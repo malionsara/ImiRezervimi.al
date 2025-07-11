@@ -1,24 +1,211 @@
-# Nestjs specific
-/dist
-/node_modules
-/build
-/tmp
+# ImiRezervimi.al - .gitignore
 
-# Logs
-logs
-*.log
+# Environment Variables & Secrets
+.env
+.env.local
+.env.development
+.env.production
+.env.test
+*.env
+
+# API Keys & Configuration
+config/secrets.json
+config/production.json
+supabase/.env
+twilio-config.json
+
+# Node.js Dependencies
+node_modules/
 npm-debug.log*
-pnpm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 lerna-debug.log*
+.pnpm-debug.log*
 
-# dotenv environment variable files
+# Next.js Build Outputs
+.next/
+out/
+build/
+dist/
+
+# Next.js Cache
+.next/cache/
+
+# Vercel Deployment
+.vercel/
+*.vercel.json
+
+# Database
+*.db
+*.sqlite
+*.sqlite3
+database/migrations/local/
+supabase/migrations/backup/
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# Runtime Data
+pids/
+*.pid
+*.seed
+*.pid.lock
+
+# Coverage Directory
+coverage/
+*.lcov
+.nyc_output/
+
+# Dependency Directories
+node_modules/
+jspm_packages/
+
+# Optional npm Cache
+.npm/
+.eslintcache
+
+# Optional REPL History
+.node_repl_history
+
+# Output of 'npm pack'
+*.tgz
+
+# Yarn Integrity File
+.yarn-integrity
+
+# dotenv Environment Variables
 .env
-.env.development
 .env.test
-.env.production
 
-# temp directory
-.temp
-.tmp
+# Parcel-bundler Cache
+.cache/
+.parcel-cache/
+
+# Next.js Build Output
+.next/
+
+# Nuxt.js Build / Generate Output
+.nuxt/
+dist/
+
+# Gatsby Files
+.cache/
+public/
+
+# Storybook Build Outputs
+.storybook-out/
+
+# Temporary Folders
+tmp/
+temp/
+.tmp/
+
+# Editor Directories and Files
+.vscode/
+!.vscode/extensions.json
+.idea/
+*.swp
+*.swo
+*~
+
+# OS Generated Files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# WhatsApp API Testing
+whatsapp-test-messages/
+twilio-logs/
+test-phone-numbers.txt
+
+# Salon Data (Testing)
+test-salons.json
+pilot-customer-data.json
+fake-appointments.sql
+
+# SSL Certificates
+*.pem
+*.key
+*.crt
+ssl/
+
+# Backup Files
+*.backup
+*.bak
+*.old
+
+# Documentation Builds
+docs/build/
+docs/.docusaurus/
+
+# Testing
+.jest/
+coverage/
+test-results/
+screenshots/
+videos/
+
+# Monitoring & Analytics
+sentry.properties
+.sentryclirc
+
+# Local Development
+.local/
+dev-notes.md
+todo.txt
+
+# Instagram API Testing
+instagram-test-tokens.json
+test-auth-responses.json
+
+# Albanian Localization Working Files
+translations-draft/
+*.po~
+*.pot~
+
+# Performance Testing
+lighthouse-reports/
+performance-logs/
+
+# Deployment Scripts (with secrets)
+deploy-prod.sh
+deploy-with-keys.sh
+
+# Email Templates (may contain test data)
+email-templates/test/
+sms-templates/test/
+
+# Error Logs
+error.log
+access.log
+combined.log
+
+# Package Manager Files
+package-lock.json (if using yarn)
+yarn.lock (if using npm)
+
+# Build Tools
+.webpack/
+.rollup.cache/
+
+# Database Backups
+*.dump
+*.sql.gz
+backups/
+
+# Development Tools
+.history/
+.vscode-server/
+
+# Miscellaneous
+*.tsbuildinfo
+.turbo/
