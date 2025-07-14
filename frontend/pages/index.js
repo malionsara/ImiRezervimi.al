@@ -253,7 +253,7 @@ export default function Homepage() {
                   </div>
                 </div>
                 <p className="text-gray-600 italic">
-                  "Shumë e thjeshtë dhe e shpejtë! Rezervova në sallonin tim të preferuar vetëm me 2 klikime."
+                  &ldquo;Shumë e thjeshtë dhe e shpejtë! Rezervova në sallonin tim të preferuar vetëm me 2 klikime.&rdquo;
                 </p>
                 <div className="flex text-yellow-400 mt-4">
                   ⭐⭐⭐⭐⭐
@@ -272,7 +272,7 @@ export default function Homepage() {
                   </div>
                 </div>
                 <p className="text-gray-600 italic">
-                  "Më pëlqen shumë që konfirmohet në WhatsApp! Nuk harrohen më takimet."
+                  &ldquo;Më pëlqen shumë që konfirmohet në WhatsApp! Nuk harrohen më takimet.&rdquo;
                 </p>
                 <div className="flex text-yellow-400 mt-4">
                   ⭐⭐⭐⭐⭐
@@ -291,7 +291,7 @@ export default function Homepage() {
                   </div>
                 </div>
                 <p className="text-gray-600 italic">
-                  "Perfekt për rezervime të shpejta! Salloni im tani është më i organizuar."
+                  &ldquo;Perfekt për rezervime të shpejta! Salloni im tani është më i organizuar.&rdquo;
                 </p>
                 <div className="flex text-yellow-400 mt-4">
                   ⭐⭐⭐⭐⭐

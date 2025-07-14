@@ -7,11 +7,11 @@ import { useState, useEffect } from 'react'
 import Head from 'next/head'
 import '../styles/globals.css'
 
-// Initialize Supabase client
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-)
+// Initialize Supabase client with fallback values
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co'
+const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'placeholder-anon-key'
+
+const supabase = createClient(supabaseUrl, supabaseAnonKey)
 
 export default function App({
   Component,
