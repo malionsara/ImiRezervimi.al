@@ -49,7 +49,7 @@ export default NextAuth({
   },
   
   callbacks: {
-    async jwt({ token, user, account, profile }) {
+    async jwt({ token, user, account }) {
       // Persist user data in JWT token
       if (user) {
         token.userId = user.id
@@ -141,7 +141,7 @@ export default NextAuth({
       }
     },
     
-    async redirect({ url, baseUrl }) {
+    async redirect({ baseUrl }) {
       // Always redirect to Albanian dashboard after login
       console.log('🔀 Redirecting to dashboard')
       return baseUrl + '/dashboard'

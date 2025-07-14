@@ -2,10 +2,9 @@
 // Albanian login page for ImiRezervimi.al
 
 import { useState } from 'react'
-import { signIn, getSession } from 'next-auth/react'
+import { signIn } from 'next-auth/react'
 import { useRouter } from 'next/router'
 import Head from 'next/head'
-import Image from 'next/image'
 
 export default function LoginPage() {
   const [loading, setLoading] = useState(false)
@@ -25,7 +24,7 @@ export default function LoginPage() {
       if (result?.error) {
         setError('Ka ndodhur një gabim gjatë identifikimit. Provoni përsëri.')
       }
-    } catch (err) {
+    } catch {
       setError('Ka ndodhur një gabim gjatë identifikimit. Provoni përsëri.')
     } finally {
       setLoading(false)
@@ -45,7 +44,7 @@ export default function LoginPage() {
       if (result?.error) {
         setError('Ka ndodhur një gabim gjatë identifikimit. Provoni përsëri.')
       }
-    } catch (err) {
+    } catch {
       setError('Ka ndodhur një gabim gjatë identifikimit. Provoni përsëri.')
     } finally {
       setLoading(false)
