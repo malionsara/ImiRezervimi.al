@@ -11,7 +11,7 @@ export default function Dashboard() {
   const { data: session, status } = useSession()
   const router = useRouter()
   const [userProfile, setUserProfile] = useState(null)
-  const [recentBookings, setRecentBookings] = useState([])
+  const [recentBookings] = useState([])
 
   useEffect(() => {
     if (status === 'unauthenticated') {
