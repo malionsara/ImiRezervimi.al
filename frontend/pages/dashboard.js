@@ -42,8 +42,8 @@ export default function Dashboard() {
     return (
       <div className="min-h-screen bg-gradient-to-br from-pink-50 to-red-50 flex items-center justify-center">
         <div className="text-center">
-          <div className="mx-auto h-16 w-16 rounded-2xl bg-gradient-to-br from-red-500 to-pink-500 flex items-center justify-center mb-4 shadow-lg animate-pulse">
-            <span className="text-2xl font-bold text-white">IR</span>
+          <div className="mx-auto h-16 w-16 rounded-2xl bg-white flex items-center justify-center mb-4 shadow-lg animate-pulse p-2">
+            <img src="/favicon-96x96.png" alt="ImiRezervimi Logo" className="w-full h-full object-contain" />
           </div>
           <p className="text-gray-600">Po ngarkohet...</p>
         </div>
@@ -70,8 +70,8 @@ export default function Dashboard() {
             <div className="flex justify-between items-center h-16">
               {/* Logo */}
               <div className="flex items-center">
-                <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-red-500 to-pink-500 flex items-center justify-center mr-3">
-                  <span className="text-sm font-bold text-white">IR</span>
+                <div className="h-8 w-8 rounded-lg bg-white flex items-center justify-center mr-3 p-1 border">
+                  <img src="/favicon-96x96.png" alt="ImiRezervimi Logo" className="w-full h-full object-contain" />
                 </div>
                 <span className="text-xl font-bold text-gray-900">ImiRezervimi</span>
               </div>
