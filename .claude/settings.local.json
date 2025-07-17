@@ -1,0 +1,18 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(gh auth refresh:*)",
+      "Bash(claude install-github-app)",
+      "Bash(set CLAUDE_CODE_GIT_BASH_PATH=C:Program FilesGitbinbash.exe)",
+      "Bash(where bash)",
+      "Bash(gh extension install:*)",
+      "Bash(gh api:*)",
+      "Bash(mkdir:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git push:*)",
+      "Bash(gh issue create:*)"
+    ],
+    "deny": []
+  }
+}
