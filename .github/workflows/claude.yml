@@ -11,13 +11,15 @@ jobs:
       - name: Debug comment
         run: |
           echo "Comment body: '${{ github.event.issue_comment.body }}'"
-          echo "Comment length: ${#comment}"
-          echo "Comment equals '/claude': ${{ github.event.issue_comment.body == '/claude' }}"
-        env:
-          comment: ${{ github.event.issue_comment.body }}
+          echo "Comment author: '${{ github.event.issue_comment.user.login }}'"
+          echo "Issue number: '${{ github.event.issue.number }}'"
+          echo "Repository: '${{ github.repository }}'"
+          echo "Event action: '${{ github.event.action }}'"
+          echo "Ref: '${{ github.ref }}'"
+          echo "Head ref: '${{ github.head_ref }}'"
   
   claude:
-    if: contains(github.event.issue_comment.body, '/claude')
+    if: github.event.issue_comment.body == '/claude'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
