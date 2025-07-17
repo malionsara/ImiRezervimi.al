@@ -271,5 +271,6 @@ INSTAGRAM_CLIENT_SECRET=
 ---
 
 *Last Updated: 2025-07-17*
+*Hook Test: Updated to test conditional build*
 *Project: ImiRezervimi.al*
 *Team: Malion Sara, fatjona.bucpapaj@gmail.com*
