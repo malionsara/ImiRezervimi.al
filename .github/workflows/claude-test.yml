@@ -17,8 +17,8 @@ jobs:
         run: |
           echo "Event name: ${{ github.event_name }}"
           echo "Action: ${{ github.event.action }}"
-          echo "Comment body: '${{ github.event.issue_comment.body }}'"
-          echo "Comment ID: ${{ github.event.issue_comment.id }}"
+          echo "Comment body: '${{ github.event.comment.body }}'"
+          echo "Comment ID: ${{ github.event.comment.id }}"
           echo "Issue number: ${{ github.event.issue.number }}"
           echo "Issue title: ${{ github.event.issue.title }}"
           echo "Repository: ${{ github.repository }}"
@@ -26,7 +26,7 @@ jobs:
           
       - name: Test comment matching
         run: |
-          COMMENT_BODY="${{ github.event.issue_comment.body }}"
+          COMMENT_BODY="${{ github.event.comment.body }}"
           echo "Testing comment: '$COMMENT_BODY'"
           if [[ "$COMMENT_BODY" == "/claude" ]]; then
             echo "✅ Comment matches /claude exactly"
