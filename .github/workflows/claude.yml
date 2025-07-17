@@ -5,8 +5,19 @@ on:
     types: [created]
 
 jobs:
+  debug:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Debug comment
+        run: |
+          echo "Comment body: '${{ github.event.issue_comment.body }}'"
+          echo "Comment length: ${#comment}"
+          echo "Comment equals '/claude': ${{ github.event.issue_comment.body == '/claude' }}"
+        env:
+          comment: ${{ github.event.issue_comment.body }}
+  
   claude:
-    if: github.event.issue_comment.body == '/claude'
+    if: contains(github.event.issue_comment.body, '/claude')
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
