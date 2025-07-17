@@ -14,13 +14,17 @@ jobs:
           echo '${{ toJson(github.event) }}'
       - name: Debug comment specifically
         run: |
-          echo "Comment body: '${{ github.event.issue_comment.body }}'"
-          echo "Comment author: '${{ github.event.issue_comment.user.login }}'"
+          echo "Comment body: '${{ github.event.comment.body }}'"
+          echo "Comment author: '${{ github.event.comment.user.login }}'"
           echo "Issue number: '${{ github.event.issue.number }}'"
   
   claude:
-    if: contains(github.event.issue_comment.body, '/claude') || github.event.issue_comment.body == '/claude'
     runs-on: ubuntu-latest
+    if: |
+      contains(github.event.comment.body, '@claude') ||
+      github.event.comment.body.trim() == '@claude' ||
+      contains(github.event.comment.body, '@Claude') ||
+      github.event.comment.body.trim() == '@Claude'
     steps:
       - uses: actions/checkout@v4
       - uses: anthropics/claude-code-action@v1
