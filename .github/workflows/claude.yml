@@ -19,7 +19,7 @@ jobs:
           echo "Issue number: '${{ github.event.issue.number }}'"
   
   claude:
-    if: contains(github.event.issue_comment.body, '/claude') || github.event.issue_comment.body == '/claude'
+    if: github.event.comment.body == '/claude'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
