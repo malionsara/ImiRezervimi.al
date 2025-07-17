@@ -5,25 +5,13 @@ on:
     types: [created]
 
 permissions:
-  contents: read
+  contents: write
   issues: write
   pull-requests: write
   id-token: write
+  actions: read
 
 jobs:
-  debug:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Debug full event
-        run: |
-          echo "Full event context:"
-          echo '${{ toJson(github.event) }}'
-      - name: Debug comment specifically
-        run: |
-          echo "Comment body: '${{ github.event.comment.body }}'"
-          echo "Comment author: '${{ github.event.comment.user.login }}'"
-          echo "Issue number: '${{ github.event.issue.number }}'"
-  
   claude:
     if: github.event.comment.body == '/claude'
     runs-on: ubuntu-latest
