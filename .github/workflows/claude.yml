@@ -20,11 +20,7 @@ jobs:
   
   claude:
     runs-on: ubuntu-latest
-    if: |
-      contains(github.event.comment.body, '@claude') ||
-      github.event.comment.body.trim() == '@claude' ||
-      contains(github.event.comment.body, '@Claude') ||
-      github.event.comment.body.trim() == '@Claude'
+    if: contains(github.event.comment.body, '@claude') || github.event.comment.body.trim() == '@claude' || contains(github.event.comment.body, '@Claude') || github.event.comment.body.trim() == '@Claude'
     steps:
       - uses: actions/checkout@v4
       - uses: anthropics/claude-code-action@v1
