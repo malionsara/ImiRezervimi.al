@@ -49,13 +49,15 @@ export default async function handler(
     // Respond to Twilio with 200 OK
     return res.status(200).json({ success: true });
 
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Webhook processing error:', error);
+    
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
     
     // Still return 200 to prevent Twilio retries for processing errors
     return res.status(200).json({ 
       success: false, 
-      error: error.message 
+      error: errorMessage 
     });
   }
 }
@@ -96,20 +98,4 @@ async function handleMessageFailed(payload: TwilioWebhookPayload): Promise<void>
   // await scheduleMessageRetry(payload.MessageSid);
 }
 
-/**
- * Update notification status in database (placeholder)
- */
-async function updateNotificationStatus(
-  twilioSid: string,
-  status: 'sent' | 'delivered' | 'failed',
-  deliveredAt?: Date,
-  errorMessage?: string
-): Promise<void> {
-  // TODO: Implement with Supabase
-  console.log('Update notification status:', {
-    twilioSid,
-    status,
-    deliveredAt,
-    errorMessage,
-  });
-}
+// TODO: Implement updateNotificationStatus function with Supabase when database integration is ready

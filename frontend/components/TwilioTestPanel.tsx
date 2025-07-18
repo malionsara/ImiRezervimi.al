@@ -3,12 +3,11 @@
 // Albanian Beauty Salon Booking Platform
 
 import { useState } from 'react';
-import { NotificationType } from '../../shared/types';
 
 interface TestResult {
   success: boolean;
-  data?: any;
-  error?: any;
+  data?: unknown;
+  error?: unknown;
 }
 
 const TwilioTestPanel: React.FC = () => {
@@ -27,12 +26,13 @@ const TwilioTestPanel: React.FC = () => {
         ...prev,
         [testType]: result
       }));
-    } catch (error: any) {
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : String(error);
       setResults(prev => ({
         ...prev,
         [testType]: {
           success: false,
-          error: error.message
+          error: errorMessage
         }
       }));
     } finally {
@@ -61,12 +61,13 @@ const TwilioTestPanel: React.FC = () => {
         ...prev,
         custom: result
       }));
-    } catch (error: any) {
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : String(error);
       setResults(prev => ({
         ...prev,
         custom: {
           success: false,
-          error: error.message
+          error: errorMessage
         }
       }));
     } finally {
@@ -198,9 +199,9 @@ const TwilioTestPanel: React.FC = () => {
       <div className="mt-6 p-4 bg-gray-50 rounded-lg">
         <h4 className="font-medium text-gray-800 mb-2">Environment Info</h4>
         <div className="text-sm text-gray-600 space-y-1">
-          <p><strong>Twilio Account SID:</strong> {process.env.NEXT_PUBLIC_TWILIO_ACCOUNT_SID ? '✅ Set' : '❌ Missing'}</p>
-          <p><strong>WhatsApp Number:</strong> {process.env.NEXT_PUBLIC_TWILIO_WHATSAPP_NUMBER || '❌ Not configured'}</p>
           <p><strong>Environment:</strong> {process.env.NODE_ENV}</p>
+          <p><strong>Note:</strong> Twilio credentials are server-side only for security</p>
+          <p><strong>Test Status:</strong> Use the test buttons above to verify configuration</p>
         </div>
       </div>
     </div>

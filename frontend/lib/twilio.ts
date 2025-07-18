@@ -3,17 +3,28 @@
 // Albanian Beauty Salon Booking Platform
 
 import { Twilio } from 'twilio';
-import { WhatsAppMessage, WhatsAppMessageResponse, NotificationType } from '../../shared/types';
+import { WhatsAppMessageResponse, NotificationType } from '../../shared/types';
 import { getTwilioConfig } from './twilio-validation';
 
-// Get validated Twilio configuration
-const twilioConfig = getTwilioConfig();
+// Lazy-loaded Twilio client and config
+let twilioClient: Twilio | null = null;
+let twilioConfig: ReturnType<typeof getTwilioConfig> | null = null;
 
-// Initialize Twilio client
-const twilioClient = new Twilio(
-  twilioConfig.accountSid,
-  twilioConfig.authToken
-);
+// Initialize Twilio client on first use
+function initializeTwilio(): { client: Twilio; config: ReturnType<typeof getTwilioConfig> } {
+  if (!twilioClient || !twilioConfig) {
+    try {
+      twilioConfig = getTwilioConfig();
+      twilioClient = new Twilio(
+        twilioConfig.accountSid,
+        twilioConfig.authToken
+      );
+    } catch (error) {
+      throw new Error(`Failed to initialize Twilio: ${(error as Error).message}`);
+    }
+  }
+  return { client: twilioClient, config: twilioConfig };
+}
 
 // Albanian WhatsApp message templates
 export const ALBANIAN_WHATSAPP_TEMPLATES = {
@@ -42,6 +53,9 @@ export async function sendWhatsAppMessage(
   retryCount = 0
 ): Promise<WhatsAppMessageResponse> {
   try {
+    // Initialize Twilio on first use
+    const { client, config } = initializeTwilio();
+
     // Validate Albanian phone number format
     if (!isValidAlbanianPhone(to)) {
       throw new Error(`Invalid Albanian phone number format: ${to}`);
@@ -52,9 +66,9 @@ export async function sendWhatsAppMessage(
     
     console.log(`Sending WhatsApp message to ${formattedPhone}:`, message);
 
-    const result = await twilioClient.messages.create({
+    const result = await client.messages.create({
       body: message,
-      from: `whatsapp:${twilioConfig.whatsappNumber}`,
+      from: `whatsapp:${config.whatsappNumber}`,
       to: `whatsapp:${formattedPhone}`,
     });
 
@@ -71,7 +85,7 @@ export async function sendWhatsAppMessage(
       status: result.status as 'queued' | 'sent' | 'delivered' | 'failed',
     };
 
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error(`WhatsApp message failed (attempt ${retryCount + 1}):`, error);
 
     // Retry logic with exponential backoff
@@ -84,14 +98,15 @@ export async function sendWhatsAppMessage(
     }
 
     // Log failed delivery after all retries
+    const errorMessage = error instanceof Error ? error.message : String(error);
     await logNotification({
       phone: to,
       message,
       status: 'failed',
-      error: error.message,
+      error: errorMessage,
     });
 
-    throw new Error(`Failed to send WhatsApp message after ${retryCount + 1} attempts: ${error.message}`);
+    throw new Error(`Failed to send WhatsApp message after ${retryCount + 1} attempts: ${errorMessage}`);
   }
 }
 

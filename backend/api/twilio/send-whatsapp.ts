@@ -3,8 +3,8 @@
 // Albanian Beauty Salon Booking Platform
 
 import { NextApiRequest, NextApiResponse } from 'next';
-import { sendWhatsAppMessage, sendNotification, isValidAlbanianPhone } from '../../../lib/twilio';
-import { ApiResponse, NotificationType } from '../../../../shared/types';
+import { sendWhatsAppMessage, sendNotification, isValidAlbanianPhone } from '../../lib/twilio';
+import { ApiResponse, NotificationType } from '../../../shared/types';
 
 interface SendWhatsAppRequest {
   to: string;

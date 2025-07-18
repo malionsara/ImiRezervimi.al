@@ -72,7 +72,7 @@ const TwilioTestPage: React.FC<TwilioTestPageProps> = ({ isProduction }) => {
               <p><strong>3. WhatsApp Sandbox Setup:</strong></p>
               <ul className="list-disc list-inside ml-4 space-y-1">
                 <li>Go to Twilio Console → Messaging → Try it out → Send a WhatsApp message</li>
-                <li>Send "join [sandbox-name]" to +14155238886 from your WhatsApp</li>
+                <li>Send &quot;join [sandbox-name]&quot; to +14155238886 from your WhatsApp</li>
                 <li>Your phone number is now connected to the sandbox</li>
               </ul>
             </div>
