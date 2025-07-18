@@ -146,13 +146,13 @@ const TwilioTestPanel: React.FC = () => {
                     {results[test.key].success ? 'Success' : 'Failed'}
                   </span>
                 </div>
-                {results[test.key].error && (
+                {results[test.key].error ? (
                   <p className="text-xs text-red-600 mt-1">
                     {typeof results[test.key].error === 'object' && results[test.key].error !== null && 'message' in (results[test.key].error as object)
                       ? (results[test.key].error as { message: string }).message
                       : String(results[test.key].error)}
                   </p>
-                )}
+                ) : null}
                 {results[test.key].data && (
                   <pre className="text-xs text-gray-600 mt-1 overflow-x-auto">
                     {JSON.stringify(results[test.key].data, null, 2)}
