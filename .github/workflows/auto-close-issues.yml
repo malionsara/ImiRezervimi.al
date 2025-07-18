@@ -19,10 +19,19 @@ jobs:
           PR_TITLE="${{ github.event.pull_request.title }}"
           echo "PR Title: $PR_TITLE"
           
-          # Extract Monday ID using regex pattern [MONDAY_XXXXXXXXXX]
-          if [[ $PR_TITLE =~ \[MONDAY_([0-9]+)\] ]]; then
+          # Extract Monday ID using flexible regex pattern to match various formats:
+          # - [MONDAY_XXXXXXXXXX] (original format)
+          # - Feature/monday 2048009327 (current format)
+          # - monday-2048009327, MONDAY_2048009327, etc.
+          if [[ $PR_TITLE =~ [Mm][Oo][Nn][Dd][Aa][Yy][_\-\ ]([0-9]+) ]]; then
             MONDAY_ID="${BASH_REMATCH[1]}"
             echo "Found Monday ID: $MONDAY_ID"
+            echo "monday_id=$MONDAY_ID" >> $GITHUB_OUTPUT
+            echo "has_monday_id=true" >> $GITHUB_OUTPUT
+          elif [[ $PR_TITLE =~ \[MONDAY_([0-9]+)\] ]]; then
+            # Fallback for original bracket format
+            MONDAY_ID="${BASH_REMATCH[1]}"
+            echo "Found Monday ID (bracket format): $MONDAY_ID"
             echo "monday_id=$MONDAY_ID" >> $GITHUB_OUTPUT
             echo "has_monday_id=true" >> $GITHUB_OUTPUT
           else
@@ -51,11 +60,20 @@ jobs:
                 per_page: 100
               });
               
-              // Find issue with matching Monday ID
-              const matchingIssue = issues.find(issue => 
-                issue.title.includes(`MONDAY_${mondayId}`) && 
-                issue.pull_request === undefined // Exclude PRs from search
-              );
+              // Find issue with matching Monday ID (flexible matching)
+              const matchingIssue = issues.find(issue => {
+                if (issue.pull_request !== undefined) return false; // Exclude PRs from search
+                
+                const issueTitle = issue.title.toLowerCase();
+                const mondayPattern = new RegExp(`monday[_\\-\\s]${mondayId}`, 'i');
+                
+                // Check multiple possible formats:
+                return (
+                  issue.title.includes(`MONDAY_${mondayId}`) ||     // Original format
+                  issue.title.includes(`[MONDAY_${mondayId}]`) ||   // Bracket format
+                  mondayPattern.test(issue.title)                   // Flexible format
+                );
+              });
               
               if (matchingIssue) {
                 console.log(`Found matching issue #${matchingIssue.number}: ${matchingIssue.title}`);
