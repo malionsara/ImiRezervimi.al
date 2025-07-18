@@ -153,11 +153,11 @@ const TwilioTestPanel: React.FC = () => {
                       : String(results[test.key].error)}
                   </p>
                 ) : null}
-                {results[test.key].data && (
+                {results[test.key].data ? (
                   <pre className="text-xs text-gray-600 mt-1 overflow-x-auto">
                     {JSON.stringify(results[test.key].data, null, 2)}
                   </pre>
-                )}
+                ) : null}
               </div>
             )}
           </div>
