@@ -148,7 +148,9 @@ const TwilioTestPanel: React.FC = () => {
                 </div>
                 {results[test.key].error && (
                   <p className="text-xs text-red-600 mt-1">
-                    {results[test.key].error.message || results[test.key].error}
+                    {typeof results[test.key].error === 'object' && results[test.key].error !== null && 'message' in (results[test.key].error as object)
+                      ? (results[test.key].error as { message: string }).message
+                      : String(results[test.key].error)}
                   </p>
                 )}
                 {results[test.key].data && (
@@ -183,7 +185,9 @@ const TwilioTestPanel: React.FC = () => {
             </div>
             {results.custom.error && (
               <p className="text-sm text-red-600">
-                {results.custom.error.message || results.custom.error}
+                {typeof results.custom.error === 'object' && results.custom.error !== null && 'message' in (results.custom.error as object)
+                  ? (results.custom.error as { message: string }).message
+                  : String(results.custom.error)}
               </p>
             )}
             {results.custom.data && (
