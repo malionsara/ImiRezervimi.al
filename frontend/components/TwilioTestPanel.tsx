@@ -183,18 +183,18 @@ const TwilioTestPanel: React.FC = () => {
                 {results.custom.success ? 'Message Sent' : 'Failed'}
               </span>
             </div>
-            {results.custom.error && (
+            {results.custom.error ? (
               <p className="text-sm text-red-600">
                 {typeof results.custom.error === 'object' && results.custom.error !== null && 'message' in (results.custom.error as object)
                   ? (results.custom.error as { message: string }).message
                   : String(results.custom.error)}
               </p>
-            )}
-            {results.custom.data && (
+            ) : null}
+            {results.custom.data ? (
               <pre className="text-xs text-gray-600 overflow-x-auto">
                 {JSON.stringify(results.custom.data, null, 2)}
               </pre>
-            )}
+            ) : null}
           </div>
         )}
       </div>
