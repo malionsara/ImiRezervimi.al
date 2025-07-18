@@ -38,16 +38,9 @@ const nextConfig = {
     minimumCacheTTL: 60,
   },
   
-  // Enable SWC minification for better performance
-  swcMinify: true,
-  
   // Experimental features (optional)
   experimental: {
-    // Enable app directory for future migration
-    appDir: false,
-    
-    // Optimize images during build
-    optimizeImages: true,
+    // Future experimental features can be added here
   },
   
   // Environment variables available to the browser
