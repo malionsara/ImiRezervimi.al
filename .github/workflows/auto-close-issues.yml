@@ -1,0 +1,86 @@
+name: Auto-close Issues on PR Merge
+
+on:
+  pull_request:
+    types: [closed]
+
+jobs:
+  auto-close-issue:
+    if: github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Extract Monday ID from PR title
+        id: extract-monday-id
+        run: |
+          PR_TITLE="${{ github.event.pull_request.title }}"
+          echo "PR Title: $PR_TITLE"
+          
+          # Extract Monday ID using flexible regex pattern to match various formats:
+          # - [MONDAY_XXXXXXXXXX] (original format)
+          # - Feature/monday 2048009327 (current format)
+          # - monday-2048009327, MONDAY_2048009327, etc.
+          if [[ $PR_TITLE =~ [Mm][Oo][Nn][Dd][Aa][Yy][_\-\ ]([0-9]+) ]]; then
+            MONDAY_ID="${BASH_REMATCH[1]}"
+            echo "Found Monday ID: $MONDAY_ID"
+            echo "monday_id=$MONDAY_ID" >> $GITHUB_OUTPUT
+            echo "has_monday_id=true" >> $GITHUB_OUTPUT
+          elif [[ $PR_TITLE =~ \[MONDAY_([0-9]+)\] ]]; then
+            # Fallback for original bracket format
+            MONDAY_ID="${BASH_REMATCH[1]}"
+            echo "Found Monday ID (bracket format): $MONDAY_ID"
+            echo "monday_id=$MONDAY_ID" >> $GITHUB_OUTPUT
+            echo "has_monday_id=true" >> $GITHUB_OUTPUT
+          else
+            echo "No Monday ID found in PR title"
+            echo "has_monday_id=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Find and close corresponding issue
+        if: steps.extract-monday-id.outputs.has_monday_id == 'true'
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const mondayId = '${{ steps.extract-monday-id.outputs.monday_id }}';
+            const prNumber = context.payload.pull_request.number;
+            const prTitle = context.payload.pull_request.title;
+            
+            console.log(`Looking for issue with Monday ID: ${mondayId}`);
+            
+            try {
+              // Search for issues with the Monday ID in the title
+              const { data: issues } = await github.rest.issues.listForRepo({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                state: 'open',
+                per_page: 100
+              });
+              
+              // Find issue with matching Monday ID (flexible matching)
+              const matchingIssue = issues.find(issue => {
+                if (issue.pull_request !== undefined) return false; // Exclude PRs from search
+                
+                const issueTitle = issue.title.toLowerCase();
+                const mondayPattern = new RegExp(`monday[_\\-\\s]${mondayId}`, 'i');
+                
+                // Check multiple possible formats:
+                return (
+                  issue.title.includes(`MONDAY_${mondayId}`) ||     // Original format
+                  issue.title.includes(`[MONDAY_${mondayId}]`) ||   // Bracket format
+                  mondayPattern.test(issue.title)                   // Flexible format
+                );
+              });
+              
+              if (matchingIssue) {
+                console.log(`Found matching issue #${matchingIssue.number}: ${matchingIssue.title}`);
+                
+                // Close the issue with a comment
+                await github.rest.issues.createComment({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  issue_number: matchingIssue.number,
+                  body: `🎉 **Automatically closed by merged PR**

@@ -9,6 +9,9 @@ import { Analytics } from "@vercel/analytics/next"
 import Head from 'next/head'
 import '../styles/globals.css'
 
+// Import Twilio validation for startup check
+import { logTwilioValidation } from '../lib/twilio-validation'
+
 // Initialize Supabase client with fallback values
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co'
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'placeholder-anon-key'
@@ -22,7 +25,12 @@ export default function App({
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    // Initialize app
+    // Initialize app and validate Twilio configuration
+    try {
+      logTwilioValidation()
+    } catch (error) {
+      console.warn('Twilio validation failed:', error.message)
+    }
     setLoading(false)
   }, [])
 
