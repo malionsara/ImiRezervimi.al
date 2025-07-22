@@ -71,7 +71,6 @@ export async function exchangeCodeForToken(code: string, redirectUri?: string): 
     redirect_uri: finalRedirectUri,
     code: code ? 'present' : 'missing'
   });
-
   const response = await fetch(`${INSTAGRAM_OAUTH_BASE}/access_token`, {
     method: 'POST',
     headers: {

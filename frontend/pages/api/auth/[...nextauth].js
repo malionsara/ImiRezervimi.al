@@ -131,6 +131,9 @@ export default NextAuth({
     error: '/auth/error',
   },
   
+  // Add NEXTAUTH_URL for production
+  url: process.env.NEXTAUTH_URL,
+  
   callbacks: {
     async jwt({ token, user, account }) {
       // Persist user data in JWT token

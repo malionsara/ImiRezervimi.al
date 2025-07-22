@@ -65,7 +65,7 @@ jobs:
                 if (issue.pull_request !== undefined) return false; // Exclude PRs from search
                 
                 const issueTitle = issue.title.toLowerCase();
-                const mondayPattern = new RegExp(`monday[_\\\\-\\\\s]${mondayId}`, 'i');
+                const mondayPattern = new RegExp(`monday[_\\-\\s]${mondayId}`, 'i');
                 
                 // Check multiple possible formats:
                 return (
