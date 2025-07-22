@@ -32,7 +32,7 @@ export default function LoginPage() {
     setError('')
     
     try {
-      const result = await signIn('facebook', {
+      const result = await signIn('instagram', {
         callbackUrl: router.query.callbackUrl || '/dashboard',
         redirect: true
       })
