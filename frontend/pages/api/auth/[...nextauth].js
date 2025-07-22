@@ -13,6 +13,22 @@ const supabase = createClient(
   process.env.SUPABASE_SERVICE_KEY
 )
 
+// Dynamic URL configuration for multiple environments
+const getBaseUrl = () => {
+  // For production
+  if (process.env.VERCEL_ENV === 'production') {
+    return 'https://imirezervimi.al'; // Your custom domain
+  }
+  
+  // For preview/staging deployments
+  if (process.env.VERCEL_URL) {
+    return `https://${process.env.VERCEL_URL}`;
+  }
+  
+  // For local development
+  return process.env.NEXTAUTH_URL || 'http://localhost:3000';
+};
+
 export default NextAuth({
   secret: process.env.NEXTAUTH_SECRET,
   providers: [
@@ -24,6 +40,8 @@ export default NextAuth({
       authorization: {
         url: "https://api.instagram.com/oauth/authorize",
         params: {
+          client_id: process.env.INSTAGRAM_CLIENT_ID,
+          redirect_uri: `${getBaseUrl()}/api/auth/callback/instagram`,
           scope: "user_profile,user_media",
           response_type: "code",
         },
@@ -32,7 +50,9 @@ export default NextAuth({
         url: "https://api.instagram.com/oauth/access_token",
         async request({ params }) {
           try {
-            const tokenResponse = await exchangeCodeForToken(params.code);
+            console.log('🔄 Instagram token exchange starting...', { code: params.code });
+            const tokenResponse = await exchangeCodeForToken(params.code, `${getBaseUrl()}/api/auth/callback/instagram`);
+            console.log('✅ Instagram token exchange successful');
             return {
               tokens: {
                 access_token: tokenResponse.access_token,
@@ -40,7 +60,7 @@ export default NextAuth({
               },
             };
           } catch (error) {
-            console.error('Instagram token exchange error:', error);
+            console.error('❌ Instagram token exchange error:', error);
             throw error;
           }
         },
@@ -48,7 +68,9 @@ export default NextAuth({
       userinfo: {
         async request({ tokens }) {
           try {
+            console.log('🔄 Instagram profile fetch starting...');
             const profile = await getInstagramProfile(tokens.access_token);
+            console.log('✅ Instagram profile fetch successful:', profile.username);
             return {
               id: profile.id,
               name: profile.username,
@@ -57,7 +79,7 @@ export default NextAuth({
               media_count: profile.media_count,
             };
           } catch (error) {
-            console.error('Instagram profile fetch error:', error);
+            console.error('❌ Instagram profile fetch error:', error);
             throw error;
           }
         },
@@ -108,9 +130,6 @@ export default NextAuth({
     signIn: '/login',
     error: '/auth/error',
   },
-  
-  // Add NEXTAUTH_URL for production
-  url: process.env.NEXTAUTH_URL,
   
   callbacks: {
     async jwt({ token, user, account }) {
