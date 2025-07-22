@@ -31,7 +31,6 @@ const getBaseUrl = () => {
 
 export default NextAuth({
   secret: process.env.NEXTAUTH_SECRET,
-  url: getBaseUrl(),
   providers: [
     // Instagram Basic Display API provider
     {
@@ -132,9 +131,6 @@ export default NextAuth({
     error: '/auth/error',
   },
   
-  // Add NEXTAUTH_URL for production
-  url: process.env.NEXTAUTH_URL,
-  
   callbacks: {
     async jwt({ token, user, account }) {
       // Persist user data in JWT token
@@ -186,6 +182,7 @@ export default NextAuth({
         // Add provider-specific fields
         if (account.provider === 'instagram') {
           userData.instagram_id = profile.id
+          userData.instagram_username = profile.username
         } else if (account.provider === 'facebook') {
           userData.facebook_id = profile.id
         } else if (account.provider === 'google') {
