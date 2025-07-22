@@ -5,6 +5,7 @@ import NextAuth from 'next-auth'
 import FacebookProvider from 'next-auth/providers/facebook'
 import GoogleProvider from 'next-auth/providers/google'
 import { createClient } from '@supabase/supabase-js'
+import { exchangeCodeForToken, getInstagramProfile } from '../../../lib/instagram'
 
 // Initialize Supabase client
 const supabase = createClient(
@@ -13,11 +14,71 @@ const supabase = createClient(
 )
 
 export default NextAuth({
+  secret: process.env.NEXTAUTH_SECRET,
   providers: [
-    // Facebook provider (works for Instagram accounts too)
-    FacebookProvider({
+    // Instagram Basic Display API provider
+    {
+      id: "instagram",
+      name: "Instagram",
+      type: "oauth",
+      authorization: {
+        url: "https://api.instagram.com/oauth/authorize",
+        params: {
+          scope: "user_profile,user_media",
+          response_type: "code",
+        },
+      },
+      token: {
+        url: "https://api.instagram.com/oauth/access_token",
+        async request({ params }) {
+          try {
+            const tokenResponse = await exchangeCodeForToken(params.code);
+            return {
+              tokens: {
+                access_token: tokenResponse.access_token,
+                token_type: "Bearer",
+              },
+            };
+          } catch (error) {
+            console.error('Instagram token exchange error:', error);
+            throw error;
+          }
+        },
+      },
+      userinfo: {
+        async request({ tokens }) {
+          try {
+            const profile = await getInstagramProfile(tokens.access_token);
+            return {
+              id: profile.id,
+              name: profile.username,
+              username: profile.username,
+              account_type: profile.account_type,
+              media_count: profile.media_count,
+            };
+          } catch (error) {
+            console.error('Instagram profile fetch error:', error);
+            throw error;
+          }
+        },
+      },
       clientId: process.env.INSTAGRAM_CLIENT_ID,
       clientSecret: process.env.INSTAGRAM_CLIENT_SECRET,
+      profile(profile) {
+        return {
+          id: profile.id,
+          name: profile.username,
+          username: profile.username,
+          image: null, // Instagram Basic Display API doesn't provide profile photos
+          email: null, // Instagram Basic Display API doesn't provide email
+        };
+      },
+    },
+    
+    // Facebook provider (fallback for Instagram accounts)
+    FacebookProvider({
+      clientId: process.env.FACEBOOK_CLIENT_ID,
+      clientSecret: process.env.FACEBOOK_CLIENT_SECRET,
       authorization: {
         params: {
           scope: 'email,public_profile'
@@ -47,6 +108,9 @@ export default NextAuth({
     signIn: '/login',
     error: '/auth/error',
   },
+  
+  // Add NEXTAUTH_URL for production
+  url: process.env.NEXTAUTH_URL,
   
   callbacks: {
     async jwt({ token, user, account }) {
@@ -97,8 +161,11 @@ export default NextAuth({
         }
         
         // Add provider-specific fields
-        if (account.provider === 'facebook') {
+        if (account.provider === 'instagram') {
           userData.instagram_id = profile.id
+          userData.instagram_username = profile.username
+        } else if (account.provider === 'facebook') {
+          userData.facebook_id = profile.id
         } else if (account.provider === 'google') {
           userData.google_id = profile.sub || profile.id
         }
