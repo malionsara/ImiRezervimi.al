@@ -65,7 +65,7 @@ jobs:
                 if (issue.pull_request !== undefined) return false; // Exclude PRs from search
                 
                 const issueTitle = issue.title.toLowerCase();
-                const mondayPattern = new RegExp(`monday[_\\-\\s]${mondayId}`, 'i');
+                const mondayPattern = new RegExp(`monday[_\\\\-\\\\s]${mondayId}`, 'i');
                 
                 // Check multiple possible formats:
                 return (
@@ -84,3 +84,61 @@ jobs:
                   repo: context.repo.repo,
                   issue_number: matchingIssue.number,
                   body: `🎉 **Automatically closed by merged PR**
+
+This issue has been automatically closed because PR #${prNumber} was merged.
+
+**PR Title:** ${prTitle}
+**Monday.com Task ID:** ${mondayId}
+
+✅ **Status:** Implementation completed and merged to main branch.
+
+---
+*Automated by GitHub Actions*`
+                });
+                
+                // Close the issue
+                await github.rest.issues.update({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  issue_number: matchingIssue.number,
+                  state: 'closed'
+                });
+                
+                console.log(`✅ Successfully closed issue #${matchingIssue.number}`);
+                
+                // Optional: Add labels to track auto-closed issues
+                await github.rest.issues.addLabels({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  issue_number: matchingIssue.number,
+                  labels: ['auto-closed', 'completed']
+                });
+                
+              } else {
+                console.log(`❌ No matching issue found for Monday ID: ${mondayId}`);
+                console.log(`Available open issues: ${issues.filter(i => !i.pull_request).map(i => i.title).join(', ')}`);
+              }
+              
+            } catch (error) {
+              console.error('❌ Error in auto-close workflow:', error);
+              
+              // Create a comment on the PR about the failure (optional)
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: prNumber,
+                body: `⚠️ **Auto-close workflow failed**
+                
+Failed to automatically close the corresponding GitHub issue for Monday ID: ${mondayId}
+
+**Error:** ${error.message}
+
+Please manually close the related issue if needed.
+
+---
+*Automated by GitHub Actions*`
+              });
+              
+              // Don't fail the workflow - just log the error
+              console.log('Workflow completed with errors but continuing...');
+            }
