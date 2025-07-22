@@ -15,9 +15,9 @@ const supabase = createClient(
 
 // Dynamic URL configuration for multiple environments
 const getBaseUrl = () => {
-  // For production
+  // For production - use www version since domain redirects
   if (process.env.VERCEL_ENV === 'production') {
-    return 'https://imirezervimi.al'; // Your custom domain
+    return 'https://www.imirezervimi.al'; // Your custom domain with www
   }
   
   // For preview/staging deployments

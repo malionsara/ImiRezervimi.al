@@ -33,7 +33,8 @@
       "Bash(wc:*)",
       "Bash(git cherry-pick:*)",
       "Bash(git fetch:*)",
-      "Bash(git branch:*)"
+      "Bash(git branch:*)",
+      "Bash(curl:*)"
     ],
     "deny": []
   }

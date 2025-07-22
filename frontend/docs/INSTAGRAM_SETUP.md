@@ -36,18 +36,28 @@ The Instagram login component uses Instagram Basic Display API to authenticate u
 1. In Instagram Basic Display settings, add OAuth Redirect URIs:
    ```
    http://localhost:3000/api/auth/callback/instagram
-   https://yourdomain.com/api/auth/callback/instagram
+   https://imirezervimi.al/api/auth/callback/instagram
+   https://www.imirezervimi.al/api/auth/callback/instagram
    ```
 
 2. Add Deauthorize Callback URL:
    ```
-   https://yourdomain.com/api/auth/deauthorize
+   https://www.imirezervimi.al/api/auth/deauthorize
    ```
 
 3. Add Data Deletion Request URL:
    ```
-   https://yourdomain.com/api/auth/data-deletion
+   https://www.imirezervimi.al/api/auth/data-deletion
    ```
+
+### 4. Important: Domain Configuration
+
+⚠️ **Critical**: Your domain `imirezervimi.al` redirects to `www.imirezervimi.al`. You MUST add BOTH URLs to your Instagram app:
+
+- `https://imirezervimi.al/api/auth/callback/instagram` (redirects from)
+- `https://www.imirezervimi.al/api/auth/callback/instagram` (redirects to)
+
+Instagram OAuth requires exact URL matching, so both variants must be configured.
 
 ### 4. Get App Credentials
 
