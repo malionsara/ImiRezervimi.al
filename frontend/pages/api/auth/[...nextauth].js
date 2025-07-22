@@ -14,6 +14,7 @@ const supabase = createClient(
 )
 
 export default NextAuth({
+  secret: process.env.NEXTAUTH_SECRET,
   providers: [
     // Instagram Basic Display API provider
     {
@@ -107,6 +108,9 @@ export default NextAuth({
     signIn: '/login',
     error: '/auth/error',
   },
+  
+  // Add NEXTAUTH_URL for production
+  url: process.env.NEXTAUTH_URL,
   
   callbacks: {
     async jwt({ token, user, account }) {
