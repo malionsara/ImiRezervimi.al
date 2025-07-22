@@ -55,15 +55,22 @@ export function getInstagramAuthUrl(): string {
 /**
  * Exchange authorization code for access token
  */
-export async function exchangeCodeForToken(code: string): Promise<InstagramTokenResponse> {
+export async function exchangeCodeForToken(code: string, redirectUri?: string): Promise<InstagramTokenResponse> {
   const clientId = process.env.INSTAGRAM_CLIENT_ID;
   const clientSecret = process.env.INSTAGRAM_CLIENT_SECRET;
-  const redirectUri = process.env.NEXT_PUBLIC_INSTAGRAM_REDIRECT_URI;
+  
+  // Use provided redirectUri or fallback to environment variable
+  const finalRedirectUri = redirectUri || process.env.NEXT_PUBLIC_INSTAGRAM_REDIRECT_URI;
 
-  if (!clientId || !clientSecret || !redirectUri) {
+  if (!clientId || !clientSecret || !finalRedirectUri) {
     throw new Error('Instagram OAuth configuration missing');
   }
 
+  console.log('🔄 Instagram token exchange params:', {
+    client_id: clientId,
+    redirect_uri: finalRedirectUri,
+    code: code ? 'present' : 'missing'
+  });
   const response = await fetch(`${INSTAGRAM_OAUTH_BASE}/access_token`, {
     method: 'POST',
     headers: {
@@ -73,7 +80,7 @@ export async function exchangeCodeForToken(code: string): Promise<InstagramToken
       client_id: clientId,
       client_secret: clientSecret,
       grant_type: 'authorization_code',
-      redirect_uri: redirectUri,
+      redirect_uri: finalRedirectUri,
       code: code,
     }),
   });

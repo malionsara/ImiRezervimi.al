@@ -26,7 +26,14 @@
       "Bash(gh pr view:*)",
       "Bash(gh pr merge:*)",
       "Bash(gh pr:*)",
-      "Bash(gh issue view:*)"
+      "Bash(gh issue view:*)",
+      "Bash(cat:*)",
+      "Bash(npm run build:*)",
+      "Bash(tail:*)",
+      "Bash(wc:*)",
+      "Bash(git cherry-pick:*)",
+      "Bash(git fetch:*)",
+      "Bash(git branch:*)"
     ],
     "deny": []
   }
