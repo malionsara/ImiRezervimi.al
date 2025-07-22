@@ -149,6 +149,8 @@
   - _GitHub Issue: #28 - MONDAY_2048009339 (mobile testing)_
 
 - [ ] 16. Implement Instagram bio link integration
+
+
   - Create unique salon booking URLs with slug system
   - Build salon profile detection from bio links
   - Add Instagram branding and styling consistency
