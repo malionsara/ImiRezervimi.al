@@ -29,7 +29,7 @@ export default NextAuth({
       },
       token: {
         url: "https://api.instagram.com/oauth/access_token",
-        async request({ client, params, checks, provider }) {
+        async request({ params }) {
           try {
             const tokenResponse = await exchangeCodeForToken(params.code);
             return {

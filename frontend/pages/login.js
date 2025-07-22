@@ -28,26 +28,6 @@ export default function LoginPage() {
     return () => window.removeEventListener('mousemove', handleMouseMove)
   }, [])
   
-  const handleInstagramLogin = async () => {
-    setLoading(true)
-    setError('')
-    
-    try {
-      const result = await signIn('instagram', {
-        callbackUrl: router.query.callbackUrl || '/dashboard',
-        redirect: true
-      })
-      
-      if (result?.error) {
-        setError('Ka ndodhur një gabim gjatë identifikimit. Ju lutemi provoni përsëri.')
-      }
-    } catch {
-      setError('Ka ndodhur një gabim gjatë identifikimit. Ju lutemi provoni përsëri.')
-    } finally {
-      setLoading(false)
-    }
-  }
-
   const handleLoginSuccess = () => {
     setLoading(false)
     setError('')
