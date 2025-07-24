@@ -15,7 +15,7 @@ const supabase = createClient(
 
 // Dynamic URL configuration for multiple environments
 const getBaseUrl = () => {
-  // For production - use www version since domain redirects
+  // For production - always use www version since domain redirects
   if (process.env.VERCEL_ENV === 'production') {
     return 'https://www.imirezervimi.al'; // Your custom domain with www
   }
@@ -40,22 +40,45 @@ export default NextAuth({
       authorization: {
         url: "https://api.instagram.com/oauth/authorize",
         params: {
-          client_id: process.env.INSTAGRAM_CLIENT_ID,
-          redirect_uri: `${getBaseUrl()}/api/auth/callback/instagram`,
           scope: "user_profile,user_media",
           response_type: "code",
         },
       },
       token: {
         url: "https://api.instagram.com/oauth/access_token",
-        async request({ params }) {
+        async request({ params, provider }) {
           try {
-            console.log('🔄 Instagram token exchange starting...', { code: params.code });
-            const tokenResponse = await exchangeCodeForToken(params.code, `${getBaseUrl()}/api/auth/callback/instagram`);
+            console.log('🔄 Instagram token exchange starting...', { 
+              code: params.code ? 'present' : 'missing',
+              redirect_uri: provider.callbackUrl 
+            });
+            
+            const response = await fetch('https://api.instagram.com/oauth/access_token', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+              },
+              body: new URLSearchParams({
+                client_id: provider.clientId,
+                client_secret: provider.clientSecret,
+                grant_type: 'authorization_code',
+                redirect_uri: provider.callbackUrl,
+                code: params.code,
+              }),
+            });
+
+            if (!response.ok) {
+              const errorText = await response.text();
+              console.error('❌ Instagram token exchange failed:', errorText);
+              throw new Error(`Instagram token exchange failed: ${errorText}`);
+            }
+
+            const tokens = await response.json();
             console.log('✅ Instagram token exchange successful');
+            
             return {
               tokens: {
-                access_token: tokenResponse.access_token,
+                access_token: tokens.access_token,
                 token_type: "Bearer",
               },
             };
@@ -132,7 +155,7 @@ export default NextAuth({
   },
   
   // Add NEXTAUTH_URL for production
-  url: process.env.NEXTAUTH_URL,
+  url: getBaseUrl(),
   
   callbacks: {
     async jwt({ token, user, account }) {
