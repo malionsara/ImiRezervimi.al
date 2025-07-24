@@ -1,0 +1,81 @@
+name: Branch Protection
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+
+jobs:
+  enforce-workflow:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check Direct Push to Protected Branches
+        if: github.event_name == 'push'
+        run: |
+          echo "❌ DIRECT PUSH DETECTED TO ${{ github.ref_name }}"
+          echo "🚫 Direct pushes to main and develop are not allowed!"
+          echo "✅ Please create a feature branch and submit a PR instead."
+          echo ""
+          echo "Correct workflow:"
+          echo "1. Create feature branch: git checkout -b feature/your-feature-name"
+          echo "2. Make changes and commit"
+          echo "3. Push feature branch: git push origin feature/your-feature-name"
+          echo "4. Create PR to develop (or main if from develop)"
+          exit 1
+
+      - name: Validate PR Source Branch
+        if: github.event_name == 'pull_request'
+        run: |
+          SOURCE_BRANCH="${{ github.head_ref }}"
+          TARGET_BRANCH="${{ github.base_ref }}"
+          
+          echo "📋 PR Details:"
+          echo "Source: $SOURCE_BRANCH"
+          echo "Target: $TARGET_BRANCH"
+          
+          # Check if PR to main is coming from develop
+          if [[ "$TARGET_BRANCH" == "main" && "$SOURCE_BRANCH" != "develop" ]]; then
+            echo "❌ PRs to main must come from develop branch only!"
+            echo "Current: $SOURCE_BRANCH → $TARGET_BRANCH"
+            echo "Expected: develop → main"
+            exit 1
+          fi
+          
+          # Check if PR to develop is coming from feature branch
+          if [[ "$TARGET_BRANCH" == "develop" && "$SOURCE_BRANCH" == "main" ]]; then
+            echo "❌ Cannot create PR from main to develop!"
+            echo "PRs should go: feature-branch → develop → main"
+            exit 1
+          fi
+          
+          echo "✅ PR workflow is correct!"
+
+  validate-branch-naming:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request' && github.base_ref == 'develop'
+    steps:
+      - name: Check Feature Branch Naming
+        run: |
+          BRANCH_NAME="${{ github.head_ref }}"
+          
+          # Allow develop branch for develop → main PRs
+          if [[ "$BRANCH_NAME" == "develop" ]]; then
+            echo "✅ develop → main PR allowed"
+            exit 0
+          fi
+          
+          # Check if branch follows naming convention
+          if [[ "$BRANCH_NAME" =~ ^(feature|fix|hotfix|chore)/.+ ]]; then
+            echo "✅ Branch name follows convention: $BRANCH_NAME"
+          else
+            echo "❌ Branch name must follow convention: type/description"
+            echo "Examples:"
+            echo "  - feature/MONDAY_2048009326-instagram-login"
+            echo "  - fix/oauth-callback-issue"
+            echo "  - hotfix/critical-security-patch"
+            echo "  - chore/update-dependencies"
+            echo ""
+            echo "Current branch: $BRANCH_NAME"
+            exit 1
+          fi
