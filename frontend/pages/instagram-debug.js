@@ -216,11 +216,11 @@ export default function InstagramDebug() {
               <h2 className="text-2xl font-semibold mb-4">🛠️ Common Issues & Solutions</h2>
               <div className="space-y-4">
                 <div className="bg-red-50 border border-red-200 rounded-lg p-4">
-                  <h3 className="font-semibold text-red-800 mb-2">❌ "Invalid platform app" Error</h3>
+                  <h3 className="font-semibold text-red-800 mb-2">❌ &quot;Invalid platform app&quot; Error</h3>
                   <ul className="list-disc list-inside text-red-700 space-y-1">
                     <li>Your Instagram app Client ID might be incorrect</li>
-                    <li>The redirect URI doesn't exactly match what's in Facebook Developer Console</li>
-                    <li>Your app might be in "Development" mode - add test users or submit for review</li>
+                    <li>The redirect URI doesn&apos;t exactly match what&apos;s in Facebook Developer Console</li>
+                    <li>Your app might be in &quot;Development&quot; mode - add test users or submit for review</li>
                     <li>Domain verification issues with www vs non-www</li>
                   </ul>
                 </div>
