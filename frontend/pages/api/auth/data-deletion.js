@@ -5,8 +5,17 @@ export default function handler(req, res) {
   // Instagram data deletion callback
   // This endpoint is required by Instagram Basic Display API for GDPR compliance
   
-  if (req.method !== 'POST') {
+  if (req.method !== 'POST' && req.method !== 'GET') {
     return res.status(405).json({ error: 'Method not allowed' });
+  }
+
+  // Handle GET requests (for Facebook validation)
+  if (req.method === 'GET') {
+    return res.status(200).json({
+      success: true,
+      message: 'Data deletion endpoint is active',
+      url: 'https://www.imirezervimi.al/privacy-policy'
+    });
   }
 
   try {
