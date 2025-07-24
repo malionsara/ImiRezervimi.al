@@ -228,7 +228,7 @@ export default function InstagramDebug() {
                 <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
                   <h3 className="font-semibold text-yellow-800 mb-2">⚠️ App Not Approved</h3>
                   <ul className="list-disc list-inside text-yellow-700 space-y-1">
-                    <li>Add your Instagram account as a "Tester" in the app</li>
+                    <li>Add your Instagram account as a &quot;Tester&quot; in the app</li>
                     <li>Make sure testers accept the invitation in their Instagram app</li>
                     <li>For production: Submit app for Instagram review</li>
                   </ul>
