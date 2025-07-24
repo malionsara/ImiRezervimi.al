@@ -32,90 +32,80 @@ const getBaseUrl = () => {
 export default NextAuth({
   secret: process.env.NEXTAUTH_SECRET,
   providers: [
-    // Instagram Basic Display API provider
+    // Facebook Login with Instagram access (replaces deprecated Instagram Basic Display)
     {
-      id: "instagram",
+      id: "instagram-via-facebook",
       name: "Instagram",
       type: "oauth",
       authorization: {
-        url: "https://api.instagram.com/oauth/authorize",
+        url: "https://www.facebook.com/v18.0/dialog/oauth",
         params: {
-          scope: "user_profile,user_media",
+          scope: "email,public_profile,instagram_basic,pages_show_list",
           response_type: "code",
         },
       },
       token: {
-        url: "https://api.instagram.com/oauth/access_token",
-        async request({ params, provider }) {
-          try {
-            console.log('🔄 Instagram token exchange starting...', { 
-              code: params.code ? 'present' : 'missing',
-              redirect_uri: provider.callbackUrl 
-            });
-            
-            const response = await fetch('https://api.instagram.com/oauth/access_token', {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
-              },
-              body: new URLSearchParams({
-                client_id: provider.clientId,
-                client_secret: provider.clientSecret,
-                grant_type: 'authorization_code',
-                redirect_uri: provider.callbackUrl,
-                code: params.code,
-              }),
-            });
-
-            if (!response.ok) {
-              const errorText = await response.text();
-              console.error('❌ Instagram token exchange failed:', errorText);
-              throw new Error(`Instagram token exchange failed: ${errorText}`);
-            }
-
-            const tokens = await response.json();
-            console.log('✅ Instagram token exchange successful');
-            
-            return {
-              tokens: {
-                access_token: tokens.access_token,
-                token_type: "Bearer",
-              },
-            };
-          } catch (error) {
-            console.error('❌ Instagram token exchange error:', error);
-            throw error;
-          }
-        },
+        url: "https://graph.facebook.com/v18.0/oauth/access_token",
       },
       userinfo: {
-        async request({ tokens }) {
+        url: "https://graph.facebook.com/v18.0/me",
+        params: {
+          fields: "id,name,email,picture,accounts{instagram_business_account{id,username,profile_picture_url,followers_count}}"
+        },
+        async request({ tokens, client }) {
           try {
-            console.log('🔄 Instagram profile fetch starting...');
-            const profile = await getInstagramProfile(tokens.access_token);
-            console.log('✅ Instagram profile fetch successful:', profile.username);
+            console.log('🔄 Facebook/Instagram profile fetch starting...');
+            
+            // Get Facebook profile with Instagram business account data
+            const profileResponse = await fetch(
+              `https://graph.facebook.com/v18.0/me?fields=id,name,email,picture,accounts{instagram_business_account{id,username,profile_picture_url,followers_count}}&access_token=${tokens.access_token}`
+            );
+            
+            if (!profileResponse.ok) {
+              throw new Error(`Profile fetch failed: ${profileResponse.statusText}`);
+            }
+            
+            const profile = await profileResponse.json();
+            console.log('✅ Facebook/Instagram profile fetch successful');
+            
+            // Extract Instagram account if available
+            let instagramAccount = null;
+            if (profile.accounts?.data) {
+              for (const account of profile.accounts.data) {
+                if (account.instagram_business_account) {
+                  instagramAccount = account.instagram_business_account;
+                  break;
+                }
+              }
+            }
+            
             return {
               id: profile.id,
-              name: profile.username,
-              username: profile.username,
-              account_type: profile.account_type,
-              media_count: profile.media_count,
+              name: profile.name,
+              email: profile.email,
+              image: profile.picture?.data?.url,
+              instagram: instagramAccount ? {
+                id: instagramAccount.id,
+                username: instagramAccount.username,
+                profile_picture_url: instagramAccount.profile_picture_url,
+                followers_count: instagramAccount.followers_count
+              } : null
             };
           } catch (error) {
-            console.error('❌ Instagram profile fetch error:', error);
+            console.error('❌ Facebook/Instagram profile fetch error:', error);
             throw error;
           }
         },
       },
-      clientId: process.env.INSTAGRAM_CLIENT_ID,
-      clientSecret: process.env.INSTAGRAM_CLIENT_SECRET,
+      clientId: process.env.FACEBOOK_CLIENT_ID,
+      clientSecret: process.env.FACEBOOK_CLIENT_SECRET,
       profile(profile) {
         return {
           id: profile.id,
-          name: profile.username,
-          username: profile.username,
-          image: null, // Instagram Basic Display API doesn't provide profile photos
-          email: null, // Instagram Basic Display API doesn't provide email
+          name: profile.name,
+          email: profile.email,
+          image: profile.image,
+          instagram: profile.instagram, // Instagram account data if available
         };
       },
     },

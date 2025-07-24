@@ -26,8 +26,8 @@ export default function InstagramLogin({
     setError('');
 
     try {
-      // Use NextAuth.js Instagram provider
-      const result = await signIn('instagram', {
+      // Use NextAuth.js Facebook Login with Instagram access
+      const result = await signIn('instagram-via-facebook', {
         callbackUrl: redirectUrl,
         redirect: true
       });
