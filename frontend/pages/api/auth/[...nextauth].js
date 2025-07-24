@@ -5,7 +5,7 @@ import NextAuth from 'next-auth'
 import FacebookProvider from 'next-auth/providers/facebook'
 import GoogleProvider from 'next-auth/providers/google'
 import { createClient } from '@supabase/supabase-js'
-import { getInstagramProfile } from '../../../lib/instagram'
+// Remove unused import - using Facebook Graph API directly now
 
 // Initialize Supabase client
 const supabase = createClient(
@@ -52,7 +52,7 @@ export default NextAuth({
         params: {
           fields: "id,name,email,picture,accounts{instagram_business_account{id,username,profile_picture_url,followers_count}}"
         },
-        async request({ tokens, client }) {
+        async request({ tokens }) {
           try {
             console.log('🔄 Facebook/Instagram profile fetch starting...');
             
