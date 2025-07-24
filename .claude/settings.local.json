@@ -34,7 +34,10 @@
       "Bash(git cherry-pick:*)",
       "Bash(git fetch:*)",
       "Bash(git branch:*)",
-      "Bash(curl:*)"
+      "Bash(curl:*)",
+      "Bash(cp:*)",
+      "Bash(rm:*)",
+      "Bash(npm run dev:*)"
     ],
     "deny": []
   }
