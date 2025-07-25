@@ -6,7 +6,7 @@ import { signIn } from 'next-auth/react'
 import { useRouter } from 'next/router'
 import Head from 'next/head'
 import Link from 'next/link'
-import InstagramLogin from '../components/auth/InstagramLogin'
+import FacebookLogin from '../components/auth/FacebookLogin'
 
 export default function LoginPage() {
   const [loading, setLoading] = useState(false)
@@ -62,7 +62,7 @@ export default function LoginPage() {
     <>
       <Head>
         <title>Identifikohu - ImiRezervimi.al</title>
-        <meta name="description" content="Identifikohu me Instagram ose Google për të rezervuar në sallonin tënd të preferuar." />
+        <meta name="description" content="Identifikohu me Facebook ose Google për të rezervuar në sallonin tënd të preferuar." />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
       </Head>
 
@@ -186,8 +186,8 @@ export default function LoginPage() {
 
             {/* Login Buttons */}
             <div className="space-y-6">
-              {/* Instagram Login Component */}
-              <InstagramLogin
+              {/* Facebook Login Component */}
+              <FacebookLogin
                 onSuccess={handleLoginSuccess}
                 onError={handleLoginError}
                 redirectUrl={router.query.callbackUrl || '/dashboard'}

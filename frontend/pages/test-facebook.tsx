@@ -5,9 +5,9 @@ import { useState } from 'react';
 import { useSession } from 'next-auth/react';
 import Head from 'next/head';
 import Link from 'next/link';
-import InstagramLogin from '../components/auth/InstagramLogin';
+import FacebookLogin from '../components/auth/FacebookLogin';
 
-export default function TestInstagramPage() {
+export default function TestFacebookPage() {
   const { data: session, status } = useSession();
   const [testResults, setTestResults] = useState<string[]>([]);
 
@@ -93,7 +93,7 @@ export default function TestInstagramPage() {
                   <p className="text-gray-600 mb-6">
                     Kliko butonin më poshtë për të testuar Instagram login:
                   </p>
-                  <InstagramLogin
+                  <FacebookLogin
                     onSuccess={handleLoginSuccess}
                     onError={handleLoginError}
                     redirectUrl="/test-instagram"
