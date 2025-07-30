@@ -78,7 +78,7 @@ export default function Homepage() {
               <span className="text-3xl">💅</span>
             </div>
           </div>
-          <div className="absolute top-64 right-1/2 animate-float-icon-delayed">
+          <div className="absolute top-64 right-1/4 animate-float-icon-delayed">
             <div className="w-14 h-14 bg-white/20 backdrop-blur-sm rounded-xl flex items-center justify-center shadow-lg">
               <span className="text-2xl">✨</span>
             </div>
