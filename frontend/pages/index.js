@@ -78,7 +78,7 @@ export default function Homepage() {
               <span className="text-3xl">💅</span>
             </div>
           </div>
-          <div className="absolute top-64 right-1/3 animate-float-icon-delayed">
+          <div className="absolute top-64 right-1/2 animate-float-icon-delayed">
             <div className="w-14 h-14 bg-white/20 backdrop-blur-sm rounded-xl flex items-center justify-center shadow-lg">
               <span className="text-2xl">✨</span>
             </div>
@@ -140,8 +140,7 @@ export default function Homepage() {
               {/* Badge */}
               <div className="inline-flex items-center px-8 py-4 rounded-full bg-gradient-to-r from-red-100 via-pink-100 to-orange-100 border border-red-200/50 mb-12 shadow-lg backdrop-blur-sm animate-fade-in-up">
                 <span className="w-3 h-3 bg-green-500 rounded-full mr-3 animate-pulse"></span>
-                <span className="text-red-600 font-semibold text-lg">✨ Platforma #1 për rezervime në Shqipëri</span>
-                <span className="ml-4">✨</span>
+                <span className="text-red-600 font-semibold text-lg">✨ Platforma #1 për rezervime në Shqipëri ✨</span>
               </div>
               
               {/* Main Heading */}
