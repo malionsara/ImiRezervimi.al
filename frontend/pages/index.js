@@ -141,6 +141,7 @@ export default function Homepage() {
               <div className="inline-flex items-center px-8 py-4 rounded-full bg-gradient-to-r from-red-100 via-pink-100 to-orange-100 border border-red-200/50 mb-12 shadow-lg backdrop-blur-sm animate-fade-in-up">
                 <span className="w-3 h-3 bg-green-500 rounded-full mr-3 animate-pulse"></span>
                 <span className="text-red-600 font-semibold text-lg">✨ Platforma #1 për rezervime në Shqipëri</span>
+                <span className="ml-4">✨</span>
               </div>
               
               {/* Main Heading */}
