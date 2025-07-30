@@ -138,10 +138,10 @@ export default function Homepage() {
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className={`text-center transition-all duration-1000 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
               {/* Badge */}
-              <div className="inline-flex items-center px-8 py-4 rounded-full bg-gradient-to-r from-red-100 via-pink-100 to-orange-100 border border-red-200/50 mb-12 shadow-lg backdrop-blur-sm animate-fade-in-up">
+              <div className="inline-flex items-center px-8 py-4 rounded-full bg-gradient-to-r from-red-100 via-pink-100 to-orange-100 border border-red-200/50 mb-12 shadow-lg backdrop-blur-sm animate-fade-in-up relative">
                 <span className="w-3 h-3 bg-green-500 rounded-full mr-3 animate-pulse"></span>
                 <span className="text-red-600 font-semibold text-lg">✨ Platforma #1 për rezervime në Shqipëri</span>
-                <span className="ml-4">✨</span>
+                <span className="absolute right-2 top-1/2 transform -translate-y-1/2 translate-x-6">✨</span>
               </div>
               
               {/* Main Heading */}
