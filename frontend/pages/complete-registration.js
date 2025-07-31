@@ -57,10 +57,7 @@ export default function CompleteRegistration() {
     }
   }
 
-  const handleVerificationError = (error) => {
-    console.error('Phone verification error:', error)
-    // Handle verification errors
-  }
+  // Removed handleVerificationError since we're using simplified form
 
   if (status === 'loading' || isLoading) {
     return (
@@ -152,7 +149,7 @@ export default function CompleteRegistration() {
             <div className="bg-white rounded-2xl shadow-xl p-8">
               <h3 className="text-xl font-bold text-gray-900 mb-4">Verifikimi i Telefonit</h3>
               <p className="text-gray-600 mb-6">
-                Do t'ju dërgojmë një kod verifikimi në SMS
+                Do t&apos;ju dërgojmë një kod verifikimi në SMS
               </p>
               <div className="space-y-4">
                 <input
