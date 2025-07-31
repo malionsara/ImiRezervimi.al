@@ -135,16 +135,11 @@ export default async function handler(req, res) {
 
     // Send welcome WhatsApp message
     try {
-      await fetch(`${process.env.NEXTAUTH_URL || 'http://localhost:3000'}/api/twilio/send-whatsapp`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          to: phoneNumber,
-          message: `Mirë se erdhe në ImiRezervimi.al! 🎉\n\nLlogaria jote është krijuar me sukses. Tani mund të rezervosh shërbime bukurie me vetëm disa klikime.\n\nFillo duke eksploruar sallone të reja: https://www.imirezervimi.al/dashboard`
-        })
-      })
+      const { sendWhatsAppWelcome } = await import('../../../lib/whatsapp')
+      await sendWhatsAppWelcome(phoneNumber, userData.name)
+      console.log('✅ Welcome WhatsApp message sent')
     } catch (error) {
-      console.error('⚠️ Welcome message failed:', error)
+      console.error('⚠️ Welcome WhatsApp message failed:', error)
       // Don't fail registration if welcome message fails
     }
 
