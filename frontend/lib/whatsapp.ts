@@ -3,7 +3,6 @@
 // Albanian Beauty Salon Booking Platform
 
 import { Twilio } from 'twilio';
-import { getTwilioConfig } from './twilio-validation';
 import { isValidAlbanianPhone } from './twilio';
 import { createClient } from '@supabase/supabase-js';
 
@@ -18,8 +17,15 @@ let twilioClient: Twilio | null = null;
 function initializeTwilio(): Twilio {
   if (!twilioClient) {
     try {
-      const config = getTwilioConfig();
-      twilioClient = new Twilio(config.accountSid, config.authToken);
+      // For now, allow sandbox number in production for testing
+      const accountSid = process.env.TWILIO_ACCOUNT_SID;
+      const authToken = process.env.TWILIO_AUTH_TOKEN;
+      
+      if (!accountSid || !authToken) {
+        throw new Error('TWILIO_ACCOUNT_SID and TWILIO_AUTH_TOKEN are required');
+      }
+      
+      twilioClient = new Twilio(accountSid, authToken);
     } catch (error) {
       throw new Error(`Failed to initialize Twilio: ${(error as Error).message}`);
     }
