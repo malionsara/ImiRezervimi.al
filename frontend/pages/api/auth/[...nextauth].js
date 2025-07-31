@@ -29,7 +29,7 @@ const getBaseUrl = () => {
   return process.env.NEXTAUTH_URL || 'http://localhost:3000';
 };
 
-export default NextAuth({
+export const authOptions = {
   secret: process.env.NEXTAUTH_SECRET,
   providers: [
     // Facebook Login for end users
@@ -182,4 +182,6 @@ export default NextAuth({
   },
   
   debug: process.env.NODE_ENV === 'development'
-})
+}
+
+export default NextAuth(authOptions)

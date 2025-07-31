@@ -49,7 +49,7 @@ export default async function handler(req, res) {
     }
 
     // Check if phone number is already in use
-    const { data: existingPhone, error: phoneCheckError } = await supabase
+    const { data: existingPhone } = await supabase
       .from('customers')
       .select('id')
       .eq('phone', phoneNumber)
@@ -63,7 +63,7 @@ export default async function handler(req, res) {
     }
 
     // Check if email is already registered
-    const { data: existingUser, error: userCheckError } = await supabase
+    const { data: existingUser } = await supabase
       .from('customers')
       .select('id, phone_verified')
       .eq('email', userData.email)
@@ -73,7 +73,7 @@ export default async function handler(req, res) {
 
     if (existingUser) {
       // User exists but phone not verified - update with phone verification
-      const { data: updatedUser, error: updateError } = await supabase
+      const { error: updateError } = await supabase
         .from('customers')
         .update({
           first_name: userData.name?.split(' ')[0] || '',
