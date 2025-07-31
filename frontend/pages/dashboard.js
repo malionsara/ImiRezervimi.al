@@ -16,8 +16,11 @@ export default function Dashboard() {
   useEffect(() => {
     if (status === 'unauthenticated') {
       router.push('/login')
+    } else if (status === 'authenticated' && session?.user?.isRegistered === false) {
+      // User is authenticated but not fully registered - redirect to complete registration
+      router.push('/complete-registration')
     }
-  }, [status, router])
+  }, [status, session, router])
 
   useEffect(() => {
     if (session?.user) {
