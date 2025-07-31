@@ -83,14 +83,10 @@ export default async function handler(req, res) {
           whatsapp_confirmed: true,
           profile_photo_url: userData.image,
           account_type: 'verified',
-          facebook_id: userData.provider === 'facebook' ? userData.providerId : null,
-          google_id: userData.provider === 'google' ? userData.providerId : null,
           last_login: new Date().toISOString(),
           updated_at: new Date().toISOString()
         })
         .eq('id', existingUser.id)
-        .select()
-        .single()
       
       if (updateError) {
         console.error('❌ User update error:', updateError)
@@ -114,8 +110,6 @@ export default async function handler(req, res) {
         whatsapp_confirmed: true,
         profile_photo_url: userData.image,
         account_type: 'verified',
-        facebook_id: userData.provider === 'facebook' ? userData.providerId : null,
-        google_id: userData.provider === 'google' ? userData.providerId : null,
         last_login: new Date().toISOString(),
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString()
