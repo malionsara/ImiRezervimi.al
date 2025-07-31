@@ -11,6 +11,7 @@ export default function CompleteRegistration() {
   const { data: session, status } = useSession()
   const router = useRouter()
   const [isLoading, setIsLoading] = useState(true)
+  const [phoneNumber, setPhoneNumber] = useState('')
 
   useEffect(() => {
     if (status === 'loading') return // Still loading
@@ -31,7 +32,44 @@ export default function CompleteRegistration() {
     setIsLoading(false)
   }, [session, status, router])
 
-  const handleVerificationComplete = async (phoneNumber) => {
+  // Format phone number as user types
+  const formatPhoneNumber = (value) => {
+    // Remove all non-digits
+    const digits = value.replace(/\D/g, '')
+    
+    // Handle different input formats
+    if (digits.startsWith('355')) {
+      return '+' + digits
+    } else if (digits.startsWith('0')) {
+      return '+355' + digits.substring(1)
+    } else if (digits.length > 0 && !digits.startsWith('355')) {
+      return '+355' + digits
+    }
+    
+    return digits ? '+355' : ''
+  }
+
+  // Validate Albanian phone number
+  const isValidPhone = (phone) => {
+    return /^\+355[0-9]{8,9}$/.test(phone)
+  }
+
+  const handlePhoneChange = (e) => {
+    const formatted = formatPhoneNumber(e.target.value)
+    setPhoneNumber(formatted)
+  }
+
+  const handleVerificationComplete = async () => {
+    if (!phoneNumber.trim()) {
+      alert('Ju lutem shkruani numrin e telefonit')
+      return
+    }
+
+    if (!isValidPhone(phoneNumber)) {
+      alert('Numri i telefonit duhet të jetë në formatin +355XXXXXXXX')
+      return
+    }
+
     try {
       // Create complete user record in database
       const response = await fetch('/api/auth/complete-registration', {
@@ -152,16 +190,24 @@ export default function CompleteRegistration() {
                 Do t&apos;ju dërgojmë një kod verifikimi në SMS
               </p>
               <div className="space-y-4">
-                <input
-                  type="tel"
-                  placeholder="+355 69 123 4567"
-                  className="block w-full px-4 py-3 border border-gray-300 rounded-lg text-lg placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                />
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <span className="text-gray-500 sm:text-sm">🇦🇱</span>
+                  </div>
+                  <input
+                    type="tel"
+                    value={phoneNumber}
+                    onChange={handlePhoneChange}
+                    placeholder="+355 69 123 4567"
+                    className="block w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg text-lg placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  />
+                </div>
                 <button 
-                  onClick={() => handleVerificationComplete('+35569123456')}
-                  className="w-full bg-blue-500 text-white py-3 px-4 rounded-lg font-medium hover:bg-blue-600 transition-colors"
+                  onClick={handleVerificationComplete}
+                  disabled={!isValidPhone(phoneNumber)}
+                  className="w-full bg-blue-500 text-white py-3 px-4 rounded-lg font-medium hover:bg-blue-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  Dërgo Kodin
+                  Plotëso Regjistrimin
                 </button>
               </div>
               <p className="text-sm text-gray-500 mt-4">
