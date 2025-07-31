@@ -70,19 +70,60 @@ export default NextAuth({
   url: getBaseUrl(),
   
   callbacks: {
-    async jwt({ token, user, account }) {
-      // Persist user data in JWT token
-      if (user) {
-        token.userId = user.id
-        token.provider = account?.provider
+    async jwt({ token, user, account, profile }) {
+      // Store social login data temporarily until phone verification
+      if (user && account) {
+        token.email = user.email
+        token.name = user.name
+        token.image = user.image
+        token.provider = account.provider
+        
+        // Store provider-specific IDs
+        if (account.provider === 'facebook') {
+          token.providerId = profile.id
+        } else if (account.provider === 'google') {
+          token.providerId = profile.sub || profile.id
+        }
+        
+        // Check if user is fully registered
+        try {
+          const { data: existingUser } = await supabase
+            .from('customers')
+            .select('id, phone_verified')
+            .eq('email', user.email)
+            .single()
+          
+          if (existingUser && existingUser.phone_verified) {
+            token.userId = existingUser.id
+            token.isRegistered = true
+          } else {
+            token.isRegistered = false
+          }
+        } catch (error) {
+          token.isRegistered = false
+        }
       }
       return token
     },
     
     async session({ session, token }) {
-      // Add custom data to session
+      // Add user data to session
       session.user.id = token.userId
       session.user.provider = token.provider
+      session.user.providerId = token.providerId
+      session.user.isRegistered = token.isRegistered
+      
+      // Include temporary data for unregistered users
+      if (!token.isRegistered) {
+        session.user.tempData = {
+          email: token.email,
+          name: token.name,
+          image: token.image,
+          provider: token.provider,
+          providerId: token.providerId
+        }
+      }
+      
       return session
     },
     
@@ -94,10 +135,10 @@ export default NextAuth({
       })
       
       try {
-        // Check if user exists in our database
+        // Check if user exists and is fully registered (has verified phone)
         const { data: existingUser, error: checkError } = await supabase
           .from('customers')
-          .select('id, first_name, last_name')
+          .select('id, first_name, last_name, phone_verified, phone')
           .eq('email', user.email)
           .single()
         
@@ -105,70 +146,38 @@ export default NextAuth({
           console.error('❌ Database check error:', checkError)
         }
         
-        // Create or update user in Supabase
-        const userData = {
-          email: user.email,
-          first_name: user.name?.split(' ')[0] || '',
-          last_name: user.name?.split(' ').slice(1).join(' ') || '',
-          profile_photo_url: user.image,
-          account_type: 'social',
-          phone_verified: false,
-          created_at: new Date().toISOString(),
-          updated_at: new Date().toISOString()
-        }
-        
-        // Add provider-specific fields
-        if (account.provider === 'instagram') {
-          userData.instagram_id = profile.id
-          userData.instagram_username = profile.username
-        } else if (account.provider === 'facebook') {
-          userData.facebook_id = profile.id
-        } else if (account.provider === 'google') {
-          userData.google_id = profile.sub || profile.id
-        }
-        
-        if (existingUser) {
-          // Update existing user
-          const { error: updateError } = await supabase
-            .from('customers')
-            .update({
-              ...userData,
-              updated_at: new Date().toISOString()
-            })
-            .eq('id', existingUser.id)
-          
-          if (updateError) {
-            console.error('❌ Update user error:', updateError)
-          } else {
-            console.log('✅ User updated successfully')
-          }
+        if (existingUser && existingUser.phone_verified) {
+          // Existing user with verified phone - allow login
+          console.log('✅ Existing verified user logging in')
+          return true
+        } else if (existingUser && !existingUser.phone_verified) {
+          // User exists but phone not verified - needs to complete registration
+          console.log('⚠️ User exists but phone not verified - redirect to complete registration')
+          return true // Allow signin but will redirect to complete registration
         } else {
-          // Create new user
-          const { data: newUser, error: insertError } = await supabase
-            .from('customers')
-            .insert([userData])
-            .select()
-            .single()
-          
-          if (insertError) {
-            console.error('❌ Create user error:', insertError)
-          } else {
-            console.log('✅ New user created:', newUser)
-          }
+          // New user - needs full registration flow
+          console.log('🆕 New user - needs complete registration')
+          return true // Allow signin but will redirect to complete registration
         }
-        
-        return true // Always allow sign in
         
       } catch (error) {
         console.error('❌ SignIn callback error:', error)
-        return true // Still allow login even if database fails
+        return true // Still allow signin to prevent blocking
       }
     },
     
-    async redirect({ baseUrl }) {
-      // Always redirect to Albanian dashboard after login
-      console.log('🔀 Redirecting to dashboard')
-      return baseUrl + '/dashboard'
+    async redirect({ url, baseUrl }) {
+      // Allow redirect to complete-registration page
+      if (url.includes('/complete-registration')) {
+        return url
+      }
+      
+      // Default redirect - let the frontend handle registration check
+      const urlParams = new URLSearchParams(url.split('?')[1] || '')
+      const callbackUrl = urlParams.get('callbackUrl')
+      
+      console.log('🔀 Redirecting after auth')
+      return callbackUrl || baseUrl + '/dashboard'
     }
   },
   
