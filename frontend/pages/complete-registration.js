@@ -3,14 +3,13 @@
 
 import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/router'
-import { useEffect, useState, useCallback } from 'react'
+import { useEffect, useState } from 'react'
 import Head from 'next/head'
-import WhatsAppVerification from '../components/auth/WhatsAppVerification'
 
 export default function CompleteRegistration() {
   const { data: session, status } = useSession()
   const router = useRouter()
-  const [isLoading, setIsLoading] = useState(true)
+  const [isLoading] = useState(true)
   const [phoneNumber, setPhoneNumber] = useState('')
 
   useEffect(() => {
@@ -28,9 +27,9 @@ export default function CompleteRegistration() {
       return
     }
 
-    // Check if user has an existing phone number in database
-    checkExistingPhone()
-  }, [session, status, router, checkExistingPhone])
+    // User is ready for phone verification
+    // No additional loading needed
+  }, [session, status, router])
 
 
   // Format phone number as user types
