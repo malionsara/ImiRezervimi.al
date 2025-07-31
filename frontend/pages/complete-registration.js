@@ -5,12 +5,13 @@ import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
 import Head from 'next/head'
+import WhatsAppVerification from '../components/auth/WhatsAppVerification'
 
 export default function CompleteRegistration() {
-  const { data: session, status } = useSession()
+  const { data: session, status, update } = useSession()
   const router = useRouter()
   const [isLoading, setIsLoading] = useState(false)
-  const [phoneNumber, setPhoneNumber] = useState('')
+  const [verificationError, setVerificationError] = useState('')
 
   useEffect(() => {
     if (status === 'loading') return // Still loading
@@ -32,44 +33,8 @@ export default function CompleteRegistration() {
   }, [session, status, router])
 
 
-  // Format phone number as user types
-  const formatPhoneNumber = (value) => {
-    // Remove all non-digits
-    const digits = value.replace(/\D/g, '')
-    
-    // Handle different input formats
-    if (digits.startsWith('355')) {
-      return '+' + digits
-    } else if (digits.startsWith('0')) {
-      return '+355' + digits.substring(1)
-    } else if (digits.length > 0 && !digits.startsWith('355')) {
-      return '+355' + digits
-    }
-    
-    return digits ? '+355' : ''
-  }
-
-  // Validate Albanian phone number
-  const isValidPhone = (phone) => {
-    return /^\+355[0-9]{8,9}$/.test(phone)
-  }
-
-  const handlePhoneChange = (e) => {
-    const formatted = formatPhoneNumber(e.target.value)
-    setPhoneNumber(formatted)
-  }
-
-  const handleVerificationComplete = async () => {
-    if (!phoneNumber.trim()) {
-      alert('Ju lutem shkruani numrin e telefonit')
-      return
-    }
-
-    if (!isValidPhone(phoneNumber)) {
-      alert('Numri i telefonit duhet të jetë në formatin +355XXXXXXXX')
-      return
-    }
-
+  // Handle successful phone verification
+  const handleVerificationComplete = async (phone) => {
     setIsLoading(true)
     try {
       // Create complete user record in database with verified phone
@@ -79,14 +44,22 @@ export default function CompleteRegistration() {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          phoneNumber: phoneNumber,
+          phoneNumber: phone,
           userData: session.user.tempData
         })
       })
 
       if (response.ok) {
-        // Registration complete - redirect to dashboard
-        router.push('/dashboard?welcome=true')
+        // Registration complete - refresh session to update isRegistered status
+        console.log('✅ Registration completed, refreshing session...')
+        
+        // Update session to trigger JWT callback refresh
+        await update()
+        
+        // Small delay to ensure session is updated
+        setTimeout(() => {
+          router.push('/dashboard?welcome=true')
+        }, 500)
       } else {
         const errorData = await response.json()
         console.error('Registration failed:', errorData)
@@ -102,6 +75,12 @@ export default function CompleteRegistration() {
     } finally {
       setIsLoading(false)
     }
+  }
+
+  // Handle verification errors
+  const handleVerificationError = (error) => {
+    setVerificationError(error)
+    console.error('Verification error:', error)
   }
 
 
@@ -191,36 +170,37 @@ export default function CompleteRegistration() {
               </div>
             </div>
 
-            {/* Temporary Simple Phone Input - TODO: Use PhoneVerification component after build fix */}
+            {/* WhatsApp Verification Component */}
             <div className="bg-white rounded-2xl shadow-xl p-8">
-              <h3 className="text-xl font-bold text-gray-900 mb-4">Verifikimi i Telefonit</h3>
-              <p className="text-gray-600 mb-6">
-                Do t&apos;ju dërgojmë një kod verifikimi në SMS
-              </p>
-              <div className="space-y-4">
-                <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <span className="text-gray-500 sm:text-sm">🇦🇱</span>
+              {isLoading ? (
+                <div className="text-center py-8">
+                  <div className="mx-auto h-12 w-12 rounded-2xl bg-blue-100 flex items-center justify-center mb-4 animate-pulse">
+                    <span className="text-2xl">⏳</span>
                   </div>
-                  <input
-                    type="tel"
-                    value={phoneNumber}
-                    onChange={handlePhoneChange}
-                    placeholder="+355 69 123 4567"
-                    className="block w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg text-lg placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  />
+                  <p className="text-gray-600">Po plotësohet regjistrimi...</p>
                 </div>
-                <button 
-                  onClick={handleVerificationComplete}
-                  disabled={!isValidPhone(phoneNumber) || isLoading}
-                  className="w-full bg-blue-500 text-white py-3 px-4 rounded-lg font-medium hover:bg-blue-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  {isLoading ? 'Po ngarkohet...' : 'Plotëso Regjistrimin'}
-                </button>
-              </div>
-              <p className="text-sm text-gray-500 mt-4">
-                Kjo është një version i thjeshtuar. PhoneVerification komponenti do të riparohet së shpejti.
-              </p>
+              ) : (
+                <>
+                  <div className="mb-6">
+                    <h3 className="text-xl font-bold text-gray-900 mb-2">Verifikimi i WhatsApp</h3>
+                    <p className="text-gray-600">
+                      Do t&apos;ju dërgojmë një kod verifikimi në WhatsApp për të plotësuar regjistrimin.
+                    </p>
+                  </div>
+                  
+                  <WhatsAppVerification
+                    onVerificationComplete={handleVerificationComplete}
+                    onError={handleVerificationError}
+                    className="space-y-4"
+                  />
+                  
+                  {verificationError && (
+                    <div className="mt-4 p-3 bg-red-50 border border-red-200 rounded-lg">
+                      <p className="text-red-600 text-sm">{verificationError}</p>
+                    </div>
+                  )}
+                </>
+              )}
             </div>
 
             {/* Info Footer */}

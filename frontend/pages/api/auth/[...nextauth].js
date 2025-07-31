@@ -71,7 +71,7 @@ export const authOptions = {
   
   callbacks: {
 
-    async jwt({ token, user, account, profile }) {
+    async jwt({ token, user, account, profile, trigger }) {
       // Store social login data temporarily until phone verification
       if (user && account) {
         token.email = user.email
@@ -85,14 +85,15 @@ export const authOptions = {
         } else if (account.provider === 'google') {
           token.providerId = profile?.sub || profile?.id || user.id
         }
-        
-        // Check if user is fully registered
+      }
+      
+      // Check registration status on sign-in OR when session is updated
+      if ((user && account) || trigger === 'update') {
         try {
-
           const { data: existingUser, error: dbError } = await supabase
             .from('customers')
             .select('id, phone_verified')
-            .eq('email', user.email)
+            .eq('email', token.email)
             .single()
           
           if (dbError && dbError.code !== 'PGRST116') {
@@ -102,8 +103,10 @@ export const authOptions = {
           } else if (existingUser && existingUser.phone_verified) {
             token.userId = existingUser.id
             token.isRegistered = true
+            console.log('✅ JWT Callback - User is fully registered:', token.email)
           } else {
             token.isRegistered = false
+            console.log('⚠️ JWT Callback - User needs phone verification:', token.email)
           }
 
         } catch (error) {
@@ -111,6 +114,7 @@ export const authOptions = {
           token.isRegistered = false
         }
       }
+      
       return token
     },
     
