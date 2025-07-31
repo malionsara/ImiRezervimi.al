@@ -3,7 +3,8 @@
 // Albanian Beauty Salon Booking Platform
 
 import { NextApiRequest, NextApiResponse } from 'next';
-import { sendWhatsAppVerification, cleanupExpiredCodes } from '../../../lib/whatsapp';
+import { sendWhatsAppVerification } from '../../../lib/whatsapp';
+import { cleanupExpiredCodes } from '../../../lib/sms';
 import { isValidAlbanianPhone } from '../../../lib/twilio';
 
 interface ApiResponse {
