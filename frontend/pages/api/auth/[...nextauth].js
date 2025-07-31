@@ -70,6 +70,7 @@ export const authOptions = {
   url: getBaseUrl(),
   
   callbacks: {
+
     async jwt({ token, user, account, profile }) {
       // Store social login data temporarily until phone verification
       if (user && account) {
@@ -87,6 +88,7 @@ export const authOptions = {
         
         // Check if user is fully registered
         try {
+
           const { data: existingUser, error: dbError } = await supabase
             .from('customers')
             .select('id, phone_verified')
@@ -103,6 +105,7 @@ export const authOptions = {
           } else {
             token.isRegistered = false
           }
+
         } catch (error) {
           console.error('❌ JWT Callback - Connection error:', error)
           token.isRegistered = false
