@@ -3,15 +3,46 @@
 
 import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/router'
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 import Head from 'next/head'
-// Removed PhoneVerification import due to build issue - will implement inline form
+import WhatsAppVerification from '../components/auth/WhatsAppVerification'
 
 export default function CompleteRegistration() {
   const { data: session, status } = useSession()
   const router = useRouter()
   const [isLoading, setIsLoading] = useState(true)
-  const [phoneNumber, setPhoneNumber] = useState('')
+  const [existingPhone, setExistingPhone] = useState('')
+
+  const checkExistingPhone = useCallback(async () => {
+    if (!session?.user?.tempData?.email) {
+      setIsLoading(false)
+      return
+    }
+
+    try {
+      // Check if user exists in database and has a phone number
+      const response = await fetch('/api/auth/check-existing-phone', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email: session.user.tempData.email
+        })
+      })
+
+      if (response.ok) {
+        const data = await response.json()
+        if (data.success && data.phone) {
+          setExistingPhone(data.phone)
+        }
+      }
+    } catch (error) {
+      console.error('Error checking existing phone:', error)
+    }
+    
+    setIsLoading(false)
+  }, [session?.user?.tempData?.email])
 
   useEffect(() => {
     if (status === 'loading') return // Still loading
@@ -28,57 +59,21 @@ export default function CompleteRegistration() {
       return
     }
 
-    // User is authenticated but not registered - show phone verification
-    setIsLoading(false)
-  }, [session, status, router])
+    // Check if user has an existing phone number in database
+    checkExistingPhone()
+  }, [session, status, router, checkExistingPhone])
 
-  // Format phone number as user types
-  const formatPhoneNumber = (value) => {
-    // Remove all non-digits
-    const digits = value.replace(/\D/g, '')
-    
-    // Handle different input formats
-    if (digits.startsWith('355')) {
-      return '+' + digits
-    } else if (digits.startsWith('0')) {
-      return '+355' + digits.substring(1)
-    } else if (digits.length > 0 && !digits.startsWith('355')) {
-      return '+355' + digits
-    }
-    
-    return digits ? '+355' : ''
-  }
 
-  // Validate Albanian phone number
-  const isValidPhone = (phone) => {
-    return /^\+355[0-9]{8,9}$/.test(phone)
-  }
-
-  const handlePhoneChange = (e) => {
-    const formatted = formatPhoneNumber(e.target.value)
-    setPhoneNumber(formatted)
-  }
-
-  const handleVerificationComplete = async () => {
-    if (!phoneNumber.trim()) {
-      alert('Ju lutem shkruani numrin e telefonit')
-      return
-    }
-
-    if (!isValidPhone(phoneNumber)) {
-      alert('Numri i telefonit duhet të jetë në formatin +355XXXXXXXX')
-      return
-    }
-
+  const handleVerificationComplete = async (verifiedPhone) => {
     try {
-      // Create complete user record in database
+      // Create complete user record in database with verified phone
       const response = await fetch('/api/auth/complete-registration', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          phoneNumber,
+          phoneNumber: verifiedPhone,
           userData: session.user.tempData
         })
       })
@@ -95,7 +90,6 @@ export default function CompleteRegistration() {
     }
   }
 
-  // Removed handleVerificationError since we're using simplified form
 
   if (status === 'loading' || isLoading) {
     return (
@@ -183,37 +177,15 @@ export default function CompleteRegistration() {
               </div>
             </div>
 
-            {/* Temporary Simple Phone Input - TODO: Use PhoneVerification component after build fix */}
-            <div className="bg-white rounded-2xl shadow-xl p-8">
-              <h3 className="text-xl font-bold text-gray-900 mb-4">Verifikimi i Telefonit</h3>
-              <p className="text-gray-600 mb-6">
-                Do t&apos;ju dërgojmë një kod verifikimi në SMS
-              </p>
-              <div className="space-y-4">
-                <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <span className="text-gray-500 sm:text-sm">🇦🇱</span>
-                  </div>
-                  <input
-                    type="tel"
-                    value={phoneNumber}
-                    onChange={handlePhoneChange}
-                    placeholder="+355 69 123 4567"
-                    className="block w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg text-lg placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  />
-                </div>
-                <button 
-                  onClick={handleVerificationComplete}
-                  disabled={!isValidPhone(phoneNumber)}
-                  className="w-full bg-blue-500 text-white py-3 px-4 rounded-lg font-medium hover:bg-blue-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  Plotëso Regjistrimin
-                </button>
-              </div>
-              <p className="text-sm text-gray-500 mt-4">
-                Kjo është një version i thjeshtuar. PhoneVerification komponenti do të riparohet së shpejti.
-              </p>
-            </div>
+            {/* WhatsApp Verification Component */}
+            <WhatsAppVerification
+              initialPhone={existingPhone}
+              onVerificationComplete={handleVerificationComplete}
+              onVerificationError={(error) => {
+                console.error('Verification error:', error)
+                // Could show user-friendly error message here
+              }}
+            />
 
             {/* Info Footer */}
             <div className="text-center mt-6">
