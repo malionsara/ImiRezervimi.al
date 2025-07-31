@@ -257,10 +257,7 @@ export default function WhatsAppVerification({
                 onKeyPress={handleKeyPress}
                 placeholder="+355 69 123 4567"
                 disabled={loading}
-                className="block w-full pl-12 pr-4 py-4 border border-gray-300 rounded-2xl text-lg 
-                         placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-green-500 
-                         focus:border-transparent disabled:opacity-50 disabled:cursor-not-allowed
-                         transition-all duration-200"
+                className="block w-full pl-12 pr-4 py-4 border border-gray-300 rounded-2xl text-lg placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
               />
             </div>
             <p className="mt-2 text-sm text-gray-500">
@@ -271,12 +268,7 @@ export default function WhatsAppVerification({
           <button
             onClick={handleSendCode}
             disabled={loading || !isValidPhone(phone)}
-            className="w-full flex justify-center items-center py-4 px-6 border border-transparent 
-                     text-lg font-semibold rounded-2xl text-white bg-gradient-to-r from-green-600 
-                     to-green-700 hover:from-green-700 hover:to-green-800 focus:outline-none 
-                     focus:ring-2 focus:ring-offset-2 focus:ring-green-500 disabled:opacity-50 
-                     disabled:cursor-not-allowed transition-all duration-200 transform 
-                     hover:scale-105 disabled:transform-none"
+            className="w-full flex justify-center items-center py-4 px-6 border border-transparent text-lg font-semibold rounded-2xl text-white bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 transform hover:scale-105 disabled:transform-none"
           >
             {loading ? (
               <>
@@ -312,10 +304,7 @@ export default function WhatsAppVerification({
               onKeyPress={handleKeyPress}
               placeholder="123456"
               disabled={loading}
-              className="block w-full px-4 py-4 border border-gray-300 rounded-2xl text-lg text-center
-                       placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-green-500 
-                       focus:border-transparent disabled:opacity-50 disabled:cursor-not-allowed
-                       transition-all duration-200 tracking-widest font-mono"
+              className="block w-full px-4 py-4 border border-gray-300 rounded-2xl text-lg text-center placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 tracking-widest font-mono"
               maxLength={6}
               autoComplete="one-time-code"
             />
@@ -344,12 +333,7 @@ export default function WhatsAppVerification({
           <button
             onClick={handleVerifyCode}
             disabled={loading || code.length !== 6}
-            className="w-full flex justify-center items-center py-4 px-6 border border-transparent 
-                     text-lg font-semibold rounded-2xl text-white bg-gradient-to-r from-green-600 
-                     to-blue-600 hover:from-green-700 hover:to-blue-700 focus:outline-none 
-                     focus:ring-2 focus:ring-offset-2 focus:ring-green-500 disabled:opacity-50 
-                     disabled:cursor-not-allowed transition-all duration-200 transform 
-                     hover:scale-105 disabled:transform-none"
+            className="w-full flex justify-center items-center py-4 px-6 border border-transparent text-lg font-semibold rounded-2xl text-white bg-gradient-to-r from-green-600 to-blue-600 hover:from-green-700 hover:to-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 transform hover:scale-105 disabled:transform-none"
           >
             {loading ? (
               <>
@@ -378,8 +362,7 @@ export default function WhatsAppVerification({
               setCanResend(true);
             }}
             disabled={loading}
-            className="w-full py-3 text-gray-600 hover:text-gray-800 font-medium disabled:opacity-50
-                     transition-colors duration-200"
+            className="w-full py-3 text-gray-600 hover:text-gray-800 font-medium disabled:opacity-50 transition-colors duration-200"
           >
             ← Ktheu te numri i telefonit
           </button>

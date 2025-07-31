@@ -3,9 +3,9 @@
 
 import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/router'
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 import Head from 'next/head'
-// Removed PhoneVerification import due to build issue - will implement inline form
+import WhatsAppVerification from '../components/auth/WhatsAppVerification'
 
 export default function CompleteRegistration() {
   const { data: session, status } = useSession()
@@ -28,9 +28,10 @@ export default function CompleteRegistration() {
       return
     }
 
-    // User is authenticated but not registered - show phone verification
-    setIsLoading(false)
-  }, [session, status, router])
+    // Check if user has an existing phone number in database
+    checkExistingPhone()
+  }, [session, status, router, checkExistingPhone])
+
 
   // Format phone number as user types
   const formatPhoneNumber = (value) => {
@@ -71,14 +72,14 @@ export default function CompleteRegistration() {
     }
 
     try {
-      // Create complete user record in database
+      // Create complete user record in database with verified phone
       const response = await fetch('/api/auth/complete-registration', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          phoneNumber,
+          phoneNumber: verifiedPhone,
           userData: session.user.tempData
         })
       })
@@ -95,7 +96,6 @@ export default function CompleteRegistration() {
     }
   }
 
-  // Removed handleVerificationError since we're using simplified form
 
   if (status === 'loading' || isLoading) {
     return (

@@ -39,7 +39,8 @@
       "Bash(rm:*)",
       "Bash(npm run dev:*)",
       "Bash(mv:*)",
-      "Bash(grep:*)"
+      "Bash(grep:*)",
+      "Bash(rg:*)"
     ],
     "deny": []
   }
