@@ -70,7 +70,7 @@ export default NextAuth({
   url: getBaseUrl(),
   
   callbacks: {
-    async jwt({ token, user, account, profile }) {
+    async jwt({ token, user, account }) {
       // Store social login data temporarily until phone verification
       if (user && account) {
         token.email = user.email
@@ -99,7 +99,7 @@ export default NextAuth({
           } else {
             token.isRegistered = false
           }
-        } catch (error) {
+        } catch {
           token.isRegistered = false
         }
       }
