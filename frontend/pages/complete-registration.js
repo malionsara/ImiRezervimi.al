@@ -9,7 +9,7 @@ import Head from 'next/head'
 export default function CompleteRegistration() {
   const { data: session, status } = useSession()
   const router = useRouter()
-  const [isLoading] = useState(true)
+  const [isLoading, setIsLoading] = useState(false)
   const [phoneNumber, setPhoneNumber] = useState('')
 
   useEffect(() => {
@@ -70,6 +70,7 @@ export default function CompleteRegistration() {
       return
     }
 
+    setIsLoading(true)
     try {
       // Create complete user record in database with verified phone
       const response = await fetch('/api/auth/complete-registration', {
@@ -78,7 +79,7 @@ export default function CompleteRegistration() {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          phoneNumber: verifiedPhone,
+          phoneNumber: phoneNumber,
           userData: session.user.tempData
         })
       })
@@ -87,11 +88,19 @@ export default function CompleteRegistration() {
         // Registration complete - redirect to dashboard
         router.push('/dashboard?welcome=true')
       } else {
+        const errorData = await response.json()
+        console.error('Registration failed:', errorData)
+        alert(errorData.error?.message || 'Regjistrimi dështoi. Ju lutemi provoni përsëri.')
         throw new Error('Registration failed')
       }
     } catch (error) {
       console.error('Registration completion error:', error)
       // Handle error - could show user-friendly message
+      if (error.message !== 'Registration failed') {
+        alert('Ka ndodhur një gabim. Ju lutemi provoni përsëri.')
+      }
+    } finally {
+      setIsLoading(false)
     }
   }
 
@@ -203,10 +212,10 @@ export default function CompleteRegistration() {
                 </div>
                 <button 
                   onClick={handleVerificationComplete}
-                  disabled={!isValidPhone(phoneNumber)}
+                  disabled={!isValidPhone(phoneNumber) || isLoading}
                   className="w-full bg-blue-500 text-white py-3 px-4 rounded-lg font-medium hover:bg-blue-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  Plotëso Regjistrimin
+                  {isLoading ? 'Po ngarkohet...' : 'Plotëso Regjistrimin'}
                 </button>
               </div>
               <p className="text-sm text-gray-500 mt-4">
