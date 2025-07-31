@@ -70,7 +70,8 @@ export const authOptions = {
   url: getBaseUrl(),
   
   callbacks: {
-    async jwt({ token, user, account }) {
+
+    async jwt({ token, user, account, profile }) {
       // Store social login data temporarily until phone verification
       if (user && account) {
         token.email = user.email
@@ -80,26 +81,33 @@ export const authOptions = {
         
         // Store provider-specific IDs
         if (account.provider === 'facebook') {
-          token.providerId = profile.id
+          token.providerId = profile?.id || user.id
         } else if (account.provider === 'google') {
-          token.providerId = profile.sub || profile.id
+          token.providerId = profile?.sub || profile?.id || user.id
         }
         
         // Check if user is fully registered
         try {
-          const { data: existingUser } = await supabase
+
+          const { data: existingUser, error: dbError } = await supabase
             .from('customers')
             .select('id, phone_verified')
             .eq('email', user.email)
             .single()
           
-          if (existingUser && existingUser.phone_verified) {
+          if (dbError && dbError.code !== 'PGRST116') {
+            console.error('❌ JWT Callback - Database error:', dbError)
+            // Assume not registered if database error
+            token.isRegistered = false
+          } else if (existingUser && existingUser.phone_verified) {
             token.userId = existingUser.id
             token.isRegistered = true
           } else {
             token.isRegistered = false
           }
-        } catch {
+
+        } catch (error) {
+          console.error('❌ JWT Callback - Connection error:', error)
           token.isRegistered = false
         }
       }
