@@ -9,8 +9,7 @@ import { Analytics } from "@vercel/analytics/next"
 import Head from 'next/head'
 import '../styles/globals.css'
 
-// Import Twilio validation for startup check
-import { logTwilioValidation } from '../lib/twilio-validation'
+// Removed Twilio validation from frontend - only runs on server-side
 
 // Initialize Supabase client with fallback values
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co'
@@ -25,12 +24,7 @@ export default function App({
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    // Initialize app and validate Twilio configuration
-    try {
-      logTwilioValidation()
-    } catch (error) {
-      console.warn('Twilio validation failed:', error.message)
-    }
+    // Initialize app
     setLoading(false)
   }, [])
 
