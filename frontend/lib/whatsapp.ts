@@ -46,23 +46,41 @@ export interface WhatsAppVerifyResult {
   attemptsRemaining?: number;
 }
 
-// Albanian WhatsApp message templates
+// Albanian WhatsApp message templates with enhanced branding
 const ALBANIAN_WHATSAPP_TEMPLATES = {
   verification: (code: string) => 
-    `🔐 *Kodi i Verifikimit - ImiRezervimi.al*\n\nKodi juaj është: *${code}*\n\n⏰ Ky kod skadon brenda 5 minutave\n🔒 Mos e ndani këtë kod me askënd\n\n💅 ImiRezervimi.al - Rezervoni tani!`,
+    `🔐 *Kodi i Verifikimit - ImiRezervimi.al*\n\n💎 Kodi juaj është: *${code}*\n\n⏰ Ky kod skadon brenda 5 minutave\n🔒 Mos e ndani këtë kod me askënd\n\n✨ *ImiRezervimi.al* - Platforma #1 për salona bukurie në Shqipëri\n📱 www.imirezervimi.al`,
   
   welcome: (name?: string) =>
-    `🎉 *Mirë se vini në ImiRezervimi.al!*\n\n${name ? `Përshëndetje ${name}! ` : ''}Llogaria juaj është krijuar me sukses.\n\n✅ Tani mund të:\n• Rezervoni shërbime bukurie\n• Zgjidhni kohën që ju përshtatet\n• Merrni konfirmime në WhatsApp\n\n🏪 Zbuloni salonet më të mira në Shqipëri!\n\n📱 https://www.imirezervimi.al`,
+    `🎉 *Mirë se vini në ImiRezervimi.al!*\n\n${name ? `✨ Përshëndetje ${name}! ` : ''}Llogaria juaj është krijuar me sukses.\n\n🌟 *Ç'mund të bëni tani:*\n💅 Rezervoni shërbimet tuaja të preferuara\n⏰ Zgjidhni kohën që ju përshtatet\n📲 Merrni konfirmime direkt në WhatsApp\n🎁 Përfitoni oferta ekskluzive\n\n🏆 *Zbuloni salonet më të mira në Shqipëri!*\n\n📱 www.imirezervimi.al\n📧 info@imirezervimi.al`,
 
   appointmentConfirmed: (salonName: string, date: string, time: string, service: string) =>
-    `✅ *Rezervimi u Konfirmua!*\n\n🏪 *Saloni:* ${salonName}\n📅 *Data:* ${date}\n🕐 *Ora:* ${time}\n💅 *Shërbimi:* ${service}\n\n📍 Adresa dhe detajet e tjera do t'ju dërgohen së shpejti.\n\n🔔 Do të merrni një kujtesë 24 orë përpara.\n\n📱 ImiRezervimi.al`,
+    `✅ *Rezervimi u Konfirmua - ImiRezervimi.al*\n\n🏪 *Saloni:* ${salonName}\n📅 *Data:* ${date}\n🕐 *Ora:* ${time}\n💅 *Shërbimi:* ${service}\n\n📍 Adresa dhe detajet e tjera do t'ju dërgohen së shpejti\n🔔 Kujtesë automatike 24 orë përpara\n\n💎 *Faleminderit që zgjodhët ImiRezervimi.al!*\n📱 www.imirezervimi.al`,
 
   appointmentReminder: (salonName: string, date: string, time: string) =>
-    `⏰ *Kujtesë për Rezervimin*\n\n🏪 ${salonName}\n📅 Nesër, ${date}\n🕐 Ora ${time}\n\n✅ Ju presim në kohë!\n❌ Për të anuluar, na kontaktoni\n\n📱 ImiRezervimi.al`,
+    `⏰ *Kujtesë Rezervimi - ImiRezervimi.al*\n\n🏪 *${salonName}*\n📅 *Nesër:* ${date}\n🕐 *Ora:* ${time}\n\n✨ Ju presim në kohë!\n❌ Për anulim: Kontaktoni salonin direkt\n\n💄 Përgatitur për një përvojë të shkëlqyer?\n📱 www.imirezervimi.al`,
 
   appointmentCancelled: (salonName: string, date: string, time: string, reason?: string) =>
-    `❌ *Rezervimi u Anulua*\n\n🏪 ${salonName}\n📅 ${date} - ${time}\n\n${reason ? `📝 Arsyeja: ${reason}\n\n` : ''}😔 Na vjen keq për këtë ndryshim.\n🔄 Rezervoni përsëri kur të dëshironi.\n\n📱 ImiRezervimi.al`
+    `❌ *Rezervimi u Anulua - ImiRezervimi.al*\n\n🏪 *Saloni:* ${salonName}\n📅 *Data/Ora:* ${date} - ${time}\n\n${reason ? `📝 *Arsyeja:* ${reason}\n\n` : ''}😔 Na vjen keq për këtë ndryshim\n\n🔄 *Rezervoni përsëri kur të dëshironi:*\n📱 www.imirezervimi.al\n\n💎 Faleminderit për besimin!`
 };
+
+/**
+ * Check if we're using Twilio Sandbox or Production WhatsApp
+ */
+function isUsingSandbox(): boolean {
+  const whatsappNumber = process.env.TWILIO_WHATSAPP_NUMBER;
+  return whatsappNumber?.includes('14155238886') || false;
+}
+
+/**
+ * Add sandbox disclaimer to messages in development
+ */
+function addSandboxDisclaimer(message: string): string {
+  if (isUsingSandbox() && process.env.NODE_ENV !== 'production') {
+    return message + '\n\n💡 _Mesazhi dërgohet nga Twilio Sandbox për teste_';
+  }
+  return message;
+}
 
 /**
  * Generate a 6-digit verification code
@@ -176,7 +194,7 @@ export async function sendWhatsAppVerification(phone: string): Promise<WhatsAppV
       throw new Error('TWILIO_WHATSAPP_NUMBER not configured for WhatsApp');
     }
 
-    const message = ALBANIAN_WHATSAPP_TEMPLATES.verification(code);
+    const message = addSandboxDisclaimer(ALBANIAN_WHATSAPP_TEMPLATES.verification(code));
     
     console.log(`Sending WhatsApp verification to ${phone}: ${code}`);
 
