@@ -112,12 +112,8 @@ export default function Homepage() {
                   Si funksionon
                   <span className="absolute bottom-0 left-1/2 w-0 h-0.5 bg-gradient-to-r from-red-500 to-pink-500 transition-all duration-300 group-hover:w-full group-hover:left-0 rounded-full"></span>
                 </a>
-                <a href="#sallone" className="text-gray-600 hover:text-red-500 transition-all duration-300 relative group py-2 px-4 rounded-lg hover:bg-red-50">
-                  Sallone
-                  <span className="absolute bottom-0 left-1/2 w-0 h-0.5 bg-gradient-to-r from-red-500 to-pink-500 transition-all duration-300 group-hover:w-full group-hover:left-0 rounded-full"></span>
-                </a>
                 <Link href="/salon" className="text-gray-600 hover:text-red-500 transition-all duration-300 relative group py-2 px-4 rounded-lg hover:bg-red-50">
-                  Për Sallone
+                  Sallone
                   <span className="absolute bottom-0 left-1/2 w-0 h-0.5 bg-gradient-to-r from-red-500 to-pink-500 transition-all duration-300 group-hover:w-full group-hover:left-0 rounded-full"></span>
                 </Link>
                 <a href="#kontakt" className="text-gray-600 hover:text-red-500 transition-all duration-300 relative group py-2 px-4 rounded-lg hover:bg-red-50">
