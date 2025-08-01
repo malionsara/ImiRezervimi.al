@@ -116,6 +116,10 @@ export default function Homepage() {
                   Sallone
                   <span className="absolute bottom-0 left-1/2 w-0 h-0.5 bg-gradient-to-r from-red-500 to-pink-500 transition-all duration-300 group-hover:w-full group-hover:left-0 rounded-full"></span>
                 </a>
+                <Link href="/salon" className="text-gray-600 hover:text-red-500 transition-all duration-300 relative group py-2 px-4 rounded-lg hover:bg-red-50">
+                  Për Sallone
+                  <span className="absolute bottom-0 left-1/2 w-0 h-0.5 bg-gradient-to-r from-red-500 to-pink-500 transition-all duration-300 group-hover:w-full group-hover:left-0 rounded-full"></span>
+                </Link>
                 <a href="#kontakt" className="text-gray-600 hover:text-red-500 transition-all duration-300 relative group py-2 px-4 rounded-lg hover:bg-red-50">
                   Kontakt
                   <span className="absolute bottom-0 left-1/2 w-0 h-0.5 bg-gradient-to-r from-red-500 to-pink-500 transition-all duration-300 group-hover:w-full group-hover:left-0 rounded-full"></span>
@@ -278,6 +282,73 @@ export default function Homepage() {
           </div>
         </section>
 
+        {/* Salon Owner CTA Section */}
+        <section className="py-32 bg-gradient-to-r from-purple-50 via-indigo-50 to-blue-50 relative overflow-hidden">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="bg-white/90 backdrop-blur-lg rounded-3xl p-12 shadow-2xl border border-white/50 relative overflow-hidden">
+              <div className="absolute inset-0 bg-gradient-to-br from-purple-500/5 to-blue-500/5"></div>
+              <div className="relative z-10 text-center">
+                <div className="mb-8">
+                  <div className="inline-block px-6 py-2 bg-purple-100 text-purple-600 rounded-full text-sm font-semibold mb-6">
+                    PËR PRONARËT E SALLONEVE
+                  </div>
+                  <h2 className="text-4xl md:text-6xl font-bold text-gray-900 mb-6">
+                    Je pronare salloni?
+                  </h2>
+                  <p className="text-2xl text-gray-600 mb-8 max-w-3xl mx-auto leading-relaxed">
+                    Bashkohu me <span className="text-purple-500 font-bold">500+ sallone</span> që kanë rritur rezervimet me <span className="text-green-500 font-bold">+150%</span> falë ImiRezervimi.al
+                  </p>
+                </div>
+                
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
+                  <div className="text-center">
+                    <div className="w-16 h-16 bg-gradient-to-br from-green-500 to-emerald-500 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg">
+                      <span className="text-2xl">📈</span>
+                    </div>
+                    <h3 className="font-bold text-gray-900 mb-2">Më shumë rezervime</h3>
+                    <p className="text-gray-600">Rezervime 24/7 edhe kur je mbyllur</p>
+                  </div>
+                  
+                  <div className="text-center">
+                    <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-purple-500 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg">
+                      <span className="text-2xl">⚡</span>
+                    </div>
+                    <h3 className="font-bold text-gray-900 mb-2">Zero thirrje të humbura</h3>
+                    <p className="text-gray-600">Konfirmime automatike në WhatsApp</p>
+                  </div>
+                  
+                  <div className="text-center">
+                    <div className="w-16 h-16 bg-gradient-to-br from-pink-500 to-red-500 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg">
+                      <span className="text-2xl">💰</span>
+                    </div>
+                    <h3 className="font-bold text-gray-900 mb-2">30 ditë falas</h3>
+                    <p className="text-gray-600">Testo platformën pa asnjë kosto</p>
+                  </div>
+                </div>
+
+                <div className="flex flex-col sm:flex-row gap-6 justify-center">
+                  <Link href="/salon" className="group bg-gradient-to-r from-purple-500 via-indigo-500 to-blue-500 text-white px-10 py-5 rounded-3xl font-bold hover:shadow-2xl hover:shadow-purple-500/30 transition-all duration-500 transform hover:scale-105 hover:-translate-y-2 text-xl relative overflow-hidden">
+                    <span className="relative z-10 flex items-center justify-center">
+                      <span className="mr-3 text-2xl">🏪</span>
+                      Regjistro Sallonin Tënd
+                      <span className="ml-3 transform group-hover:translate-x-2 transition-transform duration-300">→</span>
+                    </span>
+                    <div className="absolute inset-0 bg-gradient-to-r from-purple-600 via-indigo-600 to-blue-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                  </Link>
+                  
+                  <Link href="/salon#deshmi" className="group border-3 border-gray-300 text-gray-700 px-10 py-5 rounded-3xl font-bold hover:bg-white hover:border-purple-300 hover:text-purple-600 transition-all duration-500 text-xl shadow-lg hover:shadow-xl">
+                    <span className="flex items-center justify-center">
+                      <span className="mr-3 text-2xl">⭐</span>
+                      Shiko Dëshmi
+                      <span className="ml-3 transform group-hover:translate-x-2 transition-transform duration-300">→</span>
+                    </span>
+                  </Link>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
         {/* Enhanced Testimonials */}
         <section className="py-32 bg-gradient-to-r from-red-50 via-pink-50 to-orange-50 relative overflow-hidden">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -404,13 +475,13 @@ export default function Homepage() {
                 </span>
               </Link>
               
-              <a href="/salon/signup" className="group border-3 border-white text-white px-10 py-5 rounded-3xl font-bold hover:bg-white hover:text-red-500 transition-all duration-500 text-xl relative overflow-hidden">
+              <Link href="/salon" className="group border-3 border-white text-white px-10 py-5 rounded-3xl font-bold hover:bg-white hover:text-red-500 transition-all duration-500 text-xl relative overflow-hidden">
                 <span className="flex items-center justify-center">
                   <span className="mr-3 text-2xl">💼</span>
                   Regjistro Sallonin
                   <span className="ml-3 transform group-hover:translate-x-2 transition-transform duration-300">→</span>
                 </span>
-              </a>
+              </Link>
             </div>
 
             {/* Stats */}
