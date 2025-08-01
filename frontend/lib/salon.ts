@@ -8,6 +8,17 @@ const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey)
 
+// Service role client for admin operations (salon registration)
+const supabaseServiceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY
+const supabaseAdmin = supabaseServiceRoleKey 
+  ? createClient(supabaseUrl, supabaseServiceRoleKey, {
+      auth: {
+        autoRefreshToken: false,
+        persistSession: false
+      }
+    })
+  : null
+
 export interface SalonRegistrationData {
   // Basic Info
   name: string
@@ -183,6 +194,9 @@ export async function checkSlugAvailability(slug: string): Promise<boolean> {
  */
 export async function registerSalon(data: SalonRegistrationData): Promise<{ success: boolean; data?: unknown; error?: string }> {
   try {
+    // Use admin client for registration if available, otherwise use regular client
+    const client = supabaseAdmin || supabase
+
     // Check if slug is available
     const isSlugAvailable = await checkSlugAvailability(data.slug)
     if (!isSlugAvailable) {
@@ -214,7 +228,7 @@ export async function registerSalon(data: SalonRegistrationData): Promise<{ succ
     }
 
     // Insert salon
-    const { data: salon, error: salonError } = await supabase
+    const { data: salon, error: salonError } = await client
       .from('salons')
       .insert(salonData)
       .select()
@@ -241,7 +255,7 @@ export async function registerSalon(data: SalonRegistrationData): Promise<{ succ
         is_active: true
       }))
 
-      const { error: servicesError } = await supabase
+      const { error: servicesError } = await client
         .from('services')
         .insert(servicesData)
 
