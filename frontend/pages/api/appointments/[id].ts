@@ -167,10 +167,10 @@ async function handleUpdateAppointmentStatus(
   const appointmentResult = await getAppointmentById(appointmentId)
   if (!appointmentResult.success) {
     console.log(`❌ Appointment not found for status update: ${appointmentId}`)
-    return res.status(404).json(appointmentResult.error)
+    return res.status(404).json(appointmentResult.error as ApiResponse<unknown>)
   }
   
-  const appointment = appointmentResult.data
+  const appointment = appointmentResult.data as any
   
   // Check if appointment is still pending
   if (appointment.status !== 'pending') {
