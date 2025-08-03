@@ -70,7 +70,7 @@ export default async function handler(
     const rateLimitResult = checkRateLimit(clientIP, 'appointment_request', 1, 1)
     if (!rateLimitResult.allowed) {
       console.log(`⚠️ Rate limit exceeded for IP: ${clientIP}`)
-      return res.status(429).json(rateLimitResult.error || { success: false, error: { code: 'RATE_LIMIT', message: 'Rate limit exceeded' } })
+      return res.status(429).json({ success: false, error: { code: 'RATE_LIMIT', message: 'Rate limit exceeded' } })
     }
 
     // ==============================================
@@ -96,7 +96,7 @@ export default async function handler(
     const salonValidation = await validateSalon(appointmentRequest.salonId)
     if (!salonValidation.valid) {
       console.log(`❌ Salon validation failed: ${appointmentRequest.salonId}`)
-      return res.status(400).json(salonValidation.error || { success: false, error: { code: 'SALON_INVALID', message: 'Salon validation failed' } })
+      return res.status(400).json({ success: false, error: { code: 'SALON_INVALID', message: 'Salon validation failed' } })
     }
     
     const salon = salonValidation.data as any
@@ -107,7 +107,7 @@ export default async function handler(
     const serviceValidation = await validateService(appointmentRequest.serviceId, appointmentRequest.salonId)
     if (!serviceValidation.valid) {
       console.log(`❌ Service validation failed: ${appointmentRequest.serviceId}`)
-      return res.status(400).json(serviceValidation.error || { success: false, error: { code: 'SERVICE_INVALID', message: 'Service validation failed' } })
+      return res.status(400).json({ success: false, error: { code: 'SERVICE_INVALID', message: 'Service validation failed' } })
     }
     
     const service = serviceValidation.data as any
@@ -135,7 +135,7 @@ export default async function handler(
     const customerResult = await findOrCreateCustomer(appointmentRequest.customerInfo)
     if (!customerResult.success) {
       console.log(`❌ Customer creation failed: ${appointmentRequest.customerInfo.phone}`)
-      return res.status(400).json(customerResult.error || { success: false, error: { code: 'CUSTOMER_ERROR', message: 'Customer processing failed' } })
+      return res.status(400).json({ success: false, error: { code: 'CUSTOMER_ERROR', message: 'Customer processing failed' } })
     }
     
     const customer = customerResult.data as any
@@ -146,7 +146,7 @@ export default async function handler(
     const pendingLimitCheck = await checkCustomerPendingLimit(customer.id, 2)
     if (!pendingLimitCheck.allowed) {
       console.log(`❌ Pending limit exceeded for customer: ${customer.id}`)
-      return res.status(400).json(pendingLimitCheck.error || { success: false, error: { code: 'PENDING_LIMIT', message: 'Pending limit exceeded' } })
+      return res.status(400).json({ success: false, error: { code: 'PENDING_LIMIT', message: 'Pending limit exceeded' } })
     }
 
     // ==============================================
@@ -162,7 +162,7 @@ export default async function handler(
     
     if (conflictCheck.error) {
       console.log(`❌ Conflict check failed: ${appointmentRequest.appointmentDate} ${appointmentRequest.startTime}`)
-      return res.status(500).json(conflictCheck.error || { success: false, error: { code: 'CONFLICT_CHECK', message: 'Conflict check failed' } })
+      return res.status(500).json({ success: false, error: { code: 'CONFLICT_CHECK', message: 'Conflict check failed' } })
     }
     
     if (conflictCheck.hasConflict) {
@@ -184,7 +184,7 @@ export default async function handler(
     
     if (!appointmentResult.success) {
       console.log(`❌ Appointment creation failed`)
-      return res.status(500).json(appointmentResult.error || { success: false, error: { code: 'APPOINTMENT_CREATE', message: 'Appointment creation failed' } })
+      return res.status(500).json({ success: false, error: { code: 'APPOINTMENT_CREATE', message: 'Appointment creation failed' } })
     }
 
     const appointment = appointmentResult.data as any
