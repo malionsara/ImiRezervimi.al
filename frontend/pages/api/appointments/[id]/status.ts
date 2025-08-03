@@ -147,8 +147,8 @@ export default async function handler(
 
     const updateResult = await updateAppointmentStatus(
       id,
-      validatedData,
-      salonId
+      validatedData.status,
+      validatedData.salonNotes
     );
 
     if (!updateResult.success) {
@@ -172,7 +172,7 @@ export default async function handler(
       });
     }
 
-    const appointment = updateResult.appointment!;
+    const appointment = updateResult.data as any;
 
     // ==============================================
     // SUCCESS RESPONSE
@@ -199,7 +199,7 @@ export default async function handler(
 
     // Send notification to customer (async, non-blocking)
     sendCustomerNotification(appointment, validatedData.status)
-      .catch(error => console.error('Error sending customer notification:', error));
+      .catch((error: unknown) => console.error('Error sending customer notification:', error));
 
     return res.status(200).json({
       success: true,
@@ -245,15 +245,15 @@ async function sendCustomerNotification(
   try {
     // This would integrate with WhatsApp/SMS service
     const notificationMessages: Record<string, string> = {
-      approved: `Mirupafshim! Takimi juaj në ${appointment.salon_name} më ${appointment.appointment_date} në ${appointment.start_time} është aprovuar. Shihemi atje!`,
-      declined: `Na vjen keq, por takimi juaj në ${appointment.salon_name} më ${appointment.appointment_date} nuk mund të aprovohet. Kontaktoni sallonin për më shumë informacion.`,
-      completed: `Faleminderit që zgjodhët ${appointment.salon_name}! Shpresojmë që jeni të kënaqur me shërbimin.`,
-      cancelled: `Takimi juaj në ${appointment.salon_name} më ${appointment.appointment_date} është anuluar.`,
+      approved: `Mirupafshim! Takimi juaj në ${(appointment as any).salon_name} më ${(appointment as any).appointment_date} në ${(appointment as any).start_time} është aprovuar. Shihemi atje!`,
+      declined: `Na vjen keq, por takimi juaj në ${(appointment as any).salon_name} më ${(appointment as any).appointment_date} nuk mund të aprovohet. Kontaktoni sallonin për më shumë informacion.`,
+      completed: `Faleminderit që zgjodhët ${(appointment as any).salon_name}! Shpresojmë që jeni të kënaqur me shërbimin.`,
+      cancelled: `Takimi juaj në ${(appointment as any).salon_name} më ${(appointment as any).appointment_date} është anuluar.`,
     };
 
     const message = notificationMessages[newStatus];
     if (message) {
-      console.log(`Customer notification sent for appointment ${appointment.id}: ${newStatus}`);
+      console.log(`Customer notification sent for appointment ${(appointment as any).id}: ${newStatus}`);
       // Here you would call your WhatsApp/SMS service
     }
   } catch (error) {
