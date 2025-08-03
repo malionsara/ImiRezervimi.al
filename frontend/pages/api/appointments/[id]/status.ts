@@ -13,6 +13,7 @@ import {
   AppointmentUpdateData,
   isValidUUID,
 } from '../../../../lib/validation';
+import { sendNotification } from '../../../../lib/twilio';
 
 interface ApiResponse {
   success: boolean;
@@ -236,28 +237,44 @@ export default async function handler(
 // ==============================================
 
 /**
- * Sends notification to customer about status change
+ * Sends WhatsApp notification to customer about status change
  */
 async function sendCustomerNotification(
-  appointment: unknown,
+  appointment: any,
   newStatus: string
 ): Promise<void> {
   try {
-    // This would integrate with WhatsApp/SMS service
-    const notificationMessages: Record<string, string> = {
-      approved: `Mirupafshim! Takimi juaj në ${(appointment as any).salon_name} më ${(appointment as any).appointment_date} në ${(appointment as any).start_time} është aprovuar. Shihemi atje!`,
-      declined: `Na vjen keq, por takimi juaj në ${(appointment as any).salon_name} më ${(appointment as any).appointment_date} nuk mund të aprovohet. Kontaktoni sallonin për më shumë informacion.`,
-      completed: `Faleminderit që zgjodhët ${(appointment as any).salon_name}! Shpresojmë që jeni të kënaqur me shërbimin.`,
-      cancelled: `Takimi juaj në ${(appointment as any).salon_name} më ${(appointment as any).appointment_date} është anuluar.`,
-    };
+    const customerPhone = appointment.customer.phone;
+    if (!customerPhone) {
+      console.log('⚠️ Customer phone number not found, skipping notification');
+      return;
+    }
 
-    const message = notificationMessages[newStatus];
-    if (message) {
-      console.log(`Customer notification sent for appointment ${(appointment as any).id}: ${newStatus}`);
-      // Here you would call your WhatsApp/SMS service
+    const appointmentDate = new Date(appointment.appointment_date).toLocaleDateString('sq-AL', {
+      day: 'numeric',
+      month: 'long',
+      year: 'numeric'
+    });
+
+    // Send appropriate notification based on status
+    if (newStatus === 'approved') {
+      await sendNotification('booking_approved', customerPhone, {
+        salonName: appointment.salon.name,
+        date: appointmentDate,
+        time: appointment.start_time
+      });
+      console.log(`✅ WhatsApp notification sent to ${customerPhone} for status: ${newStatus}`);
+    } else if (newStatus === 'declined') {
+      await sendNotification('booking_declined', customerPhone, {
+        salonName: appointment.salon.name,
+        reason: appointment.salon_notes || 'Nuk ka vende të lira për këtë kohë'
+      });
+      console.log(`✅ WhatsApp notification sent to ${customerPhone} for status: ${newStatus}`);
+    } else {
+      console.log(`⚠️ No notification template for status: ${newStatus}`);
     }
   } catch (error) {
-    console.error('Error sending customer notification:', error);
+    console.error('❌ Failed to send customer notification:', error);
     // Don't fail the request if notification fails
   }
 }

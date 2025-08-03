@@ -229,15 +229,38 @@ Set `NODE_ENV=development` to enable:
 - Test endpoints
 - Stack traces in API responses
 
+## New Integration Points ✨
+
+### Automatic Notifications
+
+The WhatsApp system is now fully integrated into your booking flow:
+
+1. **Customer Books Appointment** → Automatic confirmation via WhatsApp
+2. **Salon Receives Notification** → New booking alert via WhatsApp  
+3. **Salon Approves/Declines** → Customer gets instant WhatsApp update
+4. **24-Hour Reminders** → Automatic reminder system via cron job
+
+### API Integration Points
+
+- `POST /api/appointments/request` - Sends customer confirmation + salon notification
+- `PUT /api/appointments/[id]/status` - Sends approval/decline notifications
+- `POST /api/appointments/reminders` - Sends 24-hour reminders (cron job)
+
+### Testing Interface
+
+Visit `/test-whatsapp-flow` to test all notification types with your phone number.
+
 ## Production Checklist
 
 - [ ] WhatsApp Business API approved
 - [ ] Production WhatsApp number configured
 - [ ] Message templates approved by WhatsApp
 - [ ] Webhook URLs configured in Twilio
-- [ ] Environment variables set in production
+- [ ] Environment variables set in production (including CRON_SECRET)
 - [ ] Test endpoints disabled
 - [ ] Monitoring and alerting configured
+- [ ] GitHub Actions cron job configured
+- [ ] Database schema updated with reminder_sent column
 
 ## Files Structure
 

@@ -9,6 +9,7 @@ import {
   createValidationError,
   createBusinessRuleError
 } from '../../../lib/validation'
+import { sendNotification } from '../../../lib/twilio'
 import {
   checkRateLimit,
   findOrCreateCustomer,
@@ -194,9 +195,12 @@ export default async function handler(
     // ==============================================
     console.log(`✅ Appointment created successfully: ${appointment.id}`)
     
-    // TODO: Send WhatsApp notifications to both customer and salon
-    // await sendCustomerConfirmation(appointment)
-    // await sendSalonNotification(appointment)
+    // Send WhatsApp notifications (async, non-blocking)
+    sendCustomerConfirmation(appointment, salon)
+      .catch((error: unknown) => console.error('Error sending customer confirmation:', error))
+    
+    sendSalonNotification(appointment, salon, customer, service)
+      .catch((error: unknown) => console.error('Error sending salon notification:', error))
 
     return res.status(201).json({
       success: true,
@@ -223,7 +227,70 @@ export default async function handler(
 }
 
 // ==============================================
-// TODO: NOTIFICATION FUNCTIONS
+// WHATSAPP NOTIFICATION FUNCTIONS
 // ==============================================
-// Note: Notification functions will be implemented when integrating
-// with the existing Twilio WhatsApp system
+
+/**
+ * Send booking confirmation to customer
+ */
+async function sendCustomerConfirmation(
+  appointment: any,
+  salon: any
+): Promise<void> {
+  try {
+    const customerPhone = appointment.customer.phone
+    const appointmentDate = new Date(appointment.appointment_date).toLocaleDateString('sq-AL', {
+      day: 'numeric',
+      month: 'long',
+      year: 'numeric'
+    })
+    
+    await sendNotification('booking_request', customerPhone, {
+      salonName: salon.name,
+      date: appointmentDate,
+      time: appointment.start_time
+    })
+    
+    console.log(`✅ Customer confirmation sent to ${customerPhone}`)
+  } catch (error) {
+    console.error('❌ Failed to send customer confirmation:', error)
+    // Don't throw - notification failure shouldn't break the booking flow
+  }
+}
+
+/**
+ * Send new booking notification to salon
+ */
+async function sendSalonNotification(
+  appointment: any,
+  salon: any,
+  customer: any,
+  service: any
+): Promise<void> {
+  try {
+    const salonPhone = salon.phone
+    if (!salonPhone) {
+      console.log('⚠️ Salon phone number not found, skipping notification')
+      return
+    }
+    
+    const customerName = `${customer.first_name} ${customer.last_name}`
+    const appointmentDate = new Date(appointment.appointment_date).toLocaleDateString('sq-AL', {
+      day: 'numeric',
+      month: 'long',
+      year: 'numeric'
+    })
+    
+    await sendNotification('new_request_salon', salonPhone, {
+      customerName,
+      service: service.name,
+      date: appointmentDate,
+      time: appointment.start_time
+    })
+    
+    console.log(`✅ Salon notification sent to ${salonPhone}`)
+  } catch (error) {
+    console.error('❌ Failed to send salon notification:', error)
+    // Don't throw - notification failure shouldn't break the booking flow
+  }
+}
