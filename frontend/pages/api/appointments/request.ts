@@ -70,7 +70,7 @@ export default async function handler(
     const rateLimitResult = checkRateLimit(clientIP, 'appointment_request', 1, 1)
     if (!rateLimitResult.allowed) {
       console.log(`⚠️ Rate limit exceeded for IP: ${clientIP}`)
-      return res.status(429).json(rateLimitResult.error)
+      return res.status(429).json(rateLimitResult.error || { success: false, error: { code: 'RATE_LIMIT', message: 'Rate limit exceeded' } })
     }
 
     // ==============================================
