@@ -2,7 +2,7 @@
 // Salon dashboard utility functions and business logic
 // Albanian Beauty Salon Booking Platform
 
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
+import { createClient } from '@supabase/supabase-js'
 
 // ==============================================
 // TYPES AND INTERFACES
@@ -79,7 +79,9 @@ export interface RealtimeUpdate {
 // ==============================================
 // SUPABASE CLIENT
 // ==============================================
-const supabase = createClientComponentClient()
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
+const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+const supabase = createClient(supabaseUrl, supabaseKey)
 
 // ==============================================
 // MAIN DASHBOARD DATA FUNCTIONS

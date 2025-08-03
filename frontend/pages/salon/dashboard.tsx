@@ -6,7 +6,7 @@ import { useState, useEffect } from 'react'
 import { useRouter } from 'next/router'
 import Head from 'next/head'
 import Link from 'next/link'
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
+import { createClient } from '@supabase/supabase-js'
 import RequestsQueue from '../../components/salon/RequestsQueue'
 import CustomerDetails from '../../components/salon/CustomerDetails'
 // import AppointmentActions from '../../components/salon/AppointmentActions' // Unused import
@@ -91,7 +91,9 @@ export default function SalonDashboard() {
   const [lastUpdate, setLastUpdate] = useState<Date>(new Date())
 
   // Initialize Supabase client
-  const supabase = createClientComponentClient()
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
+  const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+  const supabase = createClient(supabaseUrl, supabaseKey)
   
   // Suppress unused variable warning - supabase is used in loadDashboardData and setupRealtimeSubscription
   console.log('Supabase client initialized:', !!supabase)
