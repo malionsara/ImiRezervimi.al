@@ -164,7 +164,7 @@ export async function getPendingRequests(salonId: string): Promise<AppointmentRe
 
     if (!data) return []
 
-    return data.map(appointment => ({
+    return data.map((appointment: any) => ({
       id: appointment.id,
       customer: {
         id: appointment.customers.id,
@@ -228,7 +228,7 @@ export async function getTodaySchedule(salonId: string): Promise<Appointment[]> 
 
     if (!data) return []
 
-    return data.map(appointment => ({
+    return data.map((appointment: any) => ({
       id: appointment.id,
       customer: {
         firstName: appointment.customers.first_name,
@@ -284,7 +284,7 @@ export async function getRecentActivity(salonId: string): Promise<Appointment[]>
 
     if (!data) return []
 
-    return data.map(appointment => ({
+    return data.map((appointment: any) => ({
       id: appointment.id,
       customer: {
         firstName: appointment.customers.first_name,
