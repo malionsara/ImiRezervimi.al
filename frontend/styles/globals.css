@@ -54,7 +54,7 @@
   }
 
   .service-card:active {
-    @apply scale-98;
+    @apply scale-95;
   }
 
   /* Step indicator for mobile */
