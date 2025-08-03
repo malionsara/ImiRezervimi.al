@@ -347,7 +347,7 @@ export async function createAppointmentRequest(
       return createValidationError(ALBANIAN_ERRORS.INTERNAL_ERROR)
     }
     
-    console.log(`✅ Appointment created: ${appointment.id} for ${(appointment as any).customer.first_name} ${(appointment as any).customer.last_name}`)
+    console.log(`✅ Appointment created: ${appointment.id} for customer`)
     
     return { success: true, data: appointment }
     
