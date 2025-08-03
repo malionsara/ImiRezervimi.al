@@ -167,7 +167,7 @@ export default async function handler(
         success: false,
         error: {
           code: errorCode,
-          message: updateResult.error!,
+          message: updateResult.error as string,
         },
       });
     }
