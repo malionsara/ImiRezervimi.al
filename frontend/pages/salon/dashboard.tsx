@@ -418,7 +418,7 @@ export default function SalonDashboard() {
             <div className="lg:col-span-1">
               {selectedCustomer ? (
                 <CustomerDetails
-                  customer={selectedCustomer}
+                  customer={selectedCustomer as any}
                   onClose={() => {
                     setSelectedCustomer(null)
                     setShowCustomerDetails(false)
