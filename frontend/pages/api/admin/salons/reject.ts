@@ -23,8 +23,14 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     })
   }
 
-  // TODO: Add proper admin authentication here
-  // For now, this endpoint is open - you should add admin auth
+  // Check admin authentication
+  const adminKey = req.headers.authorization?.replace('Bearer ', '') || req.body.adminKey
+  if (!await isValidAdmin(adminKey)) {
+    return res.status(403).json({
+      success: false,
+      error: 'Qasja e paautorizuar - çelësi admin nuk është valid'
+    })
+  }
   
   const { salonId, reason } = req.body
 
@@ -156,4 +162,17 @@ Email: support@imirezervimi.al`
     console.error('Error in sendRejectionNotification:', error)
     throw error
   }
+}
+
+// Admin authentication helper
+async function isValidAdmin(adminKey: string | undefined): Promise<boolean> {
+  if (!adminKey) return false
+  
+  const configuredKey = process.env.ADMIN_SECRET_KEY
+  if (!configuredKey) {
+    console.warn('ADMIN_SECRET_KEY not configured - rejecting admin access')
+    return false
+  }
+  
+  return adminKey === configuredKey
 }

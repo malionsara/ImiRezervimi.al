@@ -5,6 +5,7 @@ import { useState, useEffect } from 'react'
 import Head from 'next/head'
 import Link from 'next/link'
 import { supabase } from '../../lib/salon'
+import AdminAuth from '../../components/admin/AdminAuth'
 
 export default function AdminSalons() {
   const [pendingSalons, setPendingSalons] = useState([])
@@ -80,12 +81,15 @@ export default function AdminSalons() {
   const handleApprove = async (salonId) => {
     setProcessingId(salonId)
     try {
+      // Get admin key from session storage
+      const adminKey = sessionStorage.getItem('admin_key')
+      
       const response = await fetch('/api/admin/salons/approve', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ salonId })
+        body: JSON.stringify({ salonId, adminKey })
       })
 
       const result = await response.json()
@@ -110,12 +114,15 @@ export default function AdminSalons() {
 
     setProcessingId(salonId)
     try {
+      // Get admin key from session storage
+      const adminKey = sessionStorage.getItem('admin_key')
+      
       const response = await fetch('/api/admin/salons/reject', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ salonId, reason })
+        body: JSON.stringify({ salonId, reason, adminKey })
       })
 
       const result = await response.json()
@@ -177,7 +184,7 @@ export default function AdminSalons() {
   }
 
   return (
-    <>
+    <AdminAuth>
       <Head>
         <title>Admin - Menaxhimi i Salloneve | ImiRezervimi.al</title>
         <meta name="description" content="Panel administrimi për miratimin e salloneve të reja" />
@@ -392,16 +399,6 @@ export default function AdminSalons() {
           </div>
         </main>
       </div>
-    </>
+    </AdminAuth>
   )
-}
-
-// Simple authentication check - replace with your auth system
-export async function getServerSideProps() {
-  // For now, this is open to anyone - you should add proper admin authentication
-  // Example: check for admin session, API key, etc.
-  
-  return {
-    props: {}
-  }
 }

@@ -5,6 +5,7 @@ import { useState, useEffect } from 'react'
 import Head from 'next/head'
 import Link from 'next/link'
 import { getSalonStats } from '../../lib/admin'
+import AdminAuth from '../../components/admin/AdminAuth'
 
 export default function AdminPortal() {
   const [stats, setStats] = useState(null)
@@ -54,7 +55,7 @@ export default function AdminPortal() {
   }
 
   return (
-    <>
+    <AdminAuth>
       <Head>
         <title>Admin Portal - ImiRezervimi.al</title>
         <meta name="description" content="Panel administrimi për ImiRezervimi.al" />
@@ -247,6 +248,6 @@ export default function AdminPortal() {
           </div>
         </main>
       </div>
-    </>
+    </AdminAuth>
   )
 }
