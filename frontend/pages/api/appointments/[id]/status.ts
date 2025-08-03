@@ -239,7 +239,7 @@ export default async function handler(
  * Sends notification to customer about status change
  */
 async function sendCustomerNotification(
-  appointment: any,
+  appointment: unknown,
   newStatus: string
 ): Promise<void> {
   try {
@@ -262,38 +262,6 @@ async function sendCustomerNotification(
   }
 }
 
-/**
- * Logs status change for analytics
- */
-function logStatusChange(data: {
-  appointmentId: string;
-  salonId: string;
-  oldStatus: string;
-  newStatus: string;
-  timestamp: string;
-}): void {
-  // In production, send to analytics service
-  console.log('Status change logged:', {
-    appointment: data.appointmentId,
-    salon: data.salonId,
-    transition: `${data.oldStatus} -> ${data.newStatus}`,
-    timestamp: data.timestamp,
-  });
-}
+// Removed unused function logStatusChange
 
-/**
- * Updates salon metrics based on status change
- */
-async function updateSalonMetrics(
-  salonId: string,
-  status: string
-): Promise<void> {
-  try {
-    // This would update salon performance metrics
-    // e.g., response time, approval rate, etc.
-    console.log(`Salon metrics updated for ${salonId}: ${status}`);
-  } catch (error) {
-    console.error('Error updating salon metrics:', error);
-    // Don't fail the request if metrics update fails
-  }
-}
+// Removed unused function updateSalonMetrics

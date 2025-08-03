@@ -11,20 +11,19 @@ import {
 } from '../../../lib/validation'
 import {
   getAppointmentById,
-  updateAppointmentStatus,
-  formatAppointmentResponse
+  updateAppointmentStatus
 } from '../../../lib/appointments'
 
 // ==============================================
 // API RESPONSE INTERFACE
 // ==============================================
-interface ApiResponse<T = any> {
+interface ApiResponse<T = unknown> {
   success: boolean
   data?: T
   error?: {
     code: string
     message: string
-    details?: any
+    details?: unknown
   }
 }
 
@@ -243,51 +242,5 @@ async function handleUpdateAppointmentStatus(
 // ==============================================
 // TODO: NOTIFICATION FUNCTIONS
 // ==============================================
-
-/**
- * Send status change notification to customer
- * TODO: Integrate with existing WhatsApp system
- */
-async function sendStatusChangeNotification(appointment: any, status: 'approved' | 'declined') {
-  try {
-    let message: string
-    
-    if (status === 'approved') {
-      message = `🎉 Rezervimi juaj u miratua!
-
-${appointment.salon.name} ju mirëpret:
-
-📅 Data: ${appointment.appointment_date}
-🕐 Ora: ${appointment.start_time}
-💅 Shërbimi: ${appointment.service_name}
-
-${appointment.salon_notes ? `💬 Shënim nga salloni: ${appointment.salon_notes}` : ''}
-
-Për çdo pyetje, kontaktoni: ${appointment.salon.phone}
-
-📱 ImiRezervimi.al`
-    } else {
-      message = `😔 Rezervimi juaj nuk u miratua
-
-${appointment.salon.name} nuk mund t'ju pranojë për:
-
-📅 Data: ${appointment.appointment_date}
-🕐 Ora: ${appointment.start_time}
-💅 Shërbimi: ${appointment.service_name}
-
-${appointment.salon_notes ? `💬 Arsyeja: ${appointment.salon_notes}` : ''}
-
-Ju lutemi provoni një kohë tjetër ose kontaktoni sallonin: ${appointment.salon.phone}
-
-📱 ImiRezervimi.al`
-    }
-    
-    // TODO: Call existing WhatsApp API
-    // await sendWhatsAppMessage(appointment.customer.phone, message)
-    
-    console.log(`📱 Status change notification prepared for: ${appointment.customer.phone}`)
-    
-  } catch (error) {
-    console.error('Error sending status change notification:', error)
-  }
-}
+// Note: Status change notifications will be implemented when integrating
+// with the existing Twilio WhatsApp system

@@ -9,13 +9,13 @@ import { ALBANIAN_ERRORS, createValidationError } from '../../../../lib/validati
 // ==============================================
 // API RESPONSE INTERFACE
 // ==============================================
-interface ApiResponse<T = any> {
+interface ApiResponse<T = unknown> {
   success: boolean
   data?: T
   error?: {
     code: string
     message: string
-    details?: any
+    details?: unknown
   }
 }
 

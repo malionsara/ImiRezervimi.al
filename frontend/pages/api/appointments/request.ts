@@ -25,13 +25,13 @@ import {
 // ==============================================
 // API RESPONSE INTERFACE
 // ==============================================
-interface ApiResponse<T = any> {
+interface ApiResponse<T = unknown> {
   success: boolean
   data?: T
   error?: {
     code: string
     message: string
-    details?: any
+    details?: unknown
   }
 }
 
@@ -225,63 +225,5 @@ export default async function handler(
 // ==============================================
 // TODO: NOTIFICATION FUNCTIONS
 // ==============================================
-
-/**
- * Send confirmation to customer via WhatsApp
- * TODO: Implement with existing Twilio integration
- */
-async function sendCustomerConfirmation(appointment: any) {
-  try {
-    const message = `Përshëndetje ${appointment.customer.first_name}! 
-
-Rezervimi juaj u dërgua me sukses:
-
-🏪 Salloni: ${appointment.salon.name}
-💅 Shërbimi: ${appointment.service_name}
-📅 Data: ${appointment.appointment_date}
-🕐 Ora: ${appointment.start_time}
-
-${appointment.salon.name} do t'ju kontaktojë brenda 2 orësh për të konfirmuar rezervimin.
-
-📱 ImiRezervimi.al`
-
-    // TODO: Call existing WhatsApp API
-    // await sendWhatsAppMessage(appointment.customer.phone, message)
-    
-    console.log(`📱 Customer confirmation message prepared for: ${appointment.customer.phone}`)
-    
-  } catch (error) {
-    console.error('Error sending customer confirmation:', error)
-  }
-}
-
-/**
- * Send new request notification to salon via WhatsApp
- * TODO: Implement with existing Twilio integration
- */
-async function sendSalonNotification(appointment: any) {
-  try {
-    const message = `📋 Kërkesë e re për rezervim!
-
-👤 Klienti: ${appointment.customer.first_name} ${appointment.customer.last_name}
-📞 Telefoni: ${appointment.customer.phone}
-💅 Shërbimi: ${appointment.service_name}
-📅 Data: ${appointment.appointment_date}
-🕐 Ora: ${appointment.start_time}
-⭐ Prioriteti: ${Math.round(appointment.priority_score)}/100
-
-${appointment.customer_notes ? `💬 Shënim: ${appointment.customer_notes}` : ''}
-
-Përgjigjuni "PO" për të miratuar ose "JO" për të refuzuar.
-
-💼 ImiRezervimi.al`
-
-    // TODO: Call existing WhatsApp API
-    // await sendWhatsAppMessage(appointment.salon.phone, message)
-    
-    console.log(`📱 Salon notification message prepared for: ${appointment.salon.phone}`)
-    
-  } catch (error) {
-    console.error('Error sending salon notification:', error)
-  }
-}
+// Note: Notification functions will be implemented when integrating
+// with the existing Twilio WhatsApp system

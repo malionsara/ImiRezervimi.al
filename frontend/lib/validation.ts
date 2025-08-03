@@ -224,7 +224,7 @@ export function validateBusinessTime(time: string, workingHours?: { open: string
 /**
  * Create a validation error response in Albanian
  */
-export function createValidationError(message: string, details?: any) {
+export function createValidationError(message: string, details?: unknown) {
   return {
     success: false,
     error: {
