@@ -531,7 +531,7 @@ export function validateWorkingHours(
 /**
  * Format appointment for client response
  */
-export function formatAppointmentResponse(appointment: unknown) {
+export function formatAppointmentResponse(appointment: any) {
   return {
     id: appointment.id,
     salonName: appointment.salon.name,

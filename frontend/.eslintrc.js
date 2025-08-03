@@ -19,7 +19,9 @@ module.exports = {
         "components/booking/**/*",
         "components/salon/**/*",
         "lib/appointments.ts",
-        "lib/salon-dashboard.ts"
+        "lib/salon-dashboard.ts",
+        "**/*.ts",
+        "**/*.tsx"
       ],
       rules: {
         "@typescript-eslint/no-explicit-any": "off",
