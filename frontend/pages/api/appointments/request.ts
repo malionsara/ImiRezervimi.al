@@ -79,7 +79,7 @@ export default async function handler(
     const validationResult = appointmentRequestSchema.safeParse(req.body)
     
     if (!validationResult.success) {
-      const errors = validationResult.error.errors.map(err => `${err.path.join('.')}: ${err.message}`).join(', ')
+      const errors = (validationResult.error as any).errors.map((err: any) => `${err.path.join('.')}: ${err.message}`).join(', ')
       console.log(`❌ Validation failed: ${errors}`)
       
       return res.status(400).json(createValidationError(
