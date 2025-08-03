@@ -82,7 +82,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       // Don't fail the approval if notification fails
     }
 
-    console.log(`Salon approved: ${salon.name} (${salon.slug})`)
+    console.log(`✅ Salon approved: ${salon.name} (${salon.slug})`)
 
     return res.status(200).json({
       success: true,
