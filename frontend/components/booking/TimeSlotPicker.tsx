@@ -19,6 +19,7 @@ interface Service {
 interface Salon {
   id: string
   name: string
+  slug: string
   working_hours: {
     [key: string]: {
       open: string
@@ -419,7 +420,7 @@ export default function TimeSlotPicker({
           </div>
           
           <p className="text-green-600 text-xs mt-3">
-            Shtypni "Vazhdo" për të plotësuar të dhënat tuaja.
+            Shtypni &quot;Vazhdo&quot; për të plotësuar të dhënat tuaja.
           </p>
         </div>
       )}

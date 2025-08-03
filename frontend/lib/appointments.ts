@@ -46,7 +46,7 @@ export function checkRateLimit(
   endpoint: string = 'appointment_request',
   maxRequests: number = 1, 
   windowMinutes: number = 1
-): { allowed: boolean; error?: any } {
+): { allowed: boolean; error?: { success: boolean; error: { code: string; message: string } } } {
   const key = `${ip}:${endpoint}`
   const now = Date.now()
   const windowMs = windowMinutes * 60 * 1000
@@ -100,7 +100,7 @@ export function checkRateLimit(
 /**
  * Find or create customer by phone number
  */
-export async function findOrCreateCustomer(customerInfo: CustomerInfo): Promise<{ success: boolean; data?: any; error?: any }> {
+export async function findOrCreateCustomer(customerInfo: CustomerInfo): Promise<{ success: boolean; data?: unknown; error?: unknown }> {
   try {
     const normalizedPhone = normalizeAlbanianPhone(customerInfo.phone)
     
@@ -171,7 +171,7 @@ export async function findOrCreateCustomer(customerInfo: CustomerInfo): Promise<
 /**
  * Check customer pending appointment limit
  */
-export async function checkCustomerPendingLimit(customerId: string, maxPending: number = 2): Promise<{ allowed: boolean; error?: any }> {
+export async function checkCustomerPendingLimit(customerId: string, maxPending: number = 2): Promise<{ allowed: boolean; error?: { success: boolean; error: { code: string; message: string } } }> {
   try {
     const { data: pendingAppointments, error } = await supabaseAdmin
       .from('appointments')
@@ -206,7 +206,7 @@ export async function checkCustomerPendingLimit(customerId: string, maxPending: 
 /**
  * Validate salon exists and is active
  */
-export async function validateSalon(salonId: string): Promise<{ valid: boolean; data?: any; error?: any }> {
+export async function validateSalon(salonId: string): Promise<{ valid: boolean; data?: { id: string; name: string; status: string; working_hours: unknown; max_advance_days: number }; error?: { success: boolean; error: { code: string; message: string } } }> {
   try {
     const { data: salon, error } = await supabaseAdmin
       .from('salons')
@@ -235,7 +235,7 @@ export async function validateSalon(salonId: string): Promise<{ valid: boolean; 
 /**
  * Validate service exists and is active
  */
-export async function validateService(serviceId: string, salonId: string): Promise<{ valid: boolean; data?: any; error?: any }> {
+export async function validateService(serviceId: string, salonId: string): Promise<{ valid: boolean; data?: { id: string; name: string; duration_minutes: number; price: number; is_active: boolean }; error?: { success: boolean; error: { code: string; message: string } } }> {
   try {
     const { data: service, error } = await supabaseAdmin
       .from('services')
@@ -274,7 +274,7 @@ export async function checkAppointmentConflict(
   appointmentDate: string,
   startTime: string,
   durationMinutes: number
-): Promise<{ hasConflict: boolean; error?: any }> {
+): Promise<{ hasConflict: boolean; error?: { success: boolean; error: { code: string; message: string } } }> {
   try {
     const { data, error } = await supabaseAdmin
       .rpc('check_booking_conflict', {
@@ -307,8 +307,8 @@ export async function checkAppointmentConflict(
 export async function createAppointmentRequest(
   request: AppointmentRequest,
   customerId: string,
-  service: any
-): Promise<{ success: boolean; data?: any; error?: any }> {
+  service: { id: string; name: string; price: number; duration_minutes: number }
+): Promise<{ success: boolean; data?: unknown; error?: unknown }> {
   try {
     const appointmentData = {
       salon_id: request.salonId,
@@ -347,7 +347,7 @@ export async function createAppointmentRequest(
       return createValidationError(ALBANIAN_ERRORS.INTERNAL_ERROR)
     }
     
-    console.log(`✅ Appointment created: ${appointment.id} for ${appointment.customer.first_name} ${appointment.customer.last_name}`)
+    console.log(`✅ Appointment created: ${appointment.id} for ${(appointment as any).customer.first_name} ${(appointment as any).customer.last_name}`)
     
     return { success: true, data: appointment }
     
@@ -364,7 +364,7 @@ export async function createAppointmentRequest(
 /**
  * Get appointment by ID with full details
  */
-export async function getAppointmentById(appointmentId: string): Promise<{ success: boolean; data?: any; error?: any }> {
+export async function getAppointmentById(appointmentId: string): Promise<{ success: boolean; data?: unknown; error?: unknown }> {
   try {
     const { data: appointment, error } = await supabaseAdmin
       .from('appointments')
@@ -434,9 +434,9 @@ export async function updateAppointmentStatus(
   appointmentId: string,
   status: 'approved' | 'declined',
   salonNotes?: string
-): Promise<{ success: boolean; data?: any; error?: any }> {
+): Promise<{ success: boolean; data?: unknown; error?: unknown }> {
   try {
-    const updateData: any = {
+    const updateData: Record<string, unknown> = {
       status,
       responded_at: new Date().toISOString(),
       updated_at: new Date().toISOString()
@@ -501,7 +501,7 @@ function getDayOfWeek(date: string): string {
 export function validateWorkingHours(
   appointmentDate: string,
   startTime: string,
-  workingHours: any
+  workingHours: { [key: string]: { open: string; close: string; closed: boolean } }
 ): { valid: boolean; error?: string } {
   const dayOfWeek = getDayOfWeek(appointmentDate)
   const dayHours = workingHours[dayOfWeek]
@@ -531,7 +531,7 @@ export function validateWorkingHours(
 /**
  * Format appointment for client response
  */
-export function formatAppointmentResponse(appointment: any) {
+export function formatAppointmentResponse(appointment: unknown) {
   return {
     id: appointment.id,
     salonName: appointment.salon.name,
@@ -559,5 +559,69 @@ export function cleanupRateLimit() {
     if (now - entry.firstRequest > oneHour) {
       rateLimitMap.delete(key)
     }
+  }
+}
+
+// ==============================================
+// ALBANIAN APPOINTMENT ERROR MESSAGES
+// ==============================================
+export const ALBANIAN_APPOINTMENT_ERRORS = {
+  APPOINTMENT_NOT_FOUND: 'Takimi nuk u gjet',
+  INVALID_STATUS_TRANSITION: 'Tranzicioni i statusit nuk është i vlefshëm',
+  SALON_NOT_AUTHORIZED: 'Salloni nuk është i autorizuar për këtë takim'
+} as const
+
+// Enhanced updateAppointmentStatus function for status.ts
+export async function updateAppointmentStatus(
+  appointmentId: string,
+  updateData: { status: string; salonNotes?: string },
+  salonId: string
+): Promise<{ success: boolean; appointment?: unknown; error?: string }> {
+  try {
+    // Verify appointment belongs to salon
+    const { data: existingAppointment, error: fetchError } = await supabaseAdmin
+      .from('appointments')
+      .select('id, salon_id, status')
+      .eq('id', appointmentId)
+      .eq('salon_id', salonId)
+      .maybeSingle()
+
+    if (fetchError) {
+      console.error('Error fetching appointment:', fetchError)
+      return { success: false, error: ALBANIAN_APPOINTMENT_ERRORS.APPOINTMENT_NOT_FOUND }
+    }
+
+    if (!existingAppointment) {
+      return { success: false, error: ALBANIAN_APPOINTMENT_ERRORS.APPOINTMENT_NOT_FOUND }
+    }
+
+    // Check valid status transitions
+    if (existingAppointment.status !== 'pending' && updateData.status !== existingAppointment.status) {
+      return { success: false, error: ALBANIAN_APPOINTMENT_ERRORS.INVALID_STATUS_TRANSITION }
+    }
+
+    // Update appointment
+    const { data: updatedAppointment, error: updateError } = await supabaseAdmin
+      .from('appointments')
+      .update({
+        status: updateData.status,
+        salon_notes: updateData.salonNotes,
+        responded_at: new Date().toISOString(),
+        updated_at: new Date().toISOString()
+      })
+      .eq('id', appointmentId)
+      .select()
+      .single()
+
+    if (updateError) {
+      console.error('Error updating appointment:', updateError)
+      return { success: false, error: ALBANIAN_ERRORS.INTERNAL_ERROR }
+    }
+
+    return { success: true, appointment: updatedAppointment }
+
+  } catch (error) {
+    console.error('Error in updateAppointmentStatus:', error)
+    return { success: false, error: ALBANIAN_ERRORS.INTERNAL_ERROR }
   }
 }

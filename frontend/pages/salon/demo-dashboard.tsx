@@ -59,9 +59,9 @@ const mockRequests = [
 ]
 
 export default function DemoDashboard() {
-  const [selectedCustomer, setSelectedCustomer] = useState<any>(null)
+  const [selectedCustomer, setSelectedCustomer] = useState<unknown>(null)
 
-  const handleCustomerClick = (request: any) => {
+  const handleCustomerClick = (request: unknown) => {
     setSelectedCustomer(request)
   }
 

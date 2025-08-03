@@ -28,7 +28,13 @@ interface SalonWithServices {
   address: string
   city: string
   instagram_handle: string
-  working_hours: any
+  working_hours: {
+    [key: string]: {
+      open: string
+      close: string
+      closed: boolean
+    }
+  }
   services: Array<{
     id: string
     name: string

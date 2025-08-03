@@ -59,7 +59,7 @@ export interface Appointment {
 export interface SalonInfo {
   id: string
   name: string
-  workingHours: any
+  workingHours: { [key: string]: { open: string; close: string; closed: boolean } }
 }
 
 export interface DashboardStats {
@@ -72,8 +72,8 @@ export interface DashboardStats {
 export interface RealtimeUpdate {
   eventType: 'INSERT' | 'UPDATE' | 'DELETE'
   table: string
-  new?: any
-  old?: any
+  new?: unknown
+  old?: unknown
 }
 
 // ==============================================
@@ -577,7 +577,7 @@ export function getAlbanianStatus(status: string): string {
 export function isValidAppointmentTime(
   appointmentDate: string,
   startTime: string,
-  workingHours: any
+  workingHours: { [key: string]: { open: string; close: string; closed: boolean } }
 ): boolean {
   try {
     const date = new Date(appointmentDate)
@@ -608,7 +608,7 @@ export function isValidAppointmentTime(
 export function createDashboardError(message: string, code?: string): Error {
   const error = new Error(message)
   if (code) {
-    (error as any).code = code
+    (error as Error & { code?: string }).code = code
   }
   return error
 }
@@ -616,7 +616,7 @@ export function createDashboardError(message: string, code?: string): Error {
 /**
  * Handle Supabase errors with Albanian messages
  */
-export function handleSupabaseError(error: any): string {
+export function handleSupabaseError(error: unknown): string {
   if (error?.code === 'PGRST116') {
     return 'Nuk ka të dhëna për të shfaqur'
   }

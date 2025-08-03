@@ -249,6 +249,36 @@ export function createBusinessRuleError(message: string, code: string = 'BUSINES
 }
 
 // ==============================================
+// APPOINTMENT UPDATE VALIDATION
+// ==============================================
+export interface AppointmentUpdateData {
+  appointmentId: string
+  status: 'approved' | 'declined'
+  salonNotes?: string
+}
+
+export function validateAppointmentUpdate(data: unknown): { success: boolean; data?: AppointmentUpdateData; errors?: unknown } {
+  try {
+    const parsed = appointmentStatusSchema.parse(data)
+    return { 
+      success: true, 
+      data: {
+        appointmentId: (data as { appointmentId: string }).appointmentId,
+        status: parsed.status,
+        salonNotes: parsed.salonNotes
+      }
+    }
+  } catch (error) {
+    return { success: false, errors: error }
+  }
+}
+
+export function isValidUUID(uuid: string): boolean {
+  const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i
+  return uuidRegex.test(uuid)
+}
+
+// ==============================================
 // TYPE EXPORTS
 // ==============================================
 export type AppointmentRequest = z.infer<typeof appointmentRequestSchema>

@@ -179,7 +179,7 @@ export default function RequestsQueue({
           {/* Filter */}
           <select
             value={filterBy}
-            onChange={(e) => setFilterBy(e.target.value as any)}
+            onChange={(e) => setFilterBy(e.target.value as 'all' | 'vip' | 'new' | 'returning')}
             className="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-red-500 focus:border-red-500"
           >
             <option value="all">Të gjitha</option>
@@ -191,7 +191,7 @@ export default function RequestsQueue({
           {/* Sort */}
           <select
             value={sortBy}
-            onChange={(e) => setSortBy(e.target.value as any)}
+            onChange={(e) => setSortBy(e.target.value as 'priority' | 'time' | 'date')}
             className="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-red-500 focus:border-red-500"
           >
             <option value="priority">Sipas prioritetit</option>

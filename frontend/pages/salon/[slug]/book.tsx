@@ -29,7 +29,7 @@ interface Salon {
   address: string
   city: string
   instagram_handle: string
-  working_hours: any
+  working_hours: { [key: string]: { open: string; close: string; closed: boolean } }
   services: Service[]
 }
 
@@ -217,7 +217,7 @@ export default function BookingPage() {
                   <div>
                     <h3 className="font-medium text-gray-900 mb-1">Kontakt nga salloni</h3>
                     <p className="text-gray-600 text-sm">
-                      {salon.name} do t'ju kontaktojë në WhatsApp brenda 2 orësh për të konfirmuar rezervimin.
+                      {salon.name} do t&apos;ju kontaktojë në WhatsApp brenda 2 orësh për të konfirmuar rezervimin.
                     </p>
                   </div>
                 </div>
@@ -326,7 +326,7 @@ export default function BookingPage() {
         <meta property="og:type" content="website" />
         <meta property="og:title" content={`Rezervo - ${salon.name} | ImiRezervimi.al`} />
         <meta property="og:description" content={`Rezervoni një termin në ${salon.name} - ${salon.description}`} />
-        <meta property="og:image" content="/api/og?salon=" + salon.name />
+        <meta property="og:image" content={`/api/og?salon=${salon.name}`} />
         
         {/* Twitter */}
         <meta property="twitter:card" content="summary_large_image" />

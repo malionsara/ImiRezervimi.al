@@ -249,10 +249,10 @@ export default function ServiceSelector({
             </svg>
             <div>
               <p className="text-green-700 text-sm font-medium">
-                Shërbimi "{selectedService.name}" u zgjodh!
+                Shërbimi &quot;{selectedService.name}&quot; u zgjodh!
               </p>
               <p className="text-green-600 text-xs mt-1">
-                Shtypni "Vazhdo" për të zgjedhur datën dhe orën.
+                Shtypni &quot;Vazhdo&quot; për të zgjedhur datën dhe orën.
               </p>
             </div>
           </div>

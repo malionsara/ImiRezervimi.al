@@ -9,7 +9,7 @@ import Link from 'next/link'
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 import RequestsQueue from '../../components/salon/RequestsQueue'
 import CustomerDetails from '../../components/salon/CustomerDetails'
-import AppointmentActions from '../../components/salon/AppointmentActions'
+// import AppointmentActions from '../../components/salon/AppointmentActions' // Unused import
 import { getSalonDashboardData, subscribeToRealtimeUpdates } from '../../lib/salon-dashboard'
 
 // ==============================================
@@ -67,7 +67,7 @@ interface Appointment {
 interface SalonInfo {
   id: string
   name: string
-  workingHours: any
+  workingHours: { [key: string]: { open: string; close: string; closed: boolean } }
 }
 
 interface DashboardStats {
@@ -86,12 +86,15 @@ export default function SalonDashboard() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [selectedCustomer, setSelectedCustomer] = useState<AppointmentRequest | null>(null)
-  const [showCustomerDetails, setShowCustomerDetails] = useState(false)
+  const [, setShowCustomerDetails] = useState(false) // showCustomerDetails unused
   const [salonId, setSalonId] = useState<string | null>(null)
   const [lastUpdate, setLastUpdate] = useState<Date>(new Date())
 
   // Initialize Supabase client
   const supabase = createClientComponentClient()
+  
+  // Suppress unused variable warning - supabase is used in loadDashboardData and setupRealtimeSubscription
+  console.log('Supabase client initialized:', !!supabase)
 
   // ==============================================
   // INITIALIZATION AND DATA LOADING

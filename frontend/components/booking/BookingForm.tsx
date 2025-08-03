@@ -2,7 +2,7 @@
 // Main booking form component for ImiRezervimi.al
 // Albanian Beauty Salon Booking Platform
 
-import { useState, useEffect } from 'react'
+import { useState } from 'react' // useEffect removed as unused
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { appointmentRequestSchema, CustomerInfo, ALBANIAN_ERRORS } from '../../lib/validation'
@@ -30,7 +30,7 @@ interface Salon {
   address: string
   city: string
   instagram_handle: string
-  working_hours: any
+  working_hours: { [key: string]: { open: string; close: string; closed: boolean } }
   services: Service[]
 }
 
@@ -42,11 +42,13 @@ interface BookingFormProps {
 }
 
 interface BookingFormData {
+  salonId: string
   serviceId: string
   appointmentDate: string
   startTime: string
   customerInfo: CustomerInfo
   customerNotes?: string
+  duration?: number
 }
 
 type FormStep = 'service' | 'datetime' | 'customer' | 'confirm'
@@ -81,6 +83,7 @@ export default function BookingForm({
     resolver: zodResolver(appointmentRequestSchema),
     mode: 'onBlur',
     defaultValues: {
+      salonId: salon.id,
       serviceId: '',
       appointmentDate: '',
       startTime: '',
@@ -505,7 +508,7 @@ export default function BookingForm({
                   <div className="mt-2 text-sm text-blue-700">
                     <ul className="list-disc list-inside space-y-1">
                       <li>Rezervimi juaj do të dërgohet për miratim</li>
-                      <li>{salon.name} do t'ju kontaktojë brenda 2 orësh</li>
+                      <li>{salon.name} do t&apos;ju kontaktojë brenda 2 orësh</li>
                       <li>Do të merrni një mesazh konfirmimi në WhatsApp</li>
                     </ul>
                   </div>

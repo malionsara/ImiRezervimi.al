@@ -307,7 +307,7 @@ export default function CustomerDetails({ customer, onClose }: CustomerDetailsPr
           ].map((tab) => (
             <button
               key={tab.id}
-              onClick={() => setActiveTab(tab.id as any)}
+              onClick={() => setActiveTab(tab.id as 'overview' | 'history' | 'notes')}
               className={`flex-1 px-4 py-3 text-sm font-medium border-b-2 transition-colors ${
                 activeTab === tab.id
                   ? 'border-red-500 text-red-600'
@@ -383,7 +383,7 @@ export default function CustomerDetails({ customer, onClose }: CustomerDetailsPr
                     {appointment.salonNotes && (
                       <div className="text-sm">
                         <p className="text-gray-600">Shënim nga salloni:</p>
-                        <p className="text-gray-800 italic">"{appointment.salonNotes}"</p>
+                        <p className="text-gray-800 italic">&quot;{appointment.salonNotes}&quot;</p>
                       </div>
                     )}
                   </div>
