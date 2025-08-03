@@ -196,10 +196,10 @@ async function handleUpdateAppointmentStatus(
   
   if (!updateResult.success) {
     console.log(`❌ Failed to update appointment status: ${appointmentId}`)
-    return res.status(500).json(updateResult.error)
+    return res.status(500).json(updateResult.error as ApiResponse<unknown>)
   }
   
-  const updatedAppointment = updateResult.data
+  const updatedAppointment = updateResult.data as any
   
   // Prepare response message in Albanian
   const statusMessage = status === 'approved' 
