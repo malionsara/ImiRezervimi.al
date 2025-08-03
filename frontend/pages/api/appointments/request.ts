@@ -96,7 +96,7 @@ export default async function handler(
     const salonValidation = await validateSalon(appointmentRequest.salonId)
     if (!salonValidation.valid) {
       console.log(`❌ Salon validation failed: ${appointmentRequest.salonId}`)
-      return res.status(400).json(salonValidation.error)
+      return res.status(400).json(salonValidation.error || { success: false, error: { code: 'SALON_INVALID', message: 'Salon validation failed' } })
     }
     
     const salon = salonValidation.data
