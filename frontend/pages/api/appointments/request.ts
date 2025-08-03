@@ -99,7 +99,7 @@ export default async function handler(
       return res.status(400).json(salonValidation.error || { success: false, error: { code: 'SALON_INVALID', message: 'Salon validation failed' } })
     }
     
-    const salon = salonValidation.data
+    const salon = salonValidation.data as any
 
     // ==============================================
     // SERVICE VALIDATION
@@ -110,7 +110,7 @@ export default async function handler(
       return res.status(400).json(serviceValidation.error || { success: false, error: { code: 'SERVICE_INVALID', message: 'Service validation failed' } })
     }
     
-    const service = serviceValidation.data
+    const service = serviceValidation.data as any
 
     // ==============================================
     // WORKING HOURS VALIDATION
@@ -138,7 +138,7 @@ export default async function handler(
       return res.status(400).json(customerResult.error || { success: false, error: { code: 'CUSTOMER_ERROR', message: 'Customer processing failed' } })
     }
     
-    const customer = customerResult.data
+    const customer = customerResult.data as any
 
     // ==============================================
     // PENDING APPOINTMENTS LIMIT CHECK
@@ -187,7 +187,7 @@ export default async function handler(
       return res.status(500).json(appointmentResult.error || { success: false, error: { code: 'APPOINTMENT_CREATE', message: 'Appointment creation failed' } })
     }
 
-    const appointment = appointmentResult.data
+    const appointment = appointmentResult.data as any
 
     // ==============================================
     // SUCCESS RESPONSE
