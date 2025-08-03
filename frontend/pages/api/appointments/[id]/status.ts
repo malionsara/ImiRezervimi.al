@@ -92,7 +92,7 @@ export default async function handler(
 
     // Validate salon exists and is active
     const salonValidation = await validateSalon(salonId);
-    if (!salonValidation.success) {
+    if (!salonValidation.valid) {
       return res.status(403).json({
         success: false,
         error: {
