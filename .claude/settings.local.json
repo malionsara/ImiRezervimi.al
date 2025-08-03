@@ -1,4 +1,5 @@
 {
+  "$schema": "https://json.schemastore.org/claude-code-settings.json",
   "permissions": {
     "allow": [
       "Bash(gh auth refresh:*)",
@@ -41,9 +42,13 @@
       "Bash(mv:*)",
       "Bash(grep:*)",
       "Bash(rg:*)",
-      "Bash(npm run lint)"
+      "Bash(npm run lint)",
+      "WebFetch(domain:github.com)",
+      "Bash(npm install:*)",
+      "Bash(npm test:*)",
+      "Bash(node:*)",
+      "Bash(npx tsc:*)"
     ],
     "deny": []
-  },
-  "$schema": "https://json.schemastore.org/claude-code-settings.json"
+  }
 }
