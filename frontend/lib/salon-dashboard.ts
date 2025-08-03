@@ -380,7 +380,7 @@ export async function getDashboardStats(salonId: string): Promise<DashboardStats
 
     let averageRating = 0
     if (ratingData && ratingData.length > 0) {
-      const totalRating = ratingData.reduce((sum, item) => sum + (item.customers?.rating || 0), 0)
+      const totalRating = ratingData.reduce((sum, item: any) => sum + (item.customers?.rating || 0), 0)
       averageRating = totalRating / ratingData.length
     }
 
@@ -619,15 +619,15 @@ export function createDashboardError(message: string, code?: string): Error {
  * Handle Supabase errors with Albanian messages
  */
 export function handleSupabaseError(error: unknown): string {
-  if (error?.code === 'PGRST116') {
+  if ((error as any)?.code === 'PGRST116') {
     return 'Nuk ka të dhëna për të shfaqur'
   }
   
-  if (error?.code === 'PGRST301') {
+  if ((error as any)?.code === 'PGRST301') {
     return 'Nuk keni qasje në këto të dhëna'
   }
   
-  if (error?.message?.includes('timeout')) {
+  if ((error as any)?.message?.includes('timeout')) {
     return 'Lidhja me bazën e të dhënave ka problema. Provoni përsëri.'
   }
   

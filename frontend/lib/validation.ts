@@ -121,9 +121,7 @@ export const appointmentRequestSchema = z.object({
 // APPOINTMENT STATUS UPDATE SCHEMA
 // ==============================================
 export const appointmentStatusSchema = z.object({
-  status: z.enum(['approved', 'declined'], {
-    errorMap: () => ({ message: 'Statusi duhet të jetë "approved" ose "declined"' })
-  }),
+  status: z.enum(['approved', 'declined']),
   salonNotes: z.string().max(500, 'Shënimet e sallonit nuk mund të kenë më shumë se 500 karaktere').optional(),
   adminKey: z.string().min(1, 'Çelësi admin është i detyrueshëm').optional()
 })
@@ -132,7 +130,7 @@ export const appointmentStatusSchema = z.object({
 // RATE LIMITING SCHEMA
 // ==============================================
 export const rateLimitSchema = z.object({
-  ip: z.string().ip('IP adresa nuk është e vlefshme'),
+  ip: z.string().min(1, 'IP adresa nuk është e vlefshme'),
   endpoint: z.string().min(1, 'Endpoint është i detyrueshëm'),
   maxRequests: z.number().positive('Numri maksimal i kërkesave duhet të jetë pozitiv').default(1),
   windowMinutes: z.number().positive('Dritarja e kohës duhet të jetë pozitive').default(1)

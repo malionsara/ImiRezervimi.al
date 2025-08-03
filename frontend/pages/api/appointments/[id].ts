@@ -84,10 +84,10 @@ async function handleGetAppointment(
   
   if (!result.success) {
     console.log(`❌ Appointment not found: ${appointmentId}`)
-    return res.status(404).json(result.error)
+    return res.status(404).json(result.error as ApiResponse<unknown>)
   }
   
-  const appointment = result.data
+  const appointment = result.data as any
   
   // Format response with Albanian labels
   const formattedAppointment = {
