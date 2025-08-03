@@ -4,7 +4,7 @@
 import { useState, useEffect } from 'react'
 import Head from 'next/head'
 import Link from 'next/link'
-import { getSalonStats, validateAdminSetup } from '../../lib/admin'
+import { getSalonStats } from '../../lib/admin'
 
 export default function AdminPortal() {
   const [stats, setStats] = useState(null)
@@ -12,13 +12,35 @@ export default function AdminPortal() {
   const [adminSetup, setAdminSetup] = useState(null)
 
   useEffect(() => {
-    // Check admin setup
-    const setup = validateAdminSetup()
-    setAdminSetup(setup)
+    // Check admin setup via API
+    fetchAdminSetup()
 
     // Fetch stats
     fetchStats()
   }, [])
+
+  const fetchAdminSetup = async () => {
+    try {
+      const response = await fetch('/api/admin/setup-status')
+      const result = await response.json()
+      
+      if (result.success) {
+        setAdminSetup(result.data)
+      } else {
+        console.error('Failed to check admin setup:', result.error)
+        setAdminSetup({
+          valid: false,
+          issues: ['Failed to check admin configuration']
+        })
+      }
+    } catch (error) {
+      console.error('Error fetching admin setup:', error)
+      setAdminSetup({
+        valid: false,
+        issues: ['Failed to connect to admin setup endpoint']
+      })
+    }
+  }
 
   const fetchStats = async () => {
     try {
@@ -68,16 +90,44 @@ export default function AdminPortal() {
           </div>
 
           {/* Admin Setup Status */}
-          {adminSetup && !adminSetup.valid && (
-            <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-6 mb-8">
-              <h2 className="text-lg font-semibold text-yellow-800 mb-3">⚠️ Konfigurimi i Admin</h2>
-              <p className="text-yellow-700 mb-3">Ka probleme me konfigurimin e admin:</p>
-              <ul className="list-disc list-inside space-y-1 text-yellow-700">
-                {adminSetup.issues.map((issue, index) => (
-                  <li key={index}>{issue}</li>
-                ))}
-              </ul>
-            </div>
+          {adminSetup && (
+            <>
+              {!adminSetup.valid && (
+                <div className="bg-red-50 border border-red-200 rounded-lg p-6 mb-8">
+                  <h2 className="text-lg font-semibold text-red-800 mb-3">❌ Konfigurimi i Admin</h2>
+                  <p className="text-red-700 mb-3">Ka probleme kritike me konfigurimin e admin:</p>
+                  <ul className="list-disc list-inside space-y-1 text-red-700">
+                    {adminSetup.issues.map((issue, index) => (
+                      <li key={index}>{issue}</li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+              
+              {adminSetup.valid && !adminSetup.twilioConfigured && (
+                <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-6 mb-8">
+                  <h2 className="text-lg font-semibold text-yellow-800 mb-3">⚠️ Konfigurimi i WhatsApp</h2>
+                  <p className="text-yellow-700 mb-3">Admin panel funksionon, por WhatsApp nuk është konfiguruar:</p>
+                  <ul className="list-disc list-inside space-y-1 text-yellow-700">
+                    {adminSetup.twilioIssues.map((issue, index) => (
+                      <li key={index}>{issue}</li>
+                    ))}
+                  </ul>
+                  <p className="text-yellow-700 mt-3 text-sm">
+                    💡 Njoftime do të shfaqen në console por nuk do të dërgohen në WhatsApp.
+                  </p>
+                </div>
+              )}
+              
+              {adminSetup.valid && adminSetup.twilioConfigured && (
+                <div className="bg-green-50 border border-green-200 rounded-lg p-6 mb-8">
+                  <h2 className="text-lg font-semibold text-green-800 mb-3">✅ Konfigurimi Komplet</h2>
+                  <p className="text-green-700">
+                    Të gjitha konfigurationet janë në rregull! Admin panel dhe WhatsApp janë gati për përdorim.
+                  </p>
+                </div>
+              )}
+            </>
           )}
 
           {/* Stats Overview */}
