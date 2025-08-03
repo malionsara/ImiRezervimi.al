@@ -74,8 +74,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       })
     }
 
-    // TODO: Send approval notification to salon owner via email/WhatsApp
-    // await sendApprovalNotification(salon)
+    // Send approval notification to salon owner
+    try {
+      await sendApprovalNotification(salon)
+    } catch (notificationError) {
+      console.error('Error sending notification:', notificationError)
+      // Don't fail the approval if notification fails
+    }
 
     console.log(`Salon approved: ${salon.name} (${salon.slug})`)
 
@@ -93,10 +98,47 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   }
 }
 
-// TODO: Implement notification function
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-async function sendApprovalNotification(salon: { name: string; phone: string; slug: string }) {
-  // Send email or WhatsApp notification to salon owner
-  // Implementation depends on your notification service
-  console.log(`Should send approval notification to ${salon.name} at ${salon.phone}`)
+async function sendApprovalNotification(salon: { name: string; phone: string; slug: string; email?: string }) {
+  try {
+    // Try WhatsApp notification first
+    if (process.env.TWILIO_ACCOUNT_SID && process.env.TWILIO_AUTH_TOKEN && process.env.TWILIO_WHATSAPP_NUMBER) {
+      const approvalMessage = `🎉 Përgëzime! Salloni juaj "${salon.name}" u miratua në ImiRezervimi.al! 
+
+Tani mund të merrni rezervime online nga klientët. 
+
+Linku juaj: https://imirezervimi.al/${salon.slug}
+
+Faleminderit që zgjodhët ImiRezervimi.al! 💄✨`
+
+      const response = await fetch('/api/twilio/send-whatsapp', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          to: salon.phone,
+          message: approvalMessage
+        })
+      })
+
+      if (!response.ok) {
+        console.error('WhatsApp notification failed:', await response.text())
+      } else {
+        console.log(`✅ WhatsApp notification sent to ${salon.name} at ${salon.phone}`)
+      }
+    } else {
+      console.log(`⚠️ WhatsApp not configured - notification would be sent to ${salon.name} at ${salon.phone}`)
+    }
+
+    // Log the notification for admin tracking
+    console.log(`=== SALON APPROVED NOTIFICATION ===`)
+    console.log(`Salon: ${salon.name}`)
+    console.log(`Phone: ${salon.phone}`)
+    console.log(`Profile: https://imirezervimi.al/${salon.slug}`)
+    console.log(`==================================`)
+
+  } catch (error) {
+    console.error('Error in sendApprovalNotification:', error)
+    throw error
+  }
 }

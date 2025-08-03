@@ -85,8 +85,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       })
     }
 
-    // TODO: Send rejection notification to salon owner via email/WhatsApp
-    // await sendRejectionNotification(salon, reason)
+    // Send rejection notification to salon owner
+    try {
+      await sendRejectionNotification(salon, reason)
+    } catch (notificationError) {
+      console.error('Error sending rejection notification:', notificationError)
+      // Don't fail the rejection if notification fails
+    }
 
     console.log(`Salon rejected: ${salon.name} (${salon.slug}). Reason: ${reason || 'No reason provided'}`)
 
@@ -104,13 +109,51 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   }
 }
 
-// TODO: Implement notification function
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-async function sendRejectionNotification(salon: { name: string; phone: string; slug: string }, reason?: string) {
-  // Send email or WhatsApp notification to salon owner
-  // Implementation depends on your notification service
-  console.log(`Should send rejection notification to ${salon.name} at ${salon.phone}`)
-  if (reason) {
-    console.log(`Rejection reason: ${reason}`)
+async function sendRejectionNotification(salon: { name: string; phone: string; slug: string; email?: string }, reason?: string) {
+  try {
+    // Try WhatsApp notification first
+    if (process.env.TWILIO_ACCOUNT_SID && process.env.TWILIO_AUTH_TOKEN && process.env.TWILIO_WHATSAPP_NUMBER) {
+      const rejectionMessage = `Përshëndetje ${salon.name}! 
+
+Faleminderit për aplikimin tuaj në ImiRezervimi.al. 
+
+Regjistrimi juaj nuk mund të miratohet momentalisht.${reason ? ` 
+
+Arsyeja: ${reason}` : ''}
+
+Ju lutemi kontaktoni mbështetjen tonë për më shumë informacion ose për të riaplikuar.
+
+Email: support@imirezervimi.al`
+
+      const response = await fetch('/api/twilio/send-whatsapp', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          to: salon.phone,
+          message: rejectionMessage
+        })
+      })
+
+      if (!response.ok) {
+        console.error('WhatsApp rejection notification failed:', await response.text())
+      } else {
+        console.log(`✅ WhatsApp rejection notification sent to ${salon.name} at ${salon.phone}`)
+      }
+    } else {
+      console.log(`⚠️ WhatsApp not configured - rejection notification would be sent to ${salon.name} at ${salon.phone}`)
+    }
+
+    // Log the notification for admin tracking
+    console.log(`=== SALON REJECTED NOTIFICATION ===`)
+    console.log(`Salon: ${salon.name}`)
+    console.log(`Phone: ${salon.phone}`)
+    console.log(`Reason: ${reason || 'No reason provided'}`)
+    console.log(`==================================`)
+
+  } catch (error) {
+    console.error('Error in sendRejectionNotification:', error)
+    throw error
   }
 }
