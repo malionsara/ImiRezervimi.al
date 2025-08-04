@@ -86,9 +86,13 @@ export default function SalonDashboard() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [selectedCustomer, setSelectedCustomer] = useState<AppointmentRequest | null>(null)
-  const [, setShowCustomerDetails] = useState(false) // showCustomerDetails unused
+  const [showCustomerDetails, setShowCustomerDetails] = useState(false)
   const [salonId, setSalonId] = useState<string | null>(null)
   const [lastUpdate, setLastUpdate] = useState<Date>(new Date())
+  const [searchQuery, setSearchQuery] = useState('')
+  const [filterStatus, setFilterStatus] = useState<'all' | 'priority' | 'today' | 'tomorrow'>('all')
+  const [showFilters, setShowFilters] = useState(false)
+  const [notifications, setNotifications] = useState<Array<{ id: string; message: string; type: 'success' | 'error' | 'info' }>>([])
 
   // Initialize Supabase client
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
@@ -103,6 +107,7 @@ export default function SalonDashboard() {
   // ==============================================
   useEffect(() => {
     initializeDashboard()
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   useEffect(() => {
@@ -110,6 +115,7 @@ export default function SalonDashboard() {
       loadDashboardData()
       setupRealtimeSubscription()
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [salonId])
 
   const initializeDashboard = async () => {
@@ -184,23 +190,75 @@ export default function SalonDashboard() {
       })
 
       if (response.ok) {
-        // Show success message
-        console.log(`✅ Rezervimi u ${action === 'approve' ? 'miratua' : 'refuzua'} me sukses`)
+        // Show success notification
+        addNotification(
+          `✅ Rezervimi u ${action === 'approve' ? 'miratua' : 'refuzua'} me sukses`,
+          'success'
+        )
         
         // Refresh dashboard data
         loadDashboardData()
+        
+        // Clear selected customer
+        setSelectedCustomer(null)
+        setShowCustomerDetails(false)
       } else {
         throw new Error('Failed to update appointment')
       }
     } catch (error) {
       console.error('Error updating appointment:', error)
-      setError(`Gabim në ${action === 'approve' ? 'miratimin' : 'refuzimin'} e rezervimit`)
+      addNotification(
+        `Gabim në ${action === 'approve' ? 'miratimin' : 'refuzimin'} e rezervimit`,
+        'error'
+      )
     }
   }
 
   const handleRefresh = () => {
     loadDashboardData()
   }
+
+  // Add notification system
+  const addNotification = (message: string, type: 'success' | 'error' | 'info' = 'info') => {
+    const id = Date.now().toString()
+    setNotifications(prev => [...prev, { id, message, type }])
+    
+    // Remove notification after 5 seconds
+    setTimeout(() => {
+      setNotifications(prev => prev.filter(n => n.id !== id))
+    }, 5000)
+  }
+
+  // Enhanced search and filter functionality
+  const filteredRequests = dashboardData?.pendingRequests.filter(request => {
+    // Search filter
+    if (searchQuery) {
+      const query = searchQuery.toLowerCase()
+      const matchesName = `${request.customer.firstName} ${request.customer.lastName}`.toLowerCase().includes(query)
+      const matchesPhone = request.customer.phone.includes(query)
+      const matchesService = request.service.name.toLowerCase().includes(query)
+      if (!matchesName && !matchesPhone && !matchesService) return false
+    }
+
+    // Status filter
+    if (filterStatus !== 'all') {
+      const today = new Date().toISOString().split('T')[0]
+      const tomorrow = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString().split('T')[0]
+      
+      switch (filterStatus) {
+        case 'priority':
+          return request.priorityScore >= 60
+        case 'today':
+          return request.appointmentDate === today
+        case 'tomorrow':
+          return request.appointmentDate === tomorrow
+        default:
+          return true
+      }
+    }
+
+    return true
+  }) || []
 
   // ==============================================
   // LOADING AND ERROR STATES
@@ -254,9 +312,71 @@ export default function SalonDashboard() {
         <meta name="description" content="Menaxho rezervimet e sallonit tuaj" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <meta name="robots" content="noindex, nofollow" />
+        <style jsx>{`
+          @keyframes slide-in {
+            from {
+              transform: translateX(100%);
+              opacity: 0;
+            }
+            to {
+              transform: translateX(0);
+              opacity: 1;
+            }
+          }
+          .animate-slide-in {
+            animation: slide-in 0.3s ease-out;
+          }
+        `}</style>
       </Head>
 
       <div className="min-h-screen bg-gray-50">
+        {/* Notification System */}
+        <div className="fixed top-4 right-4 z-50 space-y-2">
+          {notifications.map((notification) => (
+            <div
+              key={notification.id}
+              className={`max-w-sm px-4 py-3 rounded-lg shadow-lg border ${
+                notification.type === 'success' ? 'bg-green-50 border-green-200 text-green-800' :
+                notification.type === 'error' ? 'bg-red-50 border-red-200 text-red-800' :
+                'bg-blue-50 border-blue-200 text-blue-800'
+              } animate-slide-in`}
+            >
+              <div className="flex items-start">
+                <div className="flex-shrink-0">
+                  {notification.type === 'success' && (
+                    <svg className="h-5 w-5 text-green-400" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                    </svg>
+                  )}
+                  {notification.type === 'error' && (
+                    <svg className="h-5 w-5 text-red-400" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+                    </svg>
+                  )}
+                  {notification.type === 'info' && (
+                    <svg className="h-5 w-5 text-blue-400" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
+                    </svg>
+                  )}
+                </div>
+                <div className="ml-3">
+                  <p className="text-sm font-medium">{notification.message}</p>
+                </div>
+                <div className="ml-auto pl-3">
+                  <button
+                    onClick={() => setNotifications(prev => prev.filter(n => n.id !== notification.id))}
+                    className="inline-flex text-gray-400 hover:text-gray-600 focus:outline-none"
+                  >
+                    <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
+                    </svg>
+                  </button>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+
         {/* Header */}
         <header className="bg-white shadow-sm border-b sticky top-0 z-40">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -274,6 +394,35 @@ export default function SalonDashboard() {
               </div>
               
               <div className="flex items-center space-x-4">
+                {/* Search */}
+                <div className="hidden md:block relative">
+                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <svg className="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                    </svg>
+                  </div>
+                  <input
+                    type="text"
+                    placeholder="Kërko klient, shërbim..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className="block w-64 pl-10 pr-3 py-2 border border-gray-300 rounded-md leading-5 bg-white placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-1 focus:ring-red-500 focus:border-red-500 text-sm"
+                  />
+                </div>
+
+                {/* Filter Toggle */}
+                <button
+                  onClick={() => setShowFilters(!showFilters)}
+                  className={`p-2 rounded-lg transition-colors ${
+                    showFilters ? 'bg-red-100 text-red-600' : 'text-gray-500 hover:text-gray-700 hover:bg-gray-100'
+                  }`}
+                  title="Filtrat"
+                >
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.207A1 1 0 013 6.5V4z" />
+                  </svg>
+                </button>
+
                 <button
                   onClick={handleRefresh}
                   className="p-2 text-gray-500 hover:text-gray-700 rounded-lg hover:bg-gray-100 transition-colors"
@@ -289,71 +438,199 @@ export default function SalonDashboard() {
                 </Link>
               </div>
             </div>
+
+            {/* Mobile Search & Filters */}
+            <div className="md:hidden pb-4">
+              <div className="relative mb-3">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <svg className="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                  </svg>
+                </div>
+                <input
+                  type="text"
+                  placeholder="Kërko klient, shërbim..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md leading-5 bg-white placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-1 focus:ring-red-500 focus:border-red-500 text-sm"
+                />
+              </div>
+            </div>
+
+            {/* Filter Bar */}
+            {showFilters && (
+              <div className="border-t border-gray-200 py-3">
+                <div className="flex flex-wrap gap-2">
+                  {[
+                    { key: 'all', label: 'Të gjitha', count: dashboardData.pendingRequests.length },
+                    { key: 'priority', label: 'Prioritet i lartë', count: dashboardData.pendingRequests.filter(r => r.priorityScore >= 60).length },
+                    { key: 'today', label: 'Sot', count: dashboardData.pendingRequests.filter(r => r.appointmentDate === new Date().toISOString().split('T')[0]).length },
+                    { key: 'tomorrow', label: 'Nesër', count: dashboardData.pendingRequests.filter(r => r.appointmentDate === new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString().split('T')[0]).length }
+                  ].map(filter => (
+                    <button
+                      key={filter.key}
+                      onClick={() => setFilterStatus(filter.key as typeof filterStatus)}
+                      className={`px-3 py-1 rounded-full text-sm font-medium transition-colors ${
+                        filterStatus === filter.key
+                          ? 'bg-red-100 text-red-700 border border-red-200'
+                          : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                      }`}
+                    >
+                      {filter.label} ({filter.count})
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
         </header>
 
         {/* Main Content */}
         <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-          {/* Dashboard Stats */}
+          {/* Enhanced Dashboard Stats */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-            <div className="bg-white rounded-xl p-4 shadow-sm border">
-              <div className="flex items-center">
-                <div className="p-2 rounded-full bg-yellow-100">
-                  <span className="text-xl">⏳</span>
+            <div className="bg-white rounded-xl p-4 shadow-sm border hover:shadow-md transition-shadow cursor-pointer" 
+                 onClick={() => setFilterStatus('all')}>
+              <div className="flex items-center justify-between">
+                <div className="flex items-center">
+                  <div className="p-2 rounded-full bg-yellow-100">
+                    <span className="text-xl">⏳</span>
+                  </div>
+                  <div className="ml-3">
+                    <p className="text-sm font-medium text-gray-600">Në pritje</p>
+                    <p className="text-2xl font-bold text-gray-900">{dashboardData.stats.pendingCount}</p>
+                  </div>
                 </div>
-                <div className="ml-3">
-                  <p className="text-sm font-medium text-gray-600">Në pritje</p>
-                  <p className="text-2xl font-bold text-gray-900">{dashboardData.stats.pendingCount}</p>
-                </div>
+                {dashboardData.stats.pendingCount > 5 && (
+                  <div className="bg-red-100 text-red-600 text-xs font-medium px-2 py-1 rounded-full">
+                    🔥 Shtypesë
+                  </div>
+                )}
               </div>
             </div>
 
-            <div className="bg-white rounded-xl p-4 shadow-sm border">
-              <div className="flex items-center">
-                <div className="p-2 rounded-full bg-green-100">
-                  <span className="text-xl">📅</span>
+            <div className="bg-white rounded-xl p-4 shadow-sm border hover:shadow-md transition-shadow cursor-pointer"
+                 onClick={() => setFilterStatus('today')}>
+              <div className="flex items-center justify-between">
+                <div className="flex items-center">
+                  <div className="p-2 rounded-full bg-green-100">
+                    <span className="text-xl">📅</span>
+                  </div>
+                  <div className="ml-3">
+                    <p className="text-sm font-medium text-gray-600">Sot</p>
+                    <p className="text-2xl font-bold text-gray-900">{dashboardData.stats.todayCount}</p>
+                  </div>
                 </div>
-                <div className="ml-3">
-                  <p className="text-sm font-medium text-gray-600">Sot</p>
-                  <p className="text-2xl font-bold text-gray-900">{dashboardData.stats.todayCount}</p>
-                </div>
+                {dashboardData.todaySchedule.length > 0 && (
+                  <div className="text-green-600 text-xs">
+                    ✅ Aktiv
+                  </div>
+                )}
               </div>
             </div>
 
-            <div className="bg-white rounded-xl p-4 shadow-sm border">
-              <div className="flex items-center">
-                <div className="p-2 rounded-full bg-blue-100">
-                  <span className="text-xl">📊</span>
+            <div className="bg-white rounded-xl p-4 shadow-sm border hover:shadow-md transition-shadow">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center">
+                  <div className="p-2 rounded-full bg-blue-100">
+                    <span className="text-xl">📊</span>
+                  </div>
+                  <div className="ml-3">
+                    <p className="text-sm font-medium text-gray-600">Java</p>
+                    <p className="text-2xl font-bold text-gray-900">{dashboardData.stats.weeklyBookings}</p>
+                  </div>
                 </div>
-                <div className="ml-3">
-                  <p className="text-sm font-medium text-gray-600">Java</p>
-                  <p className="text-2xl font-bold text-gray-900">{dashboardData.stats.weeklyBookings}</p>
-                </div>
+                {dashboardData.stats.weeklyBookings > 20 && (
+                  <div className="text-blue-600 text-xs">
+                    📈 Lartë
+                  </div>
+                )}
               </div>
             </div>
 
-            <div className="bg-white rounded-xl p-4 shadow-sm border">
-              <div className="flex items-center">
-                <div className="p-2 rounded-full bg-purple-100">
-                  <span className="text-xl">⭐</span>
+            <div className="bg-white rounded-xl p-4 shadow-sm border hover:shadow-md transition-shadow">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center">
+                  <div className="p-2 rounded-full bg-purple-100">
+                    <span className="text-xl">⭐</span>
+                  </div>
+                  <div className="ml-3">
+                    <p className="text-sm font-medium text-gray-600">Vlerësimi</p>
+                    <p className="text-2xl font-bold text-gray-900">{dashboardData.stats.averageRating.toFixed(1)}</p>
+                  </div>
                 </div>
-                <div className="ml-3">
-                  <p className="text-sm font-medium text-gray-600">Vlerësimi</p>
-                  <p className="text-2xl font-bold text-gray-900">{dashboardData.stats.averageRating.toFixed(1)}</p>
+                <div className="flex">
+                  {[1, 2, 3, 4, 5].map((star) => (
+                    <svg key={star} className={`w-4 h-4 ${
+                      star <= dashboardData.stats.averageRating ? 'text-yellow-400' : 'text-gray-300'
+                    }`} fill="currentColor" viewBox="0 0 20 20">
+                      <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                    </svg>
+                  ))}
                 </div>
               </div>
             </div>
           </div>
 
+          {/* Quick Stats Summary */}
+          {(searchQuery || filterStatus !== 'all') && (
+            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
+              <div className="flex items-center">
+                <svg className="w-5 h-5 text-blue-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <p className="text-blue-800 text-sm">
+                  <span className="font-medium">Po shfaqen {filteredRequests.length}</span> nga {dashboardData.pendingRequests.length} kërkesat
+                  {searchQuery && <span> • Kërkim: &quot;{searchQuery}&quot;</span>}
+                  {filterStatus !== 'all' && <span> • Filtri: {{
+                    priority: 'Prioritet i lartë',
+                    today: 'Sot',
+                    tomorrow: 'Nesër'
+                  }[filterStatus]}</span>}
+                </p>
+                {(searchQuery || filterStatus !== 'all') && (
+                  <button
+                    onClick={() => {
+                      setSearchQuery('')
+                      setFilterStatus('all')
+                    }}
+                    className="ml-auto text-blue-600 hover:text-blue-700 text-sm font-medium"
+                  >
+                    Pastro filtrat
+                  </button>
+                )}
+              </div>
+            </div>
+          )}
+
           {/* Main Dashboard Grid */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             {/* Left Column - Requests Queue */}
             <div className="lg:col-span-2">
-              <RequestsQueue
-                requests={dashboardData.pendingRequests}
-                onCustomerClick={handleCustomerClick}
-                onAppointmentAction={handleAppointmentAction}
-              />
+              {filteredRequests.length === 0 && dashboardData.pendingRequests.length > 0 ? (
+                <div className="bg-white rounded-xl shadow-sm border p-8 text-center">
+                  <div className="text-gray-400 text-5xl mb-4">🔍</div>
+                  <h3 className="text-lg font-medium text-gray-900 mb-2">Asnjë rezultat</h3>
+                  <p className="text-gray-600 mb-4">
+                    Nuk u gjet asnjë kërkesë me kriteret e zgjedhura
+                  </p>
+                  <button
+                    onClick={() => {
+                      setSearchQuery('')
+                      setFilterStatus('all')
+                    }}
+                    className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition-colors"
+                  >
+                    Pastro filtrat
+                  </button>
+                </div>
+              ) : (
+                <RequestsQueue
+                  requests={filteredRequests}
+                  onCustomerClick={handleCustomerClick}
+                  onAppointmentAction={handleAppointmentAction}
+                />
+              )}
 
               {/* Today's Schedule */}
               {dashboardData.todaySchedule.length > 0 && (
@@ -418,7 +695,7 @@ export default function SalonDashboard() {
             <div className="lg:col-span-1">
               {selectedCustomer ? (
                 <CustomerDetails
-                  customer={selectedCustomer as any}
+                  customer={selectedCustomer.customer}
                   onClose={() => {
                     setSelectedCustomer(null)
                     setShowCustomerDetails(false)
