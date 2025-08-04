@@ -62,6 +62,9 @@ export interface WhatsAppVerifyResult {
 // Albanian WhatsApp message templates with enhanced branding
 const ALBANIAN_WHATSAPP_TEMPLATES = {
   verification: (code: string) => 
+    `Your verification code is: ${code}. Valid for 5 minutes. Do not share this code.`,
+  
+  verificationAlbanian: (code: string) => 
     `🔐 *Kodi i Verifikimit - ImiRezervimi.al*\n\n💎 Kodi juaj është: *${code}*\n\n⏰ Ky kod skadon brenda 5 minutave\n🔒 Mos e ndani këtë kod me askënd\n\n✨ *ImiRezervimi.al* - Platforma #1 për salona bukurie në Shqipëri\n📱 www.imirezervimi.al`,
   
   welcome: (name?: string) =>
@@ -238,7 +241,11 @@ export async function sendWhatsAppVerification(phone: string): Promise<WhatsAppV
     const isSandbox = isUsingSandbox();
     console.log('🏗️ WhatsApp mode:', isSandbox ? 'SANDBOX' : 'PRODUCTION');
     
-    const message = addSandboxDisclaimer(ALBANIAN_WHATSAPP_TEMPLATES.verification(code));
+    // Try simple English template first (more likely to be approved)
+    const useSimpleTemplate = process.env.WHATSAPP_USE_SIMPLE_TEMPLATE === 'true'
+    const message = useSimpleTemplate 
+      ? ALBANIAN_WHATSAPP_TEMPLATES.verification(code)
+      : addSandboxDisclaimer(ALBANIAN_WHATSAPP_TEMPLATES.verificationAlbanian(code));
     console.log('📝 Message prepared, length:', message.length);
     
     console.log('📤 Sending WhatsApp message...');
