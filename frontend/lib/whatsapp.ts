@@ -336,27 +336,11 @@ export async function sendWhatsAppVerification(phone: string): Promise<WhatsAppV
 
     const errorMessage = error instanceof Error ? error.message : 'Gabim në dërgimin e mesazhit në WhatsApp';
     
-    // If it's a template error and SMS fallback is enabled, try SMS
-    if (isTemplateError && process.env.USE_SMS_FALLBACK === 'true') {
-      console.log('🔄 WhatsApp template error detected, trying SMS fallback...');
-      try {
-        const smsResult = await sendSMSFallback(phone, code);
-        return smsResult;
-      } catch (smsError) {
-        console.error('❌ SMS fallback also failed:', smsError);
-        // Continue to regular error handling below
-      }
-    }
-    
-    // Also try SMS fallback for any WhatsApp error if enabled
-    if (process.env.USE_SMS_FALLBACK === 'true') {
-      console.log('🔄 WhatsApp failed, trying SMS fallback...');
-      try {
-        const smsResult = await sendSMSFallback(phone, code);
-        return smsResult;
-      } catch (smsError) {
-        console.error('❌ SMS fallback also failed:', smsError);
-      }
+    // Log specific template error for debugging
+    if (isTemplateError) {
+      console.error('🚨 WhatsApp Template Error 63016 detected');
+      console.error('   You need to create and approve a WhatsApp message template');
+      console.error('   Go to Twilio Console → Messaging → Content Template Builder');
     }
     
     // Log failed WhatsApp message
@@ -369,7 +353,7 @@ export async function sendWhatsAppVerification(phone: string): Promise<WhatsAppV
     return {
       success: false,
       error: isTemplateError 
-        ? 'WhatsApp kërkon miratim të template. Ju lutemi provoni përsëri më vonë ose kontaktoni mbeshtetjen.'
+        ? 'WhatsApp kërkon template të miratuar. Krijoni template në Twilio Console → Content Template Builder.'
         : 'Gabim në dërgimin e mesazhit në WhatsApp. Provoni përsëri.',
     };
   }
@@ -586,49 +570,6 @@ async function logWhatsAppNotification(data: {
   }
 }
 
-/**
- * SMS Fallback function when WhatsApp templates fail
- */
-async function sendSMSFallback(phone: string, code: string): Promise<WhatsAppVerificationResult> {
-  try {
-    console.log('📱 Attempting SMS fallback for:', phone);
-    
-    const client = initializeTwilio();
-    const smsNumber = process.env.TWILIO_PHONE_NUMBER;
-    
-    if (!smsNumber) {
-      throw new Error('TWILIO_PHONE_NUMBER not configured for SMS fallback');
-    }
-    
-    const message = `Your ImiRezervimi.al verification code is: ${code}. Valid for 5 minutes. Do not share this code.`;
-    
-    const result = await client.messages.create({
-      body: message,
-      from: smsNumber,
-      to: phone,
-    });
-    
-    console.log('✅ SMS fallback sent successfully:', result.sid);
-    
-    // Log successful SMS fallback
-    await logWhatsAppNotification({
-      phone,
-      code,
-      twilioSid: result.sid,
-      status: 'sent',
-      error: 'WhatsApp failed, SMS fallback used'
-    });
-    
-    return {
-      success: true,
-      messageSid: result.sid,
-    };
-    
-  } catch (error) {
-    console.error('❌ SMS fallback error:', error);
-    throw error;
-  }
-}
 
 /**
  * Check if a phone number is verified via WhatsApp
