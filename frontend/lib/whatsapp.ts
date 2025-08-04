@@ -340,7 +340,20 @@ export async function sendWhatsAppVerification(phone: string): Promise<WhatsAppV
     if (isTemplateError && process.env.USE_SMS_FALLBACK === 'true') {
       console.log('🔄 WhatsApp template error detected, trying SMS fallback...');
       try {
-        return await sendSMSFallback(phone, code);
+        const smsResult = await sendSMSFallback(phone, code);
+        return smsResult;
+      } catch (smsError) {
+        console.error('❌ SMS fallback also failed:', smsError);
+        // Continue to regular error handling below
+      }
+    }
+    
+    // Also try SMS fallback for any WhatsApp error if enabled
+    if (process.env.USE_SMS_FALLBACK === 'true') {
+      console.log('🔄 WhatsApp failed, trying SMS fallback...');
+      try {
+        const smsResult = await sendSMSFallback(phone, code);
+        return smsResult;
       } catch (smsError) {
         console.error('❌ SMS fallback also failed:', smsError);
       }
