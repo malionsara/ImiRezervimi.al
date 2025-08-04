@@ -29,6 +29,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     TWILIO_ACCOUNT_SID: !!process.env.TWILIO_ACCOUNT_SID,
     TWILIO_AUTH_TOKEN: !!process.env.TWILIO_AUTH_TOKEN,
     TWILIO_WHATSAPP_NUMBER: !!process.env.TWILIO_WHATSAPP_NUMBER,
+    TWILIO_MESSAGING_SERVICE_SID: !!process.env.TWILIO_MESSAGING_SERVICE_SID,
+    TWILIO_PHONE_NUMBER: !!process.env.TWILIO_PHONE_NUMBER,
     
     // Environment info
     NODE_ENV: process.env.NODE_ENV,
@@ -43,13 +45,25 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     ADMIN_SECRET_KEY: process.env.ADMIN_SECRET_KEY?.substring(0, 4) + '...',
     TWILIO_ACCOUNT_SID: process.env.TWILIO_ACCOUNT_SID?.substring(0, 4) + '...',
     TWILIO_AUTH_TOKEN: process.env.TWILIO_AUTH_TOKEN?.substring(0, 4) + '...',
-    TWILIO_WHATSAPP_NUMBER: process.env.TWILIO_WHATSAPP_NUMBER
+    TWILIO_WHATSAPP_NUMBER: process.env.TWILIO_WHATSAPP_NUMBER,
+    TWILIO_MESSAGING_SERVICE_SID: process.env.TWILIO_MESSAGING_SERVICE_SID?.substring(0, 4) + '...',
+    TWILIO_PHONE_NUMBER: process.env.TWILIO_PHONE_NUMBER
+  }
+
+  // WhatsApp-specific analysis
+  const whatsappAnalysis = {
+    isUsingSandbox: process.env.TWILIO_WHATSAPP_NUMBER?.includes('14155238886') || false,
+    numberFormat: process.env.TWILIO_WHATSAPP_NUMBER ? 'valid' : 'missing',
+    hasMessagingService: !!process.env.TWILIO_MESSAGING_SERVICE_SID,
+    environment: process.env.NODE_ENV,
+    isVercelProduction: process.env.VERCEL_ENV === 'production'
   }
 
   return res.status(200).json({
     message: 'Environment variable status',
     status: envStatus,
     values: envValues,
+    whatsappAnalysis,
     timestamp: new Date().toISOString()
   })
 }

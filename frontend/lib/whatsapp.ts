@@ -17,16 +17,29 @@ let twilioClient: Twilio | null = null;
 function initializeTwilio(): Twilio {
   if (!twilioClient) {
     try {
-      // For now, allow sandbox number in production for testing
       const accountSid = process.env.TWILIO_ACCOUNT_SID;
       const authToken = process.env.TWILIO_AUTH_TOKEN;
+      const whatsappNumber = process.env.TWILIO_WHATSAPP_NUMBER;
+      const messagingServiceSid = process.env.TWILIO_MESSAGING_SERVICE_SID;
+      
+      console.log('🔧 Twilio Configuration Check:');
+      console.log(`   Account SID: ${accountSid ? accountSid.substring(0, 10) + '...' : 'MISSING'}`);
+      console.log(`   Auth Token: ${authToken ? '[SET]' : 'MISSING'}`);
+      console.log(`   WhatsApp Number: ${whatsappNumber || 'MISSING'}`);
+      console.log(`   Messaging Service SID: ${messagingServiceSid || 'NOT SET (optional)'}`);
       
       if (!accountSid || !authToken) {
         throw new Error('TWILIO_ACCOUNT_SID and TWILIO_AUTH_TOKEN are required');
       }
       
+      if (!whatsappNumber) {
+        throw new Error('TWILIO_WHATSAPP_NUMBER is required for WhatsApp messaging');
+      }
+      
       twilioClient = new Twilio(accountSid, authToken);
+      console.log('✅ Twilio client initialized successfully');
     } catch (error) {
+      console.error('❌ Twilio initialization failed:', error);
       throw new Error(`Failed to initialize Twilio: ${(error as Error).message}`);
     }
   }
@@ -69,16 +82,30 @@ const ALBANIAN_WHATSAPP_TEMPLATES = {
  */
 function isUsingSandbox(): boolean {
   const whatsappNumber = process.env.TWILIO_WHATSAPP_NUMBER;
-  return whatsappNumber?.includes('14155238886') || false;
+  // Sandbox uses the Twilio test number +14155238886
+  // Production should use your actual WhatsApp Business number
+  const isSandbox = whatsappNumber?.includes('14155238886') || false;
+  console.log(`📋 WhatsApp Mode Detection:`);
+  console.log(`   Number: ${whatsappNumber}`);
+  console.log(`   Is Sandbox: ${isSandbox}`);
+  console.log(`   Environment: ${process.env.NODE_ENV}`);
+  return isSandbox;
 }
 
 /**
  * Add sandbox disclaimer to messages in development
  */
 function addSandboxDisclaimer(message: string): string {
-  if (isUsingSandbox() && process.env.NODE_ENV !== 'production') {
+  const isSandbox = isUsingSandbox();
+  console.log(`📝 Message processing:`);
+  console.log(`   Is Sandbox: ${isSandbox}`);
+  console.log(`   NODE_ENV: ${process.env.NODE_ENV}`);
+  
+  if (isSandbox) {
+    console.log(`   Adding sandbox disclaimer`);
     return message + '\n\n💡 _Mesazhi dërgohet nga Twilio Sandbox për teste_';
   }
+  console.log(`   Using production message (no disclaimer)`);
   return message;
 }
 
@@ -156,53 +183,93 @@ export async function storeWhatsAppVerificationCode(
  */
 export async function sendWhatsAppVerification(phone: string): Promise<WhatsAppVerificationResult> {
   try {
+    console.log('🚀 Starting WhatsApp verification process for:', phone);
+    
     // Validate Albanian phone number
     if (!isValidAlbanianPhone(phone)) {
+      console.log('❌ Invalid Albanian phone number format:', phone);
       return {
         success: false,
         error: 'Numri i telefonit duhet të jetë në formatin +355XXXXXXXX',
       };
     }
+    console.log('✅ Phone number format validated');
 
     // Check rate limiting (1 message per minute)
     const isRateLimited = await checkWhatsAppRateLimit(phone);
     if (isRateLimited) {
+      console.log('⏱️ Rate limited for phone:', phone);
       return {
         success: false,
         error: 'Duhet të prisni 1 minutë para se të kërkoni një kod tjetër',
       };
     }
+    console.log('✅ Rate limit check passed');
 
     // Generate verification code
     const code = generateVerificationCode();
+    console.log('🔢 Generated verification code:', code);
 
     // Store in database
     const recordId = await storeWhatsAppVerificationCode(phone, code);
     if (!recordId) {
+      console.log('❌ Failed to store verification code in database');
       return {
         success: false,
         error: 'Gabim në ruajtjen e kodit të verifikimit',
       };
     }
+    console.log('✅ Verification code stored in database with ID:', recordId);
 
     // Initialize Twilio and send WhatsApp message
+    console.log('🔧 Initializing Twilio client...');
     const client = initializeTwilio();
     
     // Get the WhatsApp phone number from environment
     const whatsappPhoneNumber = process.env.TWILIO_WHATSAPP_NUMBER;
+    console.log('📱 Using WhatsApp number:', whatsappPhoneNumber);
+    
     if (!whatsappPhoneNumber) {
+      console.log('❌ TWILIO_WHATSAPP_NUMBER environment variable not set');
       throw new Error('TWILIO_WHATSAPP_NUMBER not configured for WhatsApp');
     }
 
-    const message = addSandboxDisclaimer(ALBANIAN_WHATSAPP_TEMPLATES.verification(code));
+    // Check if using sandbox or production
+    const isSandbox = isUsingSandbox();
+    console.log('🏗️ WhatsApp mode:', isSandbox ? 'SANDBOX' : 'PRODUCTION');
     
-    console.log(`Sending WhatsApp verification to ${phone}: ${code}`);
+    const message = addSandboxDisclaimer(ALBANIAN_WHATSAPP_TEMPLATES.verification(code));
+    console.log('📝 Message prepared, length:', message.length);
+    
+    console.log('📤 Sending WhatsApp message...');
+    console.log('   From:', `whatsapp:${whatsappPhoneNumber}`);
+    console.log('   To:', `whatsapp:${phone}`);
+    console.log('   Code:', code);
 
-    const result = await client.messages.create({
+    // Check if we should use messaging service or direct number
+    const messagingServiceSid = process.env.TWILIO_MESSAGING_SERVICE_SID;
+    let messageOptions: any = {
       body: message,
-      from: `whatsapp:${whatsappPhoneNumber}`,
       to: `whatsapp:${phone}`,
-    });
+    };
+
+    if (messagingServiceSid) {
+      console.log('📡 Using Messaging Service SID:', messagingServiceSid);
+      messageOptions.messagingServiceSid = messagingServiceSid;
+    } else {
+      console.log('📱 Using direct WhatsApp number');
+      messageOptions.from = `whatsapp:${whatsappPhoneNumber}`;
+    }
+
+    console.log('📄 Message options:', JSON.stringify(messageOptions, null, 2));
+
+    const result = await client.messages.create(messageOptions);
+
+    console.log('✅ WhatsApp message sent successfully!');
+    console.log('   Twilio SID:', result.sid);
+    console.log('   Status:', result.status);
+    console.log('   Error Code:', result.errorCode);
+    console.log('   Error Message:', result.errorMessage);
 
     // Log successful WhatsApp message
     await logWhatsAppNotification({
@@ -219,7 +286,17 @@ export async function sendWhatsAppVerification(phone: string): Promise<WhatsAppV
     };
 
   } catch (error: unknown) {
-    console.error('WhatsApp send error:', error);
+    console.error('❌ WhatsApp send error details:');
+    console.error('   Error type:', typeof error);
+    console.error('   Error message:', error instanceof Error ? error.message : 'Unknown error');
+    console.error('   Full error:', error);
+    
+    // Additional Twilio-specific error logging
+    if (error && typeof error === 'object' && 'code' in error) {
+      console.error('   Twilio Error Code:', (error as any).code);
+      console.error('   Twilio Error Details:', (error as any).details);
+      console.error('   Twilio More Info:', (error as any).moreInfo);
+    }
 
     const errorMessage = error instanceof Error ? error.message : 'Gabim në dërgimin e mesazhit në WhatsApp';
     
