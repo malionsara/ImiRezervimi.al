@@ -253,19 +253,44 @@ export async function sendWhatsAppVerification(phone: string): Promise<WhatsAppV
     console.log('   To:', `whatsapp:${phone}`);
     console.log('   Code:', code);
 
-    // Check if we should use messaging service or direct number
+    // Check if we should use WhatsApp Message Templates (required for production)
+    const useMessageTemplate = process.env.WHATSAPP_USE_MESSAGE_TEMPLATE === 'true';
+    const templateSid = process.env.WHATSAPP_TEMPLATE_SID; // Template SID from Twilio Console
     const messagingServiceSid = process.env.TWILIO_MESSAGING_SERVICE_SID;
-    let messageOptions: any = {
-      body: message,
-      to: `whatsapp:${phone}`,
-    };
-
-    if (messagingServiceSid) {
-      console.log('📡 Using Messaging Service SID:', messagingServiceSid);
-      messageOptions.messagingServiceSid = messagingServiceSid;
+    
+    let messageOptions: any;
+    
+    if (useMessageTemplate && templateSid) {
+      console.log('📋 Using WhatsApp Message Template:', templateSid);
+      // Use approved message template
+      messageOptions = {
+        to: `whatsapp:${phone}`,
+        contentSid: templateSid,
+        contentVariables: JSON.stringify({
+          "1": code // The verification code variable
+        })
+      };
+      
+      if (messagingServiceSid) {
+        messageOptions.messagingServiceSid = messagingServiceSid;
+      } else {
+        messageOptions.from = `whatsapp:${whatsappPhoneNumber}`;
+      }
     } else {
-      console.log('📱 Using direct WhatsApp number');
-      messageOptions.from = `whatsapp:${whatsappPhoneNumber}`;
+      console.log('📝 Using freeform message (may fail in production)');
+      // Fallback to freeform message (will likely fail in production)
+      messageOptions = {
+        body: message,
+        to: `whatsapp:${phone}`,
+      };
+
+      if (messagingServiceSid) {
+        console.log('📡 Using Messaging Service SID:', messagingServiceSid);
+        messageOptions.messagingServiceSid = messagingServiceSid;
+      } else {
+        console.log('📱 Using direct WhatsApp number');
+        messageOptions.from = `whatsapp:${whatsappPhoneNumber}`;
+      }
     }
 
     console.log('📄 Message options:', JSON.stringify(messageOptions, null, 2));
@@ -299,13 +324,27 @@ export async function sendWhatsAppVerification(phone: string): Promise<WhatsAppV
     console.error('   Full error:', error);
     
     // Additional Twilio-specific error logging
+    let isTemplateError = false;
     if (error && typeof error === 'object' && 'code' in error) {
       console.error('   Twilio Error Code:', (error as any).code);
       console.error('   Twilio Error Details:', (error as any).details);
       console.error('   Twilio More Info:', (error as any).moreInfo);
+      
+      // Check if it's the template error (63016)
+      isTemplateError = (error as any).code === 63016;
     }
 
     const errorMessage = error instanceof Error ? error.message : 'Gabim në dërgimin e mesazhit në WhatsApp';
+    
+    // If it's a template error and SMS fallback is enabled, try SMS
+    if (isTemplateError && process.env.USE_SMS_FALLBACK === 'true') {
+      console.log('🔄 WhatsApp template error detected, trying SMS fallback...');
+      try {
+        return await sendSMSFallback(phone, code);
+      } catch (smsError) {
+        console.error('❌ SMS fallback also failed:', smsError);
+      }
+    }
     
     // Log failed WhatsApp message
     await logWhatsAppNotification({
@@ -316,7 +355,9 @@ export async function sendWhatsAppVerification(phone: string): Promise<WhatsAppV
 
     return {
       success: false,
-      error: 'Gabim në dërgimin e mesazhit në WhatsApp. Provoni përsëri.',
+      error: isTemplateError 
+        ? 'WhatsApp kërkon miratim të template. Ju lutemi provoni përsëri më vonë ose kontaktoni mbeshtetjen.'
+        : 'Gabim në dërgimin e mesazhit në WhatsApp. Provoni përsëri.',
     };
   }
 }
@@ -529,6 +570,50 @@ async function logWhatsAppNotification(data: {
     });
   } catch (error) {
     console.error('Error logging WhatsApp notification:', error);
+  }
+}
+
+/**
+ * SMS Fallback function when WhatsApp templates fail
+ */
+async function sendSMSFallback(phone: string, code: string): Promise<WhatsAppVerificationResult> {
+  try {
+    console.log('📱 Attempting SMS fallback for:', phone);
+    
+    const client = initializeTwilio();
+    const smsNumber = process.env.TWILIO_PHONE_NUMBER;
+    
+    if (!smsNumber) {
+      throw new Error('TWILIO_PHONE_NUMBER not configured for SMS fallback');
+    }
+    
+    const message = `Your ImiRezervimi.al verification code is: ${code}. Valid for 5 minutes. Do not share this code.`;
+    
+    const result = await client.messages.create({
+      body: message,
+      from: smsNumber,
+      to: phone,
+    });
+    
+    console.log('✅ SMS fallback sent successfully:', result.sid);
+    
+    // Log successful SMS fallback
+    await logWhatsAppNotification({
+      phone,
+      code,
+      twilioSid: result.sid,
+      status: 'sent',
+      error: 'WhatsApp failed, SMS fallback used'
+    });
+    
+    return {
+      success: true,
+      messageSid: result.sid,
+    };
+    
+  } catch (error) {
+    console.error('❌ SMS fallback error:', error);
+    throw error;
   }
 }
 
