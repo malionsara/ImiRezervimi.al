@@ -22,17 +22,22 @@ Template Body:
 Your verification code is {{1}}. Valid for 5 minutes. Do not share this code.
 ```
 
+**Important**: The `{{1}}` is a placeholder that will be replaced with your actual verification code.
+
 ## 🚀 **Step 3: Submit for Approval**
 
 1. **Click**: "Save and submit for WhatsApp approval"
 2. **Select Category**: AUTHENTICATION
 3. **Wait**: 5 minutes to 24 hours for approval
 
-## 🔑 **Step 4: Get Template SID**
+## 🔑 **Step 4: Check Template Status & Get SID**
 
-1. **After approval**, go back to Content Template Builder
-2. **Find your template** in the list
-3. **Copy the ContentSID** (starts with `HX...`)
+1. **Go back to**: Twilio Console → Messaging → Content Template Builder
+2. **Check Status**:
+   - **Approved** ✅ = Ready to use
+   - **Pending** ⏳ = Still under review (wait)
+   - **Rejected** ❌ = Need to fix and resubmit
+3. **Once Approved**: Copy the **ContentSID** (starts with `HX...`)
 
 ## 🌐 **Step 5: Update Vercel Environment Variables**
 

@@ -262,7 +262,9 @@ export async function sendWhatsAppVerification(phone: string): Promise<WhatsAppV
     
     if (useMessageTemplate && templateSid) {
       console.log('📋 Using WhatsApp Message Template:', templateSid);
-      // Use approved message template
+      console.log('🔢 Template variables:', { "1": code });
+      
+      // Use approved message template - Correct Twilio format
       messageOptions = {
         to: `whatsapp:${phone}`,
         contentSid: templateSid,
@@ -271,14 +273,19 @@ export async function sendWhatsAppVerification(phone: string): Promise<WhatsAppV
         })
       };
       
+      // Add messaging service or from number
       if (messagingServiceSid) {
+        console.log('📡 Using Messaging Service SID:', messagingServiceSid);
         messageOptions.messagingServiceSid = messagingServiceSid;
       } else {
+        console.log('📱 Using direct WhatsApp number:', whatsappPhoneNumber);
         messageOptions.from = `whatsapp:${whatsappPhoneNumber}`;
       }
     } else {
-      console.log('📝 Using freeform message (may fail in production)');
-      // Fallback to freeform message (will likely fail in production)
+      console.log('⚠️ WARNING: Using freeform message - will fail in production with Error 63016');
+      console.log('📝 Set WHATSAPP_USE_MESSAGE_TEMPLATE=true and provide WHATSAPP_TEMPLATE_SID');
+      
+      // Fallback to freeform message (will fail in production with Error 63016)
       messageOptions = {
         body: message,
         to: `whatsapp:${phone}`,
@@ -288,7 +295,7 @@ export async function sendWhatsAppVerification(phone: string): Promise<WhatsAppV
         console.log('📡 Using Messaging Service SID:', messagingServiceSid);
         messageOptions.messagingServiceSid = messagingServiceSid;
       } else {
-        console.log('📱 Using direct WhatsApp number');
+        console.log('📱 Using direct WhatsApp number:', whatsappPhoneNumber);
         messageOptions.from = `whatsapp:${whatsappPhoneNumber}`;
       }
     }
@@ -339,8 +346,13 @@ export async function sendWhatsAppVerification(phone: string): Promise<WhatsAppV
     // Log specific template error for debugging
     if (isTemplateError) {
       console.error('🚨 WhatsApp Template Error 63016 detected');
-      console.error('   You need to create and approve a WhatsApp message template');
-      console.error('   Go to Twilio Console → Messaging → Content Template Builder');
+      console.error('   SOLUTION: Create approved WhatsApp message template');
+      console.error('   1. Go to Twilio Console → Messaging → Content Template Builder');
+      console.error('   2. Create template: "Your verification code is {{1}}. Valid for 5 minutes."');
+      console.error('   3. Category: AUTHENTICATION');
+      console.error('   4. Submit for approval (5min-24hrs)');
+      console.error('   5. Add ContentSid to WHATSAPP_TEMPLATE_SID environment variable');
+      console.error('   6. Set WHATSAPP_USE_MESSAGE_TEMPLATE=true');
     }
     
     // Log failed WhatsApp message
