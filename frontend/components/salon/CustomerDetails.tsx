@@ -68,10 +68,6 @@ export default function CustomerDetails({ customer, onClose }: CustomerDetailsPr
   // ==============================================
   // DATA LOADING
   // ==============================================
-  useEffect(() => {
-    loadCustomerHistory()
-  }, [customer.id, loadCustomerHistory])
-
   const loadCustomerHistory = useCallback(async () => {
     try {
       setLoading(true)
@@ -127,6 +123,10 @@ export default function CustomerDetails({ customer, onClose }: CustomerDetailsPr
       setLoading(false)
     }
   }, [customer.totalVisits, customer.rating])
+
+  useEffect(() => {
+    loadCustomerHistory()
+  }, [customer.id, loadCustomerHistory])
 
   // ==============================================
   // HELPER FUNCTIONS
