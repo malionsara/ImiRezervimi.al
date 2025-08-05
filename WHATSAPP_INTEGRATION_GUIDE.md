@@ -227,5 +227,5 @@ Your WhatsApp integration is now fully functional! 🚀
 
 ---
 
-**Generated with Claude Code** 🤖  
+**Generated with Claude Code by Malion Sara** 🤖  
 **Co-Authored-By:** Claude <noreply@anthropic.com>
