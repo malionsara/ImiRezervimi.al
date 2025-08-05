@@ -13,7 +13,7 @@ import {
   AppointmentUpdateData,
   isValidUUID,
 } from '../../../../lib/validation';
-import { sendNotification } from '../../../../lib/twilio';
+import { sendWhatsAppTemplate } from '../../../../lib/whatsapp';
 import { AppointmentRow } from '../../../../types/database';
 
 interface ApiResponse {
@@ -262,14 +262,14 @@ async function sendCustomerNotification(
 
     // Send appropriate notification based on status
     if (newStatus === 'approved') {
-      await sendNotification('booking_approved', customerPhone, {
+      await sendWhatsAppTemplate(customerPhone, 'BOOKING_APPROVED', {
         salonName: appointment.salon.name,
         date: appointmentDate,
         time: appointment.start_time
       });
       console.log(`✅ WhatsApp notification sent to ${customerPhone} for status: ${newStatus}`);
     } else if (newStatus === 'declined') {
-      await sendNotification('booking_declined', customerPhone, {
+      await sendWhatsAppTemplate(customerPhone, 'BOOKING_DECLINED', {
         salonName: appointment.salon.name,
         reason: appointment.salon_notes || 'Nuk ka vende të lira për këtë kohë'
       });

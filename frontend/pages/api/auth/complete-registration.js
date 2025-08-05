@@ -135,8 +135,10 @@ export default async function handler(req, res) {
 
     // Send welcome WhatsApp message
     try {
-      const { sendWhatsAppWelcome } = await import('../../../lib/whatsapp')
-      await sendWhatsAppWelcome(phoneNumber, userData.name)
+      const { sendWhatsAppTemplate } = await import('../../../lib/whatsapp')
+      await sendWhatsAppTemplate(phoneNumber, 'WELCOME_MESSAGE', {
+        firstName: userData.name
+      })
       console.log('✅ Welcome WhatsApp message sent')
     } catch (error) {
       console.error('⚠️ Welcome WhatsApp message failed:', error)

@@ -17,14 +17,12 @@ export interface WhatsAppTemplate {
 
 export type TemplateKey = 
   | 'VERIFICATION_CODE'
-  | 'APPOINTMENT_CONFIRMATION'
-  | 'APPOINTMENT_DECLINED'
+  | 'BOOKING_CONFIRMATION'
+  | 'BOOKING_APPROVED'
+  | 'BOOKING_DECLINED'
   | 'APPOINTMENT_REMINDER'
-  | 'APPOINTMENT_CANCELLED'
-  | 'SALON_NEW_BOOKING_REQUEST'
-  | 'WELCOME_NEW_CUSTOMER'
-  | 'SPECIAL_OFFERS'
-  | 'PAYMENT_CONFIRMATION';
+  | 'SALON_NEW_REQUEST'
+  | 'WELCOME_MESSAGE';
 
 // ==============================================
 // WHATSAPP TEMPLATES CONFIGURATION
@@ -34,90 +32,70 @@ export const WHATSAPP_TEMPLATES: Record<TemplateKey, WhatsAppTemplate> = {
     id: 'verification_code',
     name: 'Verification Code',
     albanianName: 'Kodi i Verifikimit',
-    contentSid: 'HX8a5c6361c10e7378b58f0d8e40e92b46', // Your approved template
+    contentSid: 'HX8a5c6361c10e7378b38f0d8e40e92b46',
     category: 'AUTHENTICATION',
     variables: ['code'],
     description: 'Phone number verification code for registration'
   },
 
-  APPOINTMENT_CONFIRMATION: {
-    id: 'appointment_confirmation',
-    name: 'Appointment Confirmation',
+  BOOKING_CONFIRMATION: {
+    id: 'booking_confirmation',
+    name: 'Booking Confirmation',
     albanianName: 'Konfirmimi i Rezervimit',
-    contentSid: process.env.TEMPLATE_APPOINTMENT_CONFIRMATION || '', // To be set after creation
+    contentSid: 'HX068fc2360d9ac6fb1306c00caac87571',
     category: 'UTILITY',
-    variables: ['salonName', 'date', 'time'],
-    description: 'Confirm appointment booking to customer'
+    variables: ['salonName', 'date', 'time', 'service'],
+    description: 'Customer booking request confirmation'
   },
 
-  APPOINTMENT_DECLINED: {
-    id: 'appointment_declined',
-    name: 'Appointment Declined',
-    albanianName: 'Rezervimi i Refuzuar',
-    contentSid: process.env.TEMPLATE_APPOINTMENT_DECLINED || '',
+  BOOKING_APPROVED: {
+    id: 'booking_approved',
+    name: 'Booking Approved',
+    albanianName: 'Rezervimi u Konfirmua',
+    contentSid: 'HXdc5b2a3f9b49618d0add658806b61e54',
     category: 'UTILITY',
-    variables: ['salonName', 'dateTime', 'reason'],
-    description: 'Notify customer of declined appointment'
+    variables: ['salonName', 'date', 'time'],
+    description: 'Appointment approved notification'
+  },
+
+  BOOKING_DECLINED: {
+    id: 'booking_declined',
+    name: 'Booking Declined',
+    albanianName: 'Rezervimi i Refuzuar',
+    contentSid: 'HX12dd964632817b691984678661f2b8e',
+    category: 'UTILITY',
+    variables: ['salonName', 'reason'],
+    description: 'Appointment declined notification'
   },
 
   APPOINTMENT_REMINDER: {
     id: 'appointment_reminder',
     name: 'Appointment Reminder',
     albanianName: 'Kujtesë Rezervimi',
-    contentSid: process.env.TEMPLATE_APPOINTMENT_REMINDER || '',
+    contentSid: 'HXdc77b8445736ab802da7ee23c9c86f9a',
     category: 'UTILITY',
-    variables: ['salonName', 'time'],
+    variables: ['time', 'salonName', 'date'],
     description: '24-hour appointment reminder'
   },
 
-  APPOINTMENT_CANCELLED: {
-    id: 'appointment_cancelled',
-    name: 'Appointment Cancelled',
-    albanianName: 'Rezervimi i Anuluar',
-    contentSid: process.env.TEMPLATE_APPOINTMENT_CANCELLED || '',
-    category: 'UTILITY',
-    variables: ['salonName', 'dateTime', 'reason'],
-    description: 'Notify customer of cancelled appointment'
-  },
-
-  SALON_NEW_BOOKING_REQUEST: {
-    id: 'salon_new_booking_request',
-    name: 'New Booking Request (Salon)',
+  SALON_NEW_REQUEST: {
+    id: 'salon_new_request',
+    name: 'New Request (Salon)',
     albanianName: 'Kërkesë e Re (Salon)',
-    contentSid: process.env.TEMPLATE_SALON_NEW_BOOKING || '',
+    contentSid: 'HX69ac5b29688b6061b380a0450ccf3048',
     category: 'UTILITY',
-    variables: ['firstName', 'lastName', 'service', 'date', 'time'],
+    variables: ['customerName', 'service', 'date', 'time', 'phone'],
     description: 'Notify salon of new booking request'
   },
 
-  WELCOME_NEW_CUSTOMER: {
-    id: 'welcome_new_customer',
-    name: 'Welcome New Customer',
+  WELCOME_MESSAGE: {
+    id: 'welcome_message',
+    name: 'Welcome Message',
     albanianName: 'Mirë se vini',
-    contentSid: process.env.TEMPLATE_WELCOME_CUSTOMER || '',
-    category: 'MARKETING',
-    variables: ['customerName'],
-    description: 'Welcome message for new customers'
-  },
-
-  SPECIAL_OFFERS: {
-    id: 'special_offers',
-    name: 'Special Offers',
-    albanianName: 'Oferta Speciale',
-    contentSid: process.env.TEMPLATE_SPECIAL_OFFERS || '',
-    category: 'MARKETING',
-    variables: ['offerDescription', 'discountPercentage', 'expiryDate'],
-    description: 'Send special offers and promotions'
-  },
-
-  PAYMENT_CONFIRMATION: {
-    id: 'payment_confirmation',
-    name: 'Payment Confirmation',
-    albanianName: 'Konfirmimi i Pagesës',
-    contentSid: process.env.TEMPLATE_PAYMENT_CONFIRMATION || '',
+    contentSid: 'HX47e57b1104c259ba744777af81d56c5a',
     category: 'UTILITY',
-    variables: ['amount', 'service', 'salonName', 'invoiceNumber'],
-    description: 'Confirm payment for appointments'
+    variables: ['firstName'],
+    description: 'Welcome message for new customers'
   }
 };
 
@@ -235,29 +213,83 @@ export function getVerificationCodeTemplate(code: string) {
 }
 
 /**
- * Example usage for appointment confirmation
+ * Example usage for booking confirmation
  */
-export function getAppointmentConfirmationTemplate(
+export function getBookingConfirmationTemplate(
+  salonName: string, 
+  date: string, 
+  time: string,
+  service: string
+) {
+  return {
+    templateKey: 'BOOKING_CONFIRMATION' as TemplateKey,
+    variables: { salonName, date, time, service }
+  };
+}
+
+/**
+ * Example usage for booking approved
+ */
+export function getBookingApprovedTemplate(
   salonName: string, 
   date: string, 
   time: string
 ) {
   return {
-    templateKey: 'APPOINTMENT_CONFIRMATION' as TemplateKey,
+    templateKey: 'BOOKING_APPROVED' as TemplateKey,
     variables: { salonName, date, time }
   };
 }
 
 /**
- * Example usage for appointment declined
+ * Example usage for booking declined
  */
-export function getAppointmentDeclinedTemplate(
+export function getBookingDeclinedTemplate(
   salonName: string, 
-  dateTime: string, 
   reason: string
 ) {
   return {
-    templateKey: 'APPOINTMENT_DECLINED' as TemplateKey,
-    variables: { salonName, dateTime, reason }
+    templateKey: 'BOOKING_DECLINED' as TemplateKey,
+    variables: { salonName, reason }
+  };
+}
+
+/**
+ * Example usage for appointment reminder
+ */
+export function getAppointmentReminderTemplate(
+  time: string,
+  salonName: string, 
+  date: string
+) {
+  return {
+    templateKey: 'APPOINTMENT_REMINDER' as TemplateKey,
+    variables: { time, salonName, date }
+  };
+}
+
+/**
+ * Example usage for salon new request
+ */
+export function getSalonNewRequestTemplate(
+  customerName: string,
+  service: string,
+  date: string,
+  time: string,
+  phone: string
+) {
+  return {
+    templateKey: 'SALON_NEW_REQUEST' as TemplateKey,
+    variables: { customerName, service, date, time, phone }
+  };
+}
+
+/**
+ * Example usage for welcome message
+ */
+export function getWelcomeMessageTemplate(firstName: string) {
+  return {
+    templateKey: 'WELCOME_MESSAGE' as TemplateKey,
+    variables: { firstName }
   };
 }

@@ -10,7 +10,7 @@ import {
   createValidationError,
   createBusinessRuleError
 } from '../../../lib/validation'
-import { sendNotification } from '../../../lib/twilio'
+import { sendWhatsAppTemplate } from '../../../lib/whatsapp'
 import {
   checkRateLimit,
   findOrCreateCustomer,
@@ -197,9 +197,21 @@ export default async function handler(
     // ==============================================
     console.log(`✅ Appointment created successfully: ${appointment.id}`)
     
-    // TODO: Send WhatsApp notifications (requires joined data)
-    // sendCustomerConfirmation and sendSalonNotification need proper joined data
-    console.log('Notifications disabled temporarily for build compatibility')
+    // Send WhatsApp notifications
+    try {
+      // Send customer confirmation
+      await sendCustomerConfirmation(
+        { ...appointment, customer: { phone: customer.phone } },
+        salon,
+        service
+      )
+      
+      // Send salon notification
+      await sendSalonNotification(appointment, salon, customer, service)
+    } catch (notificationError) {
+      console.error('❌ Failed to send notifications:', notificationError)
+      // Don't fail the request if notifications fail
+    }
 
     return res.status(201).json({
       success: true,
@@ -240,7 +252,8 @@ export default async function handler(
  */
 async function sendCustomerConfirmation(
   appointment: AppointmentRow & { customer: { phone: string } },
-  salon: SalonRow
+  salon: SalonRow,
+  service: ServiceRow
 ): Promise<void> {
   try {
     const customerPhone = appointment.customer.phone
@@ -250,10 +263,11 @@ async function sendCustomerConfirmation(
       year: 'numeric'
     })
     
-    await sendNotification('booking_request', customerPhone, {
+    await sendWhatsAppTemplate(customerPhone, 'BOOKING_CONFIRMATION', {
       salonName: salon.name,
       date: appointmentDate,
-      time: appointment.start_time
+      time: appointment.start_time,
+      service: service.name
     })
     
     console.log(`✅ Customer confirmation sent to ${customerPhone}`)
@@ -286,11 +300,12 @@ async function sendSalonNotification(
       year: 'numeric'
     })
     
-    await sendNotification('new_request_salon', salonPhone, {
+    await sendWhatsAppTemplate(salonPhone, 'SALON_NEW_REQUEST', {
       customerName,
       service: service.name,
       date: appointmentDate,
-      time: appointment.start_time
+      time: appointment.start_time,
+      phone: customer.phone
     })
     
     console.log(`✅ Salon notification sent to ${salonPhone}`)

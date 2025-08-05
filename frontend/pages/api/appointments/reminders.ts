@@ -4,7 +4,7 @@
 
 import { NextApiRequest, NextApiResponse } from 'next';
 import { supabaseAdmin } from '../../../lib/appointments';
-import { sendNotification } from '../../../lib/twilio';
+import { sendWhatsAppTemplate } from '../../../lib/whatsapp';
 
 interface CustomerData {
   first_name: string;
@@ -151,10 +151,10 @@ export default async function handler(
         });
 
         // Send reminder notification
-        await sendNotification('reminder_24h', customerPhone, {
+        await sendWhatsAppTemplate(customerPhone, 'APPOINTMENT_REMINDER', {
+          time: appointment.start_time,
           salonName: salon?.name || 'Salloni',
-          date: appointmentDate,
-          time: appointment.start_time
+          date: appointmentDate
         });
 
         // Mark reminder as sent
