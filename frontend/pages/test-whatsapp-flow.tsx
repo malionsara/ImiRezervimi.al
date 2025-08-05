@@ -81,10 +81,10 @@ export default function TestWhatsAppFlow() {
               <h2 className="font-semibold text-blue-900 mb-2">📋 Si të testoni:</h2>
               <ol className="list-decimal list-inside text-blue-800 space-y-1">
                 <li>Sigurohuni që numri juaj i WhatsApp është i lidhur me Twilio Sandbox</li>
-                <li>Dërgoni "join [sandbox-name]" te +14155238886</li>
+                <li>Dërgoni &quot;join [sandbox-name]&quot; te +14155238886</li>
                 <li>Vendosni numrin tuaj të telefonit më poshtë</li>
                 <li>Zgjidhni llojin e testit që doni të ekzekutoni</li>
-                <li>Klikoni "Fillo Testet" dhe kontrolloni WhatsApp-in tuaj</li>
+                <li>Klikoni &quot;Fillo Testet&quot; dhe kontrolloni WhatsApp-in tuaj</li>
               </ol>
             </div>
 

@@ -9,7 +9,7 @@ interface TestResult {
   test: string;
   status: 'success' | 'failed';
   message: string;
-  data?: any;
+  data?: unknown;
   error?: string;
 }
 

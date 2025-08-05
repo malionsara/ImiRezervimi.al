@@ -6,7 +6,7 @@
  * Call the reminders API endpoint
  * This can be used by external cron services like Vercel Cron or GitHub Actions
  */
-export async function triggerReminders(): Promise<{ success: boolean; data?: any; error?: string }> {
+export async function triggerReminders(): Promise<{ success: boolean; data?: unknown; error?: string }> {
   try {
     const cronSecret = process.env.CRON_SECRET;
     if (!cronSecret) {
@@ -59,9 +59,11 @@ export function shouldSendReminder(appointmentDate: string, appointmentTime: str
 export function formatAppointmentTime(date: string, time: string): string {
   const appointmentDate = new Date(date);
   
-  return appointmentDate.toLocaleDateString('sq-AL', {
+  const formattedDate = appointmentDate.toLocaleDateString('sq-AL', {
     weekday: 'long',
     day: 'numeric',
     month: 'long',
   });
+  
+  return `${formattedDate} në orën ${time}`;
 }

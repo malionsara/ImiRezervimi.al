@@ -15,6 +15,35 @@ export interface DashboardData {
   stats: DashboardStats
 }
 
+// Raw database response interfaces
+interface RawAppointmentData {
+  id: string
+  appointment_date: string
+  start_time: string
+  customer_notes?: string
+  created_at: string
+  customers: {
+    id: string
+    first_name: string
+    last_name: string
+    phone: string
+    rating?: number
+    total_visits?: number
+    priority_score?: number
+  }
+  services: {
+    id: string
+    name: string
+    duration: number
+    price: number
+  }
+}
+
+interface SupabaseError {
+  code?: string
+  message?: string
+}
+
 export interface AppointmentRequest {
   id: string
   customer: {
@@ -164,7 +193,7 @@ export async function getPendingRequests(salonId: string): Promise<AppointmentRe
 
     if (!data) return []
 
-    return data.map((appointment: any) => ({
+    return data.map((appointment: RawAppointmentData) => ({
       id: appointment.id,
       customer: {
         id: appointment.customers.id,
@@ -228,7 +257,7 @@ export async function getTodaySchedule(salonId: string): Promise<Appointment[]> 
 
     if (!data) return []
 
-    return data.map((appointment: any) => ({
+    return data.map((appointment: RawAppointmentData) => ({
       id: appointment.id,
       customer: {
         firstName: appointment.customers.first_name,
@@ -284,7 +313,7 @@ export async function getRecentActivity(salonId: string): Promise<Appointment[]>
 
     if (!data) return []
 
-    return data.map((appointment: any) => ({
+    return data.map((appointment: RawAppointmentData) => ({
       id: appointment.id,
       customer: {
         firstName: appointment.customers.first_name,
@@ -380,7 +409,7 @@ export async function getDashboardStats(salonId: string): Promise<DashboardStats
 
     let averageRating = 0
     if (ratingData && ratingData.length > 0) {
-      const totalRating = ratingData.reduce((sum, item: any) => sum + (item.customers?.rating || 0), 0)
+      const totalRating = ratingData.reduce((sum, item: RawAppointmentData) => sum + (item.customers?.rating || 0), 0)
       averageRating = totalRating / ratingData.length
     }
 
@@ -619,15 +648,15 @@ export function createDashboardError(message: string, code?: string): Error {
  * Handle Supabase errors with Albanian messages
  */
 export function handleSupabaseError(error: unknown): string {
-  if ((error as any)?.code === 'PGRST116') {
+  if ((error as SupabaseError)?.code === 'PGRST116') {
     return 'Nuk ka të dhëna për të shfaqur'
   }
   
-  if ((error as any)?.code === 'PGRST301') {
+  if ((error as SupabaseError)?.code === 'PGRST301') {
     return 'Nuk keni qasje në këto të dhëna'
   }
   
-  if ((error as any)?.message?.includes('timeout')) {
+  if ((error as SupabaseError)?.message?.includes('timeout')) {
     return 'Lidhja me bazën e të dhënave ka problema. Provoni përsëri.'
   }
   

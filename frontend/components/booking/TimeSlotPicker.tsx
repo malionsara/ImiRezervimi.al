@@ -2,7 +2,7 @@
 // Calendar-based time slot picker for ImiRezervimi.al
 // Albanian Beauty Salon Booking Platform
 
-import { useState, useEffect, useMemo } from 'react'
+import { useState, useEffect, useMemo, useCallback } from 'react'
 
 // ==============================================
 // TYPES AND INTERFACES
@@ -135,7 +135,7 @@ export default function TimeSlotPicker({
   }
 
   // Fetch available time slots from API
-  const fetchAvailableSlots = async (date: string): Promise<TimeSlot[]> => {
+  const fetchAvailableSlots = useCallback(async (date: string): Promise<TimeSlot[]> => {
     if (!selectedService) return []
     
     try {
@@ -155,7 +155,7 @@ export default function TimeSlotPicker({
       console.error('Error fetching time slots:', error)
       return []
     }
-  }
+  }, [selectedService, salon.slug])
 
   // Load available time slots when date changes
   useEffect(() => {
@@ -169,7 +169,7 @@ export default function TimeSlotPicker({
     } else {
       setAvailableSlots([])
     }
-  }, [selectedDate, selectedService, salon])
+  }, [selectedDate, selectedService, salon, fetchAvailableSlots])
 
   // Navigate to previous month
   const goToPreviousMonth = () => {

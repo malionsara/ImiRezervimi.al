@@ -14,6 +14,7 @@ import {
   isValidUUID,
 } from '../../../../lib/validation';
 import { sendNotification } from '../../../../lib/twilio';
+import { Appointment } from '../../../../shared/types';
 
 interface ApiResponse {
   success: boolean;
@@ -173,7 +174,7 @@ export default async function handler(
       });
     }
 
-    const appointment = updateResult.data as any;
+    const appointment = updateResult.data as Appointment;
 
     // ==============================================
     // SUCCESS RESPONSE
@@ -240,7 +241,11 @@ export default async function handler(
  * Sends WhatsApp notification to customer about status change
  */
 async function sendCustomerNotification(
-  appointment: any,
+  appointment: Appointment & { 
+    customer: { phone: string }, 
+    salon: { name: string },
+    salon_notes?: string 
+  },
   newStatus: string
 ): Promise<void> {
   try {

@@ -4,6 +4,7 @@
 import { useState } from 'react'
 import { useRouter } from 'next/router'
 import Head from 'next/head'
+import Image from 'next/image'
 import RegistrationForm from '../../components/salon/RegistrationForm'
 import ServiceConfig from '../../components/salon/ServiceConfig'
 
@@ -214,7 +215,7 @@ export default function SalonRegister() {
             <div className="flex justify-between items-center h-16">
               <div className="flex items-center">
                 <div className="h-10 w-10 rounded-2xl bg-white flex items-center justify-center mr-3 shadow-lg p-1">
-                  <img src="/favicon-96x96.png" alt="ImiRezervimi Logo" className="w-full h-full object-contain" />
+                  <Image src="/favicon-96x96.png" alt="ImiRezervimi Logo" width={40} height={40} className="w-full h-full object-contain" />
                 </div>
                 <span className="text-xl font-bold text-gray-900">ImiRezervimi.al</span>
               </div>

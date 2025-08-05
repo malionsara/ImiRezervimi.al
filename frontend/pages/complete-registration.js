@@ -5,6 +5,7 @@ import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
 import Head from 'next/head'
+import Image from 'next/image'
 import WhatsAppVerification from '../components/auth/WhatsAppVerification'
 
 export default function CompleteRegistration() {
@@ -89,7 +90,7 @@ export default function CompleteRegistration() {
       <div className="min-h-screen bg-gradient-to-br from-pink-50 to-red-50 flex items-center justify-center">
         <div className="text-center">
           <div className="mx-auto h-16 w-16 rounded-2xl bg-white flex items-center justify-center mb-4 shadow-lg animate-pulse p-2">
-            <img src="/favicon-96x96.png" alt="ImiRezervimi Logo" className="w-full h-full object-contain" />
+            <Image src="/favicon-96x96.png" alt="ImiRezervimi Logo" width={64} height={64} className="w-full h-full object-contain" />
           </div>
           <p className="text-gray-600">Po ngarkohet...</p>
         </div>
@@ -102,7 +103,7 @@ export default function CompleteRegistration() {
       <div className="min-h-screen bg-gradient-to-br from-pink-50 to-red-50 flex items-center justify-center">
         <div className="text-center max-w-md mx-auto p-6">
           <div className="mx-auto h-16 w-16 rounded-2xl bg-white flex items-center justify-center mb-6 shadow-lg p-2">
-            <img src="/favicon-96x96.png" alt="ImiRezervimi Logo" className="w-full h-full object-contain" />
+            <Image src="/favicon-96x96.png" alt="ImiRezervimi Logo" width={64} height={64} className="w-full h-full object-contain" />
           </div>
           <h1 className="text-2xl font-bold text-gray-900 mb-4">Ka ndodhur një gabim</h1>
           <p className="text-gray-600 mb-6">Të dhënat e regjistrimit nuk u gjetën. Ju lutemi provoni përsëri.</p>
@@ -132,7 +133,7 @@ export default function CompleteRegistration() {
             <div className="flex justify-between items-center h-16">
               <div className="flex items-center">
                 <div className="h-10 w-10 rounded-2xl bg-white flex items-center justify-center mr-3 shadow-lg p-1">
-                  <img src="/favicon-96x96.png" alt="ImiRezervimi Logo" className="w-full h-full object-contain" />
+                  <Image src="/favicon-96x96.png" alt="ImiRezervimi Logo" width={40} height={40} className="w-full h-full object-contain" />
                 </div>
                 <span className="text-xl font-bold text-gray-900">ImiRezervimi.al</span>
               </div>

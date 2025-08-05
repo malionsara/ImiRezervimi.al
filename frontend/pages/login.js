@@ -6,6 +6,7 @@ import { signIn } from 'next-auth/react'
 import { useRouter } from 'next/router'
 import Head from 'next/head'
 import Link from 'next/link'
+import Image from 'next/image'
 import FacebookLogin from '../components/auth/FacebookLogin'
 
 export default function LoginPage() {
@@ -133,7 +134,7 @@ export default function LoginPage() {
               {/* Logo */}
               <Link href="/" className="flex items-center group">
                 <div className="h-12 w-12 rounded-2xl bg-white flex items-center justify-center mr-4 shadow-xl transform group-hover:scale-110 group-hover:rotate-3 transition-all duration-300 p-1">
-                  <img src="/favicon-96x96.png" alt="ImiRezervimi Logo" className="w-full h-full object-contain" />
+                  <Image src="/favicon-96x96.png" alt="ImiRezervimi Logo" width={48} height={48} className="w-full h-full object-contain" />
                 </div>
                 <div>
                   <span className="text-2xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">ImiRezervimi</span>
@@ -160,7 +161,7 @@ export default function LoginPage() {
             <div className="text-center">
               {/* Logo Circle */}
               <div className="mx-auto h-20 w-20 rounded-3xl bg-white flex items-center justify-center mb-8 shadow-2xl transform hover:scale-110 hover:rotate-6 transition-all duration-500 group p-2">
-                <img src="/favicon-96x96.png" alt="ImiRezervimi Logo" className="w-full h-full object-contain group-hover:scale-110 transition-transform duration-300" />
+                <Image src="/favicon-96x96.png" alt="ImiRezervimi Logo" width={80} height={80} className="w-full h-full object-contain group-hover:scale-110 transition-transform duration-300" />
                 <div className="absolute -top-2 -right-2 w-6 h-6 bg-green-500 rounded-full border-2 border-white animate-pulse"></div>
               </div>
               

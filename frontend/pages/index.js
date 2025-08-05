@@ -6,6 +6,7 @@ import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
 import Head from 'next/head'
 import Link from 'next/link'
+import Image from 'next/image'
 
 export default function Homepage() {
   const { data: session, status } = useSession()
@@ -97,7 +98,7 @@ export default function Homepage() {
               {/* Logo */}
               <div className="flex items-center group">
                 <div className="h-12 w-12 rounded-2xl bg-white flex items-center justify-center mr-4 shadow-xl transform group-hover:scale-110 group-hover:rotate-3 transition-all duration-300 p-1">
-                  <img src="/favicon-96x96.png" alt="ImiRezervimi Logo" className="w-full h-full object-contain" />
+                  <Image src="/favicon-96x96.png" alt="ImiRezervimi Logo" width={48} height={48} className="w-full h-full object-contain" />
                 </div>
                 <div>
                   <span className="text-2xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">ImiRezervimi</span>
@@ -512,7 +513,7 @@ export default function Homepage() {
               <div className="md:col-span-2">
                 <div className="flex items-center mb-6">
                   <div className="h-12 w-12 rounded-2xl bg-white flex items-center justify-center mr-4 shadow-lg p-1">
-                    <img src="/favicon-96x96.png" alt="ImiRezervimi Logo" className="w-full h-full object-contain" />
+                    <Image src="/favicon-96x96.png" alt="ImiRezervimi Logo" width={48} height={48} className="w-full h-full object-contain" />
                   </div>
                   <div>
                     <span className="text-2xl font-bold">ImiRezervimi.al</span>

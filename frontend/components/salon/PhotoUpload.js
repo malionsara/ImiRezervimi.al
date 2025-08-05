@@ -2,6 +2,7 @@
 // Photo upload component for salon registration
 
 import { useState, useRef } from 'react'
+import Image from 'next/image'
 
 export default function PhotoUpload({ photos = [], onChange, maxPhotos = 5 }) {
   const [uploading, setUploading] = useState(false)
@@ -145,9 +146,11 @@ export default function PhotoUpload({ photos = [], onChange, maxPhotos = 5 }) {
             {photos.map((photo, index) => (
               <div key={photo.id} className="relative group">
                 <div className="aspect-square rounded-lg overflow-hidden bg-gray-100">
-                  <img
+                  <Image
                     src={photo.preview}
                     alt={`Salon photo ${index + 1}`}
+                    width={200}
+                    height={200}
                     className="w-full h-full object-cover"
                   />
                 </div>

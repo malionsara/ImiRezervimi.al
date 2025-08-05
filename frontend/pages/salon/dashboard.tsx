@@ -2,7 +2,7 @@
 // Salon Dashboard for Managing Appointment Requests
 // Albanian Beauty Salon Booking Platform
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { useRouter } from 'next/router'
 import Head from 'next/head'
 import Link from 'next/link'
@@ -103,16 +103,16 @@ export default function SalonDashboard() {
   // ==============================================
   useEffect(() => {
     initializeDashboard()
-  }, [])
+  }, [initializeDashboard])
 
   useEffect(() => {
     if (salonId) {
       loadDashboardData()
       setupRealtimeSubscription()
     }
-  }, [salonId])
+  }, [salonId, loadDashboardData, setupRealtimeSubscription])
 
-  const initializeDashboard = async () => {
+  const initializeDashboard = useCallback(async () => {
     try {
       // Get salon ID from URL parameter or session
       const urlSalonId = router.query.salonId as string
@@ -126,9 +126,9 @@ export default function SalonDashboard() {
       console.error('Dashboard initialization error:', error)
       setError('Gabim në inicializimin e dashboard-it')
     }
-  }
+  }, [router])
 
-  const loadDashboardData = async () => {
+  const loadDashboardData = useCallback(async () => {
     if (!salonId) return
     
     try {
@@ -142,9 +142,9 @@ export default function SalonDashboard() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [salonId])
 
-  const setupRealtimeSubscription = () => {
+  const setupRealtimeSubscription = useCallback(() => {
     if (!salonId) return
 
     const unsubscribe = subscribeToRealtimeUpdates(salonId, (update) => {
@@ -158,7 +158,7 @@ export default function SalonDashboard() {
     return () => {
       if (unsubscribe) unsubscribe()
     }
-  }
+  }, [salonId, loadDashboardData])
 
   // ==============================================
   // EVENT HANDLERS
@@ -418,7 +418,7 @@ export default function SalonDashboard() {
             <div className="lg:col-span-1">
               {selectedCustomer ? (
                 <CustomerDetails
-                  customer={selectedCustomer as any}
+                  customer={selectedCustomer.customer}
                   onClose={() => {
                     setSelectedCustomer(null)
                     setShowCustomerDetails(false)

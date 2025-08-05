@@ -3,6 +3,7 @@
 // Albanian Beauty Salon Booking Platform
 
 import { NextApiRequest, NextApiResponse } from 'next'
+import { ZodError } from 'zod'
 import { 
   appointmentStatusSchema,
   ALBANIAN_ERRORS,
@@ -13,6 +14,7 @@ import {
   getAppointmentById,
   updateAppointmentStatus
 } from '../../../lib/appointments'
+import { Appointment } from '../../../shared/types'
 
 // ==============================================
 // API RESPONSE INTERFACE
@@ -87,7 +89,7 @@ async function handleGetAppointment(
     return res.status(404).json(result.error as ApiResponse<unknown>)
   }
   
-  const appointment = result.data as any
+  const appointment = result.data as Appointment
   
   // Format response with Albanian labels
   const formattedAppointment = {
@@ -153,7 +155,7 @@ async function handleUpdateAppointmentStatus(
   const validationResult = appointmentStatusSchema.safeParse(req.body)
   
   if (!validationResult.success) {
-    const errors = (validationResult.error as any).errors.map((err: any) => `${err.path.join('.')}: ${err.message}`).join(', ')
+    const errors = (validationResult.error as ZodError).errors.map((err) => `${err.path.join('.')}: ${err.message}`).join(', ')
     console.log(`❌ Status update validation failed: ${errors}`)
     
     return res.status(400).json(createValidationError(
@@ -170,7 +172,7 @@ async function handleUpdateAppointmentStatus(
     return res.status(404).json(appointmentResult.error as ApiResponse<unknown>)
   }
   
-  const appointment = appointmentResult.data as any
+  const appointment = appointmentResult.data as Appointment
   
   // Check if appointment is still pending
   if (appointment.status !== 'pending') {
@@ -199,7 +201,7 @@ async function handleUpdateAppointmentStatus(
     return res.status(500).json(updateResult.error as ApiResponse<unknown>)
   }
   
-  const updatedAppointment = updateResult.data as any
+  const updatedAppointment = updateResult.data as Appointment
   
   // Prepare response message in Albanian
   const statusMessage = status === 'approved' 

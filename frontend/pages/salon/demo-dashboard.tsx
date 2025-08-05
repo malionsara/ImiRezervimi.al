@@ -98,7 +98,7 @@ export default function DemoDashboard() {
             <div className="lg:col-span-1">
               {selectedCustomer ? (
                 <CustomerDetails
-                  customer={(selectedCustomer as any)?.customer}
+                  customer={selectedCustomer?.customer}
                   onClose={() => setSelectedCustomer(null)}
                 />
               ) : (

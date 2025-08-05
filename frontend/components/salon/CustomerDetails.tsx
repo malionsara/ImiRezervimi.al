@@ -2,7 +2,7 @@
 // Customer profile display with history and rating information
 // Albanian Beauty Salon Booking Platform
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 
 // ==============================================
 // TYPES AND INTERFACES
@@ -70,9 +70,9 @@ export default function CustomerDetails({ customer, onClose }: CustomerDetailsPr
   // ==============================================
   useEffect(() => {
     loadCustomerHistory()
-  }, [customer.id])
+  }, [customer.id, loadCustomerHistory])
 
-  const loadCustomerHistory = async () => {
+  const loadCustomerHistory = useCallback(async () => {
     try {
       setLoading(true)
       
@@ -126,7 +126,7 @@ export default function CustomerDetails({ customer, onClose }: CustomerDetailsPr
     } finally {
       setLoading(false)
     }
-  }
+  }, [customer.totalVisits, customer.rating])
 
   // ==============================================
   // HELPER FUNCTIONS

@@ -3,6 +3,7 @@
 // Albanian Beauty Salon Booking Platform
 
 import { NextApiRequest, NextApiResponse } from 'next'
+import { ZodError } from 'zod'
 import { 
   appointmentRequestSchema,
   ALBANIAN_ERRORS,
@@ -22,6 +23,7 @@ import {
   formatAppointmentResponse,
   cleanupRateLimit
 } from '../../../lib/appointments'
+import { Salon, Service, Customer, Appointment } from '../../../shared/types'
 
 // ==============================================
 // API RESPONSE INTERFACE
@@ -80,7 +82,7 @@ export default async function handler(
     const validationResult = appointmentRequestSchema.safeParse(req.body)
     
     if (!validationResult.success) {
-      const errors = (validationResult.error as any).errors.map((err: any) => `${err.path.join('.')}: ${err.message}`).join(', ')
+      const errors = (validationResult.error as ZodError).errors.map((err) => `${err.path.join('.')}: ${err.message}`).join(', ')
       console.log(`❌ Validation failed: ${errors}`)
       
       return res.status(400).json(createValidationError(
@@ -100,7 +102,7 @@ export default async function handler(
       return res.status(400).json({ success: false, error: { code: 'SALON_INVALID', message: 'Salon validation failed' } })
     }
     
-    const salon = salonValidation.data as any
+    const salon = salonValidation.data as Salon
 
     // ==============================================
     // SERVICE VALIDATION
@@ -111,7 +113,7 @@ export default async function handler(
       return res.status(400).json({ success: false, error: { code: 'SERVICE_INVALID', message: 'Service validation failed' } })
     }
     
-    const service = serviceValidation.data as any
+    const service = serviceValidation.data as Service
 
     // ==============================================
     // WORKING HOURS VALIDATION
@@ -139,7 +141,7 @@ export default async function handler(
       return res.status(400).json({ success: false, error: { code: 'CUSTOMER_ERROR', message: 'Customer processing failed' } })
     }
     
-    const customer = customerResult.data as any
+    const customer = customerResult.data as Customer
 
     // ==============================================
     // PENDING APPOINTMENTS LIMIT CHECK
@@ -188,7 +190,7 @@ export default async function handler(
       return res.status(500).json({ success: false, error: { code: 'APPOINTMENT_CREATE', message: 'Appointment creation failed' } })
     }
 
-    const appointment = appointmentResult.data as any
+    const appointment = appointmentResult.data as Appointment
 
     // ==============================================
     // SUCCESS RESPONSE
@@ -234,8 +236,8 @@ export default async function handler(
  * Send booking confirmation to customer
  */
 async function sendCustomerConfirmation(
-  appointment: any,
-  salon: any
+  appointment: Appointment & { customer: { phone: string } },
+  salon: Salon
 ): Promise<void> {
   try {
     const customerPhone = appointment.customer.phone
@@ -262,10 +264,10 @@ async function sendCustomerConfirmation(
  * Send new booking notification to salon
  */
 async function sendSalonNotification(
-  appointment: any,
-  salon: any,
-  customer: any,
-  service: any
+  appointment: Appointment,
+  salon: Salon,
+  customer: Customer,
+  service: Service
 ): Promise<void> {
   try {
     const salonPhone = salon.phone

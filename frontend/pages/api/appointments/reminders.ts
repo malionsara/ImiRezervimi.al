@@ -6,6 +6,26 @@ import { NextApiRequest, NextApiResponse } from 'next';
 import { supabaseAdmin } from '../../../lib/appointments';
 import { sendNotification } from '../../../lib/twilio';
 
+interface CustomerData {
+  first_name: string;
+  last_name: string;
+  phone: string;
+}
+
+interface SalonData {
+  name: string;
+  address: string;
+}
+
+interface AppointmentWithRelations {
+  id: string;
+  appointment_date: string;
+  start_time: string;
+  service_name: string;
+  customer: CustomerData;
+  salon: SalonData;
+}
+
 interface ApiResponse {
   success: boolean;
   data?: {
@@ -113,10 +133,10 @@ export default async function handler(
     let sentCount = 0;
     let errorCount = 0;
 
-    for (const appointment of appointments) {
+    for (const appointment of appointments as AppointmentWithRelations[]) {
       try {
-        const customer = appointment.customer as any;
-        const salon = appointment.salon as any;
+        const customer = appointment.customer;
+        const salon = appointment.salon;
         const customerPhone = customer?.phone;
         
         if (!customerPhone) {
@@ -160,7 +180,7 @@ export default async function handler(
         
         results.push({
           appointmentId: appointment.id,
-          customerPhone: (appointment.customer as any)?.phone || 'unknown',
+          customerPhone: appointment.customer?.phone || 'unknown',
           status: 'failed' as const,
           error: error instanceof Error ? error.message : 'Unknown error',
         });

@@ -1,7 +1,7 @@
 // frontend/components/admin/AdminAuth.js
 // Admin authentication component
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { useRouter } from 'next/router'
 
 export default function AdminAuth({ children }) {
@@ -11,11 +11,7 @@ export default function AdminAuth({ children }) {
   const [error, setError] = useState('')
   const router = useRouter()
 
-  useEffect(() => {
-    checkAuthentication()
-  }, [router.query])
-
-  const checkAuthentication = async () => {
+  const checkAuthentication = useCallback(async () => {
     // Check if admin key is in URL query params
     const queryKey = router.query.admin_key
     
@@ -48,7 +44,11 @@ export default function AdminAuth({ children }) {
     }
     
     setIsLoading(false)
-  }
+  }, [router.query])
+
+  useEffect(() => {
+    checkAuthentication()
+  }, [checkAuthentication])
 
   const verifyAdminKey = async (key) => {
     try {
