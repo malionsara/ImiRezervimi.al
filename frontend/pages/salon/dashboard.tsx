@@ -103,14 +103,14 @@ export default function SalonDashboard() {
   // ==============================================
   useEffect(() => {
     initializeDashboard()
-  }, [initializeDashboard])
+  }, [])
 
   useEffect(() => {
     if (salonId) {
       loadDashboardData()
       setupRealtimeSubscription()
     }
-  }, [salonId, loadDashboardData, setupRealtimeSubscription])
+  }, [salonId])
 
   const initializeDashboard = useCallback(async () => {
     try {

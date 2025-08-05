@@ -14,7 +14,7 @@ import {
   getAppointmentById,
   updateAppointmentStatus
 } from '../../../lib/appointments'
-import { Appointment } from '../../../shared/types'
+import { AppointmentWithRelations } from '../../../types/database'
 
 // ==============================================
 // API RESPONSE INTERFACE
@@ -89,32 +89,32 @@ async function handleGetAppointment(
     return res.status(404).json(result.error as ApiResponse<unknown>)
   }
   
-  const appointment = result.data as Appointment
+  const appointment = result.data as AppointmentWithRelations
   
   // Format response with Albanian labels
   const formattedAppointment = {
     id: appointment.id,
     salon: {
-      id: appointment.salon.id,
-      name: appointment.salon.name,
-      phone: appointment.salon.phone,
-      address: appointment.salon.address,
-      city: appointment.salon.city,
-      workingHours: appointment.salon.working_hours
+      id: appointment.salons.id,
+      name: appointment.salons.name,
+      phone: appointment.salons.phone,
+      address: appointment.salons.address,
+      city: appointment.salons.city,
+      workingHours: appointment.salons.working_hours
     },
     customer: {
-      id: appointment.customer.id,
-      firstName: appointment.customer.first_name,
-      lastName: appointment.customer.last_name,
-      phone: appointment.customer.phone,
-      rating: appointment.customer.rating,
-      totalVisits: appointment.customer.total_visits
+      id: appointment.customers.id,
+      firstName: appointment.customers.first_name,
+      lastName: appointment.customers.last_name,
+      phone: appointment.customers.phone,
+      rating: appointment.customers.rating,
+      totalVisits: appointment.customers.total_visits
     },
     service: {
-      id: appointment.service?.id,
-      name: appointment.service_name,
-      duration: appointment.duration_minutes,
-      price: appointment.service_price
+      id: appointment.services?.id,
+      name: appointment.services?.name,
+      duration: appointment.services?.duration_minutes,
+      price: appointment.services?.price
     },
     appointment: {
       date: appointment.appointment_date,
@@ -155,7 +155,7 @@ async function handleUpdateAppointmentStatus(
   const validationResult = appointmentStatusSchema.safeParse(req.body)
   
   if (!validationResult.success) {
-    const errors = (validationResult.error as ZodError).errors.map((err) => `${err.path.join('.')}: ${err.message}`).join(', ')
+    const errors = (validationResult.error as ZodError).issues.map((err) => `${err.path.join('.')}: ${err.message}`).join(', ')
     console.log(`❌ Status update validation failed: ${errors}`)
     
     return res.status(400).json(createValidationError(
@@ -172,7 +172,7 @@ async function handleUpdateAppointmentStatus(
     return res.status(404).json(appointmentResult.error as ApiResponse<unknown>)
   }
   
-  const appointment = appointmentResult.data as Appointment
+  const appointment = appointmentResult.data as AppointmentWithRelations
   
   // Check if appointment is still pending
   if (appointment.status !== 'pending') {
@@ -201,7 +201,7 @@ async function handleUpdateAppointmentStatus(
     return res.status(500).json(updateResult.error as ApiResponse<unknown>)
   }
   
-  const updatedAppointment = updateResult.data as Appointment
+  const updatedAppointment = updateResult.data as AppointmentWithRelations
   
   // Prepare response message in Albanian
   const statusMessage = status === 'approved' 
@@ -214,17 +214,17 @@ async function handleUpdateAppointmentStatus(
       status: updatedAppointment.status,
       appointmentDate: updatedAppointment.appointment_date,
       startTime: updatedAppointment.start_time,
-      serviceName: updatedAppointment.service_name,
+      serviceName: updatedAppointment.services?.name,
       salonNotes: updatedAppointment.salon_notes
     },
     salon: {
-      name: updatedAppointment.salon.name,
-      phone: updatedAppointment.salon.phone
+      name: updatedAppointment.salons.name,
+      phone: updatedAppointment.salons.phone
     },
     customer: {
-      firstName: updatedAppointment.customer.first_name,
-      lastName: updatedAppointment.customer.last_name,
-      phone: updatedAppointment.customer.phone
+      firstName: updatedAppointment.customers.first_name,
+      lastName: updatedAppointment.customers.last_name,
+      phone: updatedAppointment.customers.phone
     },
     message: statusMessage,
     updatedAt: new Date().toISOString()

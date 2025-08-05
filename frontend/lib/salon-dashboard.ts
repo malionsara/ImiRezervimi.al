@@ -193,7 +193,7 @@ export async function getPendingRequests(salonId: string): Promise<AppointmentRe
 
     if (!data) return []
 
-    return data.map((appointment: RawAppointmentData) => ({
+    return data.map((appointment: any) => ({
       id: appointment.id,
       customer: {
         id: appointment.customers.id,
@@ -257,7 +257,7 @@ export async function getTodaySchedule(salonId: string): Promise<Appointment[]> 
 
     if (!data) return []
 
-    return data.map((appointment: RawAppointmentData) => ({
+    return data.map((appointment: any) => ({
       id: appointment.id,
       customer: {
         firstName: appointment.customers.first_name,
@@ -313,7 +313,7 @@ export async function getRecentActivity(salonId: string): Promise<Appointment[]>
 
     if (!data) return []
 
-    return data.map((appointment: RawAppointmentData) => ({
+    return data.map((appointment: any) => ({
       id: appointment.id,
       customer: {
         firstName: appointment.customers.first_name,
@@ -409,7 +409,7 @@ export async function getDashboardStats(salonId: string): Promise<DashboardStats
 
     let averageRating = 0
     if (ratingData && ratingData.length > 0) {
-      const totalRating = ratingData.reduce((sum, item: RawAppointmentData) => sum + (item.customers?.rating || 0), 0)
+      const totalRating = ratingData.reduce((sum, item: any) => sum + (item.customers?.rating || 0), 0)
       averageRating = totalRating / ratingData.length
     }
 

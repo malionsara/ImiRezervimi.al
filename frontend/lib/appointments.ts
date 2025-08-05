@@ -11,7 +11,7 @@ import {
   createBusinessRuleError,
   createValidationError
 } from './validation'
-import { Appointment } from '../shared/types'
+import { AppointmentWithRelations } from '../types/database'
 
 // ==============================================
 // SUPABASE CLIENT SETUP
@@ -532,14 +532,14 @@ export function validateWorkingHours(
 /**
  * Format appointment for client response
  */
-export function formatAppointmentResponse(appointment: Appointment) {
+export function formatAppointmentResponse(appointment: AppointmentWithRelations) {
   return {
     id: appointment.id,
-    salonName: appointment.salon.name,
-    serviceName: appointment.service_name,
+    salonName: appointment.salons.name,
+    serviceName: appointment.services?.name,
     appointmentDate: appointment.appointment_date,
     startTime: appointment.start_time,
-    duration: appointment.duration_minutes,
+    duration: appointment.services?.duration_minutes,
     status: appointment.status,
     customerNotes: appointment.customer_notes,
     salonNotes: appointment.salon_notes,

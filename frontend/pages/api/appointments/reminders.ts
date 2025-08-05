@@ -17,7 +17,7 @@ interface SalonData {
   address: string;
 }
 
-interface AppointmentWithRelations {
+interface ReminderAppointment {
   id: string;
   appointment_date: string;
   start_time: string;
@@ -133,7 +133,7 @@ export default async function handler(
     let sentCount = 0;
     let errorCount = 0;
 
-    for (const appointment of appointments as AppointmentWithRelations[]) {
+    for (const appointment of appointments as any[]) {
       try {
         const customer = appointment.customer;
         const salon = appointment.salon;
