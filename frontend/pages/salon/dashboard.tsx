@@ -9,6 +9,8 @@ import Link from 'next/link'
 import { createClient } from '@supabase/supabase-js'
 import RequestsQueue from '../../components/salon/RequestsQueue'
 import CustomerDetails from '../../components/salon/CustomerDetails'
+import AvailabilityCalendar from '../../components/salon/AvailabilityCalendar'
+import WorkingHoursConfig from '../../components/salon/WorkingHoursConfig'
 // import AppointmentActions from '../../components/salon/AppointmentActions' // Unused import
 import { getSalonDashboardData, subscribeToRealtimeUpdates } from '../../lib/salon-dashboard'
 
@@ -93,6 +95,9 @@ export default function SalonDashboard() {
   const [filterStatus, setFilterStatus] = useState<'all' | 'priority' | 'today' | 'tomorrow'>('all')
   const [showFilters, setShowFilters] = useState(false)
   const [notifications, setNotifications] = useState<Array<{ id: string; message: string; type: 'success' | 'error' | 'info' }>>([])
+  const [currentView, setCurrentView] = useState<'requests' | 'availability' | 'working-hours'>('requests')
+  const [showAvailabilityManagement, setShowAvailabilityManagement] = useState(false)
+  const [showWorkingHoursConfig, setShowWorkingHoursConfig] = useState(false)
 
   // Initialize Supabase client
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
@@ -227,6 +232,18 @@ export default function SalonDashboard() {
     setTimeout(() => {
       setNotifications(prev => prev.filter(n => n.id !== id))
     }, 5000)
+  }
+
+  // Availability management handlers
+  const handleWorkingHoursSave = (workingHours: any) => {
+    addNotification('Orët e punës u përditësuan me sukses', 'success')
+    loadDashboardData() // Refresh data
+    setShowWorkingHoursConfig(false)
+  }
+
+  const handleAvailabilityChange = () => {
+    addNotification('Disponueshmëria u përditësua', 'success')
+    loadDashboardData() // Refresh data
   }
 
   // Enhanced search and filter functionality
@@ -423,6 +440,40 @@ export default function SalonDashboard() {
                   </svg>
                 </button>
 
+                {/* View toggle buttons */}
+                <div className="hidden md:flex items-center gap-1 bg-gray-100 rounded-lg p-1">
+                  <button
+                    onClick={() => setCurrentView('requests')}
+                    className={`px-3 py-1 text-sm font-medium rounded transition-colors ${
+                      currentView === 'requests' 
+                        ? 'bg-white text-gray-900 shadow-sm' 
+                        : 'text-gray-600 hover:text-gray-900'
+                    }`}
+                  >
+                    Kërkesat
+                  </button>
+                  <button
+                    onClick={() => setCurrentView('availability')}
+                    className={`px-3 py-1 text-sm font-medium rounded transition-colors ${
+                      currentView === 'availability' 
+                        ? 'bg-white text-gray-900 shadow-sm' 
+                        : 'text-gray-600 hover:text-gray-900'
+                    }`}
+                  >
+                    Kalendari
+                  </button>
+                  <button
+                    onClick={() => setCurrentView('working-hours')}
+                    className={`px-3 py-1 text-sm font-medium rounded transition-colors ${
+                      currentView === 'working-hours' 
+                        ? 'bg-white text-gray-900 shadow-sm' 
+                        : 'text-gray-600 hover:text-gray-900'
+                    }`}
+                  >
+                    Orët
+                  </button>
+                </div>
+
                 <button
                   onClick={handleRefresh}
                   className="p-2 text-gray-500 hover:text-gray-700 rounded-lg hover:bg-gray-100 transition-colors"
@@ -454,6 +505,40 @@ export default function SalonDashboard() {
                   onChange={(e) => setSearchQuery(e.target.value)}
                   className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md leading-5 bg-white placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-1 focus:ring-red-500 focus:border-red-500 text-sm"
                 />
+              </div>
+              
+              {/* Mobile view toggle */}
+              <div className="flex bg-gray-100 rounded-lg p-1 mb-3">
+                <button
+                  onClick={() => setCurrentView('requests')}
+                  className={`flex-1 px-3 py-2 text-sm font-medium rounded transition-colors ${
+                    currentView === 'requests' 
+                      ? 'bg-white text-gray-900 shadow-sm' 
+                      : 'text-gray-600'
+                  }`}
+                >
+                  Kërkesat
+                </button>
+                <button
+                  onClick={() => setCurrentView('availability')}
+                  className={`flex-1 px-3 py-2 text-sm font-medium rounded transition-colors ${
+                    currentView === 'availability' 
+                      ? 'bg-white text-gray-900 shadow-sm' 
+                      : 'text-gray-600'
+                  }`}
+                >
+                  Kalendari
+                </button>
+                <button
+                  onClick={() => setCurrentView('working-hours')}
+                  className={`flex-1 px-3 py-2 text-sm font-medium rounded transition-colors ${
+                    currentView === 'working-hours' 
+                      ? 'bg-white text-gray-900 shadow-sm' 
+                      : 'text-gray-600'
+                  }`}
+                >
+                  Orët
+                </button>
               </div>
             </div>
 
@@ -603,34 +688,35 @@ export default function SalonDashboard() {
             </div>
           )}
 
-          {/* Main Dashboard Grid */}
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            {/* Left Column - Requests Queue */}
-            <div className="lg:col-span-2">
-              {filteredRequests.length === 0 && dashboardData.pendingRequests.length > 0 ? (
-                <div className="bg-white rounded-xl shadow-sm border p-8 text-center">
-                  <div className="text-gray-400 text-5xl mb-4">🔍</div>
-                  <h3 className="text-lg font-medium text-gray-900 mb-2">Asnjë rezultat</h3>
-                  <p className="text-gray-600 mb-4">
-                    Nuk u gjet asnjë kërkesë me kriteret e zgjedhura
-                  </p>
-                  <button
-                    onClick={() => {
-                      setSearchQuery('')
-                      setFilterStatus('all')
-                    }}
-                    className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition-colors"
-                  >
-                    Pastro filtrat
-                  </button>
-                </div>
-              ) : (
-                <RequestsQueue
-                  requests={filteredRequests}
-                  onCustomerClick={handleCustomerClick}
-                  onAppointmentAction={handleAppointmentAction}
-                />
-              )}
+          {/* Main Dashboard Content */}
+          {currentView === 'requests' && (
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+              {/* Left Column - Requests Queue */}
+              <div className="lg:col-span-2">
+                {filteredRequests.length === 0 && dashboardData.pendingRequests.length > 0 ? (
+                  <div className="bg-white rounded-xl shadow-sm border p-8 text-center">
+                    <div className="text-gray-400 text-5xl mb-4">🔍</div>
+                    <h3 className="text-lg font-medium text-gray-900 mb-2">Asnjë rezultat</h3>
+                    <p className="text-gray-600 mb-4">
+                      Nuk u gjet asnjë kërkesë me kriteret e zgjedhura
+                    </p>
+                    <button
+                      onClick={() => {
+                        setSearchQuery('')
+                        setFilterStatus('all')
+                      }}
+                      className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition-colors"
+                    >
+                      Pastro filtrat
+                    </button>
+                  </div>
+                ) : (
+                  <RequestsQueue
+                    requests={filteredRequests}
+                    onCustomerClick={handleCustomerClick}
+                    onAppointmentAction={handleAppointmentAction}
+                  />
+                )}
 
               {/* Today's Schedule */}
               {dashboardData.todaySchedule.length > 0 && (
@@ -691,27 +777,52 @@ export default function SalonDashboard() {
               )}
             </div>
 
-            {/* Right Column - Customer Details */}
-            <div className="lg:col-span-1">
-              {selectedCustomer ? (
-                <CustomerDetails
-                  customer={selectedCustomer.customer}
-                  onClose={() => {
-                    setSelectedCustomer(null)
-                    setShowCustomerDetails(false)
-                  }}
-                />
-              ) : (
-                <div className="bg-white rounded-xl shadow-sm border p-6 text-center">
-                  <div className="text-gray-400 text-4xl mb-4">👤</div>
-                  <h3 className="text-lg font-medium text-gray-900 mb-2">Detajet e klientit</h3>
-                  <p className="text-gray-600 text-sm">
-                    Kliko mbi një kërkesë për të parë detajet e klientit dhe historikun e rezervimeve.
-                  </p>
-                </div>
-              )}
+              {/* Right Column - Customer Details */}
+              <div className="lg:col-span-1">
+                {selectedCustomer ? (
+                  <CustomerDetails
+                    customer={selectedCustomer.customer}
+                    onClose={() => {
+                      setSelectedCustomer(null)
+                      setShowCustomerDetails(false)
+                    }}
+                  />
+                ) : (
+                  <div className="bg-white rounded-xl shadow-sm border p-6 text-center">
+                    <div className="text-gray-400 text-4xl mb-4">👤</div>
+                    <h3 className="text-lg font-medium text-gray-900 mb-2">Detajet e klientit</h3>
+                    <p className="text-gray-600 text-sm">
+                      Kliko mbi një kërkesë për të parë detajet e klientit dhe historikun e rezervimeve.
+                    </p>
+                  </div>
+                )}
+              </div>
             </div>
-          </div>
+          )}
+
+          {/* Availability Calendar View */}
+          {currentView === 'availability' && salonId && (
+            <div className="space-y-6">
+              <AvailabilityCalendar
+                salonId={salonId}
+                allowMultiSelect={true}
+                onSelectionChange={() => handleAvailabilityChange()}
+                className="w-full"
+              />
+            </div>
+          )}
+
+          {/* Working Hours Configuration View */}
+          {currentView === 'working-hours' && salonId && dashboardData?.salon?.workingHours && (
+            <div className="space-y-6">
+              <WorkingHoursConfig
+                salonId={salonId}
+                initialWorkingHours={dashboardData.salon.workingHours}
+                onSave={handleWorkingHoursSave}
+                onCancel={() => setCurrentView('requests')}
+              />
+            </div>
+          )}
         </main>
 
         {/* Footer info */}

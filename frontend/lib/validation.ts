@@ -46,7 +46,21 @@ export const ALBANIAN_ERRORS = {
   
   // General errors
   INTERNAL_ERROR: 'Ka ndodhur një gabim i brendshëm. Ju lutemi provoni përsëri më vonë',
-  INVALID_DATA: 'Të dhënat e dërguara nuk janë të vlefshme'
+  INVALID_DATA: 'Të dhënat e dërguara nuk janë të vlefshme',
+  
+  // Conflict detection errors
+  TIME_OVERLAP: "Koha e rezervimit mbivendoset me rezervime të tjera",
+  DOUBLE_BOOKING: "Ekziston një rezervim i miratuar për këtë kohë",
+  APPROVAL_RACE: "Disa rezervime po përpunohen në të njëjtën kohë",
+  AVAILABILITY_BLOCKED: "Koha është e bllokuar dhe nuk është e disponueshme",
+  APPOINTMENT_LOCKED: "Rezervimi është duke u përpunuar nga një proces tjetër",
+  APPOINTMENT_HAS_CONFLICTS: "Rezervimi ka konflikte që duhen zgjidhur para miratimit",
+  CONFLICT_RESOLUTION_FAILED: "Zgjudhja e konfliktit dështoi",
+  MANUAL_REVIEW_REQUIRED: "Kërkohet rishikim manual për këtë konflik",
+  LOCK_ACQUISITION_FAILED: "Nuk mund të fitohet kyçja për rezervimin",
+  LOCK_EXPIRED: "Kyçja e rezervimit ka skaduar",
+  CONFLICTING_APPOINTMENT_STATUS: "Rezervimi në konflikt ka status të papërcaktuar",
+  PRIORITY_CONFLICT: "Konflik prioriteti ndërmjet rezervimeve"
 } as const
 
 // ==============================================

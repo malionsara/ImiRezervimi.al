@@ -167,3 +167,166 @@ export interface Appointment {
   salon: Salon;
   service: Service;
 }
+
+// ==============================================
+// AVAILABILITY MANAGEMENT TYPES
+// ==============================================
+
+export type TimeSlotStatus = 'available' | 'blocked' | 'booked'
+export type DayOfWeek = 'monday' | 'tuesday' | 'wednesday' | 'thursday' | 'friday' | 'saturday' | 'sunday'
+
+// Raw database row for time_slots table
+export interface TimeSlotRow {
+  id: string
+  salon_id: string
+  date: string
+  start_time: string
+  duration_minutes: number
+  status: TimeSlotStatus
+  block_reason?: string
+  created_at: string
+}
+
+// Frontend-friendly time slot interface
+export interface TimeSlot {
+  id: string
+  salonId: string
+  date: string
+  startTime: string
+  endTime: string
+  duration: number
+  status: TimeSlotStatus
+  blockReason?: string
+  available: boolean
+  createdAt: string
+}
+
+// Working hours configuration
+export interface WorkingHours {
+  [key: string]: {
+    open: string
+    close: string
+    closed: boolean
+  }
+}
+
+export interface DayHours {
+  open: string
+  close: string
+  closed: boolean
+}
+
+// Holiday/special period management
+export interface Holiday {
+  id: string
+  salonId: string
+  name: string
+  startDate: string
+  endDate: string
+  description?: string
+  createdAt: string
+  updatedAt: string
+}
+
+// Availability calculation result
+export interface AvailabilityResult {
+  date: string
+  salonName: string
+  workingHours: DayHours
+  serviceDuration: number
+  slots: TimeSlot[]
+  totalSlots: number
+  availableSlots: number
+  blockedSlots: number
+  bookedSlots: number
+}
+
+// Bulk operations for time slot management
+export interface BulkTimeSlotOperation {
+  operation: 'block' | 'unblock' | 'delete'
+  slots: {
+    date: string
+    startTime: string
+    duration?: number
+  }[]
+  reason?: string
+}
+
+export interface BulkOperationResult {
+  success: boolean
+  processed: number
+  failed: number
+  errors: string[]
+}
+
+// Calendar view data structure
+export interface CalendarDay {
+  date: string
+  dayOfWeek: DayOfWeek
+  isToday: boolean
+  isWorkingDay: boolean
+  workingHours?: DayHours
+  totalSlots: number
+  availableSlots: number
+  blockedSlots: number
+  bookedSlots: number
+  appointments: Appointment[]
+  holidays: Holiday[]
+}
+
+export interface CalendarMonth {
+  year: number
+  month: number
+  monthName: string
+  days: CalendarDay[]
+  stats: {
+    totalWorkingDays: number
+    totalAvailableSlots: number
+    totalBookedSlots: number
+    totalBlockedSlots: number
+  }
+}
+
+// Availability search and filtering
+export interface AvailabilityFilter {
+  startDate: string
+  endDate: string
+  serviceDuration?: number
+  onlyAvailable?: boolean
+  includeBlockedReason?: boolean
+}
+
+export interface AvailabilitySearchResult {
+  date: string
+  availableSlots: TimeSlot[]
+  conflictingAppointments: Appointment[]
+  workingHours: DayHours
+}
+
+// Performance optimization types
+export interface AvailabilityCache {
+  salonId: string
+  date: string
+  data: AvailabilityResult
+  cachedAt: string
+  expiresAt: string
+}
+
+// Configuration types for salon availability settings
+export interface SalonAvailabilitySettings {
+  salonId: string
+  defaultSlotDuration: number // minutes
+  bufferBetweenAppointments: number // minutes
+  maxAdvanceBookingDays: number
+  minCancellationHours: number
+  autoApproveRegularCustomers: boolean
+  allowSameDayBooking: boolean
+  sameDayBookingCutoffHours: number
+  breakPeriods: {
+    name: string
+    startTime: string
+    endTime: string
+    days: DayOfWeek[]
+  }[]
+  updatedAt: string
+}
