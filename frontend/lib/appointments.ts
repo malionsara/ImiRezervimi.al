@@ -429,22 +429,49 @@ export async function getAppointmentById(appointmentId: string): Promise<{ succe
 }
 
 /**
- * Update appointment status
+ * Update appointment status (overloaded function)
  */
 export async function updateAppointmentStatus(
   appointmentId: string,
-  status: 'approved' | 'declined',
+  statusOrData: 'approved' | 'declined' | {
+    status: 'approved' | 'declined';
+    salonNotes?: string;
+    approvedAt?: string;
+    declinedAt?: string;
+    approvalMethod?: string;
+  },
   salonNotes?: string
 ): Promise<{ success: boolean; data?: unknown; error?: unknown }> {
   try {
+    // Handle both calling patterns: (id, status, notes) and (id, dataObject)
+    let status: 'approved' | 'declined';
+    let notes: string | undefined;
+    let additionalData: Record<string, unknown> = {};
+    
+    if (typeof statusOrData === 'string') {
+      // Traditional call: updateAppointmentStatus(id, 'approved', 'notes')
+      status = statusOrData;
+      notes = salonNotes;
+    } else {
+      // Object call: updateAppointmentStatus(id, { status: 'approved', salonNotes: 'notes', ... })
+      status = statusOrData.status;
+      notes = statusOrData.salonNotes;
+      
+      // Add additional fields for webhook calls
+      if (statusOrData.approvedAt) additionalData.approved_at = statusOrData.approvedAt;
+      if (statusOrData.declinedAt) additionalData.declined_at = statusOrData.declinedAt;
+      if (statusOrData.approvalMethod) additionalData.approval_method = statusOrData.approvalMethod;
+    }
+    
     const updateData: Record<string, unknown> = {
       status,
       responded_at: new Date().toISOString(),
-      updated_at: new Date().toISOString()
+      updated_at: new Date().toISOString(),
+      ...additionalData
     }
     
-    if (salonNotes) {
-      updateData.salon_notes = salonNotes
+    if (notes) {
+      updateData.salon_notes = notes
     }
     
     if (status === 'approved') {
@@ -571,5 +598,56 @@ export const ALBANIAN_APPOINTMENT_ERRORS = {
   INVALID_STATUS_TRANSITION: 'Tranzicioni i statusit nuk është i vlefshëm',
   SALON_NOT_AUTHORIZED: 'Salloni nuk është i autorizuar për këtë takim'
 } as const
+
+/**
+ * Get appointment with detailed relations (salon, customer, service)
+ */
+export async function getAppointmentWithDetails(appointmentId: string) {
+  try {
+    console.log('🔍 Fetching appointment details for ID:', appointmentId);
+    
+    const { data: appointment, error } = await supabaseAdmin
+      .from('appointments')
+      .select(`
+        *,
+        salon:salons!appointments_salon_id_fkey (
+          id,
+          name,
+          phone,
+          address
+        ),
+        customer:customers!appointments_customer_id_fkey (
+          id,
+          first_name,
+          last_name,
+          phone
+        ),
+        service:services!appointments_service_id_fkey (
+          id,
+          name,
+          duration_minutes
+        )
+      `)
+      .eq('id', appointmentId)
+      .single();
+
+    if (error) {
+      console.error('❌ Error fetching appointment:', error);
+      return null;
+    }
+
+    if (!appointment) {
+      console.log('❌ Appointment not found:', appointmentId);
+      return null;
+    }
+
+    console.log('✅ Appointment details fetched successfully');
+    return appointment;
+    
+  } catch (error) {
+    console.error('❌ Exception in getAppointmentWithDetails:', error);
+    return null;
+  }
+}
 
 // Note: updateAppointmentStatus function is defined above
