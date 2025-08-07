@@ -54,11 +54,12 @@ interface BookingFormData {
 
 type FormStep = 'service' | 'datetime' | 'customer' | 'phone' | 'confirm'
 
-// Helper function to get steps based on authentication and phone availability
-function getStepsForUser(isAuthenticated: boolean, hasPhone: boolean): FormStep[] {
+// Helper function to get steps based on authentication and initial phone availability
+function getStepsForUser(isAuthenticated: boolean, hasPhoneInitially: boolean): FormStep[] {
   if (isAuthenticated) {
-    // Authenticated users: skip customer step, but include phone step if no phone
-    return hasPhone 
+    // Authenticated users: skip customer step, but include phone step if no phone initially
+    // Keep the step flow stable - don't change it dynamically during form filling
+    return hasPhoneInitially 
       ? ['service', 'datetime', 'confirm'] 
       : ['service', 'datetime', 'phone', 'confirm']
   } else {
@@ -90,6 +91,8 @@ export default function BookingForm({
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [submitError, setSubmitError] = useState('')
   const [successMessage, setSuccessMessage] = useState('')
+  const [initialPhoneStatus, setInitialPhoneStatus] = useState<boolean | null>(null)
+  const [stableSteps, setStableSteps] = useState<FormStep[]>(['service', 'datetime', 'customer', 'confirm'])
 
   // Form management with React Hook Form
   const {
@@ -117,30 +120,43 @@ export default function BookingForm({
   })
 
   // ==============================================
-  // AUTO-POPULATE USER DATA
+  // AUTO-POPULATE USER DATA AND SET STABLE STEPS
   // ==============================================
   useEffect(() => {
     if (isAuthenticated && session?.user) {
       // Auto-populate form with authenticated user data
       const user = session.user
       
-      // Parse name from session (Instagram provides full name)
+      // Parse name from session
       const fullName = user.name || ''
       const nameParts = fullName.split(' ')
       const firstName = nameParts[0] || ''
       const lastName = nameParts.slice(1).join(' ') || ''
       
-      // Instagram doesn't provide phone numbers, so leave empty
-      const phone = ''
+      // Use phone from session if available (from database)
+      const phone = (user as any).phone || ''
+      const hasPhone = !!phone
+      
+      // Set initial phone status once and create stable step flow
+      if (initialPhoneStatus === null) {
+        setInitialPhoneStatus(hasPhone)
+        const steps = getStepsForUser(true, hasPhone)
+        setStableSteps(steps)
+        console.log('✅ Set stable step flow:', steps)
+      }
       
       // Set form values
       setValue('customerInfo.firstName', firstName)
       setValue('customerInfo.lastName', lastName) 
       setValue('customerInfo.phone', phone)
       
-      console.log('✅ Auto-populated user data:', { firstName, lastName, phone })
+      console.log('✅ Auto-populated user data:', { firstName, lastName, phone, hasPhone })
+    } else if (!isAuthenticated && initialPhoneStatus === null) {
+      // Set guest user steps
+      setInitialPhoneStatus(false)
+      setStableSteps(['service', 'datetime', 'customer', 'confirm'])
     }
-  }, [isAuthenticated, session, setValue])
+  }, [isAuthenticated, session, setValue, initialPhoneStatus])
 
   // Watch form values for step validation
   const watchedValues = watch()
@@ -175,23 +191,21 @@ export default function BookingForm({
   const goToNextStep = () => {
     if (!isStepValid(currentStep)) return
 
-    const hasPhone = !!(watchedValues.customerInfo?.phone)
-    const steps = getStepsForUser(!!isAuthenticated, hasPhone)
-    const currentIndex = steps.indexOf(currentStep)
+    // Use stable steps instead of dynamically calculated ones
+    const currentIndex = stableSteps.indexOf(currentStep)
     
-    if (currentIndex < steps.length - 1) {
-      setCurrentStep(steps[currentIndex + 1])
+    if (currentIndex < stableSteps.length - 1) {
+      setCurrentStep(stableSteps[currentIndex + 1])
       setSubmitError('')
     }
   }
 
   const goToPreviousStep = () => {
-    const hasPhone = !!(watchedValues.customerInfo?.phone)
-    const steps = getStepsForUser(!!isAuthenticated, hasPhone)
-    const currentIndex = steps.indexOf(currentStep)
+    // Use stable steps instead of dynamically calculated ones
+    const currentIndex = stableSteps.indexOf(currentStep)
     
     if (currentIndex > 0) {
-      setCurrentStep(steps[currentIndex - 1])
+      setCurrentStep(stableSteps[currentIndex - 1])
       setSubmitError('')
     }
   }
@@ -293,10 +307,8 @@ export default function BookingForm({
       { key: 'confirm', label: 'Konfirmo', icon: '✅' }
     ]
     
-    // Filter steps based on authentication status and phone availability
-    const hasPhone = !!(watchedValues.customerInfo?.phone)
-    const activeStepKeys = getStepsForUser(!!isAuthenticated, hasPhone)
-    const steps = allSteps.filter(step => activeStepKeys.includes(step.key as FormStep))
+    // Use stable steps instead of dynamic calculation
+    const steps = allSteps.filter(step => stableSteps.includes(step.key as FormStep))
 
     const currentIndex = steps.findIndex(step => step.key === currentStep)
 
