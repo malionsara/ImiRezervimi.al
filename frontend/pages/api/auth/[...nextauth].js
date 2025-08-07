@@ -92,7 +92,7 @@ export const authOptions = {
         try {
           const { data: existingUser, error: dbError } = await supabase
             .from('customers')
-            .select('id, phone_verified')
+            .select('id, phone_verified, phone, first_name, last_name')
             .eq('email', token.email)
             .single()
           
@@ -102,8 +102,11 @@ export const authOptions = {
             token.isRegistered = false
           } else if (existingUser && existingUser.phone_verified) {
             token.userId = existingUser.id
+            token.phone = existingUser.phone
+            token.firstName = existingUser.first_name
+            token.lastName = existingUser.last_name
             token.isRegistered = true
-            console.log('✅ JWT Callback - User is fully registered:', token.email)
+            console.log('✅ JWT Callback - User is fully registered:', token.email, 'Phone:', existingUser.phone)
           } else {
             token.isRegistered = false
             console.log('⚠️ JWT Callback - User needs phone verification:', token.email)
@@ -124,6 +127,18 @@ export const authOptions = {
       session.user.provider = token.provider
       session.user.providerId = token.providerId
       session.user.isRegistered = token.isRegistered
+      
+      // Include phone and customer data for registered users
+      if (token.isRegistered && token.phone) {
+        session.user.phone = token.phone
+        session.user.firstName = token.firstName
+        session.user.lastName = token.lastName
+        
+        // Override name with database data if available
+        if (token.firstName || token.lastName) {
+          session.user.name = `${token.firstName || ''} ${token.lastName || ''}`.trim()
+        }
+      }
       
       // Include temporary data for unregistered users
       if (!token.isRegistered) {
