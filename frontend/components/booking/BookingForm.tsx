@@ -2,9 +2,10 @@
 // Main booking form component for ImiRezervimi.al
 // Albanian Beauty Salon Booking Platform
 
-import { useState } from 'react' // useEffect removed as unused
+import { useState, useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { useSession } from 'next-auth/react'
 import { appointmentRequestSchema, CustomerInfo, ALBANIAN_ERRORS } from '../../lib/validation'
 import ServiceSelector from './ServiceSelector'
 import TimeSlotPicker from './TimeSlotPicker'
@@ -51,7 +52,20 @@ interface BookingFormData {
   duration?: number
 }
 
-type FormStep = 'service' | 'datetime' | 'customer' | 'confirm'
+type FormStep = 'service' | 'datetime' | 'customer' | 'phone' | 'confirm'
+
+// Helper function to get steps based on authentication and phone availability
+function getStepsForUser(isAuthenticated: boolean, hasPhone: boolean): FormStep[] {
+  if (isAuthenticated) {
+    // Authenticated users: skip customer step, but include phone step if no phone
+    return hasPhone 
+      ? ['service', 'datetime', 'confirm'] 
+      : ['service', 'datetime', 'phone', 'confirm']
+  } else {
+    // Guest users: full flow (customer step includes phone)
+    return ['service', 'datetime', 'customer', 'confirm']
+  }
+}
 
 // ==============================================
 // MAIN BOOKING FORM COMPONENT
@@ -62,6 +76,12 @@ export default function BookingForm({
   onError,
   className = ''
 }: BookingFormProps) {
+  // ==============================================
+  // SESSION AND AUTHENTICATION
+  // ==============================================
+  const { data: session, status } = useSession()
+  const isAuthenticated = status === 'authenticated' && session?.user
+
   // ==============================================
   // STATE MANAGEMENT
   // ==============================================
@@ -96,6 +116,32 @@ export default function BookingForm({
     }
   })
 
+  // ==============================================
+  // AUTO-POPULATE USER DATA
+  // ==============================================
+  useEffect(() => {
+    if (isAuthenticated && session?.user) {
+      // Auto-populate form with authenticated user data
+      const user = session.user
+      
+      // Parse name from session (Instagram provides full name)
+      const fullName = user.name || ''
+      const nameParts = fullName.split(' ')
+      const firstName = nameParts[0] || ''
+      const lastName = nameParts.slice(1).join(' ') || ''
+      
+      // Get phone from user profile or leave empty for now
+      const phone = user.phone || ''
+      
+      // Set form values
+      setValue('customerInfo.firstName', firstName)
+      setValue('customerInfo.lastName', lastName) 
+      setValue('customerInfo.phone', phone)
+      
+      console.log('✅ Auto-populated user data:', { firstName, lastName, phone })
+    }
+  }, [isAuthenticated, session, setValue])
+
   // Watch form values for step validation
   const watchedValues = watch()
 
@@ -114,6 +160,8 @@ export default function BookingForm({
           watchedValues.customerInfo?.lastName &&
           watchedValues.customerInfo?.phone
         )
+      case 'phone':
+        return !!(watchedValues.customerInfo?.phone)
       case 'confirm':
         return isValid
       default:
@@ -127,7 +175,8 @@ export default function BookingForm({
   const goToNextStep = () => {
     if (!isStepValid(currentStep)) return
 
-    const steps: FormStep[] = ['service', 'datetime', 'customer', 'confirm']
+    const hasPhone = !!(watchedValues.customerInfo?.phone)
+    const steps = getStepsForUser(isAuthenticated, hasPhone)
     const currentIndex = steps.indexOf(currentStep)
     
     if (currentIndex < steps.length - 1) {
@@ -137,7 +186,8 @@ export default function BookingForm({
   }
 
   const goToPreviousStep = () => {
-    const steps: FormStep[] = ['service', 'datetime', 'customer', 'confirm']
+    const hasPhone = !!(watchedValues.customerInfo?.phone)
+    const steps = getStepsForUser(isAuthenticated, hasPhone)
     const currentIndex = steps.indexOf(currentStep)
     
     if (currentIndex > 0) {
@@ -153,12 +203,7 @@ export default function BookingForm({
     setSelectedService(service)
     setValue('serviceId', service.id)
     
-    // Auto-advance to next step
-    setTimeout(() => {
-      if (isStepValid('service')) {
-        goToNextStep()
-      }
-    }, 300)
+    // Remove auto-advance - user must click VAZHDO manually
   }
 
   // ==============================================
@@ -168,12 +213,7 @@ export default function BookingForm({
     setValue('appointmentDate', date)
     setValue('startTime', time)
     
-    // Auto-advance to next step
-    setTimeout(() => {
-      if (isStepValid('datetime')) {
-        goToNextStep()
-      }
-    }, 300)
+    // Remove auto-advance - user must click VAZHDO manually
   }
 
   // ==============================================
@@ -245,12 +285,18 @@ export default function BookingForm({
   // RENDER STEP INDICATOR
   // ==============================================
   const renderStepIndicator = () => {
-    const steps = [
+    const allSteps = [
       { key: 'service', label: 'Shërbimi', icon: '💅' },
       { key: 'datetime', label: 'Data & Ora', icon: '📅' },
       { key: 'customer', label: 'Të dhënat', icon: '👤' },
+      { key: 'phone', label: 'Telefoni', icon: '📱' },
       { key: 'confirm', label: 'Konfirmo', icon: '✅' }
     ]
+    
+    // Filter steps based on authentication status and phone availability
+    const hasPhone = !!(watchedValues.customerInfo?.phone)
+    const activeStepKeys = getStepsForUser(isAuthenticated, hasPhone)
+    const steps = allSteps.filter(step => activeStepKeys.includes(step.key as FormStep))
 
     const currentIndex = steps.findIndex(step => step.key === currentStep)
 
@@ -414,6 +460,57 @@ export default function BookingForm({
           </div>
         )
 
+      case 'phone':
+        return (
+          <div className="space-y-6 mb-6">
+            <div className="text-center mb-6">
+              <h3 className="text-xl font-semibold text-gray-900 mb-2">
+                Numri i telefonit
+              </h3>
+              <p className="text-gray-600">
+                Na duhet numri juaj i telefonit për të dërguar njoftimet në WhatsApp
+              </p>
+            </div>
+
+            {/* Phone Number */}
+            <div>
+              <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-2">
+                Numri i telefonit *
+              </label>
+              <input
+                {...register('customerInfo.phone')}
+                type="tel"
+                id="phone"
+                className="block w-full px-4 py-3 border border-gray-300 rounded-xl text-lg
+                         placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-red-500 
+                         focus:border-transparent transition-all duration-200 form-input-mobile"
+                placeholder="+355 69 123 4567"
+              />
+              {errors.customerInfo?.phone && (
+                <p className="mt-1 text-sm text-red-600">{errors.customerInfo.phone.message}</p>
+              )}
+              <p className="mt-2 text-sm text-gray-500">
+                Format: +355 XX XXX XXXX (numër shqiptar)
+              </p>
+            </div>
+
+            {/* WhatsApp Info */}
+            <div className="bg-green-50 border border-green-200 rounded-xl p-4">
+              <div className="flex items-start">
+                <svg className="w-5 h-5 text-green-400 mr-3 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
+                </svg>
+                <div>
+                  <h4 className="font-medium text-green-800 mb-1">WhatsApp Njoftimet</h4>
+                  <p className="text-sm text-green-700">
+                    Do të merrni një mesazh konfirmimi në WhatsApp kur salloni të aprovojë rezervimin tuaj.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        )
+
       case 'confirm':
         return (
           <div className="space-y-6 mb-6">
@@ -472,6 +569,19 @@ export default function BookingForm({
               )}
               
               <div className="border-t border-gray-200 pt-4">
+                {isAuthenticated && (
+                  <div className="bg-green-50 border border-green-200 rounded-xl p-3 mb-4">
+                    <div className="flex items-center">
+                      <svg className="w-4 h-4 text-green-400 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                      </svg>
+                      <span className="text-sm font-medium text-green-800">
+                        Përdorur nga profili juaj i Instagram
+                      </span>
+                    </div>
+                  </div>
+                )}
+                
                 <div className="flex items-center justify-between">
                   <span className="text-gray-600">Emri:</span>
                   <span className="font-semibold text-gray-900">
@@ -481,7 +591,11 @@ export default function BookingForm({
                 
                 <div className="flex items-center justify-between mt-2">
                   <span className="text-gray-600">Telefoni:</span>
-                  <span className="font-semibold text-gray-900">{watchedValues.customerInfo?.phone}</span>
+                  <div className="flex items-center">
+                    <span className="font-semibold text-gray-900">
+                      {watchedValues.customerInfo?.phone || 'Nuk është dhënë'}
+                    </span>
+                  </div>
                 </div>
               </div>
 

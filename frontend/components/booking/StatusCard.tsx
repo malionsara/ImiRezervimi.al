@@ -131,6 +131,7 @@ const StatusCard: React.FC<StatusCardProps> = ({ appointment, onCancel, cancelli
           </div>
           {canCancel && (
             <button
+              type="button"
               onClick={onCancel}
               disabled={cancelling}
               className="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
@@ -224,6 +225,7 @@ const StatusCard: React.FC<StatusCardProps> = ({ appointment, onCancel, cancelli
         {/* Toggle Details */}
         <div className="border-t pt-4">
           <button
+            type="button"
             onClick={() => setShowDetails(!showDetails)}
             className="flex items-center justify-between w-full text-left text-gray-600 hover:text-gray-900 transition-colors"
           >

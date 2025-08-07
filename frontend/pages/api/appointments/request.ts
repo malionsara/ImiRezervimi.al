@@ -288,8 +288,10 @@ async function sendSalonNotification(
 ): Promise<void> {
   try {
     const salonPhone = salon.phone
+    console.log(`🔍 Checking salon phone number: ${salonPhone}`)
     if (!salonPhone) {
       console.log('⚠️ Salon phone number not found, skipping notification')
+      console.log(`📋 Salon data:`, salon)
       return
     }
     

@@ -207,11 +207,11 @@ export async function checkCustomerPendingLimit(customerId: string, maxPending: 
 /**
  * Validate salon exists and is active
  */
-export async function validateSalon(salonId: string): Promise<{ valid: boolean; data?: { id: string; name: string; status: string; working_hours: unknown; max_advance_days: number }; error?: { success: boolean; error: { code: string; message: string } } }> {
+export async function validateSalon(salonId: string): Promise<{ valid: boolean; data?: { id: string; name: string; phone: string; status: string; working_hours: unknown; max_advance_days: number }; error?: { success: boolean; error: { code: string; message: string } } }> {
   try {
     const { data: salon, error } = await supabaseAdmin
       .from('salons')
-      .select('id, name, status, working_hours, max_advance_days')
+      .select('id, name, phone, status, working_hours, max_advance_days')
       .eq('id', salonId)
       .eq('status', 'active')
       .maybeSingle()

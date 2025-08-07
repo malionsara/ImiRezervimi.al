@@ -241,6 +241,7 @@ export default function TimeSlotPicker({
             {/* Calendar Header */}
             <div className="flex items-center justify-between mb-6">
               <button
+                type="button"
                 onClick={goToPreviousMonth}
                 className="p-2 hover:bg-gray-100 rounded-xl transition-colors duration-200"
               >
@@ -254,6 +255,7 @@ export default function TimeSlotPicker({
               </h3>
               
               <button
+                type="button"
                 onClick={goToNextMonth}
                 className="p-2 hover:bg-gray-100 rounded-xl transition-colors duration-200"
               >
@@ -282,6 +284,7 @@ export default function TimeSlotPicker({
 
                 return (
                   <button
+                    type="button"
                     key={index}
                     onClick={() => handleDateSelect(date)}
                     disabled={!selectable}
@@ -364,6 +367,7 @@ export default function TimeSlotPicker({
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 max-h-64 overflow-y-auto">
                 {availableSlots.map((slot) => (
                   <button
+                    type="button"
                     key={slot.time}
                     onClick={() => handleTimeSelect(slot.time)}
                     disabled={!slot.available}

@@ -106,7 +106,7 @@ const BookingHistory: React.FC<BookingHistoryProps> = ({ history, currentAppoint
 
         {filteredHistory.length > 5 && (
           <div className="mt-6 text-center">
-            <button className="text-pink-600 hover:text-pink-700 font-medium text-sm transition-colors">
+            <button type="button" className="text-pink-600 hover:text-pink-700 font-medium text-sm transition-colors">
               Shiko të gjitha ({filteredHistory.length - 5} më shumë)
             </button>
           </div>
