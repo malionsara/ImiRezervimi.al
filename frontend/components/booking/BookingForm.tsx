@@ -176,7 +176,7 @@ export default function BookingForm({
     if (!isStepValid(currentStep)) return
 
     const hasPhone = !!(watchedValues.customerInfo?.phone)
-    const steps = getStepsForUser(isAuthenticated, hasPhone)
+    const steps = getStepsForUser(!!isAuthenticated, hasPhone)
     const currentIndex = steps.indexOf(currentStep)
     
     if (currentIndex < steps.length - 1) {
@@ -187,7 +187,7 @@ export default function BookingForm({
 
   const goToPreviousStep = () => {
     const hasPhone = !!(watchedValues.customerInfo?.phone)
-    const steps = getStepsForUser(isAuthenticated, hasPhone)
+    const steps = getStepsForUser(!!isAuthenticated, hasPhone)
     const currentIndex = steps.indexOf(currentStep)
     
     if (currentIndex > 0) {
@@ -295,7 +295,7 @@ export default function BookingForm({
     
     // Filter steps based on authentication status and phone availability
     const hasPhone = !!(watchedValues.customerInfo?.phone)
-    const activeStepKeys = getStepsForUser(isAuthenticated, hasPhone)
+    const activeStepKeys = getStepsForUser(!!isAuthenticated, hasPhone)
     const steps = allSteps.filter(step => activeStepKeys.includes(step.key as FormStep))
 
     const currentIndex = steps.findIndex(step => step.key === currentStep)
