@@ -4,11 +4,17 @@
 
 import { NextApiRequest, NextApiResponse } from 'next';
 import { createClient } from '@supabase/supabase-js';
-import { isValidAlbanianPhone } from '../../../lib/twilio';
+import { getSession } from 'next-auth/react';
 
 const supabase = createClient(
-  process.env.SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.SUPABASE_SERVICE_ROLE_KEY!,
+  {
+    auth: {
+      autoRefreshToken: false,
+      persistSession: false
+    }
+  }
 );
 
 interface BookingHistoryItem {
@@ -23,7 +29,14 @@ interface BookingHistoryItem {
 
 interface ApiResponse {
   success: boolean;
-  data?: BookingHistoryItem[];
+  data?: {
+    bookings: BookingHistoryItem[];
+    total: number;
+    pending: number;
+    completed: number;
+    approved: number;
+    declined: number;
+  };
   error?: {
     code: string;
     message: string;
@@ -45,30 +58,56 @@ export default async function handler(
   }
 
   try {
-    const { phone } = req.query;
-
-    // Validate phone parameter
-    if (!phone || typeof phone !== 'string') {
-      return res.status(400).json({
+    // Get session for authentication
+    const session = await getSession({ req });
+    
+    if (!session?.user) {
+      return res.status(401).json({
         success: false,
         error: {
-          code: 'MISSING_PHONE',
-          message: 'Numri i telefonit është i detyrueshëm'
+          code: 'UNAUTHORIZED',
+          message: 'Duhet të jeni të identifikuar'
         }
       });
     }
 
-    if (!isValidAlbanianPhone(phone)) {
-      return res.status(400).json({
+    const { limit = 20 } = req.query;
+    const limitNum = parseInt(limit as string);
+    
+    console.log(`📖 Fetching booking history for user: ${session.user.email}`);
+
+    // First, find the customer by email from the session
+    const { data: customer, error: customerError } = await supabase
+      .from('customers')
+      .select('id, phone')
+      .eq('email', session.user.email)
+      .maybeSingle();
+    
+    if (customerError && customerError.code !== 'PGRST116') {
+      console.error('❌ Customer lookup error:', customerError);
+      return res.status(500).json({
         success: false,
         error: {
-          code: 'INVALID_PHONE',
-          message: 'Numri i telefonit nuk është i vlefshëm'
+          code: 'DATABASE_ERROR',
+          message: 'Gabim në leximin e të dhënave'
         }
       });
     }
 
-    console.log(`📖 Fetching booking history for phone: ${phone}`);
+    if (!customer) {
+      // No bookings found for this user
+      return res.status(200).json({
+        success: true,
+        data: {
+          bookings: [],
+          total: 0,
+          pending: 0,
+          completed: 0,
+          approved: 0,
+          declined: 0
+        }
+      });
+    }
 
     // Query appointment history with joins
     const { data: appointments, error } = await supabase
@@ -78,20 +117,21 @@ export default async function handler(
         appointment_date,
         start_time,
         status,
-        created_at,
+        service_name,
+        service_price,
+        customer_notes,
+        salon_notes,
+        requested_at,
+        responded_at,
         salons!inner (
-          name
-        ),
-        services!inner (
-          name
-        ),
-        customers!inner (
-          phone
+          name,
+          address,
+          city
         )
       `)
-      .eq('customers.phone', phone)
-      .order('created_at', { ascending: false })
-      .limit(20);
+      .eq('customer_id', customer.id)
+      .order('requested_at', { ascending: false })
+      .limit(limitNum);
 
     if (error) {
       console.error('❌ Database error:', error);
@@ -104,22 +144,39 @@ export default async function handler(
       });
     }
 
-    // Format the response
+    // Format the response and calculate stats
     const formattedHistory: BookingHistoryItem[] = appointments?.map(appointment => ({
       id: appointment.id,
-      salon_name: (appointment.salons as unknown as { name: string })?.name || 'Salon i panjohur',
-      service_name: (appointment.services as unknown as { name: string })?.name || 'Shërbim i panjohur',
+      salon_name: (appointment.salons as any)?.name || 'Salon i panjohur',
+      service_name: appointment.service_name || 'Shërbim i panjohur',
       appointment_date: appointment.appointment_date,
       start_time: appointment.start_time,
       status: appointment.status,
-      created_at: appointment.created_at
+      service_price: appointment.service_price,
+      customer_notes: appointment.customer_notes,
+      salon_notes: appointment.salon_notes,
+      requested_at: appointment.requested_at,
+      responded_at: appointment.responded_at,
+      created_at: appointment.requested_at
     })) || [];
 
-    console.log(`✅ Found ${formattedHistory.length} appointments for ${phone}`);
+    // Calculate statistics
+    const stats = {
+      total: formattedHistory.length,
+      pending: formattedHistory.filter(a => a.status === 'pending').length,
+      approved: formattedHistory.filter(a => a.status === 'approved').length,
+      completed: formattedHistory.filter(a => a.status === 'completed').length,
+      declined: formattedHistory.filter(a => a.status === 'declined').length
+    };
+
+    console.log(`✅ Found ${formattedHistory.length} appointments for customer ${customer.id}`);
 
     return res.status(200).json({
       success: true,
-      data: formattedHistory
+      data: {
+        bookings: formattedHistory,
+        ...stats
+      }
     });
 
   } catch (error) {

@@ -6,12 +6,20 @@ import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
 import Head from 'next/head'
 import Image from 'next/image'
+import Link from 'next/link'
 
 export default function Dashboard() {
   const { data: session, status } = useSession()
   const router = useRouter()
   const [userProfile, setUserProfile] = useState(null)
-  const [recentBookings] = useState([])
+  const [recentBookings, setRecentBookings] = useState([])
+  const [salons, setSalons] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [profileStats, setProfileStats] = useState({
+    totalBookings: 0,
+    pendingBookings: 0,
+    completedBookings: 0
+  })
 
   useEffect(() => {
     if (status === 'unauthenticated') {
@@ -29,13 +37,72 @@ export default function Dashboard() {
         name: session.user.name || session.user.username,
         email: session.user.email,
         image: session.user.image,
-        provider: session.user.provider
+        provider: session.user.provider,
+        phone: session.user.phone || null
       })
       
-      // TODO: Fetch recent bookings from Supabase
-      // fetchRecentBookings(session.user.id)
+      // Fetch dashboard data
+      fetchDashboardData()
     }
   }, [session])
+
+  // Fetch dashboard data
+  const fetchDashboardData = async () => {
+    setLoading(true)
+    try {
+      // Fetch recent bookings
+      const bookingsResponse = await fetch('/api/customers/booking-history?limit=5')
+      if (bookingsResponse.ok) {
+        const bookingsData = await bookingsResponse.json()
+        if (bookingsData.success) {
+          setRecentBookings(bookingsData.data.bookings || [])
+          setProfileStats({
+            totalBookings: bookingsData.data.total || 0,
+            pendingBookings: bookingsData.data.pending || 0,
+            completedBookings: bookingsData.data.completed || 0
+          })
+        }
+      }
+      
+      // Fetch popular salons
+      const salonsResponse = await fetch('/api/salon/popular?limit=6')
+      if (salonsResponse.ok) {
+        const salonsData = await salonsResponse.json()
+        if (salonsData.success) {
+          setSalons(salonsData.data || [])
+        }
+      }
+    } catch (error) {
+      console.error('Error fetching dashboard data:', error)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  // Navigation handlers
+  const handleExploreServices = () => {
+    router.push('/salon')
+  }
+
+  const handleMyBookings = () => {
+    router.push('/dashboard/bookings')
+  }
+
+  const handleFavorites = () => {
+    router.push('/dashboard/favorites')
+  }
+
+  const handleProfile = () => {
+    router.push('/dashboard/profile')
+  }
+
+  const handleFirstBooking = () => {
+    router.push('/salon')
+  }
+
+  const handleBookSalon = (salonSlug) => {
+    router.push(`/${salonSlug}`)
+  }
 
   const handleSignOut = async () => {
     await signOut({ callbackUrl: '/' })
@@ -130,13 +197,25 @@ export default function Dashboard() {
                 Veprime të shpejta
               </h3>
               <div className="space-y-3">
-                <button className="w-full text-left px-4 py-3 rounded-lg bg-gradient-to-r from-red-500 to-pink-500 text-white hover:from-red-600 hover:to-pink-600 transition-all">
+                <button 
+                  onClick={handleExploreServices}
+                  className="w-full text-left px-4 py-3 rounded-lg bg-gradient-to-r from-red-500 to-pink-500 text-white hover:from-red-600 hover:to-pink-600 transition-all"
+                >
                   🔍 Zbulo sallone
                 </button>
-                <button className="w-full text-left px-4 py-3 rounded-lg bg-gray-100 text-gray-700 hover:bg-gray-200 transition-all">
-                  📅 Rezervimet e mia
+                <button 
+                  onClick={handleMyBookings}
+                  className="w-full text-left px-4 py-3 rounded-lg bg-gray-100 text-gray-700 hover:bg-gray-200 transition-all flex items-center justify-between"
+                >
+                  <span>📅 Rezervimet e mia</span>
+                  <span className="bg-red-500 text-white text-xs px-2 py-1 rounded-full">
+                    {profileStats.totalBookings}
+                  </span>
                 </button>
-                <button className="w-full text-left px-4 py-3 rounded-lg bg-gray-100 text-gray-700 hover:bg-gray-200 transition-all">
+                <button 
+                  onClick={handleFavorites}
+                  className="w-full text-left px-4 py-3 rounded-lg bg-gray-100 text-gray-700 hover:bg-gray-200 transition-all"
+                >
                   ⭐ Sallone të preferuara
                 </button>
               </div>
@@ -147,20 +226,57 @@ export default function Dashboard() {
               <h3 className="text-lg font-semibold text-gray-900 mb-4">
                 Rezervimet e fundit
               </h3>
-              {recentBookings.length === 0 ? (
+              {loading ? (
+                <div className="space-y-3">
+                  <div className="animate-pulse">
+                    <div className="h-4 bg-gray-200 rounded mb-2"></div>
+                    <div className="h-3 bg-gray-200 rounded mb-2"></div>
+                    <div className="h-3 bg-gray-200 rounded w-3/4"></div>
+                  </div>
+                </div>
+              ) : recentBookings.length === 0 ? (
                 <div className="text-center py-8">
                   <div className="text-gray-400 text-4xl mb-3">📅</div>
                   <p className="text-gray-500 text-sm">
                     Nuk keni rezervime ende
                   </p>
-                  <button className="mt-3 text-red-500 text-sm font-medium hover:text-red-600">
+                  <button 
+                    onClick={handleFirstBooking}
+                    className="mt-3 text-red-500 text-sm font-medium hover:text-red-600"
+                  >
                     Bëni rezervimin e parë
                   </button>
                 </div>
               ) : (
                 <div className="space-y-3">
-                  {/* TODO: Map through actual bookings */}
-                  <p className="text-gray-500 text-sm">Po ngarkohen rezervimet...</p>
+                  {recentBookings.slice(0, 3).map((booking) => (
+                    <div key={booking.id} className="p-3 border border-gray-200 rounded-lg">
+                      <div className="flex items-center justify-between mb-1">
+                        <span className="font-medium text-sm text-gray-900">{booking.salon_name}</span>
+                        <span className={`text-xs px-2 py-1 rounded-full ${
+                          booking.status === 'approved' ? 'bg-green-100 text-green-700' :
+                          booking.status === 'pending' ? 'bg-yellow-100 text-yellow-700' :
+                          booking.status === 'declined' ? 'bg-red-100 text-red-700' :
+                          'bg-gray-100 text-gray-700'
+                        }`}>
+                          {booking.status === 'approved' ? 'Aprovuar' :
+                           booking.status === 'pending' ? 'Në pritje' :
+                           booking.status === 'declined' ? 'Refuzuar' : booking.status}
+                        </span>
+                      </div>
+                      <p className="text-xs text-gray-600">
+                        {booking.service_name} • {new Date(booking.appointment_date).toLocaleDateString('sq-AL')} në {booking.start_time}
+                      </p>
+                    </div>
+                  ))}
+                  {recentBookings.length > 3 && (
+                    <button 
+                      onClick={handleMyBookings}
+                      className="w-full text-center text-sm text-red-500 hover:text-red-600 font-medium"
+                    >
+                      Shiko të gjitha ({recentBookings.length - 3} më shumë)
+                    </button>
+                  )}
                 </div>
               )}
             </div>
@@ -178,16 +294,44 @@ export default function Dashboard() {
                 {userProfile?.email && (
                   <div>
                     <label className="text-sm font-medium text-gray-700">Email</label>
-                    <p className="text-gray-900">{userProfile.email}</p>
+                    <p className="text-gray-900 text-sm">{userProfile.email}</p>
                   </div>
                 )}
+                <div>
+                  <label className="text-sm font-medium text-gray-700">Telefoni</label>
+                  <p className="text-gray-900">
+                    {userProfile?.phone ? userProfile.phone : (
+                      <span className="text-gray-500 text-sm">Nuk është shtuar</span>
+                    )}
+                  </p>
+                </div>
+                <div>
+                  <label className="text-sm font-medium text-gray-700">Statistika</label>
+                  <div className="grid grid-cols-3 gap-2 mt-1">
+                    <div className="text-center p-2 bg-gray-50 rounded-lg">
+                      <p className="font-semibold text-red-600">{profileStats.totalBookings}</p>
+                      <p className="text-xs text-gray-500">Total</p>
+                    </div>
+                    <div className="text-center p-2 bg-gray-50 rounded-lg">
+                      <p className="font-semibold text-yellow-600">{profileStats.pendingBookings}</p>
+                      <p className="text-xs text-gray-500">Në pritje</p>
+                    </div>
+                    <div className="text-center p-2 bg-gray-50 rounded-lg">
+                      <p className="font-semibold text-green-600">{profileStats.completedBookings}</p>
+                      <p className="text-xs text-gray-500">Kryer</p>
+                    </div>
+                  </div>
+                </div>
                 <div>
                   <label className="text-sm font-medium text-gray-700">Identifikuar me</label>
                   <p className="text-gray-900 capitalize">
                     {userProfile?.provider === 'instagram' ? 'Instagram' : 'Google'}
                   </p>
                 </div>
-                <button className="w-full mt-4 px-4 py-2 rounded-lg border border-gray-300 text-gray-700 hover:bg-gray-50 transition-all">
+                <button 
+                  onClick={handleProfile}
+                  className="w-full mt-4 px-4 py-2 rounded-lg border border-gray-300 text-gray-700 hover:bg-gray-50 transition-all"
+                >
                   Ndrysho profilin
                 </button>
               </div>
@@ -200,23 +344,50 @@ export default function Dashboard() {
               Sallone të popullarizuara
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {/* TODO: Map through actual salons from Supabase */}
-              <div className="bg-white rounded-xl shadow-sm p-6 border hover:shadow-md transition-shadow">
-                <div className="w-full h-32 bg-gradient-to-br from-pink-100 to-red-100 rounded-lg mb-4 flex items-center justify-center">
-                  <span className="text-gray-400 text-4xl">💅</span>
-                </div>
-                <h3 className="font-semibold text-gray-900 mb-2">Klea Nails Studio</h3>
-                <p className="text-gray-600 text-sm mb-3">Nail art profesional në Tiranë</p>
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center">
-                    <span className="text-yellow-400">⭐</span>
-                    <span className="text-sm text-gray-600 ml-1">4.8 (127)</span>
+              {loading ? (
+                Array.from({length: 6}).map((_, index) => (
+                  <div key={index} className="bg-white rounded-xl shadow-sm p-6 border animate-pulse">
+                    <div className="w-full h-32 bg-gray-200 rounded-lg mb-4"></div>
+                    <div className="h-4 bg-gray-200 rounded mb-2"></div>
+                    <div className="h-3 bg-gray-200 rounded mb-3"></div>
+                    <div className="flex items-center justify-between">
+                      <div className="h-3 bg-gray-200 rounded w-20"></div>
+                      <div className="h-8 bg-gray-200 rounded w-16"></div>
+                    </div>
                   </div>
-                  <button className="px-4 py-2 bg-red-500 text-white rounded-lg text-sm hover:bg-red-600 transition-colors">
-                    Rezervo
-                  </button>
+                ))
+              ) : salons.length > 0 ? (
+                salons.map((salon) => (
+                  <div key={salon.id} className="bg-white rounded-xl shadow-sm p-6 border hover:shadow-md transition-shadow">
+                    <div className="w-full h-32 bg-gradient-to-br from-pink-100 to-red-100 rounded-lg mb-4 flex items-center justify-center">
+                      <span className="text-gray-400 text-4xl">💅</span>
+                    </div>
+                    <h3 className="font-semibold text-gray-900 mb-2">{salon.name}</h3>
+                    <p className="text-gray-600 text-sm mb-3">{salon.description || 'Salon i bukurisë në Tiranë'}</p>
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center">
+                        <span className="text-yellow-400">⭐</span>
+                        <span className="text-sm text-gray-600 ml-1">4.8</span>
+                      </div>
+                      <button 
+                        onClick={() => handleBookSalon(salon.slug)}
+                        className="px-4 py-2 bg-red-500 text-white rounded-lg text-sm hover:bg-red-600 transition-colors"
+                      >
+                        Rezervo
+                      </button>
+                    </div>
+                  </div>
+                ))
+              ) : (
+                <div className="col-span-full bg-white rounded-xl shadow-sm p-12 border text-center">
+                  <div className="text-gray-400 text-6xl mb-4">🏪</div>
+                  <h3 className="text-lg font-semibold text-gray-900 mb-2">Asnjë sallon i disponueshëm</h3>
+                  <p className="text-gray-600 mb-4">Aktualisht nuk ka sallone të regjistruara në platformë.</p>
+                  <Link href="/salon/register">
+                    <a className="text-red-500 hover:text-red-600 font-medium">Regjistro sallonin tënd</a>
+                  </Link>
                 </div>
-              </div>
+              )}
             </div>
           </div>
         </main>
