@@ -130,8 +130,8 @@ export default function BookingForm({
       const firstName = nameParts[0] || ''
       const lastName = nameParts.slice(1).join(' ') || ''
       
-      // Get phone from user profile or leave empty for now
-      const phone = user.phone || ''
+      // Instagram doesn't provide phone numbers, so leave empty
+      const phone = ''
       
       // Set form values
       setValue('customerInfo.firstName', firstName)
