@@ -336,9 +336,16 @@ export default function BookingForm({
         onSuccess?.(result.data.appointment.id)
         
       } else {
-        const errorMessage = result.error?.message || ALBANIAN_ERRORS.INTERNAL_ERROR
-        setSubmitError(errorMessage)
-        onError?.(errorMessage)
+        // Check if it's a pending limit error
+        if (result.error?.code === 'MAX_PENDING_EXCEEDED' || 
+            result.error?.message?.includes('Mund të keni maksimumi 2 rezervime në pritje') ||
+            result.error?.message?.includes('pending limit')) {
+          setSubmitError('PENDING_LIMIT_REACHED')
+        } else {
+          const errorMessage = result.error?.message || ALBANIAN_ERRORS.INTERNAL_ERROR
+          setSubmitError(errorMessage)
+        }
+        onError?.(result.error?.message || ALBANIAN_ERRORS.INTERNAL_ERROR)
       }
 
     } catch (error) {
@@ -847,20 +854,54 @@ export default function BookingForm({
 
           {/* Error Message */}
           {submitError && (
-            <div className="mx-8 mb-8 p-6 bg-gradient-to-r from-red-500 to-pink-600 text-white rounded-2xl shadow-lg">
-              <div className="flex items-center">
-                <div className="flex-shrink-0 mr-4">
-                  <div className="w-12 h-12 bg-white bg-opacity-20 rounded-full flex items-center justify-center">
-                    <svg className="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 20 20">
-                      <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
-                    </svg>
+            <div className="mx-8 mb-8">
+              {submitError === 'PENDING_LIMIT_REACHED' ? (
+                // Special UI for pending limit error
+                <div className="p-8 bg-gradient-to-r from-orange-400 to-yellow-500 text-white rounded-2xl shadow-lg">
+                  <div className="text-center">
+                    <div className="w-16 h-16 bg-white bg-opacity-20 rounded-full flex items-center justify-center mx-auto mb-4">
+                      <svg className="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clipRule="evenodd" />
+                      </svg>
+                    </div>
+                    <h3 className="text-2xl font-bold mb-2">⏳ Limit i rezervimeve u arrit</h3>
+                    <p className="text-orange-100 font-medium mb-6 text-lg">
+                      Keni arritur limitin maksimal të rezervimeve në pritje (2). Ju lutemi menaxhoni rezervimet ekzistuese para se të bëni një të re.
+                    </p>
+                    <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                      <button
+                        onClick={() => window.location.href = '/dashboard/bookings'}
+                        className="px-6 py-3 bg-white text-orange-600 rounded-xl font-semibold hover:bg-orange-50 transition-colors shadow-lg"
+                      >
+                        📅 Shiko Rezervimet e Mia
+                      </button>
+                      <button
+                        onClick={() => setSubmitError('')}
+                        className="px-6 py-3 bg-orange-600 bg-opacity-20 text-white rounded-xl font-semibold hover:bg-opacity-30 transition-colors border border-white border-opacity-30"
+                      >
+                        ✕ Mbyll
+                      </button>
+                    </div>
                   </div>
                 </div>
-                <div>
-                  <h3 className="text-lg font-bold mb-1">⚠️ Gabim</h3>
-                  <p className="text-red-100 font-medium">{submitError}</p>
+              ) : (
+                // Regular error message
+                <div className="p-6 bg-gradient-to-r from-red-500 to-pink-600 text-white rounded-2xl shadow-lg">
+                  <div className="flex items-center">
+                    <div className="flex-shrink-0 mr-4">
+                      <div className="w-12 h-12 bg-white bg-opacity-20 rounded-full flex items-center justify-center">
+                        <svg className="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 20 20">
+                          <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+                        </svg>
+                      </div>
+                    </div>
+                    <div>
+                      <h3 className="text-lg font-bold mb-1">⚠️ Gabim</h3>
+                      <p className="text-red-100 font-medium">{submitError}</p>
+                    </div>
+                  </div>
                 </div>
-              </div>
+              )}
             </div>
           )}
         </form>
