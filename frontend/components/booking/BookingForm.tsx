@@ -104,7 +104,7 @@ export default function BookingForm({
     reset
   } = useForm<BookingFormData>({
     resolver: zodResolver(appointmentRequestSchema),
-    mode: 'onBlur',
+    mode: 'onChange',
     defaultValues: {
       salonId: salon.id,
       serviceId: '',
@@ -182,16 +182,28 @@ export default function BookingForm({
       case 'confirm':
         console.log('🔍 Confirm step validation:', {
           isValid,
-          errors,
+          hasErrors: Object.keys(errors).length > 0,
+          errorDetails: errors,
           watchedValues: {
             salonId: watchedValues.salonId,
             serviceId: watchedValues.serviceId,
             appointmentDate: watchedValues.appointmentDate,
             startTime: watchedValues.startTime,
             customerInfo: watchedValues.customerInfo,
-            duration: selectedService?.duration_minutes
-          }
+            duration: watchedValues.duration,
+            customerNotes: watchedValues.customerNotes
+          },
+          selectedService: selectedService?.name
         })
+        
+        // Also log individual field validation
+        if (!isValid) {
+          console.log('❌ Form validation failed. Detailed errors:')
+          Object.entries(errors).forEach(([field, error]) => {
+            console.log(`  - ${field}:`, error?.message || error)
+          })
+        }
+        
         return isValid
       default:
         return false
@@ -327,38 +339,52 @@ export default function BookingForm({
     const currentIndex = steps.findIndex(step => step.key === currentStep)
 
     return (
-      <div className="flex items-center justify-between mb-8 px-4">
-        {steps.map((step, index) => (
-          <div key={step.key} className="flex items-center">
-            {/* Step Circle */}
-            <div className={`
-              flex items-center justify-center w-10 h-10 rounded-full text-sm font-medium calendar-day
-              ${index <= currentIndex 
-                ? 'bg-gradient-to-r from-red-500 to-pink-500 text-white' 
-                : 'bg-gray-200 text-gray-400'
-              }
-              ${index === currentIndex ? 'ring-4 ring-red-200' : ''}
-            `}>
-              {index < currentIndex ? '✓' : step.icon}
-            </div>
+      <div className="mb-12">
+        {/* Progress Bar */}
+        <div className="relative mb-8">
+          <div className="absolute top-1/2 left-0 w-full h-1 bg-gray-200 rounded-full transform -translate-y-1/2"></div>
+          <div 
+            className="absolute top-1/2 left-0 h-1 bg-gradient-to-r from-red-500 to-pink-500 rounded-full transform -translate-y-1/2 transition-all duration-500 ease-out"
+            style={{ width: `${(currentIndex / (steps.length - 1)) * 100}%` }}
+          ></div>
+        </div>
 
-            {/* Step Label */}
-            <div className="ml-3 hidden sm:block">
-              <p className={`text-sm font-medium ${
-                index <= currentIndex ? 'text-gray-900' : 'text-gray-400'
-              }`}>
-                {step.label}
-              </p>
-            </div>
+        {/* Step Indicators */}
+        <div className="flex justify-between relative">
+          {steps.map((step, index) => (
+            <div key={step.key} className="flex flex-col items-center relative z-10">
+              {/* Step Circle */}
+              <div className={`
+                flex items-center justify-center w-14 h-14 rounded-full text-lg font-bold transition-all duration-300 transform
+                ${index <= currentIndex 
+                  ? 'bg-gradient-to-br from-red-500 to-pink-600 text-white shadow-lg scale-110' 
+                  : 'bg-white border-2 border-gray-300 text-gray-400 hover:border-gray-400'
+                }
+                ${index === currentIndex ? 'ring-4 ring-red-200 ring-opacity-50 animate-pulse' : ''}
+              `}>
+                {index < currentIndex ? (
+                  <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                  </svg>
+                ) : (
+                  <span className="text-xl">{step.icon}</span>
+                )}
+              </div>
 
-            {/* Connector Line */}
-            {index < steps.length - 1 && (
-              <div className={`flex-1 h-0.5 mx-4 ${
-                index < currentIndex ? 'bg-red-300' : 'bg-gray-200'
-              }`} />
-            )}
-          </div>
-        ))}
+              {/* Step Label */}
+              <div className="mt-3 text-center">
+                <p className={`text-sm font-semibold transition-colors duration-300 ${
+                  index <= currentIndex ? 'text-red-600' : 'text-gray-500'
+                }`}>
+                  {step.label}
+                </p>
+                {index === currentIndex && (
+                  <div className="mt-1 w-2 h-2 bg-red-500 rounded-full mx-auto animate-bounce"></div>
+                )}
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
     )
   }
@@ -668,19 +694,22 @@ export default function BookingForm({
   // ==============================================
   const renderNavigationButtons = () => {
     return (
-      <div className="flex items-center justify-between space-x-4 mt-8">
+      <div className="flex items-center justify-between space-x-6 mt-12">
         {/* Back Button */}
         {currentStep !== 'service' && (
           <button
             type="button"
             onClick={goToPreviousStep}
             disabled={isSubmitting}
-            className="flex-1 py-3 px-6 border border-gray-300 rounded-xl text-gray-700 
-                     font-medium hover:bg-gray-50 focus:outline-none focus:ring-2 
-                     focus:ring-offset-2 focus:ring-red-500 disabled:opacity-50 
-                     disabled:cursor-not-allowed transition-all duration-200"
+            className="group flex items-center justify-center py-4 px-8 bg-white border-2 border-gray-300 rounded-2xl text-gray-700 
+                     font-semibold hover:border-red-300 hover:text-red-600 focus:outline-none focus:ring-4 
+                     focus:ring-red-100 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 
+                     transform hover:scale-105 disabled:transform-none shadow-sm hover:shadow-md"
           >
-            ← Kthehu
+            <svg className="w-5 h-5 mr-2 transition-transform duration-300 group-hover:-translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+            </svg>
+            Kthehu
           </button>
         )}
 
@@ -689,25 +718,27 @@ export default function BookingForm({
           <button
             type="submit"
             disabled={!isStepValid(currentStep) || isSubmitting}
-            className="flex-1 flex justify-center items-center py-3 px-6 border border-transparent 
-                     text-lg font-semibold rounded-xl text-white bg-gradient-to-r from-red-600 
-                     to-pink-600 hover:from-red-700 hover:to-pink-700 focus:outline-none 
-                     focus:ring-2 focus:ring-offset-2 focus:ring-red-500 disabled:opacity-50 
-                     disabled:cursor-not-allowed transition-all duration-200 transform 
-                     hover:scale-105 disabled:transform-none"
+            className="group flex-1 flex justify-center items-center py-4 px-8 bg-gradient-to-r from-red-600 to-pink-600 
+                     hover:from-red-700 hover:to-pink-700 rounded-2xl text-white text-lg font-bold
+                     focus:outline-none focus:ring-4 focus:ring-red-200 disabled:opacity-50 
+                     disabled:cursor-not-allowed transition-all duration-300 transform 
+                     hover:scale-105 disabled:transform-none shadow-lg hover:shadow-xl
+                     relative overflow-hidden"
           >
+            {/* Animated background shine effect */}
+            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white to-transparent opacity-20 -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></div>
+            
             {isSubmitting ? (
               <>
-                <div className="animate-spin rounded-full h-5 w-5 border-2 border-white border-t-transparent mr-2"></div>
-                Po dërgon...
+                <div className="animate-spin rounded-full h-6 w-6 border-2 border-white border-t-transparent mr-3"></div>
+                <span className="relative">Po dërgon rezervimin...</span>
               </>
             ) : (
               <>
-                <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} 
-                        d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+                <svg className="w-6 h-6 mr-3 transition-transform duration-300 group-hover:rotate-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
                 </svg>
-                Dërgo Rezervimin
+                <span className="relative">🎉 Dërgo Rezervimin</span>
               </>
             )}
           </button>
@@ -716,14 +747,20 @@ export default function BookingForm({
             type="button"
             onClick={goToNextStep}
             disabled={!isStepValid(currentStep)}
-            className="flex-1 py-3 px-6 border border-transparent text-lg font-semibold 
-                     rounded-xl text-white bg-gradient-to-r from-red-600 to-pink-600 
-                     hover:from-red-700 hover:to-pink-700 focus:outline-none focus:ring-2 
-                     focus:ring-offset-2 focus:ring-red-500 disabled:opacity-50 
-                     disabled:cursor-not-allowed transition-all duration-200 transform 
-                     hover:scale-105 disabled:transform-none"
+            className="group flex-1 flex items-center justify-center py-4 px-8 bg-gradient-to-r from-red-600 to-pink-600 
+                     hover:from-red-700 hover:to-pink-700 rounded-2xl text-white text-lg font-semibold
+                     focus:outline-none focus:ring-4 focus:ring-red-200 disabled:opacity-50 
+                     disabled:cursor-not-allowed transition-all duration-300 transform 
+                     hover:scale-105 disabled:transform-none shadow-lg hover:shadow-xl
+                     relative overflow-hidden"
           >
-            Vazhdo →
+            {/* Animated background shine effect */}
+            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white to-transparent opacity-20 -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></div>
+            
+            <span className="relative mr-2">Vazhdo</span>
+            <svg className="w-5 h-5 transition-transform duration-300 group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+            </svg>
           </button>
         )}
       </div>
@@ -734,43 +771,70 @@ export default function BookingForm({
   // MAIN RENDER
   // ==============================================
   return (
-    <div className={`booking-form ${className}`}>
-      <form onSubmit={handleSubmit(onSubmit)} className="max-w-2xl mx-auto">
-        {/* Step Indicator */}
-        {renderStepIndicator()}
-
-        {/* Step Content */}
-        <div className="min-h-[400px]">
-          {renderStepContent()}
-        </div>
-
-        {/* Navigation Buttons */}
-        {renderNavigationButtons()}
-
-        {/* Success Message */}
-        {successMessage && (
-          <div className="mt-6 p-4 bg-green-50 border border-green-200 rounded-2xl shadow-sm">
-            <div className="flex items-center">
-              <svg className="w-5 h-5 text-green-400 mr-2 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-              </svg>
-              <p className="text-green-700 text-sm font-medium">{successMessage}</p>
+    <div className={`booking-form ${className} min-h-screen bg-gradient-to-br from-red-50 via-pink-50 to-purple-50`}>
+      <div className="max-w-4xl mx-auto px-4 py-8">
+        <form onSubmit={handleSubmit(onSubmit)} className="bg-white rounded-3xl shadow-2xl overflow-hidden">
+          {/* Header Section */}
+          <div className="bg-gradient-to-r from-red-600 to-pink-600 p-8 text-white">
+            <div className="text-center">
+              <h1 className="text-3xl font-bold mb-2">✨ Rezervo Takimin</h1>
+              <p className="text-red-100 text-lg">Zgjidh shërbimin dhe orarin që të përshtatet më së miri</p>
             </div>
           </div>
-        )}
 
-        {/* Error Message */}
-        {submitError && (
-          <div className="mt-6 p-4 bg-red-50 border border-red-200 rounded-2xl shadow-sm">
-            <div className="flex items-center">
-              <svg className="w-5 h-5 text-red-400 mr-2 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
-              </svg>
-              <p className="text-red-700 text-sm font-medium">{submitError}</p>
+          {/* Form Content */}
+          <div className="p-8">
+            {/* Step Indicator */}
+            {renderStepIndicator()}
+
+            {/* Step Content */}
+            <div className="min-h-[500px] bg-gray-50 rounded-2xl p-8 mb-8 shadow-inner">
+              {renderStepContent()}
             </div>
+
+            {/* Navigation Buttons */}
+            {renderNavigationButtons()}
           </div>
-        )}
-      </form>
+
+          {/* Success Message */}
+          {successMessage && (
+            <div className="mx-8 mb-8 p-6 bg-gradient-to-r from-green-500 to-emerald-600 text-white rounded-2xl shadow-lg animate-pulse">
+              <div className="flex items-center">
+                <div className="flex-shrink-0 mr-4">
+                  <div className="w-12 h-12 bg-white bg-opacity-20 rounded-full flex items-center justify-center">
+                    <svg className="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                    </svg>
+                  </div>
+                </div>
+                <div>
+                  <h3 className="text-lg font-bold mb-1">🎉 Sukses!</h3>
+                  <p className="text-green-100 font-medium">{successMessage}</p>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Error Message */}
+          {submitError && (
+            <div className="mx-8 mb-8 p-6 bg-gradient-to-r from-red-500 to-pink-600 text-white rounded-2xl shadow-lg">
+              <div className="flex items-center">
+                <div className="flex-shrink-0 mr-4">
+                  <div className="w-12 h-12 bg-white bg-opacity-20 rounded-full flex items-center justify-center">
+                    <svg className="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+                    </svg>
+                  </div>
+                </div>
+                <div>
+                  <h3 className="text-lg font-bold mb-1">⚠️ Gabim</h3>
+                  <p className="text-red-100 font-medium">{submitError}</p>
+                </div>
+              </div>
+            </div>
+          )}
+        </form>
+      </div>
     </div>
   )
 }
