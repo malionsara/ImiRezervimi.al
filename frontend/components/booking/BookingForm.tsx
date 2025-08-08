@@ -115,7 +115,8 @@ export default function BookingForm({
         lastName: '',
         phone: ''
       },
-      customerNotes: ''
+      customerNotes: '',
+      duration: undefined
     }
   })
 
@@ -179,6 +180,18 @@ export default function BookingForm({
       case 'phone':
         return !!(watchedValues.customerInfo?.phone)
       case 'confirm':
+        console.log('🔍 Confirm step validation:', {
+          isValid,
+          errors,
+          watchedValues: {
+            salonId: watchedValues.salonId,
+            serviceId: watchedValues.serviceId,
+            appointmentDate: watchedValues.appointmentDate,
+            startTime: watchedValues.startTime,
+            customerInfo: watchedValues.customerInfo,
+            duration: selectedService?.duration_minutes
+          }
+        })
         return isValid
       default:
         return false
@@ -216,6 +229,7 @@ export default function BookingForm({
   const handleServiceSelect = (service: Service) => {
     setSelectedService(service)
     setValue('serviceId', service.id)
+    setValue('duration', service.duration_minutes) // Set duration for validation
     
     // Remove auto-advance - user must click VAZHDO manually
   }
