@@ -25,7 +25,7 @@ Create automated GitHub Actions cron job to send 24-hour WhatsApp appointment re
 
 ### GitHub Actions Workflow
 - **Schedule:** `0 6 * * *` (9:00 AM Albanian time = 6:00 UTC)
-- **Endpoint:** `POST https://imirerezervimi.al/api/appointments/reminders`
+- **Endpoint:** `POST https://imirezervimi.al/api/appointments/reminders`
 - **Authentication:** `CRON_SECRET` environment variable
 - **Timeout:** 5 minutes maximum execution time
 

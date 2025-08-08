@@ -85,7 +85,7 @@ export async function sendWhatsAppErrorMessage(
 
 ${errorMessage}
 
-📱 Përdorni dashboard-in: https://imirerezervimi.al/salon/dashboard
+📱 Përdorni dashboard-in: https://imirezervimi.al/salon/dashboard
 
 💼 ImiRezervimi.al`;
 
@@ -117,7 +117,7 @@ export async function sendWhatsAppConfirmation(
 💅 ${serviceName}
 
 📱 Klienti është njoftuar automatikisht
-📊 Dashboard: https://imirerezervimi.al/salon/dashboard
+📊 Dashboard: https://imirezervimi.al/salon/dashboard
 
 💼 ImiRezervimi.al`;
     } else {
@@ -128,7 +128,7 @@ export async function sendWhatsAppConfirmation(
 💅 ${serviceName}
 
 📱 Klienti është njoftuar automatikisht
-📊 Dashboard: https://imirerezervimi.al/salon/dashboard
+📊 Dashboard: https://imirezervimi.al/salon/dashboard
 
 💼 ImiRezervimi.al`;
     }

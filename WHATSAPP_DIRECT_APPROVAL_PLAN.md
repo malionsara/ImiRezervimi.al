@@ -191,13 +191,13 @@ async function handleDecline(appointmentId: string, salonPhone: string, appointm
 
 **Twilio Console Setup:**
 1. Go to WhatsApp Senders in Twilio Console
-2. Set webhook URL: `https://imirerezervimi.al/api/twilio/webhook`
+2. Set webhook URL: `https://imirezervimi.al/api/twilio/webhook`
 3. Select HTTP POST method
 4. Enable message status callbacks
 
 **Environment Variables:**
 ```env
-TWILIO_WEBHOOK_URL=https://imirerezervimi.al/api/twilio/webhook
+TWILIO_WEBHOOK_URL=https://imirezervimi.al/api/twilio/webhook
 TWILIO_AUTH_TOKEN=your_twilio_auth_token  # For signature validation
 ```
 
