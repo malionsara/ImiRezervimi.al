@@ -336,8 +336,9 @@ export default function BookingForm({
         onSuccess?.(result.data.appointment.id)
         
       } else {
-        // Check if it's a pending limit error
+        // Check if it's a pending limit error (per salon or global)
         if (result.error?.code === 'MAX_PENDING_EXCEEDED' || 
+            result.error?.code === 'MAX_PENDING_PER_SALON_EXCEEDED' ||
             result.error?.message?.includes('Mund të keni maksimumi 2 rezervime në pritje') ||
             result.error?.message?.includes('pending limit')) {
           setSubmitError('PENDING_LIMIT_REACHED')
@@ -864,16 +865,22 @@ export default function BookingForm({
                         <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clipRule="evenodd" />
                       </svg>
                     </div>
-                    <h3 className="text-2xl font-bold mb-2">⏳ Limit i rezervimeve u arrit</h3>
+                    <h3 className="text-2xl font-bold mb-2">⏳ Limit i rezervimeve për këtë sallon u arrit</h3>
                     <p className="text-orange-100 font-medium mb-6 text-lg">
-                      Keni arritur limitin maksimal të rezervimeve në pritje (2). Ju lutemi menaxhoni rezervimet ekzistuese para se të bëni një të re.
+                      Keni arritur limitin maksimal të rezervimeve në pritje për këtë sallon (2). Ju lutemi menaxhoni rezervimet ekzistuese me këtë sallon para se të bëni një të re, ose provoni me sallone të tjerë.
                     </p>
-                    <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                    <div className="flex flex-col sm:flex-row gap-3 justify-center">
                       <button
                         onClick={() => window.location.href = '/dashboard/bookings'}
                         className="px-6 py-3 bg-white text-orange-600 rounded-xl font-semibold hover:bg-orange-50 transition-colors shadow-lg"
                       >
                         📅 Shiko Rezervimet e Mia
+                      </button>
+                      <button
+                        onClick={() => window.location.href = '/salon'}
+                        className="px-6 py-3 bg-white text-orange-600 rounded-xl font-semibold hover:bg-orange-50 transition-colors shadow-lg"
+                      >
+                        🔍 Zbulo Sallone të Tjerë
                       </button>
                       <button
                         onClick={() => setSubmitError('')}

@@ -170,28 +170,31 @@ export async function findOrCreateCustomer(customerInfo: CustomerInfo): Promise<
 }
 
 /**
- * Check customer pending appointment limit
+ * Check customer pending appointment limit per salon (not global)
  */
-export async function checkCustomerPendingLimit(customerId: string, maxPending: number = 2): Promise<{ allowed: boolean; error?: { success: boolean; error: { code: string; message: string } } }> {
+export async function checkCustomerPendingLimit(customerId: string, salonId: string, maxPending: number = 2): Promise<{ allowed: boolean; error?: { success: boolean; error: { code: string; message: string } } }> {
   try {
+    // Check pending appointments for this customer with this specific salon
     const { data: pendingAppointments, error } = await supabaseAdmin
       .from('appointments')
-      .select('id')
+      .select('id, salon_id')
       .eq('customer_id', customerId)
+      .eq('salon_id', salonId)
       .eq('status', 'pending')
     
     if (error) {
-      console.error('Error checking pending appointments:', error)
+      console.error('Error checking pending appointments for salon:', error)
       return { allowed: false, error: createValidationError(ALBANIAN_ERRORS.INTERNAL_ERROR) }
     }
     
     if (pendingAppointments && pendingAppointments.length >= maxPending) {
       return { 
         allowed: false, 
-        error: createBusinessRuleError(ALBANIAN_ERRORS.MAX_PENDING_EXCEEDED, 'MAX_PENDING_EXCEEDED')
+        error: createBusinessRuleError('Mund të keni maksimumi 2 rezervime në pritje për të njëjtin sallon', 'MAX_PENDING_PER_SALON_EXCEEDED')
       }
     }
     
+    console.log(`✅ Pending limit check passed: ${pendingAppointments?.length || 0}/${maxPending} pending appointments for salon ${salonId}`)
     return { allowed: true }
     
   } catch (error) {

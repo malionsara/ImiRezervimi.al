@@ -147,12 +147,15 @@ export default async function handler(
     const customer = customerResult.data as CustomerRow
 
     // ==============================================
-    // PENDING APPOINTMENTS LIMIT CHECK
+    // PENDING APPOINTMENTS LIMIT CHECK (PER SALON)
     // ==============================================
-    const pendingLimitCheck = await checkCustomerPendingLimit(customer.id, 2)
+    const pendingLimitCheck = await checkCustomerPendingLimit(customer.id, appointmentRequest.salonId, 2)
     if (!pendingLimitCheck.allowed) {
-      console.log(`❌ Pending limit exceeded for customer: ${customer.id}`)
-      return res.status(400).json({ success: false, error: { code: 'PENDING_LIMIT', message: 'Pending limit exceeded' } })
+      console.log(`❌ Pending limit exceeded for customer: ${customer.id} at salon: ${appointmentRequest.salonId}`)
+      return res.status(400).json(pendingLimitCheck.error || {
+        success: false,
+        error: { code: 'PENDING_LIMIT', message: 'Pending limit exceeded for salon' }
+      })
     }
 
     // ==============================================
