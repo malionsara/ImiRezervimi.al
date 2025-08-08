@@ -433,8 +433,8 @@ export async function getAppointmentById(appointmentId: string): Promise<{ succe
  */
 export async function updateAppointmentStatus(
   appointmentId: string,
-  statusOrData: 'approved' | 'declined' | {
-    status: 'approved' | 'declined';
+  statusOrData: 'approved' | 'declined' | 'cancelled' | {
+    status: 'approved' | 'declined' | 'cancelled';
     salonNotes?: string;
     approvedAt?: string;
     declinedAt?: string;
@@ -444,7 +444,7 @@ export async function updateAppointmentStatus(
 ): Promise<{ success: boolean; data?: unknown; error?: unknown }> {
   try {
     // Handle both calling patterns: (id, status, notes) and (id, dataObject)
-    let status: 'approved' | 'declined';
+    let status: 'approved' | 'declined' | 'cancelled';
     let notes: string | undefined;
     let additionalData: Record<string, unknown> = {};
     

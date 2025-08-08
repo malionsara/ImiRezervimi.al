@@ -14,6 +14,7 @@ import {
   getAppointmentById,
   updateAppointmentStatus
 } from '../../../lib/appointments'
+import { getSession } from 'next-auth/react'
 import { AppointmentWithRelations } from '../../../types/database'
 
 // ==============================================
@@ -164,8 +165,8 @@ async function handleUpdateAppointmentStatus(
   }
   
   const { status, salonNotes, adminKey } = validationResult.data
-  
-  // Check if appointment exists and is pending
+
+  // Check if appointment exists
   const appointmentResult = await getAppointmentById(appointmentId)
   if (!appointmentResult.success) {
     console.log(`❌ Appointment not found for status update: ${appointmentId}`)
@@ -173,23 +174,41 @@ async function handleUpdateAppointmentStatus(
   }
   
   const appointment = appointmentResult.data as AppointmentWithRelations
-  
-  // Check if appointment is still pending
-  if (appointment.status !== 'pending') {
-    console.log(`❌ Appointment not pending: ${appointmentId} (status: ${appointment.status})`)
-    return res.status(400).json(createBusinessRuleError(
-      `Rezervimi nuk është më në pritje. Statusi aktual: ${appointment.status}`,
-      'APPOINTMENT_NOT_PENDING'
-    ))
-  }
-  
-  // TODO: Add proper authorization check
-  // For now, we'll allow the update if it's from admin or salon owner
-  if (adminKey) {
-    const configuredAdminKey = process.env.ADMIN_SECRET_KEY
-    if (!configuredAdminKey || adminKey !== configuredAdminKey) {
-      console.log(`❌ Invalid admin key for appointment update: ${appointmentId}`)
-      return res.status(403).json(createValidationError('Çelësi admin nuk është i vlefshëm'))
+
+  // Authorization and business rules
+  if (status === 'cancelled') {
+    // Allow only owner to cancel pending or approved
+    const session = await getSession({ req })
+    const sessionUserId = (session as any)?.user?.id
+    if (!sessionUserId) {
+      return res.status(401).json(createValidationError('Duhet të jeni i identifikuar'))
+    }
+    const ownerId = (appointment as any)?.customers?.id || (appointment as any)?.customer?.id
+    if (ownerId !== sessionUserId) {
+      return res.status(403).json(createBusinessRuleError('Nuk keni të drejtë të anuloni këtë rezervim', 'NOT_OWNER'))
+    }
+    const currentStatus = (appointment as any).status
+    if (!['pending', 'approved'].includes(currentStatus)) {
+      return res.status(400).json(createBusinessRuleError(
+        `Rezervimi nuk mund të anulohet (statusi aktual: ${currentStatus})`,
+        'CANNOT_CANCEL'
+      ))
+    }
+  } else {
+    // approve/decline: only when pending, with optional adminKey
+    if ((appointment as any).status !== 'pending') {
+      console.log(`❌ Appointment not pending: ${appointmentId} (status: ${(appointment as any).status})`)
+      return res.status(400).json(createBusinessRuleError(
+        `Rezervimi nuk është më në pritje. Statusi aktual: ${(appointment as any).status}`,
+        'APPOINTMENT_NOT_PENDING'
+      ))
+    }
+    if (adminKey) {
+      const configuredAdminKey = process.env.ADMIN_SECRET_KEY
+      if (!configuredAdminKey || adminKey !== configuredAdminKey) {
+        console.log(`❌ Invalid admin key for appointment update: ${appointmentId}`)
+        return res.status(403).json(createValidationError('Çelësi admin nuk është i vlefshëm'))
+      }
     }
   }
   
@@ -206,7 +225,9 @@ async function handleUpdateAppointmentStatus(
   // Prepare response message in Albanian
   const statusMessage = status === 'approved' 
     ? `Rezervimi u miratua me sukses!` 
-    : `Rezervimi u refuzua.`
+    : status === 'declined'
+    ? `Rezervimi u refuzua.`
+    : `Rezervimi u anulua me sukses.`
   
   const responseData = {
     appointment: {

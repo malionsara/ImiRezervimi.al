@@ -135,7 +135,7 @@ export const appointmentRequestSchema = z.object({
 // APPOINTMENT STATUS UPDATE SCHEMA
 // ==============================================
 export const appointmentStatusSchema = z.object({
-  status: z.enum(['approved', 'declined']),
+  status: z.enum(['approved', 'declined', 'cancelled']),
   salonNotes: z.string().max(500, 'Shënimet e sallonit nuk mund të kenë më shumë se 500 karaktere').optional(),
   adminKey: z.string().min(1, 'Çelësi admin është i detyrueshëm').optional()
 })
@@ -265,7 +265,7 @@ export function createBusinessRuleError(message: string, code: string = 'BUSINES
 // ==============================================
 export interface AppointmentUpdateData {
   appointmentId: string
-  status: 'approved' | 'declined'
+  status: 'approved' | 'declined' | 'cancelled'
   salonNotes?: string
 }
 

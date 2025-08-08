@@ -14,6 +14,12 @@ export default function BookingsPage() {
   const [bookings, setBookings] = useState([])
   const [loading, setLoading] = useState(true)
   const [filter, setFilter] = useState('all') // all, pending, approved, completed, declined
+  const [showReschedule, setShowReschedule] = useState(false)
+  const [selectedBooking, setSelectedBooking] = useState(null)
+  const [newDate, setNewDate] = useState('')
+  const [newTime, setNewTime] = useState('')
+  const [newNotes, setNewNotes] = useState('')
+  const [saving, setSaving] = useState(false)
 
   useEffect(() => {
     if (status === 'unauthenticated') {
@@ -37,6 +43,62 @@ export default function BookingsPage() {
       console.error('Error fetching bookings:', error)
     } finally {
       setLoading(false)
+    }
+  }
+
+  const handleCancel = async (booking) => {
+    if (!booking) return
+    const confirmed = window.confirm('Jeni të sigurt që doni të anuloni këtë rezervim?')
+    if (!confirmed) return
+
+    try {
+      const res = await fetch(`/api/appointments/${booking.id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status: 'cancelled', salonNotes: 'Anuluar nga klienti' })
+      })
+      const data = await res.json()
+      if (data.success) {
+        await fetchBookings()
+      } else {
+        alert(data.error?.message || 'Nuk u anulua. Provoni përsëri.')
+      }
+    } catch (e) {
+      console.error(e)
+      alert('Gabim. Provoni përsëri.')
+    }
+  }
+
+  const openReschedule = (booking) => {
+    setSelectedBooking(booking)
+    setNewDate(booking.appointment_date?.slice(0, 10) || '')
+    setNewTime(booking.start_time?.slice(0, 5) || '')
+    setNewNotes(booking.customer_notes || '')
+    setShowReschedule(true)
+  }
+
+  const submitReschedule = async () => {
+    if (!selectedBooking) return
+    setSaving(true)
+    try {
+      const res = await fetch(`/api/appointments/${selectedBooking.id}/reschedule`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ appointmentDate: newDate, startTime: newTime, customerNotes: newNotes })
+      })
+      const data = await res.json()
+      if (data.success) {
+        setShowReschedule(false)
+        setSelectedBooking(null)
+        await fetchBookings()
+      } else {
+        alert(data.error?.message || 'Nuk u përditësua. Provoni përsëri.')
+      }
+    } catch (e) {
+      console.error(e)
+      alert('Gabim. Provoni përsëri.')
+    } finally {
+      setSaving(false)
     }
   }
 
@@ -227,17 +289,22 @@ export default function BookingsPage() {
                         Shiko detajet →
                       </a>
                     </Link>
-                    
-                    {booking.status === 'pending' && (
-                      <button 
-                        className="text-gray-500 hover:text-gray-700 text-sm"
-                        onClick={() => {
-                          // TODO: Implement cancel functionality
-                          console.log('Cancel booking:', booking.id)
-                        }}
-                      >
-                        Anulloje
-                      </button>
+
+                    {(booking.status === 'pending' || booking.status === 'approved') && (
+                      <div className="flex items-center gap-4">
+                        <button 
+                          className="text-pink-600 hover:text-pink-700 text-sm font-medium"
+                          onClick={() => openReschedule(booking)}
+                        >
+                          Ndrysho orarin
+                        </button>
+                        <button 
+                          className="text-gray-500 hover:text-gray-700 text-sm"
+                          onClick={() => handleCancel(booking)}
+                        >
+                          Anulloje
+                        </button>
+                      </div>
                     )}
                   </div>
                 </div>
@@ -245,6 +312,45 @@ export default function BookingsPage() {
             </div>
           )}
         </main>
+      
+      {/* Reschedule Modal */}
+      {showReschedule && selectedBooking && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4">
+          <div className="bg-white rounded-2xl shadow-xl w-full max-w-md p-6">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg font-semibold text-gray-900">Ri-planifiko rezervimin</h3>
+              <button className="text-gray-400 hover:text-gray-600" onClick={() => setShowReschedule(false)}>✕</button>
+            </div>
+
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm text-gray-600 mb-1">Data</label>
+                <input type="date" className="w-full border rounded-lg px-3 py-2" value={newDate} onChange={(e) => setNewDate(e.target.value)} />
+              </div>
+              <div>
+                <label className="block text-sm text-gray-600 mb-1">Ora</label>
+                <input type="time" className="w-full border rounded-lg px-3 py-2" value={newTime} onChange={(e) => setNewTime(e.target.value)} />
+              </div>
+              <div>
+                <label className="block text-sm text-gray-600 mb-1">Shënimet tuaja (opsionale)</label>
+                <textarea className="w-full border rounded-lg px-3 py-2" rows={3} value={newNotes} onChange={(e) => setNewNotes(e.target.value)} />
+              </div>
+            </div>
+
+            <div className="mt-6 flex justify-end gap-3">
+              <button className="px-4 py-2 rounded-lg text-gray-600 hover:bg-gray-100" onClick={() => setShowReschedule(false)}>Anulo</button>
+              <button
+                className="px-4 py-2 rounded-lg bg-red-600 text-white hover:bg-red-700 disabled:opacity-50"
+                onClick={submitReschedule}
+                disabled={saving || !newDate || !newTime}
+              >
+                {saving ? 'Duke ruajtur...' : 'Ruaj ndryshimet'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       </div>
     </>
   )
