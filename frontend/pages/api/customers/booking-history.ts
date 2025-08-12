@@ -75,13 +75,24 @@ export default async function handler(
     const limitNum = parseInt(limit as string);
     
     console.log(`📖 Fetching booking history for user: ${session.user.email}`);
+    console.log(`📖 Session user data:`, JSON.stringify(session.user, null, 2));
 
     // First, find the customer by email from the session
     const { data: customer, error: customerError } = await supabase
       .from('customers')
-      .select('id, phone')
+      .select('id, phone, email, name')
       .eq('email', session.user.email)
       .maybeSingle();
+    
+    console.log(`📖 Customer lookup result:`, customer);
+    console.log(`📖 Customer lookup error:`, customerError);
+    
+    // Debug: Show all customers for troubleshooting
+    const { data: allCustomers } = await supabase
+      .from('customers')
+      .select('id, email, name, phone')
+      .limit(10);
+    console.log(`📖 All customers in database:`, allCustomers);
     
     if (customerError && customerError.code !== 'PGRST116') {
       console.error('❌ Customer lookup error:', customerError);
