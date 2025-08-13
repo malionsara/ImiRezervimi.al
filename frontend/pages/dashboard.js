@@ -81,7 +81,7 @@ export default function Dashboard() {
 
   // Navigation handlers
   const handleExploreServices = () => {
-    router.push('/salon')
+    router.push('/salons')
   }
 
   const handleMyBookings = () => {

@@ -113,8 +113,12 @@ export default function Homepage() {
                   Si funksionon
                   <span className="absolute bottom-0 left-1/2 w-0 h-0.5 bg-gradient-to-r from-red-500 to-pink-500 transition-all duration-300 group-hover:w-full group-hover:left-0 rounded-full"></span>
                 </a>
-                <Link href="/salon" className="text-gray-600 hover:text-red-500 transition-all duration-300 relative group py-2 px-4 rounded-lg hover:bg-red-50">
+                <Link href="/salons" className="text-gray-600 hover:text-red-500 transition-all duration-300 relative group py-2 px-4 rounded-lg hover:bg-red-50">
                   Sallone
+                  <span className="absolute bottom-0 left-1/2 w-0 h-0.5 bg-gradient-to-r from-red-500 to-pink-500 transition-all duration-300 group-hover:w-full group-hover:left-0 rounded-full"></span>
+                </Link>
+                <Link href="/salon" className="text-gray-600 hover:text-red-500 transition-all duration-300 relative group py-2 px-4 rounded-lg hover:bg-red-50">
+                  Për Sallone
                   <span className="absolute bottom-0 left-1/2 w-0 h-0.5 bg-gradient-to-r from-red-500 to-pink-500 transition-all duration-300 group-hover:w-full group-hover:left-0 rounded-full"></span>
                 </Link>
                 <a href="#kontakt" className="text-gray-600 hover:text-red-500 transition-all duration-300 relative group py-2 px-4 rounded-lg hover:bg-red-50">
@@ -164,7 +168,7 @@ export default function Homepage() {
 
               {/* CTA Buttons */}
               <div className="flex flex-col sm:flex-row gap-6 justify-center items-center mb-16">
-                <Link href="/login" className="group bg-gradient-to-r from-red-500 via-pink-500 to-orange-500 text-white px-10 py-5 rounded-3xl font-bold hover:shadow-2xl hover:shadow-red-500/30 transition-all duration-500 transform hover:scale-105 hover:-translate-y-2 text-xl relative overflow-hidden">
+                <Link href="/salons" className="group bg-gradient-to-r from-red-500 via-pink-500 to-orange-500 text-white px-10 py-5 rounded-3xl font-bold hover:shadow-2xl hover:shadow-red-500/30 transition-all duration-500 transform hover:scale-105 hover:-translate-y-2 text-xl relative overflow-hidden">
                   <span className="relative z-10 flex items-center">
                     <span className="mr-3 text-2xl">🔍</span>
                     Zbulo Sallone
