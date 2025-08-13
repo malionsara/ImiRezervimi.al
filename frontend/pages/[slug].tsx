@@ -7,6 +7,7 @@ import { useRouter } from 'next/router'
 import Head from 'next/head'
 import Link from 'next/link'
 import BookingForm from '../components/booking/BookingForm'
+import { useSession } from 'next-auth/react'
 
 // ==============================================
 // TYPES AND INTERFACES
@@ -39,6 +40,7 @@ interface Salon {
 export default function SalonBookingPage() {
   const router = useRouter()
   const { slug } = router.query
+  const { data: session, status } = useSession()
 
   // State management
   const [salon, setSalon] = useState<Salon | null>(null)
@@ -399,14 +401,45 @@ export default function SalonBookingPage() {
             </div>
           )}
 
-          {/* Booking Form */}
-          <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6 sm:p-8">
-            <BookingForm
-              salon={salon}
-              onSuccess={handleBookingSuccess}
-              onError={handleBookingError}
-            />
-          </div>
+          {/* Auth gating before showing the booking form */}
+          {status === 'loading' ? (
+            <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-8 text-center">
+              <div className="animate-spin rounded-full h-8 w-8 border-2 border-red-500 border-t-transparent mx-auto mb-3"></div>
+              <div className="text-gray-600">Po verifikojmë statusin tuaj...</div>
+            </div>
+          ) : !session ? (
+            <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-8 text-center">
+              <h2 className="text-xl font-semibold text-gray-900 mb-2">Identifikohuni për të vazhduar</h2>
+              <p className="text-gray-600 mb-6">Për të bërë një rezervim në {salon.name}, ju lutemi identifikohuni ose regjistrohuni.</p>
+              <Link
+                href={`/login?callbackUrl=${encodeURIComponent(typeof window !== 'undefined' ? window.location.href : `/${slug}`)}`}
+              >
+                <a className="inline-flex items-center px-5 py-3 rounded-xl bg-red-600 text-white hover:bg-red-700 transition-colors font-medium">
+                  Identifikohu / Regjistrohu →
+                </a>
+              </Link>
+            </div>
+          ) : (session.user as any)?.isRegistered === false ? (
+            <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-8 text-center">
+              <h2 className="text-xl font-semibold text-gray-900 mb-2">Përfundoni regjistrimin</h2>
+              <p className="text-gray-600 mb-6">Ju lutemi verifikoni numrin e telefonit për të vazhduar me rezervimin.</p>
+              <Link
+                href={`/complete-registration?callbackUrl=${encodeURIComponent(typeof window !== 'undefined' ? window.location.href : `/${slug}`)}`}
+              >
+                <a className="inline-flex items-center px-5 py-3 rounded-xl bg-red-600 text-white hover:bg-red-700 transition-colors font-medium">
+                  Vazhdo regjistrimin →
+                </a>
+              </Link>
+            </div>
+          ) : (
+            <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6 sm:p-8">
+              <BookingForm
+                salon={salon}
+                onSuccess={handleBookingSuccess}
+                onError={handleBookingError}
+              />
+            </div>
+          )}
 
           {/* Contact Info */}
           <div className="mt-8 text-center">
