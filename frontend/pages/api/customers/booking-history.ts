@@ -8,7 +8,7 @@ import { getSession } from 'next-auth/react';
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!,
+  process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_SERVICE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
   {
     auth: {
       autoRefreshToken: false,
@@ -75,24 +75,13 @@ export default async function handler(
     const limitNum = parseInt(limit as string);
     
     console.log(`📖 Fetching booking history for user: ${session.user.email}`);
-    console.log(`📖 Session user data:`, JSON.stringify(session.user, null, 2));
 
     // First, find the customer by email from the session
-    const { data: customer, error: customerError } = await supabase
+    const { data: customerByEmail, error: customerError } = await supabase
       .from('customers')
-      .select('id, phone, email, name')
+      .select('id, phone, email')
       .eq('email', session.user.email)
       .maybeSingle();
-    
-    console.log(`📖 Customer lookup result:`, customer);
-    console.log(`📖 Customer lookup error:`, customerError);
-    
-    // Debug: Show all customers for troubleshooting
-    const { data: allCustomers } = await supabase
-      .from('customers')
-      .select('id, email, name, phone')
-      .limit(10);
-    console.log(`📖 All customers in database:`, allCustomers);
     
     if (customerError && customerError.code !== 'PGRST116') {
       console.error('❌ Customer lookup error:', customerError);
@@ -103,6 +92,18 @@ export default async function handler(
           message: 'Gabim në leximin e të dhënave'
         }
       });
+    }
+
+    let customer = customerByEmail
+    
+    // Fallback: try by session user id if available
+    if (!customer && (session as any)?.user?.id) {
+      const { data: customerById } = await supabase
+        .from('customers')
+        .select('id, phone, email')
+        .eq('id', (session as any).user.id)
+        .maybeSingle();
+      customer = customerById as any
     }
 
     if (!customer) {
