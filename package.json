@@ -1,5 +1,19 @@
 {
+  "name": "imirezervimi-database",
+  "version": "1.0.0",
+  "description": "Database migration tools for ImiRezervimi.al",
+  "scripts": {
+    "migrate": "tsx scripts/manage-migrations.ts",
+    "migrate:up": "tsx scripts/manage-migrations.ts up",
+    "migrate:status": "tsx scripts/manage-migrations.ts status",
+    "migrate:create": "tsx scripts/manage-migrations.ts create"
+  },
   "dependencies": {
-    "dotenv": "^17.2.1"
+    "dotenv": "^17.2.1",
+    "@supabase/supabase-js": "^2.39.0"
+  },
+  "devDependencies": {
+    "tsx": "^4.7.0",
+    "@types/node": "^20.11.0"
   }
 }
