@@ -93,7 +93,7 @@ export const WHATSAPP_TEMPLATES: Record<TemplateKey, WhatsAppTemplate> = {
     id: 'salon_menu',
     name: 'Salon Menu (Interactive)',
     albanianName: 'Menu Saloni (Interaktiv)',
-    contentSid: 'HX_UPDATE_WITH_ACTUAL_CONTENT_SID_FROM_TWILIO',
+    contentSid: 'HXb5f22c7c738ae8cca32413aa515b9101',
     category: 'UTILITY',
     variables: [],
     description: 'Interactive menu with buttons for salon commands'
