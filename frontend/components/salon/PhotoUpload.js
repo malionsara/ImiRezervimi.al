@@ -3,6 +3,7 @@
 
 import { useState, useRef } from 'react'
 import Image from 'next/image'
+import { showToast } from '../ToastProvider'
 
 export default function PhotoUpload({ photos = [], onChange, maxPhotos = 5 }) {
   const [uploading, setUploading] = useState(false)
@@ -14,13 +15,13 @@ export default function PhotoUpload({ photos = [], onChange, maxPhotos = 5 }) {
     const validFiles = fileArray.filter(file => {
       // Validate file type
       if (!file.type.startsWith('image/')) {
-        alert('Ju lutemi zgjidhni vetëm foto (JPG, PNG, WebP)')
+        showToast.warning('Ju lutemi zgjidhni vetëm foto (JPG, PNG, WebP)')
         return false
       }
       
       // Validate file size (max 5MB)
       if (file.size > 5 * 1024 * 1024) {
-        alert('Fotoja duhet të jetë më e vogël se 5MB')
+        showToast.warning('Fotoja duhet të jetë më e vogël se 5MB')
         return false
       }
       
@@ -31,7 +32,7 @@ export default function PhotoUpload({ photos = [], onChange, maxPhotos = 5 }) {
 
     // Check if we exceed max photos
     if (photos.length + validFiles.length > maxPhotos) {
-      alert(`Mund të ngarkoni maksimumi ${maxPhotos} foto`)
+      showToast.warning(`Mund të ngarkoni maksimumi ${maxPhotos} foto`)
       return
     }
 

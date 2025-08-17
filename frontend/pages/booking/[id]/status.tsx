@@ -8,6 +8,7 @@ import Head from 'next/head';
 import { createClient } from '@supabase/supabase-js';
 import StatusCard from '../../../components/booking/StatusCard';
 import BookingHistory from '../../../components/booking/BookingHistory';
+import { showToast, showLoadingToast, updateToast } from '../../../components/ToastProvider';
 
 // Initialize Supabase client for real-time updates
 const supabase = createClient(
@@ -166,6 +167,8 @@ export default function BookingStatusPage() {
 
     if (!confirmed) return;
 
+    const toastId = showLoadingToast('Duke anuluar rezervimin...');
+
     try {
       setCancelling(true);
       const response = await fetch(`/api/appointments/${id}`, {
@@ -190,13 +193,13 @@ export default function BookingStatusPage() {
           }
         } : null);
         
-        alert('Rezervimi u anulua me sukses.');
+        updateToast(toastId, 'Rezervimi u anulua me sukses!', 'success');
       } else {
-        alert(data.error?.message || 'Gabim në anulimin e rezervimit');
+        updateToast(toastId, data.error?.message || 'Gabim në anulimin e rezervimit', 'error');
       }
     } catch (err) {
       console.error('Error cancelling appointment:', err);
-      alert('Gabim në anulimin e rezervimit. Provoni përsëri.');
+      updateToast(toastId, 'Gabim në anulimin e rezervimit. Provoni përsëri.', 'error');
     } finally {
       setCancelling(false);
     }

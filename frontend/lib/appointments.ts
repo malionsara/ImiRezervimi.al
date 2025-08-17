@@ -487,14 +487,16 @@ export async function updateAppointmentStatus(
       .update(updateData)
       .eq('id', appointmentId)
       .select(`
-        id,
-        appointment_date,
-        start_time,
-        service_name,
-        status,
-        salon_notes,
-        salon:salons!salon_id(name, phone),
-        customer:customers!customer_id(first_name, last_name, phone)
+        *,
+        salons:salons!appointments_salon_id_fkey (
+          id, name, phone, address, city, working_hours
+        ),
+        customers:customers!appointments_customer_id_fkey (
+          id, first_name, last_name, phone, rating, total_visits
+        ),
+        services:services!appointments_service_id_fkey (
+          id, name, duration_minutes, price
+        )
       `)
       .single()
     

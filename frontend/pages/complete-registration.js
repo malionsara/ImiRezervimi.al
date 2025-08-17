@@ -7,6 +7,7 @@ import { useEffect, useState } from 'react'
 import Head from 'next/head'
 import Image from 'next/image'
 import WhatsAppVerification from '../components/auth/WhatsAppVerification'
+import { showToast } from '../components/ToastProvider'
 
 export default function CompleteRegistration() {
   const { data: session, status, update } = useSession()
@@ -64,14 +65,14 @@ export default function CompleteRegistration() {
       } else {
         const errorData = await response.json()
         console.error('Registration failed:', errorData)
-        alert(errorData.error?.message || 'Regjistrimi dështoi. Ju lutemi provoni përsëri.')
+        showToast.error(errorData.error?.message || 'Regjistrimi dështoi. Ju lutemi provoni përsëri.')
         throw new Error('Registration failed')
       }
     } catch (error) {
       console.error('Registration completion error:', error)
       // Handle error - could show user-friendly message
       if (error.message !== 'Registration failed') {
-        alert('Ka ndodhur një gabim. Ju lutemi provoni përsëri.')
+        showToast.error('Ka ndodhur një gabim. Ju lutemi provoni përsëri.')
       }
     } finally {
       setIsLoading(false)

@@ -7,6 +7,7 @@ import { useState, useEffect } from 'react'
 import { SpeedInsights } from "@vercel/speed-insights/next"
 import { Analytics } from "@vercel/analytics/next"
 import Head from 'next/head'
+import ToastProvider from '../components/ToastProvider'
 import '../styles/globals.css'
 
 // Removed Twilio validation from frontend - only runs on server-side
@@ -52,10 +53,12 @@ export default function App({
         <meta name="msapplication-TileColor" content="#dc2626" />
       </Head>
       <SessionProvider session={session}>
-        <Component {...pageProps} supabase={supabase} />
-        {/* Vercel Features */}
-        <SpeedInsights />
-        <Analytics />
+        <ToastProvider>
+          <Component {...pageProps} supabase={supabase} />
+          {/* Vercel Features */}
+          <SpeedInsights />
+          <Analytics />
+        </ToastProvider>
       </SessionProvider>
     </>
   )

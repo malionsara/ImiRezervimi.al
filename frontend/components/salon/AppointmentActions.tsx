@@ -3,6 +3,7 @@
 // Albanian Beauty Salon Booking Platform
 
 import { useState } from 'react'
+import { showToast } from '../ToastProvider'
 
 // ==============================================
 // TYPES AND INTERFACES
@@ -79,7 +80,7 @@ export default function AppointmentActions({
       : declineReason
     
     if (!notes) {
-      alert('Ju lutemi zgjidhni një arsye për refuzimin')
+      showToast.warning('Ju lutemi zgjidhni një arsye për refuzimin')
       return
     }
     

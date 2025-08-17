@@ -6,6 +6,7 @@ import Head from 'next/head'
 import Link from 'next/link'
 import { supabase } from '../../lib/salon'
 import AdminAuth from '../../components/admin/AdminAuth'
+import { showToast } from '../../components/ToastProvider'
 
 export default function AdminSalons() {
   const [pendingSalons, setPendingSalons] = useState([])
@@ -95,14 +96,14 @@ export default function AdminSalons() {
       const result = await response.json()
 
       if (result.success) {
-        alert('Salloni u miratua me sukses!')
+        showToast.success('Salloni u miratua me sukses!')
         fetchSalons() // Refresh the lists
       } else {
-        alert('Gabim në miratimin e sallonit: ' + result.error)
+        showToast.error('Gabim në miratimin e sallonit: ' + result.error)
       }
     } catch (error) {
       console.error('Error approving salon:', error)
-      alert('Ka ndodhur një gabim gjatë miratimit')
+      showToast.error('Ka ndodhur një gabim gjatë miratimit')
     } finally {
       setProcessingId(null)
     }
@@ -128,14 +129,14 @@ export default function AdminSalons() {
       const result = await response.json()
 
       if (result.success) {
-        alert('Salloni u refuzua')
+        showToast.warning('Salloni u refuzua')
         fetchSalons() // Refresh the lists
       } else {
-        alert('Gabim në refuzimin e sallonit: ' + result.error)
+        showToast.error('Gabim në refuzimin e sallonit: ' + result.error)
       }
     } catch (error) {
       console.error('Error rejecting salon:', error)
-      alert('Ka ndodhur një gabim gjatë refuzimit')
+      showToast.error('Ka ndodhur një gabim gjatë refuzimit')
     } finally {
       setProcessingId(null)
     }

@@ -7,6 +7,7 @@ import { useEffect, useState } from 'react'
 import Head from 'next/head'
 import Image from 'next/image'
 import Link from 'next/link'
+import { showToast } from '../../components/ToastProvider'
 
 export default function BookingsPage() {
   const { data: session, status } = useSession()
@@ -60,12 +61,13 @@ export default function BookingsPage() {
       const data = await res.json()
       if (data.success) {
         await fetchBookings()
+        showToast.appointmentCancelled()
       } else {
-        alert(data.error?.message || 'Nuk u anulua. Provoni përsëri.')
+        showToast.error(data.error?.message || 'Nuk u anulua. Provoni përsëri.')
       }
     } catch (e) {
       console.error(e)
-      alert('Gabim. Provoni përsëri.')
+      showToast.error('Gabim. Provoni përsëri.')
     }
   }
 
@@ -91,12 +93,13 @@ export default function BookingsPage() {
         setShowReschedule(false)
         setSelectedBooking(null)
         await fetchBookings()
+        showToast.success('Rezervimi u përditësua me sukses!')
       } else {
-        alert(data.error?.message || 'Nuk u përditësua. Provoni përsëri.')
+        showToast.error(data.error?.message || 'Nuk u përditësua. Provoni përsëri.')
       }
     } catch (e) {
       console.error(e)
-      alert('Gabim. Provoni përsëri.')
+      showToast.error('Gabim. Provoni përsëri.')
     } finally {
       setSaving(false)
     }
