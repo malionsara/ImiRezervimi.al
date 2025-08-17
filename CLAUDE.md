@@ -288,6 +288,20 @@ INSTAGRAM_CLIENT_SECRET=
 3. Implement phone number change functionality
 4. Add Albanian localization across all components
 
+## Documentation
+
+### Technical Documentation
+- **[Supabase Documentation](docs/SUPABASE.md)** - Complete database schema, migrations, RLS policies, and troubleshooting guide
+- **Database Schema:** `/database/` directory contains all migration files
+- **API Documentation:** Inline documentation in API route files
+
+### Key Documentation Features
+- ✅ Complete Supabase setup and configuration
+- ✅ Database schema with constraint explanations
+- ✅ Migration management using Supabase MCP
+- ✅ RLS policy documentation and security best practices
+- ✅ Troubleshooting guide for common issues
+
 ## Claude Code Integration
 
 ### GitHub Action Setup
@@ -302,7 +316,7 @@ INSTAGRAM_CLIENT_SECRET=
 
 ---
 
-*Last Updated: 2025-07-17*
-*Hook Test: Updated to test conditional build*
+*Last Updated: 2025-08-17*
+*Recent Updates: Added comprehensive Supabase documentation, fixed appointment constraint issues*
 *Project: ImiRezervimi.al*
 *Team: Malion Sara, fatjona.bucpapaj@gmail.com*
