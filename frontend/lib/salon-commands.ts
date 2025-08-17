@@ -93,26 +93,28 @@ export async function validateSalon(phone: string): Promise<SalonInfo | null> {
   try {
     console.log(`🔍 Validating salon with phone: ${phone}`)
     
-    const { data: salon, error } = await supabase
+    // Use .limit(1) instead of .single() to handle multiple salons with same phone
+    const { data: salons, error } = await supabase
       .from('salons')
       .select('id, name, phone, whatsapp_number, status')
       .or(`phone.eq.${phone},whatsapp_number.eq.${phone}`)
       .eq('status', 'active')
-      .single()
+      .limit(1)
 
-    console.log(`📊 Salon query result:`, { salon, error })
+    console.log(`📊 Salon query result:`, { salons, error })
 
-    if (error || !salon) {
+    if (error || !salons || salons.length === 0) {
       console.log(`❌ Invalid salon phone: ${phone}`)
       // Also try to find ANY salon with this phone (regardless of status) for debugging
-      const { data: debugSalon, error: debugError } = await supabase
+      const { data: debugSalons, error: debugError } = await supabase
         .from('salons')
         .select('id, name, phone, whatsapp_number, status')
         .or(`phone.eq.${phone},whatsapp_number.eq.${phone}`)
-      console.log(`🔍 Debug salon search (any status):`, { debugSalon, debugError })
+      console.log(`🔍 Debug salon search (any status):`, { debugSalons, debugError })
       return null
     }
 
+    const salon = salons[0] // Take the first active salon with this phone
     console.log(`✅ Valid salon found: ${salon.name} (ID: ${salon.id})`)
     return salon
   } catch (error) {
