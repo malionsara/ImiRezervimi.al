@@ -99,11 +99,12 @@ export default async function handler(
     if (payload.ButtonPayload) {
       console.log('📋 Checking button payload for salon command:', payload.ButtonPayload);
       
-      // Map English button IDs to command types
+      // Map English button IDs to command types (updated with actual button IDs from Twilio)
       const salonButtonMap: Record<string, string> = {
         'appointments': 'appointments',
         'today': 'appointments', 
         'oraret': 'appointments',
+        'waiting': 'pending',
         'pending': 'pending',
         'pritje': 'pending',
         'tomorrow': 'tomorrow',

@@ -91,18 +91,29 @@ export function parseCommand(text: string): SalonCommand {
 
 export async function validateSalon(phone: string): Promise<SalonInfo | null> {
   try {
+    console.log(`🔍 Validating salon with phone: ${phone}`)
+    
     const { data: salon, error } = await supabase
       .from('salons')
-      .select('id, name, phone, status')
+      .select('id, name, phone, whatsapp_number, status')
       .or(`phone.eq.${phone},whatsapp_number.eq.${phone}`)
       .eq('status', 'active')
       .single()
 
+    console.log(`📊 Salon query result:`, { salon, error })
+
     if (error || !salon) {
       console.log(`❌ Invalid salon phone: ${phone}`)
+      // Also try to find ANY salon with this phone (regardless of status) for debugging
+      const { data: debugSalon, error: debugError } = await supabase
+        .from('salons')
+        .select('id, name, phone, whatsapp_number, status')
+        .or(`phone.eq.${phone},whatsapp_number.eq.${phone}`)
+      console.log(`🔍 Debug salon search (any status):`, { debugSalon, debugError })
       return null
     }
 
+    console.log(`✅ Valid salon found: ${salon.name} (ID: ${salon.id})`)
     return salon
   } catch (error) {
     console.error('Error validating salon:', error)
