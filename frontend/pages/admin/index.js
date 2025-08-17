@@ -239,7 +239,7 @@ export default function AdminPortal() {
             <div className="space-y-3 text-blue-700">
               <p>Për të përdorur admin panel-in në mënyrë të sigurt:</p>
               <ol className="list-decimal list-inside space-y-2 ml-4">
-                                 <li>Shto <code className="bg-blue-100 px-2 py-1 rounded">SUPABASE_SERVICE_KEY</code> në .env.local</li>
+                                 <li>Shto <code className="bg-blue-100 px-2 py-1 rounded">SUPABASE_SERVICE_ROLE_KEY</code> në .env.local</li>
                 <li>Shto <code className="bg-blue-100 px-2 py-1 rounded">ADMIN_SECRET_KEY</code> për sigurinë</li>
                 <li>Ekzekuto RLS migration në Supabase</li>
                 <li>Testo regjistrimin e salloneve</li>

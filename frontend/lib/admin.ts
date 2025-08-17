@@ -4,7 +4,7 @@
 import { createClient } from '@supabase/supabase-js'
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
-const supabaseServiceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_SERVICE_KEY!
+const supabaseServiceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY!
 
 // Admin client with service role
 export const supabaseAdmin = supabaseServiceRoleKey 
@@ -200,8 +200,8 @@ export function validateAdminSetup(): { valid: boolean; issues: string[] } {
     issues.push('NEXT_PUBLIC_SUPABASE_URL is not configured')
   }
 
-  if (!process.env.SUPABASE_SERVICE_ROLE_KEY && !process.env.SUPABASE_SERVICE_KEY) {
-    issues.push('SUPABASE_SERVICE_ROLE_KEY or SUPABASE_SERVICE_KEY is not configured - admin operations will fail')
+  if (!process.env.SUPABASE_SERVICE_ROLE_KEY) {
+    issues.push('SUPABASE_SERVICE_ROLE_KEY is not configured - admin operations will fail')
   }
 
   if (!process.env.ADMIN_SECRET_KEY) {

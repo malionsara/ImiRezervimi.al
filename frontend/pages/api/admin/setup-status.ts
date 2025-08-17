@@ -19,8 +19,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       issues.push('NEXT_PUBLIC_SUPABASE_URL is not configured')
     }
 
-    if (!process.env.SUPABASE_SERVICE_ROLE_KEY && !process.env.SUPABASE_SERVICE_KEY) {
-      issues.push('SUPABASE_SERVICE_ROLE_KEY or SUPABASE_SERVICE_KEY is not configured - admin operations will fail')
+    if (!process.env.SUPABASE_SERVICE_ROLE_KEY) {
+      issues.push('SUPABASE_SERVICE_ROLE_KEY is not configured - admin operations will fail')
     }
 
     if (!process.env.ADMIN_SECRET_KEY) {

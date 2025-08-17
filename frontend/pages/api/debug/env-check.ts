@@ -20,7 +20,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     NEXT_PUBLIC_SUPABASE_URL: !!process.env.NEXT_PUBLIC_SUPABASE_URL,
     NEXT_PUBLIC_SUPABASE_ANON_KEY: !!process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
     SUPABASE_SERVICE_ROLE_KEY: !!process.env.SUPABASE_SERVICE_ROLE_KEY,
-    SUPABASE_SERVICE_KEY: !!process.env.SUPABASE_SERVICE_KEY,
     
     // Admin
     ADMIN_SECRET_KEY: !!process.env.ADMIN_SECRET_KEY,
@@ -41,7 +40,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   // Get actual values (first 4 characters only for security)
   const envValues = {
     SUPABASE_SERVICE_ROLE_KEY: process.env.SUPABASE_SERVICE_ROLE_KEY?.substring(0, 4) + '...',
-    SUPABASE_SERVICE_KEY: process.env.SUPABASE_SERVICE_KEY?.substring(0, 4) + '...',
     ADMIN_SECRET_KEY: process.env.ADMIN_SECRET_KEY?.substring(0, 4) + '...',
     TWILIO_ACCOUNT_SID: process.env.TWILIO_ACCOUNT_SID?.substring(0, 4) + '...',
     TWILIO_AUTH_TOKEN: process.env.TWILIO_AUTH_TOKEN?.substring(0, 4) + '...',
