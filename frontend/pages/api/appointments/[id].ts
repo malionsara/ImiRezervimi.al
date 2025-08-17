@@ -14,7 +14,9 @@ import {
   getAppointmentById,
   updateAppointmentStatus
 } from '../../../lib/appointments'
-import { getSession } from 'next-auth/react'
+import { getServerSession } from 'next-auth/next'
+import { authOptions } from '../auth/[...nextauth]'
+import type { NextAuthOptions } from 'next-auth'
 import { AppointmentWithRelations } from '../../../types/database'
 
 // ==============================================
@@ -178,13 +180,25 @@ async function handleUpdateAppointmentStatus(
   // Authorization and business rules
   if (status === 'cancelled') {
     // Allow only owner to cancel pending or approved
-    const session = await getSession({ req })
+    const session = await getServerSession(req, res, authOptions as NextAuthOptions)
+    console.log('🔍 Debug session for cancellation:', {
+      sessionExists: !!session,
+      userId: (session?.user as any)?.id,
+      userEmail: session?.user?.email,
+      isRegistered: (session?.user as any)?.isRegistered
+    })
+    
     const sessionUserId = (session as any)?.user?.id
     if (!sessionUserId) {
+      console.log('❌ No user ID in session for cancellation')
       return res.status(401).json(createValidationError('Duhet të jeni i identifikuar'))
     }
+    
     const ownerId = (appointment as any)?.customers?.id || (appointment as any)?.customer?.id
+    console.log('🔍 Checking ownership:', { sessionUserId, ownerId })
+    
     if (ownerId !== sessionUserId) {
+      console.log('❌ User not authorized to cancel this appointment')
       return res.status(403).json(createBusinessRuleError('Nuk keni të drejtë të anuloni këtë rezervim', 'NOT_OWNER'))
     }
     const currentStatus = (appointment as any).status

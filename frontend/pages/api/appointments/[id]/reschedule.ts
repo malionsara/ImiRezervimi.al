@@ -2,7 +2,9 @@
 // Customer reschedule endpoint
 
 import { NextApiRequest, NextApiResponse } from 'next'
-import { getSession } from 'next-auth/react'
+import { getServerSession } from 'next-auth/next'
+import { authOptions } from '../../auth/[...nextauth]'
+import type { NextAuthOptions } from 'next-auth'
 import { supabaseAdmin, checkAppointmentConflict, validateWorkingHours } from '../../../../lib/appointments'
 
 interface ApiResponse {
@@ -27,7 +29,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
   }
 
   try {
-    const session = await getSession({ req })
+    const session = await getServerSession(req, res, authOptions as NextAuthOptions)
     const sessionUserId = (session as any)?.user?.id
     if (!sessionUserId) {
       return res.status(401).json({ success: false, error: { code: 'UNAUTHORIZED', message: 'Duhet të jeni i identifikuar' } })

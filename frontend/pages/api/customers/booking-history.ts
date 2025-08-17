@@ -4,7 +4,9 @@
 
 import { NextApiRequest, NextApiResponse } from 'next';
 import { createClient } from '@supabase/supabase-js';
-import { getSession } from 'next-auth/react';
+import { getServerSession } from 'next-auth/next';
+import { authOptions } from '../auth/[...nextauth]';
+import type { NextAuthOptions } from 'next-auth';
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -59,7 +61,7 @@ export default async function handler(
 
   try {
     // Get session for authentication
-    const session = await getSession({ req });
+    const session = await getServerSession(req, res, authOptions as NextAuthOptions);
     
     if (!session?.user) {
       return res.status(401).json({
