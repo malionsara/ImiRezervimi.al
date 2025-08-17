@@ -84,7 +84,7 @@ export const WHATSAPP_TEMPLATES: Record<TemplateKey, WhatsAppTemplate> = {
     albanianName: 'Kërkesë e Re (Salon)',
     contentSid: 'HXe508651e959c35faed984d2871d7ccb9',
     category: 'UTILITY',
-    variables: ['customerName', 'service', 'date', 'time', 'phone'],
+    variables: ['customerName', 'service', 'date', 'time', 'phone', 'appointmentId'],
     description: 'Notify salon of new booking request'
   },
 
@@ -276,11 +276,12 @@ export function getSalonNewRequestTemplate(
   service: string,
   date: string,
   time: string,
-  phone: string
+  phone: string,
+  appointmentId: string
 ) {
   return {
     templateKey: 'SALON_NEW_REQUEST' as TemplateKey,
-    variables: { customerName, service, date, time, phone }
+    variables: { customerName, service, date, time, phone, appointmentId }
   };
 }
 

@@ -313,7 +313,8 @@ async function sendSalonNotification(
       service: service.name,
       date: appointmentDate,
       time: appointment.start_time,
-      phone: customer.phone
+      phone: customer.phone,
+      appointmentId: appointment.id
     })
     
     console.log(`✅ Salon notification sent to ${salonPhone}`)
