@@ -261,6 +261,10 @@ export async function getTomorrowAppointments(salonId: string): Promise<string> 
     tomorrow.setDate(tomorrow.getDate() + 1)
     const tomorrowDate = tomorrow.toISOString().split('T')[0]
     
+    console.log(`🔍 Getting tomorrow appointments for salon ${salonId}`)
+    console.log(`📅 Tomorrow date calculated: ${tomorrowDate}`)
+    console.log(`🕐 Current time: ${new Date().toISOString()}`)
+    
     const { data: appointments, error } = await supabase
       .from('appointments')
       .select(`
@@ -273,11 +277,26 @@ export async function getTomorrowAppointments(salonId: string): Promise<string> 
       .eq('status', 'approved')
       .order('start_time', { ascending: true })
 
+    console.log(`📊 Tomorrow appointments query result:`, { appointments, error })
+    console.log(`📋 Number of appointments found: ${appointments?.length || 0}`)
+
     if (error) {
+      console.error('❌ Error in tomorrow appointments query:', error)
       throw error
     }
 
     if (!appointments || appointments.length === 0) {
+      console.log(`⚠️ No approved appointments found for tomorrow ${tomorrowDate}`)
+      
+      // Debug: Check if there are ANY appointments for tomorrow (regardless of status)
+      const { data: debugAppointments } = await supabase
+        .from('appointments')
+        .select('*')
+        .eq('salon_id', salonId)
+        .eq('appointment_date', tomorrowDate)
+      
+      console.log(`🔍 Debug - ALL appointments for tomorrow:`, debugAppointments)
+      
       return '📅 *ORARET E NESËRME*\n\nNuk keni rezervime nesër.'
     }
 
