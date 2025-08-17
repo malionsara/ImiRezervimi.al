@@ -29,6 +29,7 @@ interface ApiResponse {
   message: string;
   data?: any;
   error?: string;
+  details?: any;
 }
 
 export default async function handler(
@@ -128,10 +129,23 @@ export default async function handler(
     const appointment = await getAppointmentWithDetails(appointmentId);
     if (!appointment || !appointment.salon || !appointment.customer) {
       console.log('❌ Appointment not found:', appointmentId);
-      await sendWhatsAppErrorMessage(salonPhone, 'Rezervimi nuk u gjet në sistem. Kontrolloni dashboard-in tuaj.');
+      console.log('🔍 Debugging appointment lookup failure:');
+      console.log('- Appointment ID format:', typeof appointmentId, appointmentId.length);
+      console.log('- Salon phone from webhook:', salonPhone);
+      
+      // Send more detailed error message to salon
+      await sendWhatsAppErrorMessage(
+        salonPhone, 
+        `⚠️ *Gabim në sistem*\n\nRezervimi me ID: ${appointmentId.substring(0, 8)}... nuk u gjet.\n\n📱 Përdorni dashboard-in: https://imirezervimi.al/salon/dashboard\n\n💼 ImiRezervimi.al`
+      );
       return res.status(200).json({
         success: false,
-        message: 'Appointment not found'
+        message: 'Appointment not found',
+        details: {
+          appointmentId,
+          salonPhone,
+          timestamp: new Date().toISOString()
+        }
       });
     }
     

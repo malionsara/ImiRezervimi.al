@@ -636,6 +636,13 @@ export async function getAppointmentWithDetails(appointmentId: string) {
 
     if (error) {
       console.error('❌ Error fetching appointment:', error);
+      
+      // Help debug by showing recent appointments
+      if (error.code === 'PGRST116') {
+        console.log('🔍 Debugging: Fetching recent appointments to verify database state...');
+        await debugRecentAppointments();
+      }
+      
       return null;
     }
 
@@ -650,6 +657,32 @@ export async function getAppointmentWithDetails(appointmentId: string) {
   } catch (error) {
     console.error('❌ Exception in getAppointmentWithDetails:', error);
     return null;
+  }
+}
+
+/**
+ * Debug function to show recent appointments (for troubleshooting)
+ */
+async function debugRecentAppointments() {
+  try {
+    const { data: recentAppointments, error } = await supabaseAdmin
+      .from('appointments')
+      .select('id, status, created_at, appointment_date')
+      .order('created_at', { ascending: false })
+      .limit(5);
+    
+    if (error) {
+      console.error('❌ Error fetching recent appointments:', error);
+      return;
+    }
+    
+    console.log('📋 Recent appointments in database:');
+    recentAppointments?.forEach((apt, index) => {
+      console.log(`  ${index + 1}. ID: ${apt.id} | Status: ${apt.status} | Date: ${apt.appointment_date} | Created: ${apt.created_at}`);
+    });
+    
+  } catch (error) {
+    console.error('❌ Error in debugRecentAppointments:', error);
   }
 }
 
