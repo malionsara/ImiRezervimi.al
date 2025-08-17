@@ -83,7 +83,7 @@ export const WHATSAPP_TEMPLATES: Record<TemplateKey, WhatsAppTemplate> = {
     id: 'salon_new_request',
     name: 'New Request (Salon)',
     albanianName: 'Kërkesë e Re (Salon)',
-    contentSid: 'HXe508651e959c35faed984d2871d7ccb9',
+    contentSid: 'HXee0d98d3a4fca2f9ab931edc6039572b',
     category: 'UTILITY',
     variables: ['customerName', 'service', 'date', 'time', 'phone', 'appointmentId'],
     description: 'Notify salon of new booking request'
