@@ -7,10 +7,22 @@ import { validateRequest } from 'twilio';
 import { 
   updateAppointmentStatus,
   getAppointmentWithDetails,
-  validateSalon 
+  validateSalon as validateSalonForAppointment
 } from '../../../lib/appointments';
 import { sendWhatsAppTemplate } from '../../../lib/whatsapp';
 import { sendWhatsAppErrorMessage, sendWhatsAppConfirmation } from '../../../lib/whatsapp-direct-message';
+import {
+  parseCommand,
+  validateSalon,
+  checkRateLimit,
+  logCommand,
+  getTodayAppointments,
+  getPendingAppointments,
+  getTomorrowAppointments,
+  processApproval,
+  processDecline,
+  SALON_RESPONSES
+} from '../../../lib/salon-commands';
 
 interface TwilioWebhookPayload {
   From: string;           // whatsapp:+355691234567 (salon phone)
@@ -76,6 +88,103 @@ export default async function handler(
       console.log('⚠️ Skipping signature validation (development mode)');
     }
 
+    const fromPhone = payload.From?.replace('whatsapp:', '') || '';
+    const messageBody = (payload.Body || '').trim().toLowerCase();
+
+    // 🎯 SALON COMMAND DETECTION - Handle salon menu commands first
+    // Check for salon menu button clicks or text commands
+    let salonCommandType: string | null = null;
+    
+    // Handle salon menu button clicks (from interactive template)
+    if (payload.ButtonPayload) {
+      console.log('📋 Checking button payload for salon command:', payload.ButtonPayload);
+      
+      // Map English button IDs to command types
+      const salonButtonMap: Record<string, string> = {
+        'appointments': 'appointments',
+        'today': 'appointments', 
+        'oraret': 'appointments',
+        'pending': 'pending',
+        'pritje': 'pending',
+        'tomorrow': 'tomorrow',
+        'neser': 'tomorrow',
+        'help': 'help',
+        'ndihme': 'help'
+      };
+      
+      salonCommandType = salonButtonMap[payload.ButtonPayload.toLowerCase()];
+    }
+    
+    // Handle text commands (when no button payload or not appointment button)
+    if (!salonCommandType && messageBody && !payload.ButtonPayload?.match(/^(approve|decline)_(.+)$/)) {
+      console.log(`📱 Checking if message is salon command: "${messageBody}" from ${fromPhone}`);
+      
+      // Check if this is a known salon command
+      const command = parseCommand(messageBody);
+      if (command.type !== 'unknown') {
+        salonCommandType = command.type;
+      }
+    }
+    
+    // Process salon command if detected
+    if (salonCommandType) {
+      console.log(`🎯 Processing salon command: ${salonCommandType}`);
+      
+      // Validate salon
+      const salon = await validateSalon(fromPhone);
+      if (!salon) {
+        console.log(`❌ Unregistered salon: ${fromPhone}`);
+        return res.status(200).end(); // Ignore messages from unregistered salons
+      }
+
+      // Check rate limiting
+      const rateLimitPassed = await checkRateLimit(fromPhone);
+      if (!rateLimitPassed) {
+        await sendDirectWhatsAppMessage(fromPhone, SALON_RESPONSES.RATE_LIMIT);
+        return res.status(200).end();
+      }
+
+      // Log command
+      await logCommand(fromPhone, salonCommandType);
+
+      // Handle menu command with interactive template
+      if (salonCommandType === 'menu') {
+        try {
+          await sendWhatsAppTemplate(fromPhone, 'SALON_MENU', {});
+          console.log(`📤 Interactive menu sent to ${fromPhone}`);
+        } catch (error) {
+          console.error('Error sending menu template:', error);
+          // Fallback to plain text menu
+          await sendDirectWhatsAppMessage(fromPhone, SALON_RESPONSES.MENU);
+        }
+        return res.status(200).end();
+      }
+
+      // Process other salon commands
+      let response: string;
+      switch (salonCommandType) {
+        case 'appointments':
+          response = await getTodayAppointments(salon.id);
+          break;
+        case 'pending':
+          response = await getPendingAppointments(salon.id);
+          break;
+        case 'tomorrow':
+          response = await getTomorrowAppointments(salon.id);
+          break;
+        case 'help':
+          response = SALON_RESPONSES.HELP;
+          break;
+        default:
+          response = SALON_RESPONSES.UNKNOWN_COMMAND(salonCommandType);
+      }
+
+      // Send response
+      await sendDirectWhatsAppMessage(fromPhone, response);
+      return res.status(200).end();
+    }
+
+    // 🎯 APPOINTMENT BUTTON PROCESSING - Continue with existing logic
     // Extract appointment ID from button payload or message body
     let appointmentAction: string | null = null;
     let appointmentId: string | null = null;
@@ -346,6 +455,28 @@ async function handleDecline(appointmentId: string, salonPhone: string, appointm
     console.error('❌ Error in handleDecline:', error);
     const salonPhoneClean = whatsappFrom.replace('whatsapp:', '');
     await sendWhatsAppErrorMessage(salonPhoneClean, 'Gabim në refuzimin e rezervimit. Kontaktoni mbështetjen teknike.');
+  }
+}
+
+// Helper function to send direct WhatsApp messages for salon commands
+async function sendDirectWhatsAppMessage(phone: string, message: string): Promise<void> {
+  try {
+    const twilio = require('twilio');
+    const client = twilio(
+      process.env.TWILIO_ACCOUNT_SID!,
+      process.env.TWILIO_AUTH_TOKEN!
+    );
+
+    await client.messages.create({
+      body: message,
+      from: `whatsapp:${process.env.TWILIO_WHATSAPP_NUMBER}`,
+      to: `whatsapp:${phone}`
+    });
+
+    console.log(`📤 Direct message sent to ${phone}`);
+  } catch (error) {
+    console.error('Error sending direct WhatsApp message:', error);
+    throw error;
   }
 }
 

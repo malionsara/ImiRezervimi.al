@@ -22,6 +22,7 @@ export type TemplateKey =
   | 'BOOKING_DECLINED'
   | 'APPOINTMENT_REMINDER'
   | 'SALON_NEW_REQUEST'
+  | 'SALON_MENU'
   | 'WELCOME_MESSAGE';
 
 // ==============================================
@@ -86,6 +87,16 @@ export const WHATSAPP_TEMPLATES: Record<TemplateKey, WhatsAppTemplate> = {
     category: 'UTILITY',
     variables: ['customerName', 'service', 'date', 'time', 'phone', 'appointmentId'],
     description: 'Notify salon of new booking request'
+  },
+
+  SALON_MENU: {
+    id: 'salon_menu',
+    name: 'Salon Menu (Interactive)',
+    albanianName: 'Menu Saloni (Interaktiv)',
+    contentSid: 'HX_UPDATE_WITH_ACTUAL_CONTENT_SID_FROM_TWILIO',
+    category: 'UTILITY',
+    variables: [],
+    description: 'Interactive menu with buttons for salon commands'
   },
 
   WELCOME_MESSAGE: {
@@ -282,6 +293,16 @@ export function getSalonNewRequestTemplate(
   return {
     templateKey: 'SALON_NEW_REQUEST' as TemplateKey,
     variables: { customerName, service, date, time, phone, appointmentId }
+  };
+}
+
+/**
+ * Example usage for salon menu
+ */
+export function getSalonMenuTemplate() {
+  return {
+    templateKey: 'SALON_MENU' as TemplateKey,
+    variables: {}
   };
 }
 
