@@ -104,6 +104,10 @@ export default function Dashboard() {
     router.push(`/${salonSlug}`)
   }
 
+  const handleBookingClick = (bookingId) => {
+    router.push(`/booking/${bookingId}/status`)
+  }
+
   const handleSignOut = async () => {
     await signOut({ callbackUrl: '/' })
   }
@@ -250,7 +254,11 @@ export default function Dashboard() {
               ) : (
                 <div className="space-y-3">
                   {recentBookings.slice(0, 3).map((booking) => (
-                    <div key={booking.id} className="p-3 border border-gray-200 rounded-lg">
+                    <div 
+                      key={booking.id} 
+                      onClick={() => handleBookingClick(booking.id)}
+                      className="p-3 border border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 hover:border-gray-300 transition-all"
+                    >
                       <div className="flex items-center justify-between mb-1">
                         <span className="font-medium text-sm text-gray-900">{booking.salon_name}</span>
                         <span className={`text-xs px-2 py-1 rounded-full ${
@@ -266,6 +274,9 @@ export default function Dashboard() {
                       </div>
                       <p className="text-xs text-gray-600">
                         {booking.service_name} • {new Date(booking.appointment_date).toLocaleDateString('sq-AL')} në {booking.start_time}
+                      </p>
+                      <p className="text-xs text-gray-400 mt-1">
+                        Kliko për më shumë detaje
                       </p>
                     </div>
                   ))}

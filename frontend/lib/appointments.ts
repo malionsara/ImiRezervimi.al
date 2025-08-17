@@ -388,7 +388,7 @@ export async function getAppointmentById(appointmentId: string): Promise<{ succe
         completed_at,
         created_at,
         updated_at,
-        salon:salons!salon_id(
+        salons:salons!salon_id(
           id, 
           name, 
           phone, 
@@ -396,7 +396,7 @@ export async function getAppointmentById(appointmentId: string): Promise<{ succe
           city,
           working_hours
         ),
-        customer:customers!customer_id(
+        customers:customers!customer_id(
           id, 
           first_name, 
           last_name, 
@@ -404,7 +404,7 @@ export async function getAppointmentById(appointmentId: string): Promise<{ succe
           rating,
           total_visits
         ),
-        service:services!service_id(
+        services:services!service_id(
           id,
           name,
           duration_minutes,
@@ -613,19 +613,19 @@ export async function getAppointmentWithDetails(appointmentId: string) {
       .from('appointments')
       .select(`
         *,
-        salon:salons!appointments_salon_id_fkey (
+        salons:salons!appointments_salon_id_fkey (
           id,
           name,
           phone,
           address
         ),
-        customer:customers!appointments_customer_id_fkey (
+        customers:customers!appointments_customer_id_fkey (
           id,
           first_name,
           last_name,
           phone
         ),
-        service:services!appointments_service_id_fkey (
+        services:services!appointments_service_id_fkey (
           id,
           name,
           duration_minutes

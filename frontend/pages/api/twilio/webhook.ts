@@ -127,7 +127,7 @@ export default async function handler(
     
     // Get appointment details and validate salon ownership
     const appointment = await getAppointmentWithDetails(appointmentId);
-    if (!appointment || !appointment.salon || !appointment.customer) {
+    if (!appointment || !appointment.salons || !appointment.customers) {
       console.log('❌ Appointment not found:', appointmentId);
       console.log('🔍 Debugging appointment lookup failure:');
       console.log('- Appointment ID format:', typeof appointmentId, appointmentId.length);
@@ -150,9 +150,9 @@ export default async function handler(
     }
     
     // Validate salon ownership
-    if (appointment.salon.phone !== salonPhone) {
+    if (appointment.salons.phone !== salonPhone) {
       console.log('❌ Salon phone mismatch:', {
-        appointmentSalonPhone: appointment.salon.phone,
+        appointmentSalonPhone: appointment.salons.phone,
         requestSalonPhone: salonPhone
       });
       await sendWhatsAppErrorMessage(salonPhone, 'Ky rezervim nuk i përket salonit tuaj.');
@@ -185,7 +185,7 @@ export default async function handler(
       data: {
         appointmentId,
         action: appointmentAction,
-        salon: appointment.salon.name
+        salon: appointment.salons.name
       }
     });
     
@@ -233,7 +233,7 @@ async function handleApproval(appointmentId: string, salonPhone: string, appoint
     // Send confirmation to salon
     try {
       const salonPhone = whatsappFrom.replace('whatsapp:', '');
-      const customerName = `${appointment.customer.first_name} ${appointment.customer.last_name}`;
+      const customerName = `${appointment.customers.first_name} ${appointment.customers.last_name}`;
       const appointmentDate = new Date(appointment.appointment_date).toLocaleDateString('sq-AL', {
         day: 'numeric',
         month: 'long',
@@ -246,7 +246,7 @@ async function handleApproval(appointmentId: string, salonPhone: string, appoint
         customerName,
         appointmentDate,
         appointment.start_time,
-        appointment.service?.name || 'Shërbim'
+        appointment.services?.name || 'Shërbim'
       );
       console.log('✅ Approval confirmation sent to salon');
     } catch (error) {
@@ -261,8 +261,8 @@ async function handleApproval(appointmentId: string, salonPhone: string, appoint
         year: 'numeric'
       });
       
-      await sendWhatsAppTemplate(appointment.customer.phone, 'BOOKING_APPROVED', {
-        salonName: appointment.salon.name,
+      await sendWhatsAppTemplate(appointment.customers.phone, 'BOOKING_APPROVED', {
+        salonName: appointment.salons.name,
         date: appointmentDate,
         time: appointment.start_time
       });
@@ -308,7 +308,7 @@ async function handleDecline(appointmentId: string, salonPhone: string, appointm
     // Send confirmation to salon
     try {
       const salonPhone = whatsappFrom.replace('whatsapp:', '');
-      const customerName = `${appointment.customer.first_name} ${appointment.customer.last_name}`;
+      const customerName = `${appointment.customers.first_name} ${appointment.customers.last_name}`;
       const appointmentDate = new Date(appointment.appointment_date).toLocaleDateString('sq-AL', {
         day: 'numeric',
         month: 'long',
@@ -321,7 +321,7 @@ async function handleDecline(appointmentId: string, salonPhone: string, appointm
         customerName,
         appointmentDate,
         appointment.start_time,
-        appointment.service?.name || 'Shërbim'
+        appointment.services?.name || 'Shërbim'
       );
       console.log('✅ Decline confirmation sent to salon');
     } catch (error) {
@@ -330,8 +330,8 @@ async function handleDecline(appointmentId: string, salonPhone: string, appointm
     
     // Send decline notification to customer
     try {
-      await sendWhatsAppTemplate(appointment.customer.phone, 'BOOKING_DECLINED', {
-        salonName: appointment.salon.name,
+      await sendWhatsAppTemplate(appointment.customers.phone, 'BOOKING_DECLINED', {
+        salonName: appointment.salons.name,
         reason: 'Saloni nuk është i disponueshëm për këtë kohë'
       });
       
