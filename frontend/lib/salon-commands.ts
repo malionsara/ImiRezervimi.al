@@ -94,7 +94,7 @@ export async function validateSalon(phone: string): Promise<SalonInfo | null> {
     const { data: salon, error } = await supabase
       .from('salons')
       .select('id, name, phone, status')
-      .eq('phone', phone)
+      .or(`phone.eq.${phone},whatsapp_number.eq.${phone}`)
       .eq('status', 'active')
       .single()
 
