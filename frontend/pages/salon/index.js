@@ -84,6 +84,9 @@ export default function SalonLanding() {
 
               {/* CTA */}
               <div className="flex items-center space-x-4">
+                <Link href="/login-salon" className="group border-2 border-red-500 text-red-500 px-6 py-3 rounded-2xl font-semibold hover:bg-red-500 hover:text-white transition-all duration-300 transform hover:scale-105 hover:-translate-y-1">
+                  <span className="relative z-10">Hyr</span>
+                </Link>
                 <Link href="/salon/register" className="group bg-gradient-to-r from-red-500 via-pink-500 to-orange-500 text-white px-6 py-3 rounded-2xl font-semibold hover:shadow-2xl hover:shadow-red-500/25 transition-all duration-300 transform hover:scale-105 hover:-translate-y-1 relative overflow-hidden">
                   <span className="relative z-10">Fillo Tani</span>
                   <div className="absolute inset-0 bg-gradient-to-r from-red-600 via-pink-600 to-orange-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
@@ -130,6 +133,14 @@ export default function SalonLanding() {
                     <span className="ml-3 transform group-hover:translate-x-2 transition-transform duration-300">→</span>
                   </span>
                   <div className="absolute inset-0 bg-gradient-to-r from-red-600 via-pink-600 to-orange-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                </Link>
+                
+                <Link href="/login-salon" className="group border-3 border-red-500 text-red-600 px-10 py-5 rounded-3xl font-bold hover:bg-red-500 hover:text-white hover:border-red-500 transition-all duration-500 text-xl shadow-lg hover:shadow-2xl hover:shadow-red-500/30 transform hover:scale-105 hover:-translate-y-2">
+                  <span className="flex items-center">
+                    <span className="mr-3 text-2xl">🏪</span>
+                    Hyr në Dashboard
+                    <span className="ml-3 transform group-hover:translate-x-2 transition-transform duration-300">→</span>
+                  </span>
                 </Link>
                 
                 <button className="group border-3 border-gray-300 text-gray-700 px-10 py-5 rounded-3xl font-bold hover:bg-white hover:border-red-300 hover:text-red-600 transition-all duration-500 text-xl shadow-lg hover:shadow-xl">

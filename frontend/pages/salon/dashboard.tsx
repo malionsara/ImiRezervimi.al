@@ -127,11 +127,19 @@ export default function SalonDashboard() {
     try {
       // Get salon ID from URL parameter or session
       const urlSalonId = router.query.salonId as string
+      const verified = router.query.verified as string
+      
       if (urlSalonId) {
         setSalonId(urlSalonId)
+        
+        // Show success message if just verified via magic link
+        if (verified === 'true') {
+          addNotification('🎉 Hyrja u krye me sukses! Mirë se erdhe në dashboard.', 'success')
+        }
       } else {
-        // Redirect to salon selection or login
-        router.push('/salon/login')
+        // Redirect to salon login
+        console.log('No salon ID provided, redirecting to login...')
+        router.push('/login-salon')
       }
     } catch (error) {
       console.error('Dashboard initialization error:', error)
@@ -244,6 +252,19 @@ export default function SalonDashboard() {
   const handleAvailabilityChange = () => {
     addNotification('Disponueshmëria u përditësua', 'success')
     loadDashboardData() // Refresh data
+  }
+
+  const handleLogout = () => {
+    // Clear any session cookies
+    document.cookie = 'salon_session=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;'
+    
+    // Show logout notification
+    addNotification('👋 Dolët me sukses nga dashboard-i', 'info')
+    
+    // Redirect to login after a short delay
+    setTimeout(() => {
+      router.push('/login-salon')
+    }, 1500)
   }
 
   // Enhanced search and filter functionality
@@ -482,6 +503,19 @@ export default function SalonDashboard() {
                   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
                   </svg>
+                </button>
+
+                <button
+                  onClick={handleLogout}
+                  className="text-red-500 hover:text-red-700 px-3 py-2 rounded-md text-sm font-medium hover:bg-red-50 transition-colors"
+                  title="Dil nga dashboard-i"
+                >
+                  <div className="flex items-center">
+                    <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                    </svg>
+                    <span className="hidden sm:inline">Dil</span>
+                  </div>
                 </button>
                 
                 <Link href="/" className="text-gray-500 hover:text-gray-700 px-3 py-2 rounded-md text-sm font-medium">
