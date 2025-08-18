@@ -173,6 +173,10 @@ export async function getTodayAppointments(salonId: string): Promise<string> {
   try {
     const today = new Date().toISOString().split('T')[0]
     
+    console.log(`🔍 Getting today appointments for salon ${salonId}`)
+    console.log(`📅 Today date: ${today}`)
+    console.log(`🕐 Current time: ${new Date().toISOString()}`)
+    
     const { data: appointments, error } = await supabase
       .from('appointments')
       .select(`
@@ -185,11 +189,26 @@ export async function getTodayAppointments(salonId: string): Promise<string> {
       .in('status', ['approved', 'pending'])
       .order('start_time', { ascending: true })
 
+    console.log(`📊 Today appointments query result:`, { appointments, error })
+    console.log(`📋 Number of appointments found: ${appointments?.length || 0}`)
+
     if (error) {
+      console.error('❌ Error in today appointments query:', error)
       throw error
     }
 
     if (!appointments || appointments.length === 0) {
+      console.log(`⚠️ No appointments found for today ${today}`)
+      
+      // Debug: Check if there are ANY appointments for today (regardless of status)
+      const { data: debugAppointments } = await supabase
+        .from('appointments')
+        .select('*')
+        .eq('salon_id', salonId)
+        .eq('appointment_date', today)
+      
+      console.log(`🔍 Debug - ALL appointments for today:`, debugAppointments)
+      
       return '📅 *ORARET E SOTME*\n\nNuk keni rezervime sot.'
     }
 
