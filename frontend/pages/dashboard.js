@@ -4,9 +4,9 @@
 import { useSession, signOut } from 'next-auth/react'
 import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
-import Head from 'next/head'
 import Image from 'next/image'
 import Link from 'next/link'
+import Layout, { dashboardLayout } from '../components/layout/Layout'
 
 export default function Dashboard() {
   const { data: session, status } = useSession()

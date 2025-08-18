@@ -165,16 +165,24 @@ export default function MobileBookingForm({ salon, onSuccess, onError }: MobileB
   }
 
   return (
-    <div className="max-w-md mx-auto bg-white rounded-2xl shadow-xl overflow-hidden">
-      {/* Progress Bar */}
-      <div className="bg-gradient-to-r from-red-500 to-pink-500 p-1">
-        <div className="bg-white rounded-lg">
+    <>
+      {/* Fixed Progress Bar at Top of Page */}
+      <div className="fixed top-0 left-0 right-0 z-50 bg-white shadow-sm">
+        <div className="h-1 bg-gray-200">
           <div 
-            className="h-1 bg-gradient-to-r from-red-500 to-pink-500 rounded-lg transition-all duration-500 ease-out"
+            className="h-1 bg-gradient-to-r from-red-500 to-pink-500 transition-all duration-500 ease-out"
             style={{ width: `${progress}%` }}
           />
         </div>
+        {/* Step indicator text */}
+        <div className="px-4 py-2 text-center">
+          <span className="text-sm text-gray-600">
+            Hapi {currentStepIndex + 1} nga {steps.length}
+          </span>
+        </div>
       </div>
+
+      <div className="max-w-md mx-auto bg-white rounded-2xl shadow-xl overflow-hidden mt-16">{/* Added top margin for fixed progress bar */}
 
       {/* Header */}
       <div className="p-6 bg-gradient-to-r from-red-500 to-pink-500 text-white">
@@ -461,5 +469,6 @@ export default function MobileBookingForm({ salon, onSuccess, onError }: MobileB
         )}
       </div>
     </div>
+    </> 
   )
 }

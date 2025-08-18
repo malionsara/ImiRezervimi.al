@@ -348,19 +348,10 @@ export default function SalonBookingPage() {
       <Layout {...bookingLayout({ 
         title: `Rezervo në ${salon.name}`,
         description: `Rezervoni online në ${salon.name}. ${salon.description || ''}`,
-        showHeader: false
+        showHeader: true,
+        headerVariant: 'minimal'
       })}>
         <div className="min-h-screen bg-gradient-to-br from-pink-50 via-red-50 to-orange-50 py-6 px-4">
-          {/* Back Navigation */}
-          <div className="max-w-md mx-auto mb-4">
-            <Link
-              href="/"
-              className="inline-flex items-center space-x-2 text-gray-600 hover:text-gray-900 transition-colors"
-            >
-              <span>←</span>
-              <span className="text-sm font-medium">ImiRezervimi.al</span>
-            </Link>
-          </div>
 
           {/* Mobile Booking Form */}
           <MobileBookingForm
