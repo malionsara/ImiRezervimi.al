@@ -348,7 +348,8 @@ export default function SalonBookingPage() {
       <Layout {...bookingLayout({ 
         title: `Rezervo në ${salon.name}`,
         description: `Rezervoni online në ${salon.name}. ${salon.description || ''}`,
-        showHeader: false
+        showHeader: true,
+        headerVariant: 'minimal'
       })}>
         <div className="min-h-screen bg-gradient-to-br from-pink-50 via-red-50 to-orange-50 py-6 px-4">
 

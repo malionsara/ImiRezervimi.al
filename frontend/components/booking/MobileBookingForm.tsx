@@ -504,7 +504,8 @@ export default function MobileBookingForm({ salon, onSuccess, onError }: MobileB
           </button>
         ) : (
           <button
-            type="submit"
+            type="button"
+            onClick={handleSubmit(onSubmit)}
             disabled={loading}
             className={`flex-1 py-3 px-4 rounded-xl font-medium transition-all touch-manipulation ${
               loading
@@ -516,35 +517,6 @@ export default function MobileBookingForm({ salon, onSuccess, onError }: MobileB
           </button>
         )}
         
-        {/* Test button to bypass form validation */}
-        <button
-          type="button"
-          onClick={() => {
-            console.log('🧪 TEST BUTTON CLICKED')
-            const testData = {
-              salonId: salon.id,
-              serviceId: selectedService?.id || '',
-              appointmentDate: selectedDate,
-              startTime: selectedTime,
-              customerInfo: session?.user ? {
-                firstName: session.user.name?.split(' ')[0] || '',
-                lastName: session.user.name?.split(' ').slice(1).join(' ') || '',
-                phone: (session.user as any)?.phone || ''
-              } : {
-                firstName: 'Test',
-                lastName: 'User',
-                phone: '+35569123456'
-              },
-              customerNotes: 'Test submission',
-              duration: selectedService?.duration_minutes || 30
-            }
-            console.log('Test data:', testData)
-            onSubmit(testData)
-          }}
-          className="mt-2 w-full py-2 px-4 bg-blue-500 text-white rounded-lg text-sm"
-        >
-          🧪 Test Submit (Bypass Form)
-        </button>
       </div>
     </div>
     </> 
