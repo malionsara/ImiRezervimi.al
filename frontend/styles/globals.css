@@ -28,6 +28,24 @@
     @apply w-full max-w-none;
   }
 
+  /* Header animations and utilities */
+  .animate-slideDown {
+    animation: slideDown 0.2s ease-out;
+  }
+  
+  .animate-float {
+    animation: float 6s ease-in-out infinite;
+  }
+  
+  .animate-float-delayed {
+    animation: float 6s ease-in-out infinite 2s;
+  }
+  
+  .animate-float-slow {
+    animation: float 8s ease-in-out infinite 1s;
+  }
+}
+
   /* Touch-friendly buttons for mobile */
   .btn-touch {
     @apply min-h-[48px] min-w-[48px] touch-manipulation;
@@ -130,6 +148,26 @@
   }
   50% {
     background-position: 100% 50%;
+  }
+}
+
+@keyframes slideDown {
+  from { 
+    opacity: 0; 
+    transform: translateY(-10px); 
+  }
+  to { 
+    opacity: 1; 
+    transform: translateY(0); 
+  }
+}
+
+@keyframes float {
+  0%, 100% { 
+    transform: translateY(0px); 
+  }
+  50% { 
+    transform: translateY(-20px); 
   }
 }
 

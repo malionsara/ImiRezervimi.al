@@ -1,7 +1,7 @@
 // frontend/pages/salons.tsx
 // Public salons listing page (separate from marketing /salon)
 
-import Head from 'next/head'
+import Layout from '../components/layout/Layout'
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
 
@@ -36,18 +36,14 @@ export default function SalonsListPage() {
   }, [])
 
   return (
-    <>
-      <Head>
-        <title>Sallone - ImiRezervimi.al</title>
-        <meta name="description" content="Shfleto sallonet e disponueshme" />
-      </Head>
-      <div className="min-h-screen bg-gray-50">
-        <header className="bg-white border-b">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-            <Link href="/" className="text-lg font-bold">ImiRezervimi</Link>
-            <Link href="/salon" className="text-sm text-gray-600 hover:text-gray-900">Për Sallone</Link>
-          </div>
-        </header>
+    <Layout
+      title="Sallone"
+      description="Shfleto sallonet e disponueshme dhe rezervo online në çdo moment"
+      headerVariant="minimal"
+      footerVariant="minimal"
+      backgroundClass="bg-gray-50"
+    >
+      <div className="min-h-screen">
 
         <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
           {/* Page heading + search */}
@@ -137,7 +133,7 @@ export default function SalonsListPage() {
           )}
         </main>
       </div>
-    </>
+    </Layout>
   )
 }
 
