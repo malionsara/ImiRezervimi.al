@@ -173,6 +173,26 @@ export default async function handler(
         case 'tomorrow':
           response = await getTomorrowAppointments(salon.id);
           break;
+        case 'approve':
+          {
+            const command = parseCommand(messageBody);
+            if (command.parameter) {
+              response = await processApproval(command.parameter, salon.id);
+            } else {
+              response = '❌ Ju lutemi specifikoni ID-në e rezervimit. Shembull: "aprovo 12345678"';
+            }
+          }
+          break;
+        case 'decline':
+          {
+            const command = parseCommand(messageBody);
+            if (command.parameter) {
+              response = await processDecline(command.parameter, salon.id);
+            } else {
+              response = '❌ Ju lutemi specifikoni ID-në e rezervimit. Shembull: "refuzo 12345678"';
+            }
+          }
+          break;
         case 'help':
           response = SALON_RESPONSES.HELP;
           break;

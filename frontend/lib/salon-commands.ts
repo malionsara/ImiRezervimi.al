@@ -206,7 +206,7 @@ export async function getTodayAppointments(salonId: string): Promise<string> {
       return '📅 *ORARET E SOTME*\n\nNuk keni rezervime sot.'
     }
 
-    let response = '📅 *ORARET E SOTME* (Të miratuara)\n\n'
+    let response = '📅 *ORARET E SOTME*\n\n'
     
     appointments.forEach(apt => {
       const customer = `${apt.customers.first_name} ${apt.customers.last_name}`
