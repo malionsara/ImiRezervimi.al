@@ -1,12 +1,11 @@
 // frontend/pages/dashboard/bookings.js
-// Customer bookings management page - ImiRezervimi.al
+// Mobile-first customer bookings management page - ImiRezervimi.al
 
 import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
-import Head from 'next/head'
-import Image from 'next/image'
 import Link from 'next/link'
+import Layout, { dashboardLayout } from '../../components/layout/Layout'
 import { showToast } from '../../components/ToastProvider'
 
 export default function BookingsPage() {
@@ -105,114 +104,128 @@ export default function BookingsPage() {
     }
   }
 
-  const filteredBookings = bookings.filter(booking => {
+  const filteredBookings = bookings.filter((booking) => {
     if (filter === 'all') return true
     return booking.status === filter
   })
 
   const getStatusBadge = (status) => {
-    const statusConfig = {
-      pending: { bg: 'bg-yellow-100', text: 'text-yellow-700', label: 'Në pritje' },
-      approved: { bg: 'bg-green-100', text: 'text-green-700', label: 'Aprovuar' },
-      completed: { bg: 'bg-blue-100', text: 'text-blue-700', label: 'Kryer' },
-      declined: { bg: 'bg-red-100', text: 'text-red-700', label: 'Refuzuar' },
-      cancelled: { bg: 'bg-gray-100', text: 'text-gray-700', label: 'Anulluar' }
+    const styles = {
+      pending: 'bg-yellow-100 text-yellow-800',
+      approved: 'bg-green-100 text-green-800', 
+      completed: 'bg-blue-100 text-blue-800',
+      declined: 'bg-red-100 text-red-800',
+      cancelled: 'bg-gray-100 text-gray-800'
     }
-    
-    const config = statusConfig[status] || statusConfig.pending
-    return (
-      <span className={`px-2 py-1 text-xs rounded-full ${config.bg} ${config.text}`}>
-        {config.label}
-      </span>
-    )
-  }
 
-  if (status === 'loading' || loading) {
+    const labels = {
+      pending: 'Në pritje',
+      approved: 'Aprovuar',
+      completed: 'Kryer', 
+      declined: 'Refuzuar',
+      cancelled: 'Anulluar'
+    }
+
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center">
-          <div className="mx-auto h-16 w-16 rounded-2xl bg-white flex items-center justify-center mb-4 shadow-lg animate-pulse p-2">
-            <Image src="/favicon-96x96.png" alt="ImiRezervimi Logo" width={64} height={64} />
-          </div>
-          <p className="text-gray-600">Po ngarkon...</p>
-        </div>
-      </div>
+      <span className={`inline-flex px-2 py-1 text-xs font-medium rounded-full ${styles[status] || styles.pending}`}>
+        {labels[status] || status}
+      </span>
     )
   }
 
   if (!session) return null
 
   return (
-    <>
-      <Head>
-        <title>Rezervimet e Mia - ImiRezervimi.al</title>
-        <meta name="description" content="Shiko dhe menaxho të gjitha rezervimet e tua" />
-      </Head>
-
+    <Layout {...dashboardLayout({ 
+      title: 'Rezervimet e Mia',
+      description: 'Shiko dhe menaxho të gjitha rezervimet e tua'
+    })}>
       <div className="min-h-screen bg-gray-50">
-        {/* Header */}
-        <header className="bg-white shadow-sm border-b">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="flex justify-between items-center h-16">
-              <div className="flex items-center">
-                <Link href="/dashboard">
-                  <a className="flex items-center">
-                    <div className="h-8 w-8 rounded-lg bg-white flex items-center justify-center mr-3 p-1 border">
-                      <Image src="/favicon-96x96.png" alt="ImiRezervimi Logo" width={32} height={32} />
-                    </div>
-                    <span className="text-xl font-bold text-gray-900">ImiRezervimi</span>
-                  </a>
+        {/* Mobile-First Header */}
+        <div className="bg-white shadow-sm border-b sticky top-0 z-10">
+          <div className="px-4 sm:px-6">
+            <div className="flex items-center justify-between h-16">
+              <div className="flex items-center min-w-0">
+                <Link href="/dashboard" className="flex items-center min-w-0">
+                  <div className="h-8 w-8 rounded-lg bg-white flex items-center justify-center mr-3 border shadow-sm flex-shrink-0">
+                    <img src="/favicon-96x96.png" alt="ImiRezervimi Logo" className="w-6 h-6" />
+                  </div>
+                  <div className="min-w-0">
+                    <span className="text-lg font-bold text-gray-900 truncate">ImiRezervimi</span>
+                  </div>
                 </Link>
-                <span className="ml-4 text-gray-400">•</span>
-                <span className="ml-4 text-gray-600">Rezervimet e Mia</span>
               </div>
               
-              <Link href="/dashboard">
-                <a className="text-gray-500 hover:text-gray-700 text-sm">
-                  ← Kthehu te Dashboard
-                </a>
+              <Link href="/dashboard" className="text-gray-500 hover:text-gray-700 text-sm font-medium">
+                ← Dashboard
               </Link>
             </div>
           </div>
-        </header>
+        </div>
 
         {/* Main Content */}
-        <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <div className="mb-8">
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">Rezervimet e Mia</h1>
+        <div className="px-4 sm:px-6 py-6">
+          {/* Page Header */}
+          <div className="mb-6">
+            <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">Rezervimet e Mia</h1>
             <p className="text-gray-600">Menaxho të gjitha rezervimet e tua</p>
           </div>
 
-          {/* Filter Tabs */}
-          <div className="flex space-x-1 mb-8 bg-gray-100 p-1 rounded-lg inline-flex">
-            {[
-              { key: 'all', label: 'Të gjitha' },
-              { key: 'pending', label: 'Në pritje' },
-              { key: 'approved', label: 'Aprovuar' },
-              { key: 'completed', label: 'Kryer' },
-              { key: 'declined', label: 'Refuzuar' }
-            ].map((tab) => (
-              <button
-                key={tab.key}
-                onClick={() => setFilter(tab.key)}
-                className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
-                  filter === tab.key
-                    ? 'bg-white text-red-600 shadow-sm'
-                    : 'text-gray-600 hover:text-gray-900'
-                }`}
-              >
-                {tab.label}
-                {tab.key !== 'all' && (
-                  <span className="ml-2 text-xs bg-gray-200 text-gray-600 px-1.5 py-0.5 rounded-full">
-                    {bookings.filter(b => b.status === tab.key).length}
-                  </span>
-                )}
-              </button>
-            ))}
+          {/* Mobile-Optimized Filter Tabs */}
+          <div className="mb-6">
+            <div className="flex overflow-x-auto pb-2 -mb-2 space-x-1">
+              {[
+                { key: 'all', label: 'Të gjitha', count: bookings.length },
+                { key: 'pending', label: 'Në pritje', count: bookings.filter(b => b.status === 'pending').length },
+                { key: 'approved', label: 'Aprovuar', count: bookings.filter(b => b.status === 'approved').length },
+                { key: 'completed', label: 'Kryer', count: bookings.filter(b => b.status === 'completed').length },
+                { key: 'declined', label: 'Refuzuar', count: bookings.filter(b => b.status === 'declined').length }
+              ].map((tab) => (
+                <button
+                  key={tab.key}
+                  onClick={() => setFilter(tab.key)}
+                  className={`flex-shrink-0 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
+                    filter === tab.key
+                      ? 'bg-red-500 text-white shadow-sm'
+                      : 'bg-white text-gray-600 hover:text-gray-900 border border-gray-200 hover:border-gray-300'
+                  }`}
+                >
+                  {tab.label}
+                  {tab.count > 0 && (
+                    <span className={`ml-2 text-xs px-1.5 py-0.5 rounded-full ${
+                      filter === tab.key 
+                        ? 'bg-white/20 text-white' 
+                        : 'bg-gray-100 text-gray-600'
+                    }`}>
+                      {tab.count}
+                    </span>
+                  )}
+                </button>
+              ))}
+            </div>
           </div>
 
-          {/* Bookings List */}
-          {filteredBookings.length === 0 ? (
+          {/* Loading State */}
+          {loading ? (
+            <div className="space-y-4">
+              {[1, 2, 3].map(i => (
+                <div key={i} className="bg-white rounded-xl p-4 border animate-pulse">
+                  <div className="flex justify-between items-start mb-3">
+                    <div className="space-y-2">
+                      <div className="h-5 bg-gray-200 rounded w-24"></div>
+                      <div className="h-4 bg-gray-200 rounded w-32"></div>
+                    </div>
+                    <div className="h-6 bg-gray-200 rounded w-16"></div>
+                  </div>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="h-4 bg-gray-200 rounded"></div>
+                    <div className="h-4 bg-gray-200 rounded"></div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : filteredBookings.length === 0 ? (
+            /* Empty State */
             <div className="text-center py-12 bg-white rounded-xl border">
               <div className="text-gray-400 text-6xl mb-4">📅</div>
               <h3 className="text-lg font-semibold text-gray-900 mb-2">
@@ -224,86 +237,85 @@ export default function BookingsPage() {
                   : 'Ndryshoni filtrin për të parë rezervime të tjera.'}
               </p>
               {filter === 'all' && (
-                <Link href="/salon">
-                  <a className="inline-flex items-center px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors">
-                    🔍 Zbulo Sallone
-                  </a>
+                <Link href="/salons" className="inline-flex items-center px-6 py-3 bg-red-500 text-white rounded-xl hover:bg-red-600 transition-colors font-medium">
+                  🔍 Zbulo Sallone
                 </Link>
               )}
             </div>
           ) : (
+            /* Mobile-Optimized Bookings List */
             <div className="space-y-4">
               {filteredBookings.map((booking) => (
-                <div key={booking.id} className="bg-white rounded-xl border p-6 hover:shadow-sm transition-shadow">
+                <div key={booking.id} className="bg-white rounded-xl border p-4 hover:shadow-sm transition-shadow">
+                  {/* Booking Header */}
                   <div className="flex items-start justify-between mb-4">
-                    <div>
-                      <h3 className="font-semibold text-lg text-gray-900">{booking.salon_name}</h3>
-                      <p className="text-gray-600">{booking.service_name}</p>
+                    <div className="min-w-0 flex-1">
+                      <h3 className="font-semibold text-lg text-gray-900 truncate">{booking.salon_name}</h3>
+                      <p className="text-gray-600 text-sm">{booking.service_name}</p>
                     </div>
-                    {getStatusBadge(booking.status)}
+                    <div className="flex-shrink-0 ml-3">
+                      {getStatusBadge(booking.status)}
+                    </div>
                   </div>
                   
-                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+                  {/* Booking Details Grid - Mobile Optimized */}
+                  <div className="grid grid-cols-2 gap-4 text-sm mb-4">
                     <div>
-                      <p className="text-gray-500">Data</p>
-                      <p className="font-medium">
-                        {new Date(booking.appointment_date).toLocaleDateString('sq-AL', {
-                          weekday: 'short',
-                          day: 'numeric',
-                          month: 'short'
+                      <p className="text-gray-500 mb-1">Data</p>
+                      <p className="font-medium text-gray-900">
+                        {new Date(booking.appointment_date).toLocaleDateString('sq-AL', { 
+                          weekday: 'short', 
+                          month: 'short', 
+                          day: 'numeric' 
                         })}
                       </p>
                     </div>
                     <div>
-                      <p className="text-gray-500">Ora</p>
-                      <p className="font-medium">{booking.start_time}</p>
+                      <p className="text-gray-500 mb-1">Ora</p>
+                      <p className="font-medium text-gray-900">{booking.start_time}</p>
                     </div>
                     <div>
-                      <p className="text-gray-500">Çmimi</p>
-                      <p className="font-medium">{booking.service_price}€</p>
+                      <p className="text-gray-500 mb-1">Çmimi</p>
+                      <p className="font-medium text-gray-900">{booking.service_price}€</p>
                     </div>
                     <div>
-                      <p className="text-gray-500">Kërkuar më</p>
-                      <p className="font-medium">
-                        {new Date(booking.requested_at).toLocaleDateString('sq-AL')}
+                      <p className="text-gray-500 mb-1">Kërkuar më</p>
+                      <p className="font-medium text-gray-900">
+                        {new Date(booking.created_at).toLocaleDateString('sq-AL')}
                       </p>
                     </div>
                   </div>
 
-                  {booking.customer_notes && (
-                    <div className="mt-4 p-3 bg-gray-50 rounded-lg">
-                      <p className="text-sm text-gray-600">
-                        <strong>Shënimi:</strong> {booking.customer_notes}
-                      </p>
-                    </div>
-                  )}
-
+                  {/* Salon Response */}
                   {booking.salon_notes && (
-                    <div className="mt-4 p-3 bg-blue-50 rounded-lg">
-                      <p className="text-sm text-blue-700">
-                        <strong>Përgjigja e sallonit:</strong> {booking.salon_notes}
+                    <div className="mb-4 p-3 bg-gray-50 rounded-lg">
+                      <p className="text-sm">
+                        <strong className="text-gray-900">Përgjigja e sallonit:</strong>{' '}
+                        <span className="text-gray-700">{booking.salon_notes}</span>
                       </p>
                     </div>
                   )}
 
-                  <div className="mt-4 flex items-center justify-between">
-                    <Link href={`/booking/${booking.id}/status`}>
-                      <a className="text-red-600 hover:text-red-700 text-sm font-medium">
-                        Shiko detajet →
-                      </a>
+                  {/* Action Buttons - Mobile Optimized */}
+                  <div className="flex flex-col space-y-2">
+                    <Link 
+                      href={`/booking/${booking.id}/status`}
+                      className="w-full text-center px-4 py-2 bg-blue-50 text-blue-700 rounded-lg hover:bg-blue-100 transition-colors font-medium text-sm"
+                    >
+                      📋 Shiko detajet →
                     </Link>
-
+                    
                     {(booking.status === 'pending' || booking.status === 'approved') && (
-                      <div className="flex items-center gap-4">
-                        <button 
-                          className="text-pink-600 hover:text-pink-700 text-sm font-medium"
+                      <div className="flex space-x-2">
+                        <button
                           onClick={() => openReschedule(booking)}
+                          className="flex-1 px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors font-medium text-sm"
                         >
                           Ndrysho orarin
                         </button>
-                        <button 
-                          className="text-gray-500 hover:text-gray-700 text-sm"
+                        <button
                           onClick={() => handleCancel(booking)}
+                          className="flex-1 px-4 py-2 bg-red-50 text-red-700 rounded-lg hover:bg-red-100 transition-colors font-medium text-sm"
                         >
                           Anulloje
                         </button>
@@ -314,47 +326,77 @@ export default function BookingsPage() {
               ))}
             </div>
           )}
-        </main>
-      
-      {/* Reschedule Modal */}
-      {showReschedule && selectedBooking && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4">
-          <div className="bg-white rounded-2xl shadow-xl w-full max-w-md p-6">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-semibold text-gray-900">Ri-planifiko rezervimin</h3>
-              <button className="text-gray-400 hover:text-gray-600" onClick={() => setShowReschedule(false)}>✕</button>
-            </div>
+        </div>
 
-            <div className="space-y-4">
-              <div>
-                <label className="block text-sm text-gray-600 mb-1">Data</label>
-                <input type="date" className="w-full border rounded-lg px-3 py-2" value={newDate} onChange={(e) => setNewDate(e.target.value)} />
-              </div>
-              <div>
-                <label className="block text-sm text-gray-600 mb-1">Ora</label>
-                <input type="time" className="w-full border rounded-lg px-3 py-2" value={newTime} onChange={(e) => setNewTime(e.target.value)} />
-              </div>
-              <div>
-                <label className="block text-sm text-gray-600 mb-1">Shënimet tuaja (opsionale)</label>
-                <textarea className="w-full border rounded-lg px-3 py-2" rows={3} value={newNotes} onChange={(e) => setNewNotes(e.target.value)} />
-              </div>
-            </div>
+        {/* Mobile-Optimized Reschedule Modal */}
+        {showReschedule && selectedBooking && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-end sm:items-center justify-center p-4 z-50">
+            <div className="bg-white rounded-t-2xl sm:rounded-2xl w-full max-w-md max-h-[90vh] overflow-y-auto">
+              <div className="p-6">
+                <div className="flex items-center justify-between mb-6">
+                  <h3 className="text-lg font-semibold text-gray-900">Ndrysho orarin</h3>
+                  <button 
+                    onClick={() => setShowReschedule(false)}
+                    className="text-gray-400 hover:text-gray-600"
+                  >
+                    ✕
+                  </button>
+                </div>
 
-            <div className="mt-6 flex justify-end gap-3">
-              <button className="px-4 py-2 rounded-lg text-gray-600 hover:bg-gray-100" onClick={() => setShowReschedule(false)}>Anulo</button>
-              <button
-                className="px-4 py-2 rounded-lg bg-red-600 text-white hover:bg-red-700 disabled:opacity-50"
-                onClick={submitReschedule}
-                disabled={saving || !newDate || !newTime}
-              >
-                {saving ? 'Duke ruajtur...' : 'Ruaj ndryshimet'}
-              </button>
+                <div className="space-y-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Data e re</label>
+                    <input
+                      type="date"
+                      value={newDate}
+                      onChange={(e) => setNewDate(e.target.value)}
+                      className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
+                      min={new Date().toISOString().split('T')[0]}
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Ora e re</label>
+                    <input
+                      type="time"
+                      value={newTime}
+                      onChange={(e) => setNewTime(e.target.value)}
+                      className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Shënime (opsionale)</label>
+                    <textarea
+                      value={newNotes}
+                      onChange={(e) => setNewNotes(e.target.value)}
+                      className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
+                      rows={3}
+                      placeholder="Arsyeja e ndryshimit..."
+                    />
+                  </div>
+
+                  <div className="flex space-x-3 pt-4">
+                    <button
+                      onClick={() => setShowReschedule(false)}
+                      className="flex-1 py-3 px-4 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors font-medium"
+                    >
+                      Anulo
+                    </button>
+                    <button
+                      onClick={submitReschedule}
+                      disabled={saving}
+                      className="flex-1 py-3 px-4 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors font-medium disabled:opacity-50"
+                    >
+                      {saving ? 'Po ruhet...' : 'Ruaj ndryshimet'}
+                    </button>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
-        </div>
-      )}
-
+        )}
       </div>
-    </>
+    </Layout>
   )
 }
