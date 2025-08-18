@@ -1,4 +1,4 @@
-# Production WhatsApp Configuration - imireservimi.al
+# Production WhatsApp Configuration - imirezervimi.al
 
 ## Environment Variables for Vercel Dashboard
 
@@ -16,7 +16,7 @@ TWILIO_WHATSAPP_NUMBER=+1234567890  # Your approved WhatsApp Business number
 CRON_SECRET=your_secure_random_string_here
 
 # Production URL
-NEXTAUTH_URL=https://imireservimi.al
+NEXTAUTH_URL=https://imirezervimi.al
 
 # Test endpoint security (optional)
 TEST_SECRET=your_test_secret_here
@@ -32,6 +32,6 @@ TEST_SECRET=your_test_secret_here
 ## Quick Test:
 
 Once configured, test with:
-- Visit: https://imireservimi.al/test-whatsapp-flow
+- Visit: https://imirezervimi.al/test-whatsapp-flow
 - Enter any Albanian phone number (+355...)
 - Should work without any "join" step
