@@ -52,6 +52,9 @@ export default function MobileBookingForm({ salon, onSuccess, onError }: MobileB
     resolver: zodResolver(appointmentRequestSchema)
   })
 
+  // Debug form errors
+  console.log('Form errors:', errors)
+
   // Progress indicator - skip details step for authenticated users
   const steps = session?.user 
     ? ['service', 'datetime', 'confirm'] as const
@@ -93,23 +96,60 @@ export default function MobileBookingForm({ salon, onSuccess, onError }: MobileB
   const timeSlots = generateTimeSlots(selectedDate)
 
   const onSubmit = async (data: any) => {
+    console.log('🚀 FORM SUBMISSION TRIGGERED!')
+    console.log('Form submitted with data:', data)
+    console.log('Selected service:', selectedService)
+    console.log('Selected date:', selectedDate)
+    console.log('Selected time:', selectedTime)
+    
+    // Validate required fields before submission
+    if (!selectedService) {
+      setError('Ju lutem zgjidhni një shërbim')
+      return
+    }
+    
+    if (!selectedDate) {
+      setError('Ju lutem zgjidhni një datë')
+      return
+    }
+    
+    if (!selectedTime) {
+      setError('Ju lutem zgjidhni një orë')
+      return
+    }
+    
+    // For non-authenticated users, validate customer info
+    if (!session?.user) {
+      if (!data.customerInfo?.firstName || !data.customerInfo?.lastName || !data.customerInfo?.phone) {
+        setError('Ju lutem plotësoni të gjitha fushat e detyrueshme')
+        return
+      }
+    }
+    
     setLoading(true)
     setError('')
     
     try {
+      // Prepare the data in the exact format the API expects
       const appointmentData = {
         salonId: salon.id,
-        serviceId: selectedService?.id,
+        serviceId: selectedService?.id || '',
         appointmentDate: selectedDate,
         startTime: selectedTime,
         customerInfo: session?.user ? {
           firstName: session.user.name?.split(' ')[0] || '',
           lastName: session.user.name?.split(' ').slice(1).join(' ') || '',
           phone: (session.user as any)?.phone || ''
-        } : data.customerInfo,
+        } : {
+          firstName: data.customerInfo?.firstName || '',
+          lastName: data.customerInfo?.lastName || '',
+          phone: data.customerInfo?.phone || ''
+        },
         customerNotes: data.customerNotes || '',
-        duration: selectedService?.duration_minutes
+        duration: selectedService?.duration_minutes || 30
       }
+
+      console.log('Sending appointment data:', appointmentData)
 
       const response = await fetch('/api/appointments/request', {
         method: 'POST',
@@ -117,7 +157,9 @@ export default function MobileBookingForm({ salon, onSuccess, onError }: MobileB
         body: JSON.stringify(appointmentData)
       })
 
+      console.log('Response status:', response.status)
       const result = await response.json()
+      console.log('Response data:', result)
       
       if (result.success) {
         onSuccess?.(result.data.id)
@@ -126,6 +168,7 @@ export default function MobileBookingForm({ salon, onSuccess, onError }: MobileB
         onError?.(result.error?.message || 'Gabim në dërgimin e kërkesës')
       }
     } catch (err) {
+      console.error('Error submitting form:', err)
       const errorMsg = 'Gabim në lidhje. Ju lutemi provoni përsëri.'
       setError(errorMsg)
       onError?.(errorMsg)
@@ -218,6 +261,12 @@ export default function MobileBookingForm({ salon, onSuccess, onError }: MobileB
         )}
 
         <form onSubmit={handleSubmit(onSubmit)}>
+          {/* Hidden fields to ensure form has required data */}
+          <input type="hidden" {...register('salonId')} value={salon.id} />
+          <input type="hidden" {...register('serviceId')} value={selectedService?.id || ''} />
+          <input type="hidden" {...register('appointmentDate')} value={selectedDate} />
+          <input type="hidden" {...register('startTime')} value={selectedTime} />
+          
           {/* Step 1: Service Selection */}
           {currentStep === 'service' && (
             <div className="space-y-4">
@@ -456,7 +505,6 @@ export default function MobileBookingForm({ salon, onSuccess, onError }: MobileB
         ) : (
           <button
             type="submit"
-            onClick={handleSubmit(onSubmit)}
             disabled={loading}
             className={`flex-1 py-3 px-4 rounded-xl font-medium transition-all touch-manipulation ${
               loading
@@ -467,6 +515,36 @@ export default function MobileBookingForm({ salon, onSuccess, onError }: MobileB
             {loading ? 'Po dërgohet...' : '✓ Konfirmo Rezervimin'}
           </button>
         )}
+        
+        {/* Test button to bypass form validation */}
+        <button
+          type="button"
+          onClick={() => {
+            console.log('🧪 TEST BUTTON CLICKED')
+            const testData = {
+              salonId: salon.id,
+              serviceId: selectedService?.id || '',
+              appointmentDate: selectedDate,
+              startTime: selectedTime,
+              customerInfo: session?.user ? {
+                firstName: session.user.name?.split(' ')[0] || '',
+                lastName: session.user.name?.split(' ').slice(1).join(' ') || '',
+                phone: (session.user as any)?.phone || ''
+              } : {
+                firstName: 'Test',
+                lastName: 'User',
+                phone: '+35569123456'
+              },
+              customerNotes: 'Test submission',
+              duration: selectedService?.duration_minutes || 30
+            }
+            console.log('Test data:', testData)
+            onSubmit(testData)
+          }}
+          className="mt-2 w-full py-2 px-4 bg-blue-500 text-white rounded-lg text-sm"
+        >
+          🧪 Test Submit (Bypass Form)
+        </button>
       </div>
     </div>
     </> 
