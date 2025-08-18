@@ -121,18 +121,24 @@ export default function Header({
             className="flex items-center space-x-3 group hover:scale-105 transition-transform duration-300"
           >
             <div className="relative">
-              {/* Logo Image/Icon */}
-              <div className="h-10 w-10 lg:h-12 lg:w-12 rounded-2xl bg-gradient-to-br from-red-500 to-pink-500 flex items-center justify-center shadow-lg group-hover:shadow-xl transition-shadow">
-                <span className="text-white font-bold text-lg lg:text-xl">💅</span>
+              {/* Logo Image */}
+              <div className="h-10 w-10 lg:h-12 lg:w-12 rounded-2xl bg-white shadow-lg group-hover:shadow-xl transition-shadow overflow-hidden">
+                <Image 
+                  src="/favicon-96x96.png" 
+                  alt="ImiRezervimi Logo" 
+                  width={48} 
+                  height={48} 
+                  className="w-full h-full object-contain"
+                />
               </div>
             </div>
             
             <div className="flex flex-col">
               <div className="flex items-center">
-                <span className="text-xl lg:text-2xl font-black bg-gradient-to-r from-red-600 to-pink-600 bg-clip-text text-transparent">
+                <span className="text-xl lg:text-2xl font-bold bg-gradient-to-r from-red-600 to-pink-600 bg-clip-text text-transparent">
                   {currentLogo.mainText}
                 </span>
-                <span className="text-xl lg:text-2xl font-black text-orange-500">
+                <span className="text-xl lg:text-2xl font-bold text-orange-500">
                   {currentLogo.subText}
                 </span>
               </div>

@@ -87,12 +87,18 @@ export default function Footer({ variant = 'default', className = '' }: FooterPr
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center">
             <Link href="/" className="inline-flex items-center space-x-3 mb-4">
-              <div className="h-8 w-8 rounded-xl bg-gradient-to-br from-red-500 to-pink-500 flex items-center justify-center">
-                <span className="text-white font-bold text-sm">💅</span>
+              <div className="h-8 w-8 rounded-xl bg-white shadow-md overflow-hidden">
+                <Image 
+                  src="/favicon-96x96.png" 
+                  alt="ImiRezervimi Logo" 
+                  width={32} 
+                  height={32} 
+                  className="w-full h-full object-contain"
+                />
               </div>
               <div className="flex items-center">
-                <span className="text-lg font-black text-red-600">{config.mainText.split('.')[0]}</span>
-                <span className="text-lg font-black text-orange-500">.{config.mainText.split('.')[1]}</span>
+                <span className="text-lg font-bold text-red-600">{config.mainText.split('.')[0]}</span>
+                <span className="text-lg font-bold text-orange-500">.{config.mainText.split('.')[1]}</span>
               </div>
             </Link>
             <p className="text-gray-600 text-sm mb-4">{config.description}</p>
@@ -110,13 +116,19 @@ export default function Footer({ variant = 'default', className = '' }: FooterPr
           {/* Brand Section */}
           <div className="lg:col-span-2">
             <Link href="/" className="flex items-center space-x-3 mb-6 group">
-              <div className="h-12 w-12 rounded-2xl bg-gradient-to-br from-red-500 to-pink-500 flex items-center justify-center shadow-lg group-hover:shadow-xl transition-shadow">
-                <span className="text-white font-bold text-xl">💅</span>
+              <div className="h-12 w-12 rounded-2xl bg-white shadow-lg group-hover:shadow-xl transition-shadow overflow-hidden">
+                <Image 
+                  src="/favicon-96x96.png" 
+                  alt="ImiRezervimi Logo" 
+                  width={48} 
+                  height={48} 
+                  className="w-full h-full object-contain"
+                />
               </div>
               <div className="flex flex-col">
                 <div className="flex items-center">
-                  <span className="text-xl font-black text-white">{config.mainText.split('.')[0]}</span>
-                  <span className="text-xl font-black text-orange-400">.{config.mainText.split('.')[1]}</span>
+                  <span className="text-xl font-bold text-white">{config.mainText.split('.')[0]}</span>
+                  <span className="text-xl font-bold text-orange-400">.{config.mainText.split('.')[1]}</span>
                 </div>
                 <span className="text-sm text-gray-400 -mt-1">{config.tagline}</span>
               </div>
