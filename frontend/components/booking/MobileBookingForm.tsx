@@ -52,9 +52,11 @@ export default function MobileBookingForm({ salon, onSuccess, onError }: MobileB
     resolver: zodResolver(appointmentRequestSchema)
   })
 
-  // Progress indicator
-  const steps = ['service', 'datetime', 'details', 'confirm'] as const
-  const currentStepIndex = steps.indexOf(currentStep)
+  // Progress indicator - skip details step for authenticated users
+  const steps = session?.user 
+    ? ['service', 'datetime', 'confirm'] as const
+    : ['service', 'datetime', 'details', 'confirm'] as const
+  const currentStepIndex = steps.indexOf(currentStep as any)
   const progress = ((currentStepIndex + 1) / steps.length) * 100
 
   // Generate time slots for selected date
@@ -103,7 +105,7 @@ export default function MobileBookingForm({ salon, onSuccess, onError }: MobileB
         customerInfo: session?.user ? {
           firstName: session.user.name?.split(' ')[0] || '',
           lastName: session.user.name?.split(' ').slice(1).join(' ') || '',
-          phone: data.customerInfo?.phone || ''
+          phone: (session.user as any)?.phone || ''
         } : data.customerInfo,
         customerNotes: data.customerNotes || '',
         duration: selectedService?.duration_minutes
@@ -134,16 +136,16 @@ export default function MobileBookingForm({ salon, onSuccess, onError }: MobileB
 
   // Step navigation
   const nextStep = () => {
-    const currentIndex = steps.indexOf(currentStep)
+    const currentIndex = steps.indexOf(currentStep as any)
     if (currentIndex < steps.length - 1) {
-      setCurrentStep(steps[currentIndex + 1])
+      setCurrentStep(steps[currentIndex + 1] as FormStep)
     }
   }
 
   const prevStep = () => {
-    const currentIndex = steps.indexOf(currentStep)
+    const currentIndex = steps.indexOf(currentStep as any)
     if (currentIndex > 0) {
-      setCurrentStep(steps[currentIndex - 1])
+      setCurrentStep(steps[currentIndex - 1] as FormStep)
     }
   }
 
@@ -154,7 +156,7 @@ export default function MobileBookingForm({ salon, onSuccess, onError }: MobileB
       case 'datetime':
         return selectedDate !== '' && selectedTime !== ''
       case 'details':
-        return true // Form validation will handle this
+        return true // Form validation will handle this when needed
       case 'confirm':
         return true
       default:
@@ -296,39 +298,35 @@ export default function MobileBookingForm({ salon, onSuccess, onError }: MobileB
             </div>
           )}
 
-          {/* Step 3: Customer Details */}
-          {currentStep === 'details' && (
+          {/* Step 3: Customer Details - Only for non-authenticated users */}
+          {currentStep === 'details' && !session && (
             <div className="space-y-4">
               <h3 className="text-lg font-semibold text-gray-900 mb-4">Detajet tuaja</h3>
               
-              {!session && (
-                <>
-                  <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">Emri</label>
-                      <input
-                        {...register('customerInfo.firstName')}
-                        className="w-full p-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-red-500 focus:border-transparent text-base"
-                        placeholder="Emri"
-                      />
-                      {errors.customerInfo?.firstName && (
-                        <p className="mt-1 text-sm text-red-600">{errors.customerInfo.firstName.message}</p>
-                      )}
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">Mbiemri</label>
-                      <input
-                        {...register('customerInfo.lastName')}
-                        className="w-full p-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-red-500 focus:border-transparent text-base"
-                        placeholder="Mbiemri"
-                      />
-                      {errors.customerInfo?.lastName && (
-                        <p className="mt-1 text-sm text-red-600">{errors.customerInfo.lastName.message}</p>
-                      )}
-                    </div>
-                  </div>
-                </>
-              )}
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Emri</label>
+                  <input
+                    {...register('customerInfo.firstName')}
+                    className="w-full p-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-red-500 focus:border-transparent text-base"
+                    placeholder="Emri"
+                  />
+                  {errors.customerInfo?.firstName && (
+                    <p className="mt-1 text-sm text-red-600">{errors.customerInfo.firstName.message}</p>
+                  )}
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Mbiemri</label>
+                  <input
+                    {...register('customerInfo.lastName')}
+                    className="w-full p-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-red-500 focus:border-transparent text-base"
+                    placeholder="Mbiemri"
+                  />
+                  {errors.customerInfo?.lastName && (
+                    <p className="mt-1 text-sm text-red-600">{errors.customerInfo.lastName.message}</p>
+                  )}
+                </div>
+              </div>
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Numri i telefonit</label>
@@ -360,6 +358,24 @@ export default function MobileBookingForm({ salon, onSuccess, onError }: MobileB
             <div className="space-y-4">
               <h3 className="text-lg font-semibold text-gray-900 mb-4">Konfirmo rezervimin</h3>
               
+              {/* Show user info for authenticated users */}
+              {session && (
+                <div className="bg-blue-50 rounded-xl p-4 mb-4">
+                  <div className="flex items-center space-x-3">
+                    <div className="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center">
+                      <span className="text-white font-semibold text-sm">
+                        {session.user?.name?.charAt(0)?.toUpperCase() || 'U'}
+                      </span>
+                    </div>
+                    <div>
+                      <p className="font-medium text-gray-900">{session.user?.name}</p>
+                      <p className="text-gray-600 text-sm">{(session.user as any)?.phone || 'Telefoni në profil'}</p>
+                    </div>
+                  </div>
+                </div>
+              )}
+              
+              {/* Appointment details */}
               <div className="bg-gray-50 rounded-xl p-4 space-y-3">
                 <div className="flex justify-between">
                   <span className="text-gray-600">Shërbimi:</span>
@@ -382,6 +398,19 @@ export default function MobileBookingForm({ salon, onSuccess, onError }: MobileB
                   <span className="font-medium">{selectedService?.duration_minutes} min</span>
                 </div>
               </div>
+
+              {/* Notes field for authenticated users */}
+              {session && (
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Shënime (opsionale)</label>
+                  <textarea
+                    {...register('customerNotes')}
+                    rows={3}
+                    className="w-full p-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-red-500 focus:border-transparent text-base resize-none"
+                    placeholder="Çfarë dëshironi të na tregoni për rezervimin tuaj?"
+                  />
+                </div>
+              )}
 
               <div className="text-center text-sm text-gray-600 p-4 bg-blue-50 rounded-xl">
                 💬 Do të merrni konfirmim në WhatsApp nga salloni
