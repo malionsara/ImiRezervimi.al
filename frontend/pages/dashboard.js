@@ -6,6 +6,7 @@ import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
+import Head from 'next/head'
 import Layout, { dashboardLayout } from '../components/layout/Layout'
 
 export default function Dashboard() {

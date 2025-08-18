@@ -153,6 +153,7 @@ coverage/
 test-results/
 screenshots/
 videos/
+playwright-mcp/
 
 # Monitoring & Analytics
 sentry.properties
