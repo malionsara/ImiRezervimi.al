@@ -6,6 +6,7 @@ import { useState, useEffect } from 'react'
 import { useRouter } from 'next/router'
 import { useSession } from 'next-auth/react'
 import Link from 'next/link'
+import Image from 'next/image'
 import Layout, { bookingLayout } from '../components/layout/Layout'
 import MobileBookingForm from '../components/booking/MobileBookingForm'
 
@@ -104,8 +105,14 @@ export default function SalonBookingPage() {
       <Layout {...bookingLayout({ title: 'Po ngarkon...', showHeader: false })}>
         <div className="min-h-screen flex items-center justify-center p-4">
           <div className="text-center">
-            <div className="h-16 w-16 mx-auto rounded-2xl bg-gradient-to-br from-red-500 to-pink-500 flex items-center justify-center mb-4 shadow-2xl animate-pulse">
-              <span className="text-2xl">💅</span>
+            <div className="h-16 w-16 mx-auto rounded-2xl bg-white shadow-2xl animate-pulse overflow-hidden">
+              <Image 
+                src="/favicon-96x96.png" 
+                alt="ImiRezervimi Logo" 
+                width={64} 
+                height={64} 
+                className="w-full h-full object-contain"
+              />
             </div>
             <div className="flex space-x-1 justify-center mb-4">
               <div className="w-2 h-2 bg-red-500 rounded-full animate-bounce"></div>
