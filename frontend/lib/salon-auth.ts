@@ -58,21 +58,23 @@ export async function createSalonLoginToken(phone: string): Promise<{ success: b
     // Normalize phone number
     const normalizedPhone = phone.replace(/\s+/g, '').replace(/^00/, '+')
     
-    // Find salon by phone
-    const { data: salon, error: salonError } = await supabaseAdmin
+    // Find salon by phone (use limit(1) to handle multiple salons with same phone)
+    const { data: salons, error: salonError } = await supabaseAdmin
       .from('salons')
       .select('id, name, phone, email, status')
       .eq('phone', normalizedPhone)
       .eq('status', 'active')
-      .single()
+      .limit(1)
     
-    if (salonError || !salon) {
+    if (salonError || !salons || salons.length === 0) {
       console.log('❌ Salon not found or inactive:', phone)
       return {
         success: false,
         error: 'Saloni nuk u gjet ose nuk është aktiv. Kontrolloni numrin e telefonit ose regjistrohuni.'
       }
     }
+
+    const salon = salons[0] // Take the first active salon with this phone
     
     console.log('✅ Salon found:', salon.name)
     
