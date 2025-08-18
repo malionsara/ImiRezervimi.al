@@ -4,9 +4,7 @@
 import { useState, useEffect } from 'react'
 import { signIn } from 'next-auth/react'
 import { useRouter } from 'next/router'
-import Head from 'next/head'
-import Link from 'next/link'
-import Image from 'next/image'
+import Layout, { authLayout } from '../components/layout/Layout'
 import FacebookLogin from '../components/auth/FacebookLogin'
 
 export default function LoginPage() {
@@ -60,13 +58,10 @@ export default function LoginPage() {
   }
 
   return (
-    <>
-      <Head>
-        <title>Identifikohu - ImiRezervimi.al</title>
-        <meta name="description" content="Identifikohu me Facebook ose Google për të rezervuar në sallonin tënd të preferuar." />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-      </Head>
-
+    <Layout {...authLayout({
+      title: "Identifikohu",
+      description: "Identifikohu me Facebook ose Google për të rezervuar në sallonin tënd të preferuar."
+    })}>
       <div className="min-h-screen bg-gradient-to-br from-pink-50 via-red-50 to-orange-50 relative overflow-hidden">
         {/* Dynamic Background Elements */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
@@ -127,32 +122,6 @@ export default function LoginPage() {
           </div>
         </div>
 
-        {/* Header */}
-        <header className="bg-white/95 backdrop-blur-xl border-b border-red-100/50 relative z-50 shadow-lg shadow-red-100/25">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="flex justify-between items-center h-20">
-              {/* Logo */}
-              <Link href="/" className="flex items-center group">
-                <div className="h-12 w-12 rounded-2xl bg-white flex items-center justify-center mr-4 shadow-xl transform group-hover:scale-110 group-hover:rotate-3 transition-all duration-300 p-1">
-                  <Image src="/favicon-96x96.png" alt="ImiRezervimi Logo" width={48} height={48} className="w-full h-full object-contain" />
-                </div>
-                <div>
-                  <span className="text-2xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">ImiRezervimi</span>
-                  <span className="text-lg text-red-500 animate-pulse ml-1">.al</span>
-                  <div className="text-xs text-gray-500 -mt-1">Rezervime Online</div>
-                </div>
-              </Link>
-
-              {/* Back to Homepage */}
-              <Link href="/" className="inline-flex items-center text-gray-500 hover:text-gray-700 transition-colors duration-200">
-                <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-                </svg>
-                Kthehu në ballina
-              </Link>
-            </div>
-          </div>
-        </header>
 
         {/* Main Content */}
         <div className="flex-1 flex items-center justify-center py-16 px-4 sm:px-6 lg:px-8 relative">
@@ -200,7 +169,7 @@ export default function LoginPage() {
                   <div className="w-full border-t border-gray-300"></div>
                 </div>
                 <div className="relative flex justify-center text-sm">
-                  <span className="px-6 bg-gradient-to-r from-pink-50 via-red-50 to-orange-50 text-gray-500 font-medium">ose</span>
+                  <span className="px-6 py-1 bg-gradient-to-r from-pink-50 via-red-50 to-orange-50 text-gray-500 font-medium rounded-lg border border-gray-200">ose</span>
                 </div>
               </div>
 
@@ -359,6 +328,6 @@ export default function LoginPage() {
         .animate-bounce-slow { animation: bounce-slow 3s ease-in-out infinite; }
         .animate-shake { animation: shake 0.5s ease-in-out; }
       `}</style>
-    </>
+    </Layout>
   )
 }

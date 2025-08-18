@@ -7,6 +7,7 @@ import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import Layout, { dashboardLayout } from '../../components/layout/Layout'
 import { showToast } from '../../components/ToastProvider'
+import ConfirmationModal from '../../components/ui/ConfirmationModal'
 
 export default function BookingsPage() {
   const { data: session, status } = useSession()
@@ -20,6 +21,8 @@ export default function BookingsPage() {
   const [newTime, setNewTime] = useState('')
   const [newNotes, setNewNotes] = useState('')
   const [saving, setSaving] = useState(false)
+  const [showCancelModal, setShowCancelModal] = useState(false)
+  const [bookingToCancel, setBookingToCancel] = useState(null)
 
   useEffect(() => {
     if (status === 'unauthenticated') {
@@ -46,10 +49,18 @@ export default function BookingsPage() {
     }
   }
 
-  const handleCancel = async (booking) => {
+  const handleCancel = (booking) => {
     if (!booking) return
-    const confirmed = window.confirm('Jeni të sigurt që doni të anuloni këtë rezervim?')
-    if (!confirmed) return
+    setBookingToCancel(booking)
+    setShowCancelModal(true)
+  }
+
+  const confirmCancel = async () => {
+    if (!bookingToCancel) return
+    
+    setShowCancelModal(false)
+    const booking = bookingToCancel
+    setBookingToCancel(null)
 
     try {
       const res = await fetch(`/api/appointments/${booking.id}`, {
@@ -141,27 +152,6 @@ export default function BookingsPage() {
       description: 'Shiko dhe menaxho të gjitha rezervimet e tua'
     })}>
       <div className="min-h-screen bg-gray-50">
-        {/* Mobile-First Header */}
-        <div className="bg-white shadow-sm border-b sticky top-0 z-10">
-          <div className="px-4 sm:px-6">
-            <div className="flex items-center justify-between h-16">
-              <div className="flex items-center min-w-0">
-                <Link href="/dashboard" className="flex items-center min-w-0">
-                  <div className="h-8 w-8 rounded-lg bg-white flex items-center justify-center mr-3 border shadow-sm flex-shrink-0">
-                    <img src="/favicon-96x96.png" alt="ImiRezervimi Logo" className="w-6 h-6" />
-                  </div>
-                  <div className="min-w-0">
-                    <span className="text-lg font-bold text-gray-900 truncate">ImiRezervimi</span>
-                  </div>
-                </Link>
-              </div>
-              
-              <Link href="/dashboard" className="text-gray-500 hover:text-gray-700 text-sm font-medium">
-                ← Dashboard
-              </Link>
-            </div>
-          </div>
-        </div>
 
         {/* Main Content */}
         <div className="px-4 sm:px-6 py-6">
@@ -243,8 +233,8 @@ export default function BookingsPage() {
               )}
             </div>
           ) : (
-            /* Mobile-Optimized Bookings List */
-            <div className="space-y-4">
+            /* Responsive Bookings Grid - 2 columns on desktop, 1 on mobile */
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
               {filteredBookings.map((booking) => (
                 <div key={booking.id} className="bg-white rounded-xl border p-4 hover:shadow-sm transition-shadow">
                   {/* Booking Header */}
@@ -397,6 +387,21 @@ export default function BookingsPage() {
           </div>
         )}
       </div>
+
+      {/* Cancel Confirmation Modal */}
+      <ConfirmationModal
+        isOpen={showCancelModal}
+        onClose={() => {
+          setShowCancelModal(false)
+          setBookingToCancel(null)
+        }}
+        onConfirm={confirmCancel}
+        title="Anulo rezervimin"
+        message="Jeni të sigurt që doni të anuloni këtë rezervim?"
+        confirmText="Po, anulo"
+        cancelText="Jo, mbaje"
+        variant="danger"
+      />
     </Layout>
   )
 }

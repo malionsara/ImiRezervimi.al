@@ -6,7 +6,9 @@ import { useState, useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useSession } from 'next-auth/react'
-import { appointmentRequestSchema, CustomerInfo } from '../../lib/validation'
+import { appointmentRequestSchema, authenticatedAppointmentRequestSchema, CustomerInfo } from '../../lib/validation'
+import DatePickerInput from '../ui/DatePickerInput'
+import { useRealTimeAvailability, formatLastRefresh, getAvailabilityStatusMessage } from '../../hooks/useRealTimeAvailability'
 
 // Types
 interface Service {
@@ -43,13 +45,31 @@ export default function MobileBookingForm({ salon, onSuccess, onError }: MobileB
   const { data: session } = useSession()
   const [currentStep, setCurrentStep] = useState<FormStep>('service')
   const [selectedService, setSelectedService] = useState<Service | null>(null)
-  const [selectedDate, setSelectedDate] = useState<string>('')
+  const [selectedDate, setSelectedDate] = useState<Date | null>(null)
   const [selectedTime, setSelectedTime] = useState<string>('')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   
-  const { register, handleSubmit, formState: { errors }, setValue, watch } = useForm({
-    resolver: zodResolver(appointmentRequestSchema)
+  const { register, handleSubmit, formState: { errors }, setValue, watch, reset } = useForm({
+    resolver: zodResolver(session?.user ? authenticatedAppointmentRequestSchema : appointmentRequestSchema)
+  })
+
+  // Real-time availability hook
+  const {
+    timeSlots,
+    loading: availabilityLoading,
+    error: availabilityError,
+    lastRefresh,
+    refreshAvailability,
+    availableSlotCount,
+    totalSlotCount,
+    isRefreshing
+  } = useRealTimeAvailability({
+    salonSlug: salon.slug,
+    selectedDate,
+    selectedService,
+    refreshInterval: 45000, // 45 seconds
+    enabled: currentStep === 'datetime' && selectedDate !== null
   })
 
   // Debug form errors
@@ -62,47 +82,38 @@ export default function MobileBookingForm({ salon, onSuccess, onError }: MobileB
   const currentStepIndex = steps.indexOf(currentStep as any)
   const progress = ((currentStepIndex + 1) / steps.length) * 100
 
-  // Generate time slots for selected date
-  const generateTimeSlots = (date: string) => {
-    if (!selectedService || !date) return []
-    
-    const dayOfWeek = new Date(date).toLocaleDateString('en-US', { weekday: 'long' }).toLowerCase()
-    const workingHours = salon.working_hours[dayOfWeek]
-    
-    if (!workingHours || workingHours.closed) return []
-    
-    const slots = []
-    const [openHour, openMin] = workingHours.open.split(':').map(Number)
-    const [closeHour, closeMin] = workingHours.close.split(':').map(Number)
-    
-    let currentTime = new Date()
-    currentTime.setHours(openHour, openMin, 0, 0)
-    
-    const endTime = new Date()
-    endTime.setHours(closeHour, closeMin, 0, 0)
-    
-    while (currentTime < endTime) {
-      const timeString = currentTime.toLocaleTimeString('en-GB', { 
-        hour: '2-digit', 
-        minute: '2-digit' 
-      })
-      slots.push(timeString)
-      currentTime.setMinutes(currentTime.getMinutes() + 30)
+  // Reset time selection when date changes or when availability updates
+  useEffect(() => {
+    if (selectedTime && timeSlots.length > 0) {
+      // Check if selected time is still available
+      const isSelectedTimeStillAvailable = timeSlots.some(
+        slot => slot.time === selectedTime && slot.available
+      )
+      
+      if (!isSelectedTimeStillAvailable) {
+        console.log('⚠️ Selected time slot is no longer available, clearing selection')
+        setSelectedTime('')
+      }
     }
-    
-    return slots
-  }
+  }, [timeSlots, selectedTime])
 
-  const timeSlots = generateTimeSlots(selectedDate)
+  // Get availability status message
+  const availabilityStatus = getAvailabilityStatusMessage(
+    availableSlotCount,
+    totalSlotCount,
+    availabilityLoading,
+    availabilityError
+  )
 
-  const onSubmit = async (data: any) => {
+  const onSubmit = async (formData: any) => {
     console.log('🚀 FORM SUBMISSION TRIGGERED!')
-    console.log('Form submitted with data:', data)
+    console.log('Form data received:', formData)
     console.log('Selected service:', selectedService)
     console.log('Selected date:', selectedDate)
     console.log('Selected time:', selectedTime)
+    console.log('Current session:', session?.user)
     
-    // Validate required fields before submission
+    // Validate required selections (should not be needed due to step validation, but as safety)
     if (!selectedService) {
       setError('Ju lutem zgjidhni një shërbim')
       return
@@ -118,10 +129,10 @@ export default function MobileBookingForm({ salon, onSuccess, onError }: MobileB
       return
     }
     
-    // For non-authenticated users, validate customer info
-    if (!session?.user) {
-      if (!data.customerInfo?.firstName || !data.customerInfo?.lastName || !data.customerInfo?.phone) {
-        setError('Ju lutem plotësoni të gjitha fushat e detyrueshme')
+    // For authenticated users, check if we have required user data
+    if (session?.user) {
+      if (!session.user.name || !(session.user as any)?.phone) {
+        setError('Informacionet e profilit tuaj janë të papërditësuara. Ju lutem kontaktoni mbështetjen.')
         return
       }
     }
@@ -130,26 +141,26 @@ export default function MobileBookingForm({ salon, onSuccess, onError }: MobileB
     setError('')
     
     try {
-      // Prepare the data in the exact format the API expects
+      // Prepare appointment data in the exact format the API expects
       const appointmentData = {
         salonId: salon.id,
-        serviceId: selectedService?.id || '',
-        appointmentDate: selectedDate,
+        serviceId: selectedService.id,
+        appointmentDate: selectedDate?.toISOString().split('T')[0] || '',
         startTime: selectedTime,
         customerInfo: session?.user ? {
           firstName: session.user.name?.split(' ')[0] || '',
-          lastName: session.user.name?.split(' ').slice(1).join(' ') || '',
-          phone: (session.user as any)?.phone || ''
+          lastName: session.user.name?.split(' ').slice(1).join(' ') || session.user.name?.split(' ')[0] || '',
+          phone: (session.user as any).phone || ''
         } : {
-          firstName: data.customerInfo?.firstName || '',
-          lastName: data.customerInfo?.lastName || '',
-          phone: data.customerInfo?.phone || ''
+          firstName: formData.customerInfo?.firstName || '',
+          lastName: formData.customerInfo?.lastName || '',
+          phone: formData.customerInfo?.phone || ''
         },
-        customerNotes: data.customerNotes || '',
-        duration: selectedService?.duration_minutes || 30
+        customerNotes: formData.customerNotes || '',
+        duration: selectedService.duration_minutes
       }
 
-      console.log('Sending appointment data:', appointmentData)
+      console.log('📤 Sending appointment data to API:', appointmentData)
 
       const response = await fetch('/api/appointments/request', {
         method: 'POST',
@@ -157,19 +168,22 @@ export default function MobileBookingForm({ salon, onSuccess, onError }: MobileB
         body: JSON.stringify(appointmentData)
       })
 
-      console.log('Response status:', response.status)
+      console.log('📥 API Response status:', response.status)
       const result = await response.json()
-      console.log('Response data:', result)
+      console.log('📥 API Response data:', result)
       
       if (result.success) {
-        onSuccess?.(result.data.id)
+        console.log('✅ Booking successful, calling onSuccess callback')
+        onSuccess?.(result.data.appointment?.id || result.data.id)
       } else {
-        setError(result.error?.message || 'Gabim në dërgimin e kërkesës')
-        onError?.(result.error?.message || 'Gabim në dërgimin e kërkesës')
+        const errorMsg = result.error?.message || 'Gabim në dërgimin e kërkesës për rezervim'
+        console.error('❌ API returned error:', errorMsg)
+        setError(errorMsg)
+        onError?.(errorMsg)
       }
     } catch (err) {
-      console.error('Error submitting form:', err)
-      const errorMsg = 'Gabim në lidhje. Ju lutemi provoni përsëri.'
+      console.error('❌ Network/Runtime error in form submission:', err)
+      const errorMsg = 'Gabim në lidhje. Ju lutemi kontrolloni internetin dhe provoni përsëri.'
       setError(errorMsg)
       onError?.(errorMsg)
     } finally {
@@ -197,7 +211,7 @@ export default function MobileBookingForm({ salon, onSuccess, onError }: MobileB
       case 'service':
         return selectedService !== null
       case 'datetime':
-        return selectedDate !== '' && selectedTime !== ''
+        return selectedDate !== null && selectedTime !== ''
       case 'details':
         return true // Form validation will handle this when needed
       case 'confirm':
@@ -209,8 +223,10 @@ export default function MobileBookingForm({ salon, onSuccess, onError }: MobileB
 
   return (
     <>
-      {/* Fixed Progress Bar at Top of Page */}
-      <div className="fixed top-0 left-0 right-0 z-50 bg-white shadow-sm">
+      <div className="max-w-md md:max-w-2xl mx-auto bg-white rounded-2xl shadow-xl overflow-hidden">
+
+      {/* Progress Bar - moved to be below header/within container */}
+      <div className="bg-white border-b border-gray-100">
         <div className="h-1 bg-gray-200">
           <div 
             className="h-1 bg-gradient-to-r from-red-500 to-pink-500 transition-all duration-500 ease-out"
@@ -224,8 +240,6 @@ export default function MobileBookingForm({ salon, onSuccess, onError }: MobileB
           </span>
         </div>
       </div>
-
-      <div className="max-w-md mx-auto bg-white rounded-2xl shadow-xl overflow-hidden mt-16">{/* Added top margin for fixed progress bar */}
 
       {/* Header */}
       <div className="p-6 bg-gradient-to-r from-red-500 to-pink-500 text-white">
@@ -261,17 +275,13 @@ export default function MobileBookingForm({ salon, onSuccess, onError }: MobileB
         )}
 
         <form onSubmit={handleSubmit(onSubmit)}>
-          {/* Hidden fields to ensure form has required data */}
-          <input type="hidden" {...register('salonId')} value={salon.id} />
-          <input type="hidden" {...register('serviceId')} value={selectedService?.id || ''} />
-          <input type="hidden" {...register('appointmentDate')} value={selectedDate} />
-          <input type="hidden" {...register('startTime')} value={selectedTime} />
           
           {/* Step 1: Service Selection */}
           {currentStep === 'service' && (
             <div className="space-y-4">
               <h3 className="text-lg font-semibold text-gray-900 mb-4">Zgjidh shërbimin</h3>
-              <div className="space-y-3">
+              {/* Responsive services grid - 1 column on mobile, 2 columns on desktop */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                 {salon.services.map((service) => (
                   <div
                     key={service.id}
@@ -316,39 +326,132 @@ export default function MobileBookingForm({ salon, onSuccess, onError }: MobileB
               
               {/* Date Picker */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Data</label>
-                <input
-                  type="date"
-                  value={selectedDate}
-                  onChange={(e) => setSelectedDate(e.target.value)}
-                  min={new Date().toISOString().split('T')[0]}
-                  max={new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]}
-                  className="w-full p-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-red-500 focus:border-transparent text-base touch-manipulation"
+                <DatePickerInput
+                  selected={selectedDate}
+                  onChange={(date) => {
+                    setSelectedDate(date)
+                    setSelectedTime('') // Reset time when date changes
+                  }}
+                  minDate={new Date()}
+                  maxDate={new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)}
+                  label="Data"
+                  placeholder="Zgjidhni datën e rezervimit"
+                  required
                 />
               </div>
+
+              {/* Availability Status */}
+              {selectedDate && (
+                <div className={`p-3 rounded-lg border flex items-center justify-between ${
+                  availabilityStatus.type === 'error' ? 'bg-red-50 border-red-200' :
+                  availabilityStatus.type === 'warning' ? 'bg-yellow-50 border-yellow-200' :
+                  availabilityStatus.type === 'success' ? 'bg-green-50 border-green-200' :
+                  'bg-blue-50 border-blue-200'
+                }`}>
+                  <div className="flex items-center space-x-2">
+                    {availabilityLoading || isRefreshing ? (
+                      <div className="w-4 h-4 border-2 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+                    ) : (
+                      <div className={`w-2 h-2 rounded-full ${
+                        availabilityStatus.type === 'error' ? 'bg-red-500' :
+                        availabilityStatus.type === 'warning' ? 'bg-yellow-500' :
+                        availabilityStatus.type === 'success' ? 'bg-green-500' :
+                        'bg-blue-500'
+                      }`}></div>
+                    )}
+                    <span className={`text-sm font-medium ${
+                      availabilityStatus.type === 'error' ? 'text-red-700' :
+                      availabilityStatus.type === 'warning' ? 'text-yellow-700' :
+                      availabilityStatus.type === 'success' ? 'text-green-700' :
+                      'text-blue-700'
+                    }`}>
+                      {availabilityStatus.message}
+                    </span>
+                  </div>
+                  
+                  {/* Refresh button and last update */}
+                  <div className="flex items-center space-x-2">
+                    {lastRefresh && (
+                      <span className="text-xs text-gray-500">
+                        {formatLastRefresh(lastRefresh)}
+                      </span>
+                    )}
+                    <button
+                      type="button"
+                      onClick={refreshAvailability}
+                      disabled={isRefreshing}
+                      className="p-1 hover:bg-gray-200 rounded-md transition-colors touch-manipulation disabled:opacity-50"
+                      title="Rifresko disponueshmërinë"
+                    >
+                      <svg className={`w-4 h-4 text-gray-600 ${isRefreshing ? 'animate-spin' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                      </svg>
+                    </button>
+                  </div>
+                </div>
+              )}
 
               {/* Time Slots */}
               {selectedDate && (
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">Ora</label>
-                  <div className="grid grid-cols-3 gap-2">
-                    {timeSlots.map((time) => (
+                  
+                  {availabilityLoading ? (
+                    <div className="text-center py-8">
+                      <div className="w-8 h-8 border-2 border-red-500 border-t-transparent rounded-full animate-spin mx-auto mb-3"></div>
+                      <p className="text-gray-600 text-sm">Po kontrollon disponueshmërinë...</p>
+                    </div>
+                  ) : availabilityError ? (
+                    <div className="text-center py-8">
+                      <div className="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                        <svg className="w-6 h-6 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16c-.77.833.192 2.5 1.732 2.5z" />
+                        </svg>
+                      </div>
+                      <p className="text-red-600 text-sm mb-2">{availabilityError.message}</p>
                       <button
-                        key={time}
                         type="button"
-                        onClick={() => setSelectedTime(time)}
-                        className={`p-3 rounded-lg text-sm font-medium transition-all duration-200 touch-manipulation ${
-                          selectedTime === time
-                            ? 'bg-red-500 text-white'
-                            : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                        }`}
+                        onClick={refreshAvailability}
+                        className="text-sm text-red-600 hover:text-red-700 underline"
                       >
-                        {time}
+                        Provo përsëri
                       </button>
-                    ))}
-                  </div>
-                  {timeSlots.length === 0 && (
-                    <p className="text-gray-500 text-center py-4">Nuk ka orare të disponueshme për këtë datë</p>
+                    </div>
+                  ) : timeSlots.length === 0 ? (
+                    <div className="text-center py-8">
+                      <div className="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                        <svg className="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                      </div>
+                      <p className="text-gray-500 text-center">Nuk ka orare të disponueshme për këtë datë</p>
+                    </div>
+                  ) : (
+                    <div className="grid grid-cols-3 gap-2">
+                      {timeSlots.map((slot) => (
+                        <button
+                          key={slot.time}
+                          type="button"
+                          onClick={() => slot.available && setSelectedTime(slot.time)}
+                          disabled={!slot.available}
+                          title={slot.reason}
+                          className={`p-3 rounded-lg text-sm font-medium transition-all duration-200 touch-manipulation ${
+                            selectedTime === slot.time
+                              ? 'bg-red-500 text-white shadow-md'
+                              : slot.available
+                              ? 'bg-gray-100 text-gray-700 hover:bg-red-50 hover:text-red-600 hover:border-red-200 border border-transparent'
+                              : 'bg-gray-50 text-gray-400 cursor-not-allowed border border-gray-200'
+                          }`}
+                        >
+                          {slot.time}
+                          {!slot.available && slot.reason && (
+                            <div className="text-xs mt-1 opacity-75 leading-tight">
+                              {slot.reason}
+                            </div>
+                          )}
+                        </button>
+                      ))}
+                    </div>
                   )}
                 </div>
               )}
@@ -440,7 +543,7 @@ export default function MobileBookingForm({ salon, onSuccess, onError }: MobileB
                 </div>
                 <div className="flex justify-between">
                   <span className="text-gray-600">Data:</span>
-                  <span className="font-medium">{new Date(selectedDate).toLocaleDateString('sq-AL')}</span>
+                  <span className="font-medium">{selectedDate?.toLocaleDateString('sq-AL') || ''}</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-gray-600">Ora:</span>

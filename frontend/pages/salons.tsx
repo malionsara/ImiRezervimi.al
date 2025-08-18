@@ -39,8 +39,8 @@ export default function SalonsListPage() {
     <Layout
       title="Sallone"
       description="Shfleto sallonet e disponueshme dhe rezervo online në çdo moment"
-      headerVariant="minimal"
-      footerVariant="minimal"
+      headerVariant="default"
+      footerVariant="default"
       backgroundClass="bg-gray-50"
     >
       <div className="min-h-screen">

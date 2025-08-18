@@ -132,6 +132,31 @@ export const appointmentRequestSchema = z.object({
 })
 
 // ==============================================
+// AUTHENTICATED USER APPOINTMENT REQUEST SCHEMA
+// ==============================================
+export const authenticatedAppointmentRequestSchema = z.object({
+  // Required fields
+  salonId: z.string().uuid('ID e sallonit nuk është e vlefshme'),
+  serviceId: z.string().uuid('ID e shërbimit nuk është e vlefshme'),  
+  appointmentDate: dateSchema,
+  startTime: timeSchema,
+  
+  // Optional customerInfo for form compatibility (not validated for authenticated users)
+  customerInfo: z.object({
+    firstName: z.string().optional(),
+    lastName: z.string().optional(),
+    phone: z.string().optional()
+  }).optional(),
+  
+  // Optional fields for authenticated users
+  customerNotes: z.string().max(500, 'Shënimet nuk mund të kenë më shumë se 500 karaktere').optional(),
+  duration: z.number()
+    .min(15, ALBANIAN_ERRORS.DURATION_INVALID)
+    .max(480, ALBANIAN_ERRORS.DURATION_INVALID)
+    .optional()
+})
+
+// ==============================================
 // APPOINTMENT STATUS UPDATE SCHEMA
 // ==============================================
 export const appointmentStatusSchema = z.object({

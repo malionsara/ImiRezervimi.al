@@ -5,6 +5,8 @@
 import { useState, useEffect } from 'react'
 import { WorkingHours, DayHours, DayOfWeek } from '../../types/database'
 import { updateWorkingHours, getAlbanianDayName } from '../../lib/availability'
+import { AlertModal } from '../ui/ConfirmationModal'
+import { useAlertModal } from '../../hooks/useModals'
 
 // ==============================================
 // TYPES AND INTERFACES
@@ -87,6 +89,7 @@ export default function WorkingHoursConfig({
   const [hasChanges, setHasChanges] = useState(false)
   const [saving, setSaving] = useState(false)
   const [errors, setErrors] = useState<Record<string, string>>({})
+  const alertModal = useAlertModal()
 
   // Days configuration with Albanian names
   const days: { key: DayOfWeek; name: string; shortName: string }[] = [
@@ -196,7 +199,11 @@ export default function WorkingHoursConfig({
       setHasChanges(false)
     } catch (error) {
       console.error('Error saving working hours:', error)
-      alert('Gabim në ruajtjen e orëve të punës. Ju lutemi provoni përsëri.')
+      alertModal.showAlert({
+        title: 'Gabim',
+        message: 'Gabim në ruajtjen e orëve të punës. Ju lutemi provoni përsëri.',
+        variant: 'error'
+      })
     } finally {
       setSaving(false)
     }
@@ -420,6 +427,16 @@ export default function WorkingHoursConfig({
           <p>⚠️ Ndryshimet do të aplikohen vetëm për rezervimet e ardhshme.</p>
         </div>
       </div>
+
+      {/* Alert Modal */}
+      <AlertModal
+        isOpen={alertModal.isOpen}
+        onClose={alertModal.hideAlert}
+        title={alertModal.title}
+        message={alertModal.message}
+        variant={alertModal.variant}
+        buttonText={alertModal.buttonText}
+      />
     </div>
   )
 }

@@ -4,6 +4,8 @@
 
 import { useState } from 'react';
 import { ConflictDetails, ResolutionStrategy, atomicApproval } from '../../lib/conflictDetection';
+import { AlertModal } from '../ui/ConfirmationModal';
+import { useAlertModal } from '../../hooks/useModals';
 
 interface ConflictResolverProps {
   appointmentId: string;
@@ -23,6 +25,7 @@ const ConflictResolver: React.FC<ConflictResolverProps> = ({
   const [selectedStrategy, setSelectedStrategy] = useState<ResolutionStrategy | null>(null);
   const [processing, setProcessing] = useState(false);
   const [manualNotes, setManualNotes] = useState('');
+  const alertModal = useAlertModal();
 
   // Determine suggested resolution strategy
   const suggestedStrategy = conflicts.length > 0 ? conflicts[0].resolutionStrategy : 'MANUAL_REVIEW';
@@ -127,12 +130,20 @@ const ConflictResolver: React.FC<ConflictResolverProps> = ({
         onResolution(true, result.action);
       } else {
         onResolution(false);
-        alert(result.error || 'Gabim në zgjidhjen e konfliktit');
+        alertModal.showAlert({
+          title: 'Gabim',
+          message: result.error || 'Gabim në zgjidhjen e konfliktit',
+          variant: 'error'
+        });
       }
     } catch (error) {
       console.error('Error resolving conflict:', error);
       onResolution(false);
-      alert('Gabim në zgjidhjen e konfliktit');
+      alertModal.showAlert({
+        title: 'Gabim',
+        message: 'Gabim në zgjidhjen e konfliktit',
+        variant: 'error'
+      });
     } finally {
       setProcessing(false);
     }
@@ -352,6 +363,16 @@ const ConflictResolver: React.FC<ConflictResolverProps> = ({
           </div>
         </div>
       </div>
+
+      {/* Alert Modal */}
+      <AlertModal
+        isOpen={alertModal.isOpen}
+        onClose={alertModal.hideAlert}
+        title={alertModal.title}
+        message={alertModal.message}
+        variant={alertModal.variant}
+        buttonText={alertModal.buttonText}
+      />
     </div>
   );
 };

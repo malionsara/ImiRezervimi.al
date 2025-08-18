@@ -4,6 +4,8 @@
 
 import React, { useState } from 'react';
 import Head from 'next/head';
+import { AlertModal } from '../components/ui/ConfirmationModal';
+import { useAlertModal } from '../hooks/useModals';
 
 interface TestResult {
   test: string;
@@ -24,10 +26,15 @@ export default function TestWhatsAppFlow() {
   const [isLoading, setIsLoading] = useState(false);
   const [results, setResults] = useState<TestResult[]>([]);
   const [summary, setSummary] = useState<TestSummary | null>(null);
+  const alertModal = useAlertModal();
 
   const runTests = async () => {
     if (!testPhone) {
-      alert('Ju lutem vendosni numrin e telefonit për test');
+      alertModal.showAlert({
+        title: 'Gabim',
+        message: 'Ju lutem vendosni numrin e telefonit për test',
+        variant: 'warning'
+      });
       return;
     }
 
@@ -53,11 +60,19 @@ export default function TestWhatsAppFlow() {
         setResults(data.results || []);
         setSummary(data.summary || null);
       } else {
-        alert(`Test dështoi: ${data.error?.message || 'Gabim i panjohur'}`);
+        alertModal.showAlert({
+          title: 'Test dështoi',
+          message: data.error?.message || 'Gabim i panjohur',
+          variant: 'error'
+        });
       }
     } catch (error) {
       console.error('Test error:', error);
-      alert('Ka ndodhur një gabim gjatë testimit');
+      alertModal.showAlert({
+        title: 'Gabim',
+        message: 'Ka ndodhur një gabim gjatë testimit',
+        variant: 'error'
+      });
     } finally {
       setIsLoading(false);
     }
@@ -196,6 +211,16 @@ export default function TestWhatsAppFlow() {
           </div>
         </div>
       </div>
+
+      {/* Alert Modal */}
+      <AlertModal
+        isOpen={alertModal.isOpen}
+        onClose={alertModal.hideAlert}
+        title={alertModal.title}
+        message={alertModal.message}
+        variant={alertModal.variant}
+        buttonText={alertModal.buttonText}
+      />
     </>
   );
 }

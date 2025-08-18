@@ -131,58 +131,10 @@ export default function Dashboard() {
   }
 
   return (
-    <>
-      <Head>
-        <title>Dashboard - ImiRezervimi.al</title>
-        <meta name="description" content="Menaxho rezervimet e tua" />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-      </Head>
-
-      <div className="min-h-screen bg-gray-50">
-        {/* Header */}
-        <header className="bg-white shadow-sm border-b">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="flex justify-between items-center h-16">
-              {/* Logo */}
-              <div className="flex items-center">
-                <div className="h-8 w-8 rounded-lg bg-white flex items-center justify-center mr-3 p-1 border">
-                  <Image src="/favicon-96x96.png" alt="ImiRezervimi Logo" width={32} height={32} className="w-full h-full object-contain" />
-                </div>
-                <span className="text-xl font-bold text-gray-900">ImiRezervimi</span>
-              </div>
-
-              {/* User Menu */}
-              <div className="flex items-center space-x-4">
-                <div className="flex items-center space-x-3">
-                  {userProfile?.image && (
-                    <Image
-                      src={userProfile.image}
-                      alt={userProfile.name}
-                      width={32}
-                      height={32}
-                      className="rounded-full"
-                    />
-                  )}
-                  <div className="hidden sm:block">
-                    <p className="text-sm font-medium text-gray-900">
-                      Mirë se erdhe, {userProfile?.name}!
-                    </p>
-                    <p className="text-xs text-gray-500">
-                      {userProfile?.provider === 'instagram' ? 'Instagram' : 'Google'} përdorues
-                    </p>
-                  </div>
-                </div>
-                
-                <button
-                  onClick={handleSignOut}
-                  className="text-gray-500 hover:text-gray-700 px-3 py-2 rounded-md text-sm font-medium"
-                >
-                  Dil
-                </button>
-              </div>
-            </div>
-          </div>
-        </header>
+    <Layout {...dashboardLayout({
+      title: "Dashboard",
+      description: "Menaxho rezervimet e tua"
+    })}>
 
         {/* Main Content */}
         <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -403,7 +355,6 @@ export default function Dashboard() {
             </div>
           </div>
         </main>
-      </div>
-    </>
+    </Layout>
   )
 }

@@ -7,6 +7,8 @@ import Head from 'next/head'
 import RequestsQueue from '../../components/salon/RequestsQueue'
 import CustomerDetails from '../../components/salon/CustomerDetails'
 import AppointmentActions from '../../components/salon/AppointmentActions'
+import { AlertModal } from '../../components/ui/ConfirmationModal'
+import { useAlertModal } from '../../hooks/useModals'
 
 // Mock data for testing
 const mockRequests = [
@@ -60,6 +62,7 @@ const mockRequests = [
 
 export default function DemoDashboard() {
   const [selectedCustomer, setSelectedCustomer] = useState<unknown>(null)
+  const alertModal = useAlertModal()
 
   const handleCustomerClick = (request: unknown) => {
     setSelectedCustomer(request)
@@ -67,7 +70,11 @@ export default function DemoDashboard() {
 
   const handleAppointmentAction = (appointmentId: string, action: 'approve' | 'decline', notes?: string) => {
     console.log(`${action} appointment ${appointmentId}`, notes)
-    alert(`Rezervimi u ${action === 'approve' ? 'miratua' : 'refuzua'} me sukses!`)
+    alertModal.showAlert({
+      title: 'Sukses',
+      message: `Rezervimi u ${action === 'approve' ? 'miratua' : 'refuzua'} me sukses!`,
+      variant: 'success'
+    })
   }
 
   return (
@@ -126,6 +133,16 @@ export default function DemoDashboard() {
           </div>
         </div>
       </div>
+
+      {/* Alert Modal */}
+      <AlertModal
+        isOpen={alertModal.isOpen}
+        onClose={alertModal.hideAlert}
+        title={alertModal.title}
+        message={alertModal.message}
+        variant={alertModal.variant}
+        buttonText={alertModal.buttonText}
+      />
     </>
   )
 }

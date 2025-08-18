@@ -7,6 +7,7 @@ import { useEffect, useState } from 'react'
 import Head from 'next/head'
 import Image from 'next/image'
 import Link from 'next/link'
+import ConfirmationModal from '../../components/ui/ConfirmationModal'
 
 export default function ProfilePage() {
   const { data: session, status } = useSession()
@@ -21,6 +22,7 @@ export default function ProfilePage() {
   })
   const [saving, setSaving] = useState(false)
   const [message, setMessage] = useState('')
+  const [showDeleteModal, setShowDeleteModal] = useState(false)
 
   useEffect(() => {
     if (status === 'unauthenticated') {
@@ -93,10 +95,15 @@ export default function ProfilePage() {
   }
 
   const handleDeleteAccount = () => {
-    if (confirm('Jeni të sigurt që doni të fshini llogarinë? Ky veprim nuk mund të zhbëhet.')) {
-      // TODO: Implement account deletion
-      console.log('Delete account requested')
-    }
+    setShowDeleteModal(true)
+  }
+
+  const confirmDeleteAccount = () => {
+    setShowDeleteModal(false)
+    // TODO: Implement account deletion
+    console.log('Delete account requested')
+    // For now just show a message
+    setMessage('Kërkesa për fshirjen e llogarisë është dërguar. Do të kontaktoheni së shpejti.')
   }
 
   if (status === 'loading') {
@@ -359,6 +366,31 @@ export default function ProfilePage() {
           </div>
         </main>
       </div>
+
+      {/* Delete Account Confirmation Modal */}
+      <ConfirmationModal
+        isOpen={showDeleteModal}
+        onClose={() => setShowDeleteModal(false)}
+        onConfirm={confirmDeleteAccount}
+        title="Fshij llogarinë"
+        message={
+          <div>
+            <p className="mb-2">Jeni të sigurt që doni të fshini llogarinë tuaj?</p>
+            <p className="text-sm text-gray-600">
+              <strong>Ky veprim nuk mund të zhbëhet</strong> dhe do të humbasni:
+            </p>
+            <ul className="list-disc list-inside text-sm text-gray-600 mt-2 space-y-1">
+              <li>Të gjitha rezervimet tuaja</li>
+              <li>Historikun e rezervimeve</li>
+              <li>Sallone të preferuara</li>
+              <li>Të gjitha të dhënat personale</li>
+            </ul>
+          </div>
+        }
+        confirmText="Po, fshije llogarinë"
+        cancelText="Jo, mbaje llogarinë"
+        variant="danger"
+      />
     </>
   )
 }

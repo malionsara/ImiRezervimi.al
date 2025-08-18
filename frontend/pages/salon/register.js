@@ -3,8 +3,7 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/router'
-import Head from 'next/head'
-import Image from 'next/image'
+import Layout, { authLayout } from '../../components/layout/Layout'
 import RegistrationForm from '../../components/salon/RegistrationForm'
 import ServiceConfig from '../../components/salon/ServiceConfig'
 
@@ -201,33 +200,11 @@ export default function SalonRegister() {
   }
 
   return (
-    <>
-      <Head>
-        <title>Regjistrimi i Sallonit - ImiRezervimi.al</title>
-        <meta name="description" content="Regjistroni sallonin tuaj në platformën më të madhe të rezervimeve në Shqipëri" />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-      </Head>
-
-      <div className="min-h-screen bg-gradient-to-br from-pink-50 to-red-50">
-        {/* Header */}
-        <header className="bg-white/95 backdrop-blur-xl border-b border-red-100/50">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="flex justify-between items-center h-16">
-              <div className="flex items-center">
-                <div className="h-10 w-10 rounded-2xl bg-white flex items-center justify-center mr-3 shadow-lg p-1">
-                  <Image src="/favicon-96x96.png" alt="ImiRezervimi Logo" width={40} height={40} className="w-full h-full object-contain" />
-                </div>
-                <span className="text-xl font-bold text-gray-900">ImiRezervimi.al</span>
-              </div>
-              <button
-                onClick={() => router.push('/')}
-                className="text-gray-500 hover:text-gray-700 px-3 py-2 rounded-md text-sm font-medium"
-              >
-                Kthehu në faqen kryesore
-              </button>
-            </div>
-          </div>
-        </header>
+    <Layout {...authLayout({
+      title: "Regjistrimi i Sallonit",
+      description: "Regjistroni sallonin tuaj në platformën më të madhe të rezervimeve në Shqipëri"
+    })}>
+      <div className="min-h-screen">
 
         {/* Progress Bar */}
         <div className="bg-white border-b">
@@ -263,17 +240,7 @@ export default function SalonRegister() {
           {renderStep()}
         </main>
 
-        {/* Footer */}
-        <footer className="bg-white border-t mt-16">
-          <div className="max-w-7xl mx-auto px-4 py-8">
-            <div className="text-center">
-              <p className="text-gray-500 text-sm">
-                © 2025 ImiRezervimi.al - Platforma më e madhe e rezervimeve në Shqipëri
-              </p>
-            </div>
-          </div>
-        </footer>
       </div>
-    </>
+    </Layout>
   )
 }

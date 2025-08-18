@@ -6,6 +6,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { useRouter } from 'next/router'
 import { useState, useEffect } from 'react'
+import { useSession, signOut } from 'next-auth/react'
 
 interface HeaderProps {
   variant?: 'default' | 'salon' | 'minimal' | 'auth'
@@ -23,6 +24,7 @@ export default function Header({
   className = ''
 }: HeaderProps) {
   const router = useRouter()
+  const { data: session } = useSession()
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
 
@@ -76,7 +78,6 @@ export default function Header({
   const navigationItems = {
     default: [
       { href: '#si-funksionon', label: 'Si funksionon' },
-      { href: '/salons', label: 'Sallone' },
       { href: '/salon', label: 'Për Sallone' },
       { href: '#kontakt', label: 'Kontakt' }
     ],
@@ -92,24 +93,76 @@ export default function Header({
 
   const ctaConfig = {
     default: {
-      primary: { href: '/login', label: 'Identifikohu', icon: '👤' },
-      secondary: { href: '/salons', label: 'Zbulo Sallone', icon: '🔍' }
+      primary: session ? { href: '/dashboard', label: 'Dashboard', icon: '📊' } : { href: '/login', label: 'Identifikohu', icon: '👤' },
+      secondary: { href: '/salons', label: 'Zbulo Sallone', icon: '🔍' },
+      authenticated: session ? { 
+        user: {
+          name: session.user?.name || 'User',
+          image: session.user?.image,
+          provider: 'Google' // Default since we primarily use Google auth
+        },
+        actions: [
+          { href: '/dashboard', label: 'Dashboard', icon: '📊' },
+          { href: '/dashboard/bookings', label: 'Rezervimet e mia', icon: '📅' },
+          { label: 'Dil', action: 'signOut', icon: '🚪' }
+        ]
+      } : null
     },
     salon: {
       primary: { href: '/salon/register', label: 'Fillo Tani', icon: '🚀' },
-      secondary: { href: '/login-salon', label: 'Hyr', icon: '🏪' }
+      secondary: { href: '/login-salon', label: 'Hyr', icon: '🏪' },
+      authenticated: session ? { 
+        user: {
+          name: session.user?.name || 'User',
+          image: session.user?.image,
+          provider: 'Google' // Default since we primarily use Google auth
+        },
+        actions: [
+          { href: '/dashboard', label: 'Dashboard', icon: '📊' },
+          { href: '/dashboard/bookings', label: 'Rezervimet e mia', icon: '📅' },
+          { label: 'Dil', action: 'signOut', icon: '🚪' }
+        ]
+      } : null
     },
     minimal: {
-      primary: { href: '/login', label: 'Identifikohu', icon: '👤' },
-      secondary: null
+      primary: session ? { href: '/dashboard', label: 'Dashboard', icon: '📊' } : { href: '/login', label: 'Identifikohu', icon: '👤' },
+      secondary: null,
+      authenticated: session ? { 
+        user: {
+          name: session.user?.name || 'User',
+          image: session.user?.image,
+          provider: 'Google' // Default since we primarily use Google auth
+        },
+        actions: [
+          { href: '/dashboard', label: 'Dashboard', icon: '📊' },
+          { href: '/dashboard/bookings', label: 'Rezervimet e mia', icon: '📅' },
+          { label: 'Dil', action: 'signOut', icon: '🚪' }
+        ]
+      } : null
     },
     auth: {
-      primary: { href: '/', label: 'Kthehu në ballina', icon: '🏠' },
-      secondary: null
+      primary: { href: '/', label: 'Kthehu në krye', icon: '🏠' },
+      secondary: null,
+      authenticated: session ? { 
+        user: {
+          name: session.user?.name || 'User',
+          image: session.user?.image,
+          provider: 'Google' // Default since we primarily use Google auth
+        },
+        actions: [
+          { href: '/dashboard', label: 'Dashboard', icon: '📊' },
+          { href: '/dashboard/bookings', label: 'Rezervimet e mia', icon: '📅' },
+          { label: 'Dil', action: 'signOut', icon: '🚪' }
+        ]
+      } : null
     }
   }
 
   const currentCTA = ctaConfig[variant]
+
+  const handleSignOut = async () => {
+    await signOut({ callbackUrl: '/' })
+  }
 
   return (
     <header className={baseStyles}>
@@ -168,23 +221,77 @@ export default function Header({
 
           {/* Desktop CTA Buttons */}
           <div className="hidden lg:flex items-center space-x-3">
-            {currentCTA.secondary && (
-              <Link
-                href={currentCTA.secondary.href}
-                className="px-4 py-2 text-gray-700 hover:text-red-600 font-medium transition-colors duration-200"
-              >
-                <span className="mr-2">{currentCTA.secondary.icon}</span>
-                {currentCTA.secondary.label}
-              </Link>
+            {session && currentCTA.authenticated ? (
+              /* Authenticated User Menu */
+              <div className="flex items-center space-x-4">
+                {currentCTA.secondary && (
+                  <Link
+                    href={currentCTA.secondary.href}
+                    className="px-4 py-2 text-gray-700 hover:text-red-600 font-medium transition-colors duration-200"
+                  >
+                    <span className="mr-2">{currentCTA.secondary.icon}</span>
+                    {currentCTA.secondary.label}
+                  </Link>
+                )}
+                
+                <div className="flex items-center space-x-3">
+                  {currentCTA.authenticated.user.image && (
+                    <Image
+                      src={currentCTA.authenticated.user.image}
+                      alt={currentCTA.authenticated.user.name}
+                      width={32}
+                      height={32}
+                      className="rounded-full"
+                    />
+                  )}
+                  <div>
+                    <p className="text-sm font-medium text-gray-900">
+                      {currentCTA.authenticated.user.name}
+                    </p>
+                    <p className="text-xs text-gray-500">
+                      {currentCTA.authenticated.user.provider === 'instagram' ? 'Instagram' : 'Google'}
+                    </p>
+                  </div>
+                </div>
+                
+                <Link
+                  href="/dashboard"
+                  className="inline-flex items-center px-4 py-2 bg-gradient-to-r from-red-500 to-pink-500 text-white font-semibold rounded-xl hover:from-red-600 hover:to-pink-600 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-0.5"
+                >
+                  <span className="mr-2">📊</span>
+                  Dashboard
+                </Link>
+                
+                <button
+                  onClick={handleSignOut}
+                  className="px-4 py-2 text-gray-700 hover:text-red-600 font-medium transition-colors duration-200"
+                >
+                  <span className="mr-2">🚪</span>
+                  Dil
+                </button>
+              </div>
+            ) : (
+              /* Non-authenticated User Menu */
+              <div className="flex items-center space-x-3">
+                {currentCTA.secondary && (
+                  <Link
+                    href={currentCTA.secondary.href}
+                    className="px-4 py-2 text-gray-700 hover:text-red-600 font-medium transition-colors duration-200"
+                  >
+                    <span className="mr-2">{currentCTA.secondary.icon}</span>
+                    {currentCTA.secondary.label}
+                  </Link>
+                )}
+                
+                <Link
+                  href={currentCTA.primary.href}
+                  className="inline-flex items-center px-4 py-2 bg-gradient-to-r from-red-500 to-pink-500 text-white font-semibold rounded-xl hover:from-red-600 hover:to-pink-600 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-0.5"
+                >
+                  <span className="mr-2">{currentCTA.primary.icon}</span>
+                  {currentCTA.primary.label}
+                </Link>
+              </div>
             )}
-            
-            <Link
-              href={currentCTA.primary.href}
-              className="inline-flex items-center px-4 py-2 bg-gradient-to-r from-red-500 to-pink-500 text-white font-semibold rounded-xl hover:from-red-600 hover:to-pink-600 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-0.5"
-            >
-              <span className="mr-2">{currentCTA.primary.icon}</span>
-              {currentCTA.primary.label}
-            </Link>
           </div>
 
           {/* Mobile Menu Button */}
@@ -223,25 +330,88 @@ export default function Header({
               
               {/* Mobile CTA Buttons */}
               <div className="pt-4 border-t border-red-100 space-y-3">
-                {currentCTA.secondary && (
-                  <Link
-                    href={currentCTA.secondary.href}
-                    onClick={() => setMobileMenuOpen(false)}
-                    className="flex items-center justify-center px-4 py-2 text-gray-700 hover:text-red-600 font-medium border border-gray-300 hover:border-red-300 rounded-xl transition-colors duration-200"
-                  >
-                    <span className="mr-2">{currentCTA.secondary.icon}</span>
-                    {currentCTA.secondary.label}
-                  </Link>
+                {session && currentCTA.authenticated ? (
+                  /* Authenticated Mobile Menu */
+                  <div className="space-y-3">
+                    {/* User Info */}
+                    <div className="flex items-center space-x-3 px-4 py-2 bg-gray-50 rounded-xl">
+                      {currentCTA.authenticated.user.image && (
+                        <Image
+                          src={currentCTA.authenticated.user.image}
+                          alt={currentCTA.authenticated.user.name}
+                          width={32}
+                          height={32}
+                          className="rounded-full"
+                        />
+                      )}
+                      <div>
+                        <p className="text-sm font-medium text-gray-900">
+                          {currentCTA.authenticated.user.name}
+                        </p>
+                        <p className="text-xs text-gray-500">
+                          {currentCTA.authenticated.user.provider === 'instagram' ? 'Instagram' : 'Google'}
+                        </p>
+                      </div>
+                    </div>
+                    
+                    {/* Secondary Link */}
+                    {currentCTA.secondary && (
+                      <Link
+                        href={currentCTA.secondary.href}
+                        onClick={() => setMobileMenuOpen(false)}
+                        className="flex items-center justify-center px-4 py-2 text-gray-700 hover:text-red-600 font-medium border border-gray-300 hover:border-red-300 rounded-xl transition-colors duration-200"
+                      >
+                        <span className="mr-2">{currentCTA.secondary.icon}</span>
+                        {currentCTA.secondary.label}
+                      </Link>
+                    )}
+                    
+                    {/* Dashboard Link */}
+                    <Link
+                      href="/dashboard"
+                      onClick={() => setMobileMenuOpen(false)}
+                      className="flex items-center justify-center px-4 py-2 bg-gradient-to-r from-red-500 to-pink-500 text-white font-semibold rounded-xl shadow-lg transition-all duration-300"
+                    >
+                      <span className="mr-2">📊</span>
+                      Dashboard
+                    </Link>
+                    
+                    {/* Sign Out Button */}
+                    <button
+                      onClick={() => {
+                        setMobileMenuOpen(false)
+                        handleSignOut()
+                      }}
+                      className="w-full flex items-center justify-center px-4 py-2 text-gray-700 hover:text-red-600 font-medium border border-gray-300 hover:border-red-300 rounded-xl transition-colors duration-200"
+                    >
+                      <span className="mr-2">🚪</span>
+                      Dil
+                    </button>
+                  </div>
+                ) : (
+                  /* Non-authenticated Mobile Menu */
+                  <div className="space-y-3">
+                    {currentCTA.secondary && (
+                      <Link
+                        href={currentCTA.secondary.href}
+                        onClick={() => setMobileMenuOpen(false)}
+                        className="flex items-center justify-center px-4 py-2 text-gray-700 hover:text-red-600 font-medium border border-gray-300 hover:border-red-300 rounded-xl transition-colors duration-200"
+                      >
+                        <span className="mr-2">{currentCTA.secondary.icon}</span>
+                        {currentCTA.secondary.label}
+                      </Link>
+                    )}
+                    
+                    <Link
+                      href={currentCTA.primary.href}
+                      onClick={() => setMobileMenuOpen(false)}
+                      className="flex items-center justify-center px-4 py-2 bg-gradient-to-r from-red-500 to-pink-500 text-white font-semibold rounded-xl shadow-lg transition-all duration-300"
+                    >
+                      <span className="mr-2">{currentCTA.primary.icon}</span>
+                      {currentCTA.primary.label}
+                    </Link>
+                  </div>
                 )}
-                
-                <Link
-                  href={currentCTA.primary.href}
-                  onClick={() => setMobileMenuOpen(false)}
-                  className="flex items-center justify-center px-4 py-2 bg-gradient-to-r from-red-500 to-pink-500 text-white font-semibold rounded-xl shadow-lg transition-all duration-300"
-                >
-                  <span className="mr-2">{currentCTA.primary.icon}</span>
-                  {currentCTA.primary.label}
-                </Link>
               </div>
             </div>
           </div>

@@ -2,9 +2,8 @@
 // Marketing-focused salon landing page for Albanian beauty salon platform
 
 import { useState, useEffect } from 'react'
-import Head from 'next/head'
+import Layout, { salonLayout } from '../../components/layout/Layout'
 import Link from 'next/link'
-import Image from 'next/image'
 
 export default function SalonLanding() {
   const [isVisible, setIsVisible] = useState(false)
@@ -22,14 +21,11 @@ export default function SalonLanding() {
   }, [])
 
   return (
-    <>
-      <Head>
-        <title>Për Sallone - ImiRezervimi.al | Platforma më e madhe e rezervimeve</title>
-        <meta name="description" content="Bashkohuni me 500+ sallone që përdorin ImiRezervimi.al për të rritur rezervimet dhe kënaqësinë e klientëve. Filloni falas sot!" />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-      </Head>
-
-      <div className="min-h-screen bg-gradient-to-br from-pink-50 via-red-50 to-orange-50 relative overflow-hidden">
+    <Layout {...salonLayout({
+      title: "Për Sallone - Platforma më e madhe e rezervimeve",
+      description: "Bashkohuni me 500+ sallone që përdorin ImiRezervimi.al për të rritur rezervimet dhe kënaqësinë e klientëve. Filloni falas sot!"
+    })}>
+      <div className="relative overflow-hidden">
         {/* Dynamic Background */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
           <div 
@@ -46,55 +42,6 @@ export default function SalonLanding() {
           ></div>
         </div>
 
-        {/* Header */}
-        <header className="bg-white/95 backdrop-blur-xl border-b border-red-100/50 sticky top-0 z-50 shadow-lg shadow-red-100/25">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="flex justify-between items-center h-20">
-              {/* Logo */}
-              <Link href="/" className="flex items-center group">
-                <div className="h-12 w-12 rounded-2xl bg-white flex items-center justify-center mr-4 shadow-xl transform group-hover:scale-110 group-hover:rotate-3 transition-all duration-300 p-1">
-                  <Image src="/favicon-96x96.png" alt="ImiRezervimi Logo" width={48} height={48} className="w-full h-full object-contain" />
-                </div>
-                <div>
-                  <span className="text-2xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">ImiRezervimi</span>
-                  <span className="text-lg text-red-500 animate-pulse ml-1">.al</span>
-                  <div className="text-xs text-gray-500 -mt-1">Për Sallone</div>
-                </div>
-              </Link>
-
-              {/* Navigation */}
-              <nav className="hidden md:flex space-x-8">
-                <a href="#avantazhet" className="text-gray-600 hover:text-red-500 transition-all duration-300 relative group py-2 px-4 rounded-lg hover:bg-red-50">
-                  Avantazhet
-                  <span className="absolute bottom-0 left-1/2 w-0 h-0.5 bg-gradient-to-r from-red-500 to-pink-500 transition-all duration-300 group-hover:w-full group-hover:left-0 rounded-full"></span>
-                </a>
-                <a href="#si-funksionon" className="text-gray-600 hover:text-red-500 transition-all duration-300 relative group py-2 px-4 rounded-lg hover:bg-red-50">
-                  Si funksionon
-                  <span className="absolute bottom-0 left-1/2 w-0 h-0.5 bg-gradient-to-r from-red-500 to-pink-500 transition-all duration-300 group-hover:w-full group-hover:left-0 rounded-full"></span>
-                </a>
-                <a href="#deshmi" className="text-gray-600 hover:text-red-500 transition-all duration-300 relative group py-2 px-4 rounded-lg hover:bg-red-50">
-                  Dëshmi
-                  <span className="absolute bottom-0 left-1/2 w-0 h-0.5 bg-gradient-to-r from-red-500 to-pink-500 transition-all duration-300 group-hover:w-full group-hover:left-0 rounded-full"></span>
-                </a>
-                <a href="#cmimi" className="text-gray-600 hover:text-red-500 transition-all duration-300 relative group py-2 px-4 rounded-lg hover:bg-red-50">
-                  Çmimi
-                  <span className="absolute bottom-0 left-1/2 w-0 h-0.5 bg-gradient-to-r from-red-500 to-pink-500 transition-all duration-300 group-hover:w-full group-hover:left-0 rounded-full"></span>
-                </a>
-              </nav>
-
-              {/* CTA */}
-              <div className="flex items-center space-x-4">
-                <Link href="/login-salon" className="group border-2 border-red-500 text-red-500 px-6 py-3 rounded-2xl font-semibold hover:bg-red-500 hover:text-white transition-all duration-300 transform hover:scale-105 hover:-translate-y-1">
-                  <span className="relative z-10">Hyr</span>
-                </Link>
-                <Link href="/salon/register" className="group bg-gradient-to-r from-red-500 via-pink-500 to-orange-500 text-white px-6 py-3 rounded-2xl font-semibold hover:shadow-2xl hover:shadow-red-500/25 transition-all duration-300 transform hover:scale-105 hover:-translate-y-1 relative overflow-hidden">
-                  <span className="relative z-10">Fillo Tani</span>
-                  <div className="absolute inset-0 bg-gradient-to-r from-red-600 via-pink-600 to-orange-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                </Link>
-              </div>
-            </div>
-          </div>
-        </header>
 
         {/* Hero Section */}
         <section className="relative py-32 lg:py-40">
@@ -523,55 +470,6 @@ export default function SalonLanding() {
           </div>
         </section>
 
-        {/* Footer */}
-        <footer className="bg-gray-900 text-white py-20 relative overflow-hidden">
-          <div className="absolute inset-0 bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900"></div>
-          
-          <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
-              {/* Brand */}
-              <div className="md:col-span-2">
-                <div className="flex items-center mb-6">
-                  <div className="h-12 w-12 rounded-2xl bg-white flex items-center justify-center mr-4 shadow-lg p-1">
-                    <Image src="/favicon-96x96.png" alt="ImiRezervimi Logo" width={48} height={48} className="w-full h-full object-contain" />
-                  </div>
-                  <div>
-                    <span className="text-2xl font-bold">ImiRezervimi.al</span>
-                    <div className="text-sm text-gray-400">Për Sallone</div>
-                  </div>
-                </div>
-                <p className="text-gray-300 mb-6 leading-relaxed text-lg max-w-md">
-                  Platforma më e madhe e rezervimeve në Shqipëri. 
-                  E bërë me ❤️ për sallone si e joja.
-                </p>
-              </div>
-
-              {/* Links */}
-              <div>
-                <h4 className="font-bold mb-6 text-lg">Për Sallone</h4>
-                <div className="space-y-3">
-                  <Link href="/salon/register" className="block text-gray-400 hover:text-white transition-colors duration-300 hover:translate-x-2 transform">Regjistrohu</Link>
-                  <a href="#avantazhet" className="block text-gray-400 hover:text-white transition-colors duration-300 hover:translate-x-2 transform">Avantazhet</a>
-                  <a href="#cmimi" className="block text-gray-400 hover:text-white transition-colors duration-300 hover:translate-x-2 transform">Çmimi</a>
-                </div>
-              </div>
-
-              {/* Support */}
-              <div>
-                <h4 className="font-bold mb-6 text-lg">Mbështetje</h4>
-                <div className="space-y-3">
-                  <a href="tel:+355694567890" className="block text-gray-400 hover:text-white transition-colors duration-300 hover:translate-x-2 transform">+355 69 456 7890</a>
-                  <a href="mailto:sallone@imirezervimi.al" className="block text-gray-400 hover:text-white transition-colors duration-300 hover:translate-x-2 transform">sallone@imirezervimi.al</a>
-                  <Link href="/" className="block text-gray-400 hover:text-white transition-colors duration-300 hover:translate-x-2 transform">Për Klienta</Link>
-                </div>
-              </div>
-            </div>
-
-            <div className="border-t border-gray-800 pt-8 text-center">
-              <p className="text-gray-400">© 2025 ImiRezervimi.al. Të gjitha të drejtat e rezervuara.</p>
-            </div>
-          </div>
-        </footer>
       </div>
 
       <style jsx>{`
@@ -611,6 +509,6 @@ export default function SalonLanding() {
         }
         .animate-fade-in-up { animation: fade-in-up 0.6s ease-out; }
       `}</style>
-    </>
+    </Layout>
   )
 }

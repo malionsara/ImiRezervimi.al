@@ -9,6 +9,7 @@ import { createClient } from '@supabase/supabase-js';
 import StatusCard from '../../../components/booking/StatusCard';
 import BookingHistory from '../../../components/booking/BookingHistory';
 import { showToast, showLoadingToast, updateToast } from '../../../components/ToastProvider';
+import ConfirmationModal from '../../../components/ui/ConfirmationModal';
 
 // Initialize Supabase client for real-time updates
 const supabase = createClient(
@@ -73,6 +74,7 @@ export default function BookingStatusPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [cancelling, setCancelling] = useState(false);
+  const [showCancelModal, setShowCancelModal] = useState(false);
 
   // Fetch appointment details
   useEffect(() => {
@@ -158,14 +160,15 @@ export default function BookingStatusPage() {
     }
   };
 
-  const handleCancelAppointment = async () => {
+  const handleCancelAppointment = () => {
+    if (!appointment || cancelling) return;
+    setShowCancelModal(true);
+  };
+
+  const confirmCancelAppointment = async () => {
     if (!appointment || cancelling) return;
 
-    const confirmed = window.confirm(
-      'Jeni të sigurt që doni të anuloni këtë rezervim? Ky veprim nuk mund të zhbëhet.'
-    );
-
-    if (!confirmed) return;
+    setShowCancelModal(false);
 
     const toastId = showLoadingToast('Duke anuluar rezervimin...');
 
@@ -320,6 +323,19 @@ export default function BookingStatusPage() {
           </div>
         </div>
       </div>
+
+      {/* Cancel Confirmation Modal */}
+      <ConfirmationModal
+        isOpen={showCancelModal}
+        onClose={() => setShowCancelModal(false)}
+        onConfirm={confirmCancelAppointment}
+        title="Anulo rezervimin"
+        message="Jeni të sigurt që doni të anuloni këtë rezervim? Ky veprim nuk mund të zhbëhet."
+        confirmText="Po, anulo"
+        cancelText="Jo, mbaje"
+        variant="danger"
+        loading={cancelling}
+      />
     </>
   );
 }

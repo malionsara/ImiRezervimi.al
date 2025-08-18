@@ -159,9 +159,45 @@ export default async function handler(
     }
 
     // ==============================================
-    // APPOINTMENT CONFLICT CHECK
+    // REAL-TIME AVAILABILITY CHECK (Final Validation)
     // ==============================================
+    // Double-check availability at submission time to prevent race conditions
     const duration = appointmentRequest.duration || service.duration_minutes
+    
+    try {
+      // Check real-time availability from the API endpoint
+      const availabilityResponse = await fetch(
+        `${process.env.NEXTAUTH_URL || 'http://localhost:3000'}/api/salon/${salon.slug}/availability?date=${appointmentRequest.appointmentDate}&duration=${duration}`,
+        {
+          method: 'GET',
+          headers: { 'Content-Type': 'application/json' }
+        }
+      )
+      
+      if (availabilityResponse.ok) {
+        const availabilityData = await availabilityResponse.json()
+        
+        if (availabilityData.success && availabilityData.data.slots) {
+          const requestedSlot = availabilityData.data.slots.find(
+            (slot: any) => slot.time === appointmentRequest.startTime
+          )
+          
+          if (!requestedSlot || !requestedSlot.available) {
+            console.log(`❌ Selected time slot is no longer available: ${appointmentRequest.startTime}`)
+            return res.status(400).json(createBusinessRuleError(
+              'Koha e zgjedhur nuk është më e disponueshme. Ju lutemi zgjidhni një orë tjetër.',
+              'TIME_SLOT_UNAVAILABLE'
+            ))
+          }
+        }
+      }
+    } catch (availabilityError) {
+      console.warn('⚠️ Could not verify real-time availability, proceeding with legacy conflict check:', availabilityError)
+    }
+
+    // ==============================================
+    // LEGACY APPOINTMENT CONFLICT CHECK (Backup)
+    // ==============================================
     const conflictCheck = await checkAppointmentConflict(
       appointmentRequest.salonId,
       appointmentRequest.appointmentDate,
