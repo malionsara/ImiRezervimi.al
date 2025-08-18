@@ -61,7 +61,7 @@ export default function MobileBookingForm({ salon, onSuccess, onError }: MobileB
   const generateTimeSlots = (date: string) => {
     if (!selectedService || !date) return []
     
-    const dayOfWeek = new Date(date).toLocaleDateString('en-US', { weekday: 'lowercase' })
+    const dayOfWeek = new Date(date).toLocaleDateString('en-US', { weekday: 'long' }).toLowerCase()
     const workingHours = salon.working_hours[dayOfWeek]
     
     if (!workingHours || workingHours.closed) return []
