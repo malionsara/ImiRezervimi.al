@@ -105,12 +105,6 @@ export async function validateSalon(phone: string): Promise<SalonInfo | null> {
 
     if (error || !salons || salons.length === 0) {
       console.log(`❌ Invalid salon phone: ${phone}`)
-      // Also try to find ANY salon with this phone (regardless of status) for debugging
-      const { data: debugSalons, error: debugError } = await supabase
-        .from('salons')
-        .select('id, name, phone, whatsapp_number, status')
-        .or(`phone.eq.${phone},whatsapp_number.eq.${phone}`)
-      console.log(`🔍 Debug salon search (any status):`, { debugSalons, debugError })
       return null
     }
 
