@@ -103,12 +103,8 @@ export default function MobileBookingForm({ salon, onSuccess, onError }: MobileB
         customerInfo: session?.user ? {
           firstName: session.user.name?.split(' ')[0] || '',
           lastName: session.user.name?.split(' ').slice(1).join(' ') || '',
-          phone: data.phone || ''
-        } : {
-          firstName: data.firstName,
-          lastName: data.lastName,
-          phone: data.phone
-        },
+          phone: data.customerInfo?.phone || ''
+        } : data.customerInfo,
         customerNotes: data.customerNotes || '',
         duration: selectedService?.duration_minutes
       }
@@ -311,23 +307,23 @@ export default function MobileBookingForm({ salon, onSuccess, onError }: MobileB
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-1">Emri</label>
                       <input
-                        {...register('firstName')}
+                        {...register('customerInfo.firstName')}
                         className="w-full p-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-red-500 focus:border-transparent text-base"
                         placeholder="Emri"
                       />
-                      {errors.firstName && (
-                        <p className="mt-1 text-sm text-red-600">{errors.firstName.message}</p>
+                      {errors.customerInfo?.firstName && (
+                        <p className="mt-1 text-sm text-red-600">{errors.customerInfo.firstName.message}</p>
                       )}
                     </div>
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-1">Mbiemri</label>
                       <input
-                        {...register('lastName')}
+                        {...register('customerInfo.lastName')}
                         className="w-full p-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-red-500 focus:border-transparent text-base"
                         placeholder="Mbiemri"
                       />
-                      {errors.lastName && (
-                        <p className="mt-1 text-sm text-red-600">{errors.lastName.message}</p>
+                      {errors.customerInfo?.lastName && (
+                        <p className="mt-1 text-sm text-red-600">{errors.customerInfo.lastName.message}</p>
                       )}
                     </div>
                   </div>
@@ -337,13 +333,13 @@ export default function MobileBookingForm({ salon, onSuccess, onError }: MobileB
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Numri i telefonit</label>
                 <input
-                  {...register('phone')}
+                  {...register('customerInfo.phone')}
                   type="tel"
                   className="w-full p-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-red-500 focus:border-transparent text-base"
                   placeholder="+355 69 123 4567"
                 />
-                {errors.phone && (
-                  <p className="mt-1 text-sm text-red-600">{errors.phone.message}</p>
+                {errors.customerInfo?.phone && (
+                  <p className="mt-1 text-sm text-red-600">{errors.customerInfo.phone.message}</p>
                 )}
               </div>
 
