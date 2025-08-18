@@ -186,7 +186,7 @@ export async function getTodayAppointments(salonId: string): Promise<string> {
       `)
       .eq('salon_id', salonId)
       .eq('appointment_date', today)
-      .in('status', ['approved', 'pending'])
+      .eq('status', 'approved')
       .order('start_time', { ascending: true })
 
     console.log(`📊 Today appointments query result:`, { appointments, error })
@@ -212,15 +212,14 @@ export async function getTodayAppointments(salonId: string): Promise<string> {
       return '📅 *ORARET E SOTME*\n\nNuk keni rezervime sot.'
     }
 
-    let response = '📅 *ORARET E SOTME*\n\n'
+    let response = '📅 *ORARET E SOTME* (Të miratuara)\n\n'
     
     appointments.forEach(apt => {
-      const status = apt.status === 'approved' ? '✅' : '⏳'
       const customer = `${apt.customers.first_name} ${apt.customers.last_name}`
       const service = apt.services.name
       const time = apt.start_time.substring(0, 5) // HH:MM format
       
-      response += `${status} ${time} - ${customer}\n📋 ${service}\n📞 ${apt.customers.phone}\n\n`
+      response += `✅ ${time} - ${customer}\n📋 ${service}\n📞 ${apt.customers.phone}\n\n`
     })
 
     return response.trim()
@@ -429,9 +428,9 @@ export const SALON_RESPONSES = {
 
 Komanda të disponueshme:
 
-🕐 *oraret* - Rezervimet e sotme
-⏳ *pritje* - Kërkesa në pritje  
-📅 *nesër* - Rezervimet e nesërme
+🕐 *oraret* - Rezervimet e miratuara të sotme
+⏳ *pritje* - Kërkesa në pritje (pa miratuar)
+📅 *nesër* - Rezervimet e miratuara të nesërme
 ✅ *aprovo [ID]* - Aprovo rezervimin
 ❌ *refuzo [ID]* - Refuzo rezervimin
 ❓ *ndihme* - Lista e komandave
@@ -441,16 +440,16 @@ Shembull: "aprovo 12345678"`,
   HELP: `❓ *NDIHMA - KOMANDA*
 
 📋 *menu* - Shfaq menunë kryesore
-🕐 *oraret* - Rezervimet e sotme
-⏳ *pritje* - Kërkesa në pritje
-📅 *nesër* - Rezervimet e nesërme
+🕐 *oraret* - Rezervimet e miratuara të sotme
+⏳ *pritje* - Kërkesa në pritje (pa miratuar)
+📅 *nesër* - Rezervimet e miratuara të nesërme
 
 *Menaxhimi i rezervimeve:*
 ✅ *aprovo [ID]* - Aprovo rezervimin  
 ❌ *refuzo [ID]* - Refuzo rezervimin
 
 *Shembuj:*
-• "oraret" - shfaq rezervimet e sotme
+• "oraret" - shfaq rezervimet e miratuara të sotme
 • "aprovo 12345678" - aprovo rezervimin
 • "refuzo 12345678" - refuzo rezervimin
 
