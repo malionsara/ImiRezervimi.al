@@ -303,16 +303,26 @@ export default function BookingForm({
     setSuccessMessage('')
 
     try {
-      // Prepare appointment request data
+      // Get current form values (fallback to watched values if form data is missing)
+      const currentValues = watch()
+      
+      // Prepare appointment request data - use form data or fallback to current state
       const appointmentRequest = {
-        salonId: salon.id,
-        serviceId: data.serviceId,
-        appointmentDate: data.appointmentDate,
-        startTime: data.startTime,
+        salonId: data.salonId || salon.id,
+        serviceId: data.serviceId || selectedService.id,
+        appointmentDate: data.appointmentDate || currentValues.appointmentDate,
+        startTime: data.startTime || currentValues.startTime,
         customerInfo: data.customerInfo,
         customerNotes: data.customerNotes || undefined,
         duration: selectedService.duration_minutes
       }
+
+      console.log('📋 Form submission data comparison:', {
+        formData: data,
+        watchedValues: currentValues,
+        finalRequest: appointmentRequest,
+        selectedService: selectedService?.name
+      })
 
       console.log('Submitting appointment request:', appointmentRequest)
 
