@@ -5,6 +5,7 @@ import { useState, useEffect } from 'react'
 import { signIn } from 'next-auth/react'
 import { useRouter } from 'next/router'
 import Link from 'next/link'
+import Image from 'next/image'
 import Layout, { authLayout } from '../components/layout/Layout'
 import FacebookLogin from '../components/auth/FacebookLogin'
 

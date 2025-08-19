@@ -8,7 +8,7 @@ import { useSession } from 'next-auth/react'
 import Link from 'next/link'
 import Image from 'next/image'
 import Layout, { bookingLayout } from '../components/layout/Layout'
-import MobileBookingForm from '../components/booking/MobileBookingForm'
+import BookingForm from '../components/booking/BookingForm'
 
 // ==============================================
 // TYPES AND INTERFACES
@@ -360,8 +360,8 @@ export default function SalonBookingPage() {
       })}>
         <div className="min-h-screen bg-gradient-to-br from-pink-50 via-red-50 to-orange-50 py-6 px-4">
 
-          {/* Mobile Booking Form */}
-          <MobileBookingForm
+          {/* Enhanced Booking Form with Albanian Calendar */}
+          <BookingForm
             salon={salon}
             onSuccess={handleBookingSuccess}
             onError={handleBookingError}
