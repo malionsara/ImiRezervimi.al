@@ -96,9 +96,15 @@ export default async function handler(
     // ==============================================
     // VALIDATE DATE
     // ==============================================
-    const appointmentDate = new Date(date)
+    // Parse the date string properly to avoid timezone issues
+    // date comes as "YYYY-MM-DD" format from the frontend
+    const [year, month, day] = date.split('-').map(Number)
+    const appointmentDate = new Date(year, month - 1, day) // month is 0-indexed
+    
     const today = new Date()
     today.setHours(0, 0, 0, 0)
+
+    console.log(`🔍 Date validation: input="${date}", parsed=${appointmentDate.toISOString()}, today=${today.toISOString()}`)
 
     if (appointmentDate < today) {
       return res.status(400).json(createValidationError(

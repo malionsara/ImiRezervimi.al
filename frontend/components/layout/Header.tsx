@@ -91,9 +91,16 @@ export default function Header({
 
   const navItems = navigationItems[variant as keyof typeof navigationItems] || []
 
+  // Helper to check if we're on dashboard pages
+  const isDashboardPage = router.pathname.startsWith('/dashboard')
+  
   const ctaConfig = {
     default: {
-      primary: session ? { href: '/dashboard', label: 'Dashboard', icon: '📊' } : { href: '/login', label: 'Identifikohu', icon: '👤' },
+      primary: session ? (
+        isDashboardPage 
+          ? { href: '/salons', label: 'Zbulo Sallone', icon: '🔍' }
+          : { href: '/dashboard', label: 'Dashboard', icon: '📊' }
+      ) : { href: '/login', label: 'Identifikohu', icon: '👤' },
       secondary: { href: '/salons', label: 'Zbulo Sallone', icon: '🔍' },
       authenticated: session ? { 
         user: {
@@ -102,7 +109,7 @@ export default function Header({
           provider: 'Google' // Default since we primarily use Google auth
         },
         actions: [
-          { href: '/dashboard', label: 'Dashboard', icon: '📊' },
+          ...(isDashboardPage ? [] : [{ href: '/dashboard', label: 'Dashboard', icon: '📊' }]),
           { href: '/dashboard/bookings', label: 'Rezervimet e mia', icon: '📅' },
           { label: 'Dil', action: 'signOut', icon: '🚪' }
         ]

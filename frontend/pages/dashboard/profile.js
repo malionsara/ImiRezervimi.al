@@ -4,9 +4,9 @@
 import { useSession, signOut } from 'next-auth/react'
 import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
-import Head from 'next/head'
 import Image from 'next/image'
 import Link from 'next/link'
+import Layout, { dashboardLayout } from '../../components/layout/Layout'
 import ConfirmationModal from '../../components/ui/ConfirmationModal'
 
 export default function ProfilePage() {
@@ -122,41 +122,13 @@ export default function ProfilePage() {
   if (!session || !profile) return null
 
   return (
-    <>
-      <Head>
-        <title>Profili Im - ImiRezervimi.al</title>
-        <meta name="description" content="Menaxho informacionet e profilit tuaj" />
-      </Head>
-
-      <div className="min-h-screen bg-gray-50">
-        {/* Header */}
-        <header className="bg-white shadow-sm border-b">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="flex justify-between items-center h-16">
-              <div className="flex items-center">
-                <Link href="/dashboard">
-                  <a className="flex items-center">
-                    <div className="h-8 w-8 rounded-lg bg-white flex items-center justify-center mr-3 p-1 border">
-                      <Image src="/favicon-96x96.png" alt="ImiRezervimi Logo" width={32} height={32} />
-                    </div>
-                    <span className="text-xl font-bold text-gray-900">ImiRezervimi</span>
-                  </a>
-                </Link>
-                <span className="ml-4 text-gray-400">•</span>
-                <span className="ml-4 text-gray-600">Profili Im</span>
-              </div>
-              
-              <Link href="/dashboard">
-                <a className="text-gray-500 hover:text-gray-700 text-sm">
-                  ← Kthehu te Dashboard
-                </a>
-              </Link>
-            </div>
-          </div>
-        </header>
-
+    <Layout {...dashboardLayout({
+      title: 'Profili Im - ImiRezervimi.al',
+      description: 'Menaxho informacionet e profilit tuaj'
+    })}>
+      <div className="min-h-screen bg-gray-50 py-8">
         {/* Main Content */}
-        <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="mb-8">
             <h1 className="text-3xl font-bold text-gray-900 mb-2">Profili Im</h1>
             <p className="text-gray-600">Menaxho informacionet tuaja personale</p>
@@ -391,6 +363,6 @@ export default function ProfilePage() {
         cancelText="Jo, mbaje llogarinë"
         variant="danger"
       />
-    </>
+    </Layout>
   )
 }

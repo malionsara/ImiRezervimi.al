@@ -186,7 +186,13 @@ export default function TimeSlotPicker({
     const { selectable } = isDateSelectable(date)
     if (!selectable) return
     
-    const dateString = date.toISOString().split('T')[0] // YYYY-MM-DD format
+    // Format date properly to avoid timezone issues
+    const year = date.getFullYear()
+    const month = String(date.getMonth() + 1).padStart(2, '0')
+    const day = String(date.getDate()).padStart(2, '0')
+    const dateString = `${year}-${month}-${day}` // YYYY-MM-DD format
+    
+    console.log(`🗓️ Date selected: ${date} -> ${dateString}`)
     onTimeSlotSelect(dateString, '') // Clear time selection when date changes
   }
 
@@ -278,7 +284,9 @@ export default function TimeSlotPicker({
             <div className="grid grid-cols-7 gap-1">
               {calendarDays.map((date, index) => {
                 const { selectable, reason } = isDateSelectable(date)
-                const isSelected = selectedDate === date.toISOString().split('T')[0]
+                // Fix timezone issue by formatting date without timezone conversion
+                const dateString = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`
+                const isSelected = selectedDate === dateString
                 const isCurrentMonth = date.getMonth() === currentMonth.getMonth()
                 const isToday = date.toDateString() === new Date().toDateString()
 

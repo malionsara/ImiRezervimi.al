@@ -74,9 +74,14 @@ export function useRealTimeAvailability({
   const refreshIntervalRef = useRef<NodeJS.Timeout | null>(null)
   const isComponentMountedRef = useRef(true)
 
-  // Format date for API call
+  // Format date for API call - avoid timezone issues
   const formatDateForAPI = useCallback((date: Date): string => {
-    return date.toISOString().split('T')[0] // YYYY-MM-DD format
+    const year = date.getFullYear()
+    const month = String(date.getMonth() + 1).padStart(2, '0')
+    const day = String(date.getDate()).padStart(2, '0')
+    const formatted = `${year}-${month}-${day}`
+    console.log(`📅 Date formatting: ${date} -> ${formatted}`)
+    return formatted
   }, [])
 
   // Fetch availability data from API
