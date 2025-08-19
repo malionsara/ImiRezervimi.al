@@ -305,7 +305,7 @@ export default function BookingForm({
   }
 
   // ==============================================
-  // ENSURE FORM VALUES ARE SET
+  // ENSURE FORM VALUES ARE SET (LEGACY - NOW USING DIRECT API)
   // ==============================================
   const ensureFormValuesAreSet = async () => {
     console.log('🚨 Setting form values and triggering validation...')
@@ -815,20 +815,102 @@ export default function BookingForm({
           <button
             type="button"
             onClick={async () => {
-              console.log('🚨 PROPER FORM SUBMISSION WITH VALIDATION!')
+              console.log('🚨 DIRECT API SUBMISSION - BYPASSING REACT HOOK FORM')
               
               if (isSubmitting) return
               
-              // Set form values and trigger validation
-              const isValidForm = await ensureFormValuesAreSet()
+              // Direct submission without React Hook Form validation
+              // All our data is captured in watchedValues and selectedService
+              const currentValues = watchedValues
               
-              if (isValidForm) {
-                console.log('✅ Form is valid, submitting via handleSubmit')
-                // Use proper React Hook Form submission
-                handleSubmit(onSubmit)()
-              } else {
-                console.log('❌ Form validation failed:', errors)
+              // Validate required fields manually
+              const requiredFieldsPresent = !!(
+                salon.id &&
+                selectedService?.id &&
+                currentValues.appointmentDate &&
+                currentValues.startTime &&
+                currentValues.customerInfo?.firstName &&
+                currentValues.customerInfo?.lastName &&
+                currentValues.customerInfo?.phone
+              )
+              
+              console.log('📋 Direct API submission validation:', {
+                salonId: salon.id,
+                serviceId: selectedService?.id,
+                appointmentDate: currentValues.appointmentDate,
+                startTime: currentValues.startTime,
+                firstName: currentValues.customerInfo?.firstName,
+                lastName: currentValues.customerInfo?.lastName,
+                phone: currentValues.customerInfo?.phone,
+                requiredFieldsPresent
+              })
+              
+              if (!requiredFieldsPresent) {
+                console.log('❌ Required fields missing')
                 setSubmitError('Ju lutem plotësoni të gjitha fushat e kërkuara')
+                return
+              }
+              
+              // Direct API call
+              setIsSubmitting(true)
+              setSubmitError('')
+              
+              try {
+                const appointmentRequest = {
+                  salonId: salon.id,
+                  serviceId: selectedService.id,
+                  appointmentDate: currentValues.appointmentDate,
+                  startTime: currentValues.startTime,
+                  customerInfo: currentValues.customerInfo,
+                  customerNotes: currentValues.customerNotes || undefined,
+                  duration: selectedService.duration_minutes
+                }
+                
+                console.log('📤 Sending direct API request:', appointmentRequest)
+                
+                const response = await fetch('/api/appointments/request', {
+                  method: 'POST',
+                  headers: {
+                    'Content-Type': 'application/json',
+                  },
+                  body: JSON.stringify(appointmentRequest),
+                })
+                
+                const result = await response.json()
+                console.log('📨 Direct API response:', result)
+                
+                if (result.success) {
+                  setSuccessMessage(result.data.message || 'Rezervimi u dërgua me sukses!')
+                  
+                  // Reset form
+                  reset()
+                  setSelectedService(null)
+                  setCurrentStep('service')
+                  
+                  // Call success callback
+                  onSuccess?.(result.data.appointment.id)
+                  
+                } else {
+                  // Check if it's a pending limit error
+                  if (result.error?.code === 'MAX_PENDING_EXCEEDED' || 
+                      result.error?.code === 'MAX_PENDING_PER_SALON_EXCEEDED' ||
+                      result.error?.message?.includes('Mund të keni maksimumi 2 rezervime në pritje') ||
+                      result.error?.message?.includes('pending limit')) {
+                    setSubmitError('PENDING_LIMIT_REACHED')
+                  } else {
+                    const errorMessage = result.error?.message || 'Ka ndodhur një gabim'
+                    setSubmitError(errorMessage)
+                  }
+                  onError?.(result.error?.message || 'Ka ndodhur një gabim')
+                }
+                
+              } catch (error) {
+                console.error('❌ Direct API submission error:', error)
+                const errorMessage = 'Ka ndodhur një gabim në dërgimin e rezervimit'
+                setSubmitError(errorMessage)
+                onError?.(errorMessage)
+              } finally {
+                setIsSubmitting(false)
               }
             }}
             disabled={!isStepValid(currentStep) || isSubmitting}
