@@ -110,6 +110,7 @@ export default function BookingForm({
     handleSubmit,
     setValue,
     watch,
+    trigger,
     formState: { errors, isValid },
     reset
   } = useForm<BookingFormData>({
@@ -306,13 +307,8 @@ export default function BookingForm({
   // ==============================================
   // ENSURE FORM VALUES ARE SET
   // ==============================================
-  const ensureFormValuesAreSet = () => {
-    console.log('🚨 BEFORE setValue - Current state:', {
-      salon: salon.id,
-      selectedService: selectedService,
-      watchedValues: watchedValues,
-      formErrors: errors
-    })
+  const ensureFormValuesAreSet = async () => {
+    console.log('🚨 Setting form values and triggering validation...')
     
     // Set all required form values using setValue
     setValue('salonId', salon.id)
@@ -321,23 +317,16 @@ export default function BookingForm({
     setValue('startTime', watchedValues.startTime || '')
     setValue('duration', selectedService?.duration_minutes || 0)
     
-    console.log('🔧 AFTER setValue - Form values set manually:', {
-      salonId: salon.id,
-      serviceId: selectedService?.id,
-      appointmentDate: watchedValues.appointmentDate,
-      startTime: watchedValues.startTime,
-      duration: selectedService?.duration_minutes,
-      formErrors: errors
+    // Trigger validation for all required fields
+    const isFormValid = await trigger(['salonId', 'serviceId', 'appointmentDate', 'startTime', 'customerInfo'])
+    
+    console.log('✅ Form validation result:', {
+      isFormValid,
+      currentErrors: errors,
+      formData: watch()
     })
     
-    // Force trigger validation
-    setTimeout(() => {
-      console.log('⏰ DELAYED CHECK - Form state after setValue:', {
-        watchedValuesAfter: watch(),
-        errorsAfter: errors,
-        isValidAfter: isValid
-      })
-    }, 100)
+    return isFormValid
   }
 
   // ==============================================
@@ -826,50 +815,20 @@ export default function BookingForm({
           <button
             type="button"
             onClick={async () => {
-              console.log('🚨 DIRECT API SUBMISSION BYPASS!')
+              console.log('🚨 PROPER FORM SUBMISSION WITH VALIDATION!')
               
               if (isSubmitting) return
-              setIsSubmitting(true)
               
-              // Build appointment request directly from current state
-              const appointmentRequest = {
-                salonId: salon.id,
-                serviceId: selectedService?.id,
-                appointmentDate: watchedValues.appointmentDate,
-                startTime: watchedValues.startTime,
-                customerInfo: {
-                  firstName: watchedValues.customerInfo?.firstName,
-                  lastName: watchedValues.customerInfo?.lastName,
-                  phone: watchedValues.customerInfo?.phone
-                },
-                customerNotes: watchedValues.customerNotes || '',
-                duration: selectedService?.duration_minutes
-              }
+              // Set form values and trigger validation
+              const isValidForm = await ensureFormValuesAreSet()
               
-              console.log('🚀 Submitting directly:', appointmentRequest)
-              
-              try {
-                const response = await fetch('/api/appointments/request', {
-                  method: 'POST',
-                  headers: { 'Content-Type': 'application/json' },
-                  body: JSON.stringify(appointmentRequest)
-                })
-                
-                const result = await response.json()
-                console.log('📝 API Response:', result)
-                
-                if (result.success) {
-                  console.log('✅ SUCCESS! Booking created:', result.data.appointment.id)
-                  onSuccess?.(result.data.appointment.id)
-                } else {
-                  console.error('❌ API Error:', result.error)
-                  setSubmitError(result.error?.message || 'Gabim në dërgimin e rezervimit')
-                }
-              } catch (error) {
-                console.error('❌ Network Error:', error)
-                setSubmitError('Gabim në lidhje. Provoni përsëri.')
-              } finally {
-                setIsSubmitting(false)
+              if (isValidForm) {
+                console.log('✅ Form is valid, submitting via handleSubmit')
+                // Use proper React Hook Form submission
+                handleSubmit(onSubmit)()
+              } else {
+                console.log('❌ Form validation failed:', errors)
+                setSubmitError('Ju lutem plotësoni të gjitha fushat e kërkuara')
               }
             }}
             disabled={!isStepValid(currentStep) || isSubmitting}
