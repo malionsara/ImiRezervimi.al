@@ -247,7 +247,11 @@ export default function BookingForm({
         }
         
         // TEMPORARY: Use manual validation as fallback
-        return hasRequiredFields || isValid
+        const finalResult = hasRequiredFields || isValid
+        console.log('🔥 CONFIRM STEP VALIDATION RESULT:', finalResult)
+        console.log('🔥 hasRequiredFields:', hasRequiredFields)
+        console.log('🔥 isValid:', isValid)
+        return finalResult
       default:
         return false
     }
@@ -303,6 +307,13 @@ export default function BookingForm({
   // ENSURE FORM VALUES ARE SET
   // ==============================================
   const ensureFormValuesAreSet = () => {
+    console.log('🚨 BEFORE setValue - Current state:', {
+      salon: salon.id,
+      selectedService: selectedService,
+      watchedValues: watchedValues,
+      formErrors: errors
+    })
+    
     // Set all required form values using setValue
     setValue('salonId', salon.id)
     setValue('serviceId', selectedService?.id || '')
@@ -310,20 +321,36 @@ export default function BookingForm({
     setValue('startTime', watchedValues.startTime || '')
     setValue('duration', selectedService?.duration_minutes || 0)
     
-    console.log('🔧 Form values set manually:', {
+    console.log('🔧 AFTER setValue - Form values set manually:', {
       salonId: salon.id,
       serviceId: selectedService?.id,
       appointmentDate: watchedValues.appointmentDate,
       startTime: watchedValues.startTime,
-      duration: selectedService?.duration_minutes
+      duration: selectedService?.duration_minutes,
+      formErrors: errors
     })
+    
+    // Force trigger validation
+    setTimeout(() => {
+      console.log('⏰ DELAYED CHECK - Form state after setValue:', {
+        watchedValuesAfter: watch(),
+        errorsAfter: errors,
+        isValidAfter: isValid
+      })
+    }, 100)
   }
 
   // ==============================================
   // FORM SUBMISSION
   // ==============================================
   const onSubmit = async (data: BookingFormData) => {
+    console.log('🎯 onSubmit FUNCTION CALLED!')
+    console.log('📊 Form data received:', data)
+    console.log('📊 Current errors:', errors)
+    console.log('📊 Form is valid:', isValid)
+    
     if (!selectedService) {
+      console.log('❌ No selected service!')
       setSubmitError('Ju lutem zgjidhni një shërbim')
       return
     }
@@ -799,9 +826,18 @@ export default function BookingForm({
           <button
             type="button"
             onClick={() => {
+              console.log('🚨 SUBMIT BUTTON CLICKED!')
+              console.log('🔍 Button disabled state:', (!isStepValid(currentStep) || isSubmitting))
+              console.log('🔍 Step valid:', isStepValid(currentStep))
+              console.log('🔍 Is submitting:', isSubmitting)
+              console.log('🔍 Current step:', currentStep)
+              
               ensureFormValuesAreSet()
+              
+              console.log('🔥 About to call handleSubmit...')
               // Trigger form submission programmatically
               handleSubmit(onSubmit)()
+              console.log('✅ handleSubmit called!')
             }}
             disabled={!isStepValid(currentStep) || isSubmitting}
             className="group flex-1 flex justify-center items-center py-4 px-8 bg-gradient-to-r from-red-600 to-pink-600 
