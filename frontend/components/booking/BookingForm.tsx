@@ -69,6 +69,16 @@ function getStepsForUser(isAuthenticated: boolean, hasPhoneInitially: boolean): 
 }
 
 // ==============================================
+// UTILITY FUNCTIONS
+// ==============================================
+const formatDateForAPI = (date: Date): string => {
+  const year = date.getFullYear()
+  const month = String(date.getMonth() + 1).padStart(2, '0')
+  const day = String(date.getDate()).padStart(2, '0')
+  return `${year}-${month}-${day}`
+}
+
+// ==============================================
 // MAIN BOOKING FORM COMPONENT
 // ==============================================
 export default function BookingForm({
@@ -836,11 +846,11 @@ export default function BookingForm({
           {/* Form Content */}
           <div className="p-8">
             {/* Hidden form fields for data persistence */}
-            <input type="hidden" {...register('salonId')} />
-            <input type="hidden" {...register('serviceId')} />
-            <input type="hidden" {...register('appointmentDate')} />
-            <input type="hidden" {...register('startTime')} />
-            <input type="hidden" {...register('duration')} />
+            <input type="hidden" name="salonId" value={salon.id} />
+            <input type="hidden" name="serviceId" value={selectedService?.id || ''} />
+            <input type="hidden" name="appointmentDate" value={selectedDate ? formatDateForAPI(selectedDate) : ''} />
+            <input type="hidden" name="startTime" value={selectedTimeSlot || ''} />
+            <input type="hidden" name="duration" value={selectedService?.duration_minutes || ''} />
 
             {/* Step Indicator */}
             {renderStepIndicator()}
