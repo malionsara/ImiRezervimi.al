@@ -124,6 +124,9 @@ export default function BookingForm({
   // AUTO-POPULATE USER DATA AND SET STABLE STEPS
   // ==============================================
   useEffect(() => {
+    // Always set salonId first
+    setValue('salonId', salon.id)
+    
     if (isAuthenticated && session?.user) {
       // Auto-populate form with authenticated user data
       const user = session.user
@@ -157,7 +160,7 @@ export default function BookingForm({
       setInitialPhoneStatus(false)
       setStableSteps(['service', 'datetime', 'customer', 'confirm'])
     }
-  }, [isAuthenticated, session, setValue, initialPhoneStatus])
+  }, [isAuthenticated, session, setValue, initialPhoneStatus, salon.id])
 
   // Watch form values for step validation
   const watchedValues = watch()
@@ -822,6 +825,13 @@ export default function BookingForm({
 
           {/* Form Content */}
           <div className="p-8">
+            {/* Hidden form fields for data persistence */}
+            <input type="hidden" {...register('salonId')} />
+            <input type="hidden" {...register('serviceId')} />
+            <input type="hidden" {...register('appointmentDate')} />
+            <input type="hidden" {...register('startTime')} />
+            <input type="hidden" {...register('duration')} />
+
             {/* Step Indicator */}
             {renderStepIndicator()}
 
