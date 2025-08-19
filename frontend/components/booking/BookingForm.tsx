@@ -300,6 +300,26 @@ export default function BookingForm({
   }
 
   // ==============================================
+  // ENSURE FORM VALUES ARE SET
+  // ==============================================
+  const ensureFormValuesAreSet = () => {
+    // Set all required form values using setValue
+    setValue('salonId', salon.id)
+    setValue('serviceId', selectedService?.id || '')
+    setValue('appointmentDate', watchedValues.appointmentDate || '')
+    setValue('startTime', watchedValues.startTime || '')
+    setValue('duration', selectedService?.duration_minutes || 0)
+    
+    console.log('🔧 Form values set manually:', {
+      salonId: salon.id,
+      serviceId: selectedService?.id,
+      appointmentDate: watchedValues.appointmentDate,
+      startTime: watchedValues.startTime,
+      duration: selectedService?.duration_minutes
+    })
+  }
+
+  // ==============================================
   // FORM SUBMISSION
   // ==============================================
   const onSubmit = async (data: BookingFormData) => {
@@ -777,7 +797,12 @@ export default function BookingForm({
         {/* Next/Submit Button */}
         {currentStep === 'confirm' ? (
           <button
-            type="submit"
+            type="button"
+            onClick={() => {
+              ensureFormValuesAreSet()
+              // Trigger form submission programmatically
+              handleSubmit(onSubmit)()
+            }}
             disabled={!isStepValid(currentStep) || isSubmitting}
             className="group flex-1 flex justify-center items-center py-4 px-8 bg-gradient-to-r from-red-600 to-pink-600 
                      hover:from-red-700 hover:to-pink-700 rounded-2xl text-white text-lg font-bold
@@ -845,12 +870,7 @@ export default function BookingForm({
 
           {/* Form Content */}
           <div className="p-8">
-            {/* Hidden form fields for data persistence */}
-            <input type="hidden" name="salonId" value={salon.id} />
-            <input type="hidden" name="serviceId" value={selectedService?.id || ''} />
-            <input type="hidden" name="appointmentDate" value={watchedValues.appointmentDate ? formatDateForAPI(new Date(watchedValues.appointmentDate)) : ''} />
-            <input type="hidden" name="startTime" value={watchedValues.startTime || ''} />
-            <input type="hidden" name="duration" value={selectedService?.duration_minutes || ''} />
+            {/* Form values are set programmatically via setValue() before submission */}
 
             {/* Step Indicator */}
             {renderStepIndicator()}
