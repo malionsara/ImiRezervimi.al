@@ -848,8 +848,8 @@ export default function BookingForm({
             {/* Hidden form fields for data persistence */}
             <input type="hidden" name="salonId" value={salon.id} />
             <input type="hidden" name="serviceId" value={selectedService?.id || ''} />
-            <input type="hidden" name="appointmentDate" value={selectedDate ? formatDateForAPI(selectedDate) : ''} />
-            <input type="hidden" name="startTime" value={selectedTimeSlot || ''} />
+            <input type="hidden" name="appointmentDate" value={watchedValues.appointmentDate ? formatDateForAPI(new Date(watchedValues.appointmentDate)) : ''} />
+            <input type="hidden" name="startTime" value={watchedValues.startTime || ''} />
             <input type="hidden" name="duration" value={selectedService?.duration_minutes || ''} />
 
             {/* Step Indicator */}
