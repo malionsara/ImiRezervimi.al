@@ -825,19 +825,52 @@ export default function BookingForm({
         {currentStep === 'confirm' ? (
           <button
             type="button"
-            onClick={() => {
-              console.log('🚨 SUBMIT BUTTON CLICKED!')
-              console.log('🔍 Button disabled state:', (!isStepValid(currentStep) || isSubmitting))
-              console.log('🔍 Step valid:', isStepValid(currentStep))
-              console.log('🔍 Is submitting:', isSubmitting)
-              console.log('🔍 Current step:', currentStep)
+            onClick={async () => {
+              console.log('🚨 DIRECT API SUBMISSION BYPASS!')
               
-              ensureFormValuesAreSet()
+              if (isSubmitting) return
+              setIsSubmitting(true)
               
-              console.log('🔥 About to call handleSubmit...')
-              // Trigger form submission programmatically
-              handleSubmit(onSubmit)()
-              console.log('✅ handleSubmit called!')
+              // Build appointment request directly from current state
+              const appointmentRequest = {
+                salonId: salon.id,
+                serviceId: selectedService?.id,
+                appointmentDate: watchedValues.appointmentDate,
+                startTime: watchedValues.startTime,
+                customerInfo: {
+                  firstName: watchedValues.customerInfo?.firstName,
+                  lastName: watchedValues.customerInfo?.lastName,
+                  phone: watchedValues.customerInfo?.phone
+                },
+                customerNotes: watchedValues.customerNotes || '',
+                duration: selectedService?.duration_minutes
+              }
+              
+              console.log('🚀 Submitting directly:', appointmentRequest)
+              
+              try {
+                const response = await fetch('/api/appointments/request', {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify(appointmentRequest)
+                })
+                
+                const result = await response.json()
+                console.log('📝 API Response:', result)
+                
+                if (result.success) {
+                  console.log('✅ SUCCESS! Booking created:', result.data.appointment.id)
+                  onSuccess?.(result.data.appointment.id)
+                } else {
+                  console.error('❌ API Error:', result.error)
+                  setSubmitError(result.error?.message || 'Gabim në dërgimin e rezervimit')
+                }
+              } catch (error) {
+                console.error('❌ Network Error:', error)
+                setSubmitError('Gabim në lidhje. Provoni përsëri.')
+              } finally {
+                setIsSubmitting(false)
+              }
             }}
             disabled={!isStepValid(currentStep) || isSubmitting}
             className="group flex-1 flex justify-center items-center py-4 px-8 bg-gradient-to-r from-red-600 to-pink-600 
