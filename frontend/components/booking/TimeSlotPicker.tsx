@@ -48,11 +48,11 @@ interface TimeSlot {
 // HELPER FUNCTIONS
 // ==============================================
 const ALBANIAN_DAYS = [
-  'Diel', 'Hënë', 'Martë', 'Mërkurë', 'Enjte', 'Premte', 'Shtunë'
+  'Hënë', 'Martë', 'Mërkurë', 'Enjte', 'Premte', 'Shtunë', 'Diel'
 ]
 
 const ALBANIAN_DAY_ABBREVIATIONS = [
-  'Di', 'Hë', 'Ma', 'Më', 'En', 'Pr', 'Sh'
+  'Hë', 'Ma', 'Më', 'En', 'Pr', 'Sh', 'Di'
 ]
 
 const ALBANIAN_MONTHS = [

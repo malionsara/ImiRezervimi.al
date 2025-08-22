@@ -291,6 +291,11 @@ export default function BookingForm({
     setValue('serviceId', service.id)
     setValue('duration', service.duration_minutes) // Set duration for validation
     
+    // Force trigger validation to update form state
+    trigger(['serviceId'])
+    
+    console.log('💅 Service selected:', service.name, service.id)
+    
     // Remove auto-advance - user must click VAZHDO manually
   }
 
@@ -300,6 +305,11 @@ export default function BookingForm({
   const handleTimeSlotSelect = (date: string, time: string) => {
     setValue('appointmentDate', date)
     setValue('startTime', time)
+    
+    // Force trigger validation to update form state
+    trigger(['appointmentDate', 'startTime'])
+    
+    console.log('🕐 Time slot selected:', { date, time })
     
     // Remove auto-advance - user must click VAZHDO manually
   }
@@ -819,13 +829,22 @@ export default function BookingForm({
               
               if (isSubmitting) return
               
-              // Direct submission without React Hook Form validation
-              // All our data is captured in watchedValues and selectedService
-              const currentValues = watchedValues
+              // Ensure all form fields are properly set before validation
+              setValue('salonId', salon.id)
+              if (selectedService?.id) {
+                setValue('serviceId', selectedService.id)
+                setValue('duration', selectedService.duration_minutes)
+              }
+              
+              // Trigger form validation to ensure all fields are updated
+              await trigger()
+              
+              // Get current values after ensuring they're set
+              const currentValues = watch()
               
               // Validate required fields manually
               const requiredFieldsPresent = !!(
-                salon.id &&
+                currentValues.salonId &&
                 selectedService?.id &&
                 currentValues.appointmentDate &&
                 currentValues.startTime &&
@@ -835,14 +854,17 @@ export default function BookingForm({
               )
               
               console.log('📋 Direct API submission validation:', {
-                salonId: salon.id,
+                salonId: currentValues.salonId,
                 serviceId: selectedService?.id,
                 appointmentDate: currentValues.appointmentDate,
                 startTime: currentValues.startTime,
                 firstName: currentValues.customerInfo?.firstName,
                 lastName: currentValues.customerInfo?.lastName,
                 phone: currentValues.customerInfo?.phone,
-                requiredFieldsPresent
+                requiredFieldsPresent,
+                formIsValid: isValid,
+                hasErrors: Object.keys(errors).length > 0,
+                errors: errors
               })
               
               if (!requiredFieldsPresent) {
@@ -857,7 +879,7 @@ export default function BookingForm({
               
               try {
                 const appointmentRequest = {
-                  salonId: salon.id,
+                  salonId: currentValues.salonId || salon.id,
                   serviceId: selectedService.id,
                   appointmentDate: currentValues.appointmentDate,
                   startTime: currentValues.startTime,
@@ -970,6 +992,13 @@ export default function BookingForm({
     <div className={`booking-form ${className} min-h-screen bg-gradient-to-br from-red-50 via-pink-50 to-purple-50`}>
       <div className="max-w-4xl mx-auto px-4 py-8">
         <form onSubmit={handleSubmit(onSubmit)} className="bg-white rounded-3xl shadow-2xl overflow-hidden">
+          {/* Hidden form fields to ensure React Hook Form has all required data */}
+          <input {...register('salonId')} type="hidden" />
+          <input {...register('serviceId')} type="hidden" />
+          <input {...register('appointmentDate')} type="hidden" />
+          <input {...register('startTime')} type="hidden" />
+          <input {...register('duration')} type="hidden" />
+          
           {/* Header Section */}
           <div className="bg-gradient-to-r from-red-600 to-pink-600 p-8 text-white">
             <div className="text-center">
