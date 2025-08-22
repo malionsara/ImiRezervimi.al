@@ -11,6 +11,7 @@ import {
 } from '../../../lib/appointments';
 import { sendWhatsAppTemplate } from '../../../lib/whatsapp';
 import { sendWhatsAppErrorMessage, sendWhatsAppConfirmation } from '../../../lib/whatsapp-direct-message';
+import { getWhatsAppTemplate } from '../../../lib/whatsapp-templates';
 import {
   parseCommand,
   validateSalon,
@@ -52,6 +53,18 @@ export default async function handler(
   console.log('Method:', req.method);
   console.log('Headers:', JSON.stringify(req.headers, null, 2));
   console.log('Body:', JSON.stringify(req.body, null, 2));
+
+  // Validate WhatsApp templates on startup (log warnings but don't block)
+  try {
+    const templateValidation = await validateWhatsAppTemplates();
+    if (!templateValidation.allValid) {
+      console.warn('⚠️ WhatsApp template validation warnings:', templateValidation.errors);
+    } else {
+      console.log('✅ All WhatsApp templates are valid');
+    }
+  } catch (error) {
+    console.error('❌ Template validation failed:', error);
+  }
 
   if (req.method !== 'POST') {
     console.log('❌ Invalid method:', req.method);
@@ -391,15 +404,34 @@ async function handleApproval(appointmentId: string, salonPhone: string, appoint
         year: 'numeric'
       });
       
-      await sendWhatsAppTemplate(appointment.customers.phone, 'BOOKING_APPROVED', {
+      console.log(`📱 Sending approval notification to customer: ${appointment.customers.phone}`);
+      console.log(`🏪 Salon: ${appointment.salons.name}, Date: ${appointmentDate}, Time: ${appointment.start_time}`);
+      
+      const result = await sendWhatsAppTemplate(appointment.customers.phone, 'BOOKING_APPROVED', {
         salonName: appointment.salons.name,
         date: appointmentDate,
         time: appointment.start_time
       });
       
-      console.log('✅ Approval notification sent to customer');
+      if (result.success) {
+        console.log(`✅ Approval notification sent to customer successfully. Message SID: ${result.messageSid}`);
+      } else {
+        console.error(`❌ Failed to send approval notification to customer: ${result.error}`);
+        
+        // Send fallback notification to salon about the failure
+        await sendWhatsAppErrorMessage(
+          salonPhone,
+          `⚠️ *Kujdes*: Rezervimi u aprovua por klienti NUK u njoftua.\n\n📱 Ju lutem kontaktoni klientin manualisht:\n*${appointment.customers.first_name} ${appointment.customers.last_name}*\n📞 ${appointment.customers.phone}\n\n💼 ImiRezervimi.al`
+        );
+      }
     } catch (error) {
-      console.error('⚠️ Failed to send customer notification:', error);
+      console.error('⚠️ Exception in customer notification:', error);
+      
+      // Send fallback notification to salon about the critical failure
+      await sendWhatsAppErrorMessage(
+        salonPhone,
+        `🚨 *Gabim kritik*: Rezervimi u aprovua por klienti NUK u njoftua për shkak të një gabimi teknik.\n\n📱 DUHET ta kontaktoni klientin manualisht:\n*${appointment.customers.first_name} ${appointment.customers.last_name}*\n📞 ${appointment.customers.phone}\n\n💼 ImiRezervimi.al`
+      );
     }
     
     console.log(`🎉 Appointment ${appointmentId} successfully approved via WhatsApp`);
@@ -460,14 +492,33 @@ async function handleDecline(appointmentId: string, salonPhone: string, appointm
     
     // Send decline notification to customer
     try {
-      await sendWhatsAppTemplate(appointment.customers.phone, 'BOOKING_DECLINED', {
+      console.log(`📱 Sending decline notification to customer: ${appointment.customers.phone}`);
+      console.log(`🏪 Salon: ${appointment.salons.name}`);
+      
+      const result = await sendWhatsAppTemplate(appointment.customers.phone, 'BOOKING_DECLINED', {
         salonName: appointment.salons.name,
         reason: 'Saloni nuk është i disponueshëm për këtë kohë'
       });
       
-      console.log('✅ Decline notification sent to customer');
+      if (result.success) {
+        console.log(`✅ Decline notification sent to customer successfully. Message SID: ${result.messageSid}`);
+      } else {
+        console.error(`❌ Failed to send decline notification to customer: ${result.error}`);
+        
+        // Send fallback notification to salon about the failure
+        await sendWhatsAppErrorMessage(
+          salonPhone,
+          `⚠️ *Kujdes*: Refuzimi u përpunua por klienti NUK u njoftua.\n\n📱 Ju lutem kontaktoni klientin manualisht:\n*${appointment.customers.first_name} ${appointment.customers.last_name}*\n📞 ${appointment.customers.phone}\n\n💼 ImiRezervimi.al`
+        );
+      }
     } catch (error) {
-      console.error('⚠️ Failed to send customer notification:', error);
+      console.error('⚠️ Exception in customer notification:', error);
+      
+      // Send fallback notification to salon about the critical failure
+      await sendWhatsAppErrorMessage(
+        salonPhone,
+        `🚨 *Gabim kritik*: Refuzimi u përpunua por klienti NUK u njoftua për shkak të një gabimi teknik.\n\n📱 DUHET ta kontaktoni klientin manualisht:\n*${appointment.customers.first_name} ${appointment.customers.last_name}*\n📞 ${appointment.customers.phone}\n\n💼 ImiRezervimi.al`
+      );
     }
     
     console.log(`❌ Appointment ${appointmentId} successfully declined via WhatsApp`);
@@ -499,5 +550,52 @@ async function sendDirectWhatsAppMessage(phone: string, message: string): Promis
     console.error('Error sending direct WhatsApp message:', error);
     throw error;
   }
+}
+
+/**
+ * Validate template configuration before sending notifications
+ */
+async function validateWhatsAppTemplates(): Promise<{
+  allValid: boolean;
+  approvalTemplateValid: boolean;
+  declineTemplateValid: boolean;
+  errors: string[];
+}> {
+  const errors: string[] = [];
+  let approvalTemplateValid = false;
+  let declineTemplateValid = false;
+
+  try {
+    // Check BOOKING_APPROVED template
+    const approvalTemplate = getWhatsAppTemplate('BOOKING_APPROVED');
+    if (approvalTemplate.contentSid && approvalTemplate.variables.includes('salonName') && 
+        approvalTemplate.variables.includes('date') && approvalTemplate.variables.includes('time')) {
+      approvalTemplateValid = true;
+    } else {
+      errors.push('BOOKING_APPROVED template missing or invalid variables');
+    }
+  } catch (error) {
+    errors.push(`BOOKING_APPROVED template error: ${(error as Error).message}`);
+  }
+
+  try {
+    // Check BOOKING_DECLINED template
+    const declineTemplate = getWhatsAppTemplate('BOOKING_DECLINED');
+    if (declineTemplate.contentSid && declineTemplate.variables.includes('salonName') && 
+        declineTemplate.variables.includes('reason')) {
+      declineTemplateValid = true;
+    } else {
+      errors.push('BOOKING_DECLINED template missing or invalid variables');
+    }
+  } catch (error) {
+    errors.push(`BOOKING_DECLINED template error: ${(error as Error).message}`);
+  }
+
+  return {
+    allValid: approvalTemplateValid && declineTemplateValid,
+    approvalTemplateValid,
+    declineTemplateValid,
+    errors
+  };
 }
 
