@@ -63,14 +63,20 @@ export default async function handler(
         overallStatus = 'degraded';
       } else {
         // Simple connection test
+        // Simple connection test with timeout handling
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 5000);
+        
         const response = await fetch(`${supabaseUrl}/rest/v1/`, {
           method: 'HEAD',
           headers: {
             'apikey': supabaseKey,
             'Authorization': `Bearer ${supabaseKey}`
           },
-          signal: AbortSignal.timeout(5000) // 5 second timeout
+          signal: controller.signal
         });
+        
+        clearTimeout(timeoutId);
 
         const latency = Date.now() - supabaseStart;
         
@@ -114,13 +120,18 @@ export default async function handler(
         // Simple Twilio API test
         const auth = Buffer.from(`${twilioSid}:${twilioToken}`).toString('base64');
         
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 5000);
+        
         const response = await fetch(`https://api.twilio.com/2010-04-01/Accounts/${twilioSid}.json`, {
           method: 'GET',
           headers: {
             'Authorization': `Basic ${auth}`
           },
-          signal: AbortSignal.timeout(5000)
+          signal: controller.signal
         });
+        
+        clearTimeout(timeoutId);
 
         const latency = Date.now() - twilioStart;
         
