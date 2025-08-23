@@ -85,8 +85,13 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: build-artifacts
-          path: frontend/
+          path: |
+            frontend/.next/
+            frontend/package.json
+            frontend/package-lock.json
+            frontend/node_modules/
           retention-days: 1
+          include-hidden-files: true
         continue-on-error: true
 
   playwright-tests:
@@ -118,7 +123,7 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: build-artifacts
-          path: frontend/
+          path: ./
         continue-on-error: true
           
       - name: Verify build artifacts
@@ -187,7 +192,7 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: build-artifacts
-          path: frontend/
+          path: ./
         continue-on-error: true
           
       - name: Verify build artifacts
@@ -248,7 +253,7 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: build-artifacts
-          path: frontend/
+          path: ./
         continue-on-error: true
           
       - name: Verify build artifacts
