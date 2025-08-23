@@ -1,4 +1,5 @@
 name: Playwright Tests & Deployment Testing
+# Testing with GitHub secrets now configured
 
 on:
   push:
