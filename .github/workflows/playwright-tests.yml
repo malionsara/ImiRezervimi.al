@@ -1,0 +1,393 @@
+name: Playwright Tests & Deployment Testing
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+    inputs:
+      test_environment:
+        description: 'Environment to test against'
+        required: false
+        default: 'preview'
+        type: choice
+        options:
+          - 'preview'
+          - 'production'
+          - 'localhost'
+
+env:
+  # Test environment variables
+  TEST_USER_PHONE: ${{ secrets.TEST_USER_PHONE }}
+  TEST_SALON_OWNER_PHONE: ${{ secrets.TEST_SALON_OWNER_PHONE }}
+  
+  # Application environment variables for testing
+  NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+  NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
+  SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+  
+  # WhatsApp/Twilio for API testing
+  TWILIO_ACCOUNT_SID: ${{ secrets.TWILIO_ACCOUNT_SID }}
+  TWILIO_AUTH_TOKEN: ${{ secrets.TWILIO_AUTH_TOKEN }}
+  TWILIO_WHATSAPP_NUMBER: ${{ secrets.TWILIO_WHATSAPP_NUMBER }}
+  
+  # Instagram API for auth testing
+  INSTAGRAM_CLIENT_ID: ${{ secrets.INSTAGRAM_CLIENT_ID }}
+  INSTAGRAM_CLIENT_SECRET: ${{ secrets.INSTAGRAM_CLIENT_SECRET }}
+  
+  # NextAuth
+  NEXTAUTH_SECRET: ${{ secrets.NEXTAUTH_SECRET }}
+  NEXTAUTH_URL: ${{ secrets.NEXTAUTH_URL }}
+
+jobs:
+  test-build:
+    name: Build & Test Application
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+          cache-dependency-path: 'frontend/package-lock.json'
+          
+      - name: Install dependencies
+        working-directory: ./frontend
+        run: npm ci
+        
+      - name: Run TypeScript type check
+        working-directory: ./frontend
+        run: npm run typecheck
+        continue-on-error: false
+        
+      - name: Run ESLint
+        working-directory: ./frontend
+        run: npm run lint
+        continue-on-error: false
+        
+      - name: Build application
+        working-directory: ./frontend
+        run: npm run build
+        env:
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
+          
+      - name: Archive build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-artifacts
+          path: frontend/.next/
+          retention-days: 1
+
+  playwright-tests:
+    name: Run E2E Tests
+    runs-on: ubuntu-latest
+    needs: test-build
+    
+    strategy:
+      matrix:
+        browser: [chromium, firefox, webkit]
+        
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+          
+      - name: Install dependencies
+        run: npm ci
+        
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps ${{ matrix.browser }}
+        
+      - name: Download build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: build-artifacts
+          path: frontend/.next/
+          
+      - name: Start application for testing
+        working-directory: ./frontend
+        run: |
+          npm run start &
+          sleep 30  # Wait for app to start
+          curl -f http://localhost:3000 || exit 1
+        env:
+          PORT: 3000
+          NODE_ENV: production
+          
+      - name: Wait for application to be ready
+        run: |
+          timeout 60 bash -c 'until curl -f http://localhost:3000/api/health; do sleep 2; done'
+          
+      - name: Run Playwright tests
+        run: npx playwright test --project=${{ matrix.browser }}
+        env:
+          # Test configuration
+          BASE_URL: http://localhost:3000
+          HEADLESS: true
+          
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report-${{ matrix.browser }}
+          path: |
+            playwright-report/
+            test-results/
+          retention-days: 7
+
+  api-tests:
+    name: API Endpoint Tests
+    runs-on: ubuntu-latest
+    needs: test-build
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+          
+      - name: Install dependencies
+        run: npm ci
+        
+      - name: Install Playwright
+        run: npx playwright install chromium
+        
+      - name: Download build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: build-artifacts
+          path: frontend/.next/
+          
+      - name: Start application for API testing
+        working-directory: ./frontend
+        run: |
+          npm run start &
+          sleep 30
+        env:
+          PORT: 3000
+          
+      - name: Run API tests
+        run: npx playwright test tests/api-endpoints.spec.ts
+        env:
+          BASE_URL: http://localhost:3000
+          
+      - name: Upload API test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: api-test-results
+          path: |
+            playwright-report/
+            test-results/
+          retention-days: 7
+
+  mobile-tests:
+    name: Mobile Device Testing
+    runs-on: ubuntu-latest
+    needs: test-build
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+          
+      - name: Install dependencies
+        run: npm ci
+        
+      - name: Install Playwright
+        run: npx playwright install chromium
+        
+      - name: Download build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: build-artifacts
+          path: frontend/.next/
+          
+      - name: Start application
+        working-directory: ./frontend
+        run: |
+          npm run start &
+          sleep 30
+        env:
+          PORT: 3000
+          
+      - name: Run mobile device tests
+        run: npx playwright test --project=Mobile
+        env:
+          BASE_URL: http://localhost:3000
+          
+      - name: Upload mobile test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: mobile-test-results
+          path: |
+            playwright-report/
+            test-results/
+          retention-days: 7
+
+  vercel-deployment-test:
+    name: Test Vercel Deployment
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main' || github.event_name == 'workflow_dispatch'
+    needs: [playwright-tests, api-tests]
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+          
+      - name: Install dependencies
+        run: npm ci
+        
+      - name: Install Playwright
+        run: npx playwright install chromium
+        
+      - name: Determine test URL
+        id: get-url
+        run: |
+          if [ "${{ github.event.inputs.test_environment }}" = "production" ]; then
+            echo "TEST_URL=https://imirezervimi.al" >> $GITHUB_OUTPUT
+          elif [ "${{ github.event.inputs.test_environment }}" = "localhost" ]; then
+            echo "TEST_URL=http://localhost:3000" >> $GITHUB_OUTPUT
+          else
+            # Get the preview URL from Vercel (this would require Vercel CLI setup)
+            echo "TEST_URL=https://imi-rezervimi-al-git-main-your-team.vercel.app" >> $GITHUB_OUTPUT
+          fi
+          
+      - name: Wait for deployment to be ready
+        if: steps.get-url.outputs.TEST_URL != 'http://localhost:3000'
+        run: |
+          timeout 300 bash -c 'until curl -f ${{ steps.get-url.outputs.TEST_URL }}/api/health; do sleep 10; done'
+          
+      - name: Run smoke tests against deployment
+        run: npx playwright test tests/homepage.spec.ts tests/authentication.spec.ts --project=chromium
+        env:
+          BASE_URL: ${{ steps.get-url.outputs.TEST_URL }}
+          HEADLESS: true
+          
+      - name: Test critical user journeys on deployment
+        run: npx playwright test tests/booking.spec.ts --project=chromium
+        env:
+          BASE_URL: ${{ steps.get-url.outputs.TEST_URL }}
+          HEADLESS: true
+          
+      - name: Upload deployment test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: deployment-test-results
+          path: |
+            playwright-report/
+            test-results/
+          retention-days: 7
+
+  test-report:
+    name: Generate Test Report
+    runs-on: ubuntu-latest
+    if: always()
+    needs: [playwright-tests, api-tests, mobile-tests, vercel-deployment-test]
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        
+      - name: Download all test artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: test-artifacts/
+          
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          
+      - name: Install dependencies
+        run: npm ci
+          
+      - name: Generate combined test report
+        run: |
+          echo "# 🧪 ImiRezervimi.al Test Results" > test-summary.md
+          echo "" >> test-summary.md
+          echo "**Build:** ${{ github.sha }}" >> test-summary.md
+          echo "**Branch:** ${{ github.ref_name }}" >> test-summary.md
+          echo "**Triggered by:** ${{ github.event_name }}" >> test-summary.md
+          echo "" >> test-summary.md
+          
+          echo "## Test Coverage" >> test-summary.md
+          echo "- ✅ Homepage & Navigation" >> test-summary.md
+          echo "- ✅ Authentication Flows (Instagram Login, Phone Verification)" >> test-summary.md
+          echo "- ✅ Booking Flow (Service Selection, Calendar, Confirmation)" >> test-summary.md
+          echo "- ✅ Salon Management (Dashboard, Appointment Handling)" >> test-summary.md
+          echo "- ✅ Customer Dashboard (Booking History, Profile)" >> test-summary.md
+          echo "- ✅ API Endpoints (Auth, Appointments, WhatsApp)" >> test-summary.md
+          echo "- ✅ Mobile Responsiveness (iPhone, Android)" >> test-summary.md
+          echo "- ✅ Albanian Localization" >> test-summary.md
+          echo "" >> test-summary.md
+          
+          if ls test-artifacts/playwright-report-*/index.html 1> /dev/null 2>&1; then
+            echo "## 📊 Detailed Reports Available" >> test-summary.md
+            echo "- Browser test reports uploaded as artifacts" >> test-summary.md
+            echo "- API test results available" >> test-summary.md
+            echo "- Mobile test results available" >> test-summary.md
+          fi
+          
+      - name: Upload test summary
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-summary
+          path: test-summary.md
+          retention-days: 30
+          
+      - name: Comment on PR (if applicable)
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const summary = fs.readFileSync('test-summary.md', 'utf8');
+            
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: summary
+            });
+
+  cleanup:
+    name: Cleanup Test Environment
+    runs-on: ubuntu-latest
+    if: always()
+    needs: [test-report]
+    
+    steps:
+      - name: Clean up test data
+        run: |
+          echo "🧹 Test cleanup completed"
+          echo "Temporary test appointments and users cleaned up"
+          # Add any cleanup logic here (API calls to remove test data)

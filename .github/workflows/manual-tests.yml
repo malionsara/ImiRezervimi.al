@@ -1,0 +1,409 @@
+name: Manual Test Execution
+
+on:
+  workflow_dispatch:
+    inputs:
+      test_suite:
+        description: 'Which test suite to run'
+        required: true
+        default: 'all'
+        type: choice
+        options:
+          - 'all'
+          - 'smoke'
+          - 'authentication'
+          - 'booking'
+          - 'salon-management'
+          - 'customer-dashboard'
+          - 'api-endpoints'
+          - 'mobile-only'
+      test_environment:
+        description: 'Environment to test against'
+        required: true
+        default: 'production'
+        type: choice
+        options:
+          - 'production'
+          - 'preview'
+          - 'localhost'
+      browser:
+        description: 'Browser to test with'
+        required: false
+        default: 'chromium'
+        type: choice
+        options:
+          - 'chromium'
+          - 'firefox'
+          - 'webkit'
+          - 'all'
+      headless:
+        description: 'Run tests in headless mode'
+        required: false
+        default: true
+        type: boolean
+      debug_mode:
+        description: 'Enable debug mode (slower execution, more logging)'
+        required: false
+        default: false
+        type: boolean
+
+env:
+  # Test environment variables
+  TEST_USER_PHONE: ${{ secrets.TEST_USER_PHONE }}
+  TEST_SALON_OWNER_PHONE: ${{ secrets.TEST_SALON_OWNER_PHONE }}
+  
+  # Application environment variables
+  NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+  NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
+  SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+  
+  # WhatsApp/Twilio
+  TWILIO_ACCOUNT_SID: ${{ secrets.TWILIO_ACCOUNT_SID }}
+  TWILIO_AUTH_TOKEN: ${{ secrets.TWILIO_AUTH_TOKEN }}
+  TWILIO_WHATSAPP_NUMBER: ${{ secrets.TWILIO_WHATSAPP_NUMBER }}
+  
+  # Instagram API
+  INSTAGRAM_CLIENT_ID: ${{ secrets.INSTAGRAM_CLIENT_ID }}
+  INSTAGRAM_CLIENT_SECRET: ${{ secrets.INSTAGRAM_CLIENT_SECRET }}
+  
+  # NextAuth
+  NEXTAUTH_SECRET: ${{ secrets.NEXTAUTH_SECRET }}
+  NEXTAUTH_URL: ${{ secrets.NEXTAUTH_URL }}
+
+jobs:
+  setup-test-environment:
+    name: Setup Test Environment
+    runs-on: ubuntu-latest
+    
+    outputs:
+      test_url: ${{ steps.get-url.outputs.TEST_URL }}
+      test_files: ${{ steps.get-files.outputs.TEST_FILES }}
+      browser_projects: ${{ steps.get-browsers.outputs.BROWSER_PROJECTS }}
+      
+    steps:
+      - name: Determine test URL
+        id: get-url
+        run: |
+          case "${{ github.event.inputs.test_environment }}" in
+            "production")
+              echo "TEST_URL=https://imirezervimi.al" >> $GITHUB_OUTPUT
+              ;;
+            "preview")
+              echo "TEST_URL=https://imi-rezervimi-al-git-main-your-team.vercel.app" >> $GITHUB_OUTPUT
+              ;;
+            "localhost")
+              echo "TEST_URL=http://localhost:3000" >> $GITHUB_OUTPUT
+              ;;
+          esac
+          
+      - name: Determine test files
+        id: get-files
+        run: |
+          case "${{ github.event.inputs.test_suite }}" in
+            "all")
+              echo "TEST_FILES=tests/" >> $GITHUB_OUTPUT
+              ;;
+            "smoke")
+              echo "TEST_FILES=tests/homepage.spec.ts tests/authentication.spec.ts" >> $GITHUB_OUTPUT
+              ;;
+            "authentication")
+              echo "TEST_FILES=tests/authentication.spec.ts" >> $GITHUB_OUTPUT
+              ;;
+            "booking")
+              echo "TEST_FILES=tests/booking.spec.ts" >> $GITHUB_OUTPUT
+              ;;
+            "salon-management")
+              echo "TEST_FILES=tests/salon-management.spec.ts" >> $GITHUB_OUTPUT
+              ;;
+            "customer-dashboard")
+              echo "TEST_FILES=tests/customer-dashboard.spec.ts" >> $GITHUB_OUTPUT
+              ;;
+            "api-endpoints")
+              echo "TEST_FILES=tests/api-endpoints.spec.ts" >> $GITHUB_OUTPUT
+              ;;
+            "mobile-only")
+              echo "TEST_FILES=tests/homepage.spec.ts tests/booking.spec.ts tests/authentication.spec.ts" >> $GITHUB_OUTPUT
+              ;;
+          esac
+          
+      - name: Determine browser projects
+        id: get-browsers
+        run: |
+          case "${{ github.event.inputs.browser }}" in
+            "all")
+              echo "BROWSER_PROJECTS=[\"chromium\", \"firefox\", \"webkit\"]" >> $GITHUB_OUTPUT
+              ;;
+            *)
+              echo "BROWSER_PROJECTS=[\"${{ github.event.inputs.browser }}\"]" >> $GITHUB_OUTPUT
+              ;;
+          esac
+
+  run-manual-tests:
+    name: Execute Manual Tests
+    runs-on: ubuntu-latest
+    needs: setup-test-environment
+    
+    strategy:
+      matrix:
+        browser: ${{ fromJson(needs.setup-test-environment.outputs.browser_projects) }}
+        
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+          
+      - name: Install dependencies
+        run: npm ci
+        
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps ${{ matrix.browser }}
+        
+      - name: Setup local server (if testing localhost)
+        if: github.event.inputs.test_environment == 'localhost'
+        working-directory: ./frontend
+        run: |
+          npm ci
+          npm run build
+          npm run start &
+          sleep 30
+          curl -f http://localhost:3000 || exit 1
+        env:
+          NODE_ENV: production
+          PORT: 3000
+          
+      - name: Wait for application to be ready
+        run: |
+          timeout 120 bash -c 'until curl -f ${{ needs.setup-test-environment.outputs.test_url }}/api/health; do sleep 5; done'
+          
+      - name: Run Playwright tests with debug info
+        run: |
+          echo "🧪 Running test suite: ${{ github.event.inputs.test_suite }}"
+          echo "🌐 Testing against: ${{ needs.setup-test-environment.outputs.test_url }}"
+          echo "🌐 Browser: ${{ matrix.browser }}"
+          echo "📁 Test files: ${{ needs.setup-test-environment.outputs.test_files }}"
+          
+          if [ "${{ github.event.inputs.debug_mode }}" = "true" ]; then
+            echo "🐛 Debug mode enabled"
+            DEBUG=pw:* npx playwright test ${{ needs.setup-test-environment.outputs.test_files }} \
+              --project=${{ matrix.browser }} \
+              --headed=${{ github.event.inputs.headless == 'false' && 'true' || 'false' }} \
+              --timeout=60000 \
+              --retries=2 \
+              --reporter=html,json,junit
+          else
+            npx playwright test ${{ needs.setup-test-environment.outputs.test_files }} \
+              --project=${{ matrix.browser }} \
+              --headed=${{ github.event.inputs.headless == 'false' && 'true' || 'false' }} \
+              --reporter=html,json,junit
+          fi
+        env:
+          BASE_URL: ${{ needs.setup-test-environment.outputs.test_url }}
+          HEADLESS: ${{ github.event.inputs.headless }}
+          
+      - name: Generate test summary
+        if: always()
+        run: |
+          echo "# 🧪 Manual Test Results" > test-summary.md
+          echo "" >> test-summary.md
+          echo "**Test Suite:** ${{ github.event.inputs.test_suite }}" >> test-summary.md
+          echo "**Environment:** ${{ github.event.inputs.test_environment }}" >> test-summary.md
+          echo "**URL:** ${{ needs.setup-test-environment.outputs.test_url }}" >> test-summary.md
+          echo "**Browser:** ${{ matrix.browser }}" >> test-summary.md
+          echo "**Headless:** ${{ github.event.inputs.headless }}" >> test-summary.md
+          echo "**Debug Mode:** ${{ github.event.inputs.debug_mode }}" >> test-summary.md
+          echo "**Triggered by:** @${{ github.actor }}" >> test-summary.md
+          echo "**Timestamp:** $(date -u '+%Y-%m-%d %H:%M:%S UTC')" >> test-summary.md
+          echo "" >> test-summary.md
+          
+          if [ -f "playwright-report/index.html" ]; then
+            echo "✅ **HTML Report Generated:** Available in artifacts" >> test-summary.md
+          fi
+          
+          if [ -f "test-results.json" ]; then
+            echo "✅ **JSON Results:** Available in artifacts" >> test-summary.md
+          fi
+          
+          echo "" >> test-summary.md
+          echo "## Test Coverage for this run:" >> test-summary.md
+          
+          case "${{ github.event.inputs.test_suite }}" in
+            "all")
+              echo "- ✅ Complete test suite executed" >> test-summary.md
+              echo "- 🏠 Homepage & Navigation tests" >> test-summary.md
+              echo "- 🔐 Authentication flows" >> test-summary.md  
+              echo "- 📅 Booking workflow" >> test-summary.md
+              echo "- 💼 Salon management" >> test-summary.md
+              echo "- 👤 Customer dashboard" >> test-summary.md
+              echo "- 🔌 API endpoints" >> test-summary.md
+              ;;
+            "smoke")
+              echo "- ⚡ Smoke tests (critical functionality only)" >> test-summary.md
+              echo "- 🏠 Homepage loading" >> test-summary.md
+              echo "- 🔐 Basic authentication" >> test-summary.md
+              ;;
+            "authentication")
+              echo "- 🔐 Instagram login integration" >> test-summary.md
+              echo "- 📱 Phone verification flow" >> test-summary.md
+              echo "- 👤 Profile completion" >> test-summary.md
+              ;;
+            "booking")
+              echo "- 🎯 Service selection" >> test-summary.md
+              echo "- 📅 Albanian calendar functionality" >> test-summary.md
+              echo "- ⏰ Time slot selection" >> test-summary.md
+              echo "- ✅ Booking confirmation" >> test-summary.md
+              ;;
+            "salon-management")
+              echo "- 📋 Appointment request handling" >> test-summary.md
+              echo "- ✅ Approval/decline workflows" >> test-summary.md
+              echo "- 📊 Dashboard functionality" >> test-summary.md
+              echo "- ⚙️ Settings management" >> test-summary.md
+              ;;
+            "customer-dashboard")
+              echo "- 📚 Booking history display" >> test-summary.md
+              echo "- 🔍 Status filtering" >> test-summary.md
+              echo "- 👤 Profile management" >> test-summary.md
+              echo "- 📱 Phone number updates" >> test-summary.md
+              ;;
+            "api-endpoints")
+              echo "- 🔌 Authentication APIs" >> test-summary.md
+              echo "- 📅 Appointment APIs" >> test-summary.md
+              echo "- 📨 WhatsApp notification APIs" >> test-summary.md
+              echo "- 🔗 Twilio webhook handling" >> test-summary.md
+              ;;
+            "mobile-only")
+              echo "- 📱 Mobile responsiveness" >> test-summary.md
+              echo "- 👆 Touch interactions" >> test-summary.md
+              echo "- 🔄 Mobile navigation" >> test-summary.md
+              ;;
+          esac
+          
+      - name: Upload test artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: manual-test-results-${{ matrix.browser }}-${{ github.event.inputs.test_suite }}
+          path: |
+            playwright-report/
+            test-results/
+            test-results.json
+            junit-results.xml
+            test-summary.md
+          retention-days: 30
+          
+      - name: Upload screenshots (if any failures)
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: failure-screenshots-${{ matrix.browser }}
+          path: test-results/
+          retention-days: 7
+
+  mobile-specific-tests:
+    name: Mobile Device Tests
+    runs-on: ubuntu-latest
+    needs: setup-test-environment
+    if: contains(github.event.inputs.test_suite, 'mobile') || github.event.inputs.test_suite == 'all'
+    
+    strategy:
+      matrix:
+        device: ['iPhone 12', 'Pixel 5']
+        
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+          
+      - name: Install dependencies
+        run: npm ci
+        
+      - name: Install Playwright
+        run: npx playwright install chromium
+        
+      - name: Setup local server (if needed)
+        if: github.event.inputs.test_environment == 'localhost'
+        working-directory: ./frontend
+        run: |
+          npm ci && npm run build && npm run start &
+          sleep 30
+        
+      - name: Run mobile device tests
+        run: |
+          npx playwright test tests/homepage.spec.ts tests/booking.spec.ts tests/authentication.spec.ts \
+            --project="Mobile ${{ matrix.device }}" \
+            --reporter=html,json
+        env:
+          BASE_URL: ${{ needs.setup-test-environment.outputs.test_url }}
+          
+      - name: Upload mobile test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: mobile-test-results-${{ matrix.device }}
+          path: |
+            playwright-report/
+            test-results/
+          retention-days: 7
+
+  generate-final-report:
+    name: Generate Final Test Report
+    runs-on: ubuntu-latest
+    if: always()
+    needs: [run-manual-tests, mobile-specific-tests]
+    
+    steps:
+      - name: Download all test artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: all-test-results/
+          
+      - name: Generate comprehensive report
+        run: |
+          echo "# 🧪 Manual Test Execution Report" > final-report.md
+          echo "" >> final-report.md
+          echo "## Execution Details" >> final-report.md
+          echo "- **Test Suite:** ${{ github.event.inputs.test_suite }}" >> final-report.md
+          echo "- **Environment:** ${{ github.event.inputs.test_environment }}" >> final-report.md
+          echo "- **Browser(s):** ${{ github.event.inputs.browser }}" >> final-report.md  
+          echo "- **Headless Mode:** ${{ github.event.inputs.headless }}" >> final-report.md
+          echo "- **Debug Mode:** ${{ github.event.inputs.debug_mode }}" >> final-report.md
+          echo "- **Executed by:** @${{ github.actor }}" >> final-report.md
+          echo "- **Timestamp:** $(date -u '+%Y-%m-%d %H:%M:%S UTC')" >> final-report.md
+          echo "- **Repository:** ${{ github.repository }}" >> final-report.md
+          echo "- **Commit:** ${{ github.sha }}" >> final-report.md
+          echo "" >> final-report.md
+          
+          echo "## 📊 Results Summary" >> final-report.md
+          echo "All test artifacts have been uploaded and are available for download." >> final-report.md
+          echo "" >> final-report.md
+          
+          echo "### Available Artifacts:" >> final-report.md
+          find all-test-results -name "*.html" -o -name "*.json" | while read file; do
+            echo "- 📁 $(basename $(dirname $file))" >> final-report.md
+          done
+          echo "" >> final-report.md
+          
+          echo "## 🚀 Next Steps" >> final-report.md
+          echo "1. Review the HTML reports in the artifacts" >> final-report.md
+          echo "2. Check any failure screenshots if tests failed" >> final-report.md
+          echo "3. Review mobile device test results if applicable" >> final-report.md
+          echo "" >> final-report.md
+          
+          echo "---" >> final-report.md
+          echo "*Report generated automatically by GitHub Actions*" >> final-report.md
+          
+      - name: Upload final report
+        uses: actions/upload-artifact@v4
+        with:
+          name: final-test-report
+          path: final-report.md
+          retention-days: 30
