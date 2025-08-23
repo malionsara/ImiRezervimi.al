@@ -1,5 +1,5 @@
-name: Playwright Tests & Deployment Testing
-# Testing with GitHub secrets now configured
+name: Playwright Tests & Production Testing
+# Tests against production domain (imirezervimi.al) where OAuth callbacks are configured
 
 on:
   push:
@@ -11,10 +11,9 @@ on:
       test_environment:
         description: 'Environment to test against'
         required: false
-        default: 'preview'
+        default: 'production'
         type: choice
         options:
-          - 'preview'
           - 'production'
           - 'localhost'
 
@@ -341,8 +340,8 @@ jobs:
             test-results/
           retention-days: 7
 
-  vercel-deployment-test:
-    name: Test Vercel Deployment
+  production-deployment-test:
+    name: Test Production Deployment
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main' || github.event_name == 'workflow_dispatch'
     needs: [playwright-tests, api-tests]
@@ -366,13 +365,11 @@ jobs:
       - name: Determine test URL
         id: get-url
         run: |
-          if [ "${{ github.event.inputs.test_environment }}" = "production" ]; then
-            echo "TEST_URL=https://imirezervimi.al" >> $GITHUB_OUTPUT
-          elif [ "${{ github.event.inputs.test_environment }}" = "localhost" ]; then
+          if [ "${{ github.event.inputs.test_environment }}" = "localhost" ]; then
             echo "TEST_URL=http://localhost:3000" >> $GITHUB_OUTPUT
           else
-            # Get the preview URL from Vercel (this would require Vercel CLI setup)
-            echo "TEST_URL=https://imi-rezervimi-al-git-main-your-team.vercel.app" >> $GITHUB_OUTPUT
+            # Always test against production domain where OAuth callbacks are configured
+            echo "TEST_URL=https://imirezervimi.al" >> $GITHUB_OUTPUT
           fi
           
       - name: Wait for deployment to be ready
@@ -406,7 +403,7 @@ jobs:
     name: Generate Test Report
     runs-on: ubuntu-latest
     if: always()
-    needs: [playwright-tests, api-tests, mobile-tests, vercel-deployment-test]
+    needs: [playwright-tests, api-tests, mobile-tests, production-deployment-test]
     
     steps:
       - name: Checkout code
