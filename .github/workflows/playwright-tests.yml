@@ -86,8 +86,10 @@ jobs:
         with:
           name: build-artifacts
           path: |
-            frontend/.next/
+            frontend/.next/**/*
             frontend/package.json
+            frontend/package-lock.json
+            frontend/next.config.js
           retention-days: 1
         continue-on-error: true
 
@@ -121,6 +123,13 @@ jobs:
         with:
           name: build-artifacts
           path: ./
+        continue-on-error: true
+          
+      - name: Verify build artifacts
+        run: |
+          echo "📁 Checking downloaded artifacts..."
+          ls -la frontend/ || echo "No frontend directory"
+          ls -la frontend/.next/ || echo "No .next directory"
         continue-on-error: true
           
       - name: Install frontend dependencies
@@ -185,6 +194,13 @@ jobs:
           path: ./
         continue-on-error: true
           
+      - name: Verify build artifacts
+        run: |
+          echo "📁 Checking downloaded artifacts..."
+          ls -la frontend/ || echo "No frontend directory"
+          ls -la frontend/.next/ || echo "No .next directory"
+        continue-on-error: true
+          
       - name: Install frontend dependencies
         working-directory: ./frontend
         run: npm install
@@ -237,6 +253,13 @@ jobs:
         with:
           name: build-artifacts
           path: ./
+        continue-on-error: true
+          
+      - name: Verify build artifacts
+        run: |
+          echo "📁 Checking downloaded artifacts..."
+          ls -la frontend/ || echo "No frontend directory"
+          ls -la frontend/.next/ || echo "No .next directory"
         continue-on-error: true
           
       - name: Install frontend dependencies
