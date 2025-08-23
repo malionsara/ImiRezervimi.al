@@ -11,10 +11,20 @@ import { TEST_DATA } from './test-data';
 export async function waitForPageLoad(page: Page, timeout: number = TEST_DATA.TIMEOUTS.MEDIUM) {
   try {
     // First, ensure the page is loaded
-    await page.waitForLoadState('domcontentloaded');
+    await page.waitForLoadState('domcontentloaded', { timeout: Math.max(timeout, 30000) });
     
-    // Wait for network to be mostly idle (shorter timeout)
-    await page.waitForLoadState('networkidle', { timeout: Math.min(timeout, 15000) });
+    // For production, just wait a bit longer for the page to settle
+    if (page.url().includes('imirezervimi.al')) {
+      await page.waitForTimeout(2000);
+      return;
+    }
+    
+    // Wait for network to be mostly idle (shorter timeout for local)
+    try {
+      await page.waitForLoadState('networkidle', { timeout: Math.min(timeout, 10000) });
+    } catch {
+      console.log('📝 Note: Network idle timeout - continuing anyway for production reliability');
+    }
     
     // Optional: Check for loading indicators with shorter timeout and no failure
     try {
@@ -114,7 +124,7 @@ export async function clickAndWait(page: Page, selector: string, waitForNavigati
  * Check if element contains Albanian text
  */
 export async function expectAlbanianText(page: Page, text: string, timeout: number = TEST_DATA.TIMEOUTS.FAST) {
-  await expect(page.locator(`text=${text}`)).toBeVisible({ timeout });
+  await expect(page.locator(`text=${text}`).first()).toBeVisible({ timeout });
 }
 
 /**

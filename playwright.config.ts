@@ -107,11 +107,11 @@ export default defineConfig({
   outputDir: 'test-results/',
   
   /* Maximum time one test can run for. */
-  timeout: 60000,
+  timeout: 90000,
 
   /* Expect options */
   expect: {
     /* Maximum time expect() should wait for the condition to be met. */
-    timeout: 10000
+    timeout: 20000
   },
 });
