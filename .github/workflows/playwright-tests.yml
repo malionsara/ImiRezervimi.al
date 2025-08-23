@@ -123,6 +123,10 @@ jobs:
           path: ./
         continue-on-error: true
           
+      - name: Install frontend dependencies
+        working-directory: ./frontend
+        run: npm install
+          
       - name: Start application for testing
         run: |
           cd frontend && npm run start &
@@ -181,6 +185,10 @@ jobs:
           path: ./
         continue-on-error: true
           
+      - name: Install frontend dependencies
+        working-directory: ./frontend
+        run: npm install
+          
       - name: Start application for API testing
         run: |
           cd frontend && npm run start &
@@ -230,6 +238,10 @@ jobs:
           name: build-artifacts
           path: ./
         continue-on-error: true
+          
+      - name: Install frontend dependencies
+        working-directory: ./frontend
+        run: npm install
           
       - name: Start application
         run: |
