@@ -85,11 +85,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: build-artifacts
-          path: |
-            frontend/.next/**/*
-            frontend/package.json
-            frontend/package-lock.json
-            frontend/next.config.js
+          path: frontend/
           retention-days: 1
         continue-on-error: true
 
@@ -122,7 +118,7 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: build-artifacts
-          path: ./
+          path: frontend/
         continue-on-error: true
           
       - name: Verify build artifacts
@@ -191,7 +187,7 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: build-artifacts
-          path: ./
+          path: frontend/
         continue-on-error: true
           
       - name: Verify build artifacts
@@ -252,7 +248,7 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: build-artifacts
-          path: ./
+          path: frontend/
         continue-on-error: true
           
       - name: Verify build artifacts
