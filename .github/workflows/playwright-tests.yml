@@ -118,56 +118,18 @@ jobs:
         
       - name: Install Playwright browsers
         run: npx playwright install --with-deps ${{ matrix.browser }}
-        
-      - name: Verify build output
+          
+      - name: Wait for production site to be ready
         run: |
-          echo "📁 Checking build output..."
-          ls -la frontend/.next/ || echo "No .next directory"
-        continue-on-error: true
+          echo "🌐 Testing against production: https://imirezervimi.al"
+          timeout 60 bash -c 'until curl -f https://imirezervimi.al/api/health-simple; do sleep 5; done'
           
-      - name: Install frontend dependencies
-        working-directory: ./frontend
-        run: npm install
-          
-      - name: Build application in test job
-        working-directory: ./frontend
-        run: npm run build
-        env:
-          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co' }}
-          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'placeholder-key' }}
-          NEXTAUTH_SECRET: ${{ secrets.NEXTAUTH_SECRET || 'placeholder-secret' }}
-          NEXTAUTH_URL: ${{ secrets.NEXTAUTH_URL || 'http://localhost:3000' }}
-          TWILIO_ACCOUNT_SID: ${{ secrets.TWILIO_ACCOUNT_SID || 'placeholder' }}
-          TWILIO_AUTH_TOKEN: ${{ secrets.TWILIO_AUTH_TOKEN || 'placeholder' }}
-          TWILIO_WHATSAPP_NUMBER: ${{ secrets.TWILIO_WHATSAPP_NUMBER || '+1234567890' }}
-          INSTAGRAM_CLIENT_ID: ${{ secrets.INSTAGRAM_CLIENT_ID || 'placeholder' }}
-          INSTAGRAM_CLIENT_SECRET: ${{ secrets.INSTAGRAM_CLIENT_SECRET || 'placeholder' }}
-          
-      - name: Start application for testing
-        run: |
-          cd frontend && npm run start &
-          sleep 30  # Wait for app to start
-          curl -f http://localhost:3000 || exit 1
-        env:
-          PORT: 3000
-          NODE_ENV: production
-          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
-          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
-          TWILIO_ACCOUNT_SID: ${{ secrets.TWILIO_ACCOUNT_SID }}
-          TWILIO_AUTH_TOKEN: ${{ secrets.TWILIO_AUTH_TOKEN }}
-          TWILIO_WHATSAPP_NUMBER: ${{ secrets.TWILIO_WHATSAPP_NUMBER }}
-          NEXTAUTH_SECRET: ${{ secrets.NEXTAUTH_SECRET }}
-          NEXTAUTH_URL: ${{ secrets.NEXTAUTH_URL || 'http://localhost:3000' }}
-          
-      - name: Wait for application to be ready
-        run: |
-          timeout 60 bash -c 'until curl -f http://localhost:3000/api/health-simple; do sleep 2; done'
-          
-      - name: Run Playwright tests
+      - name: Run Playwright tests against production
         run: npx playwright test --project=${{ matrix.browser }}
         env:
-          # Test configuration
-          BASE_URL: http://localhost:3000
+          # Test against production domain
+          BASE_URL: https://imirezervimi.al
+          TEST_BASE_URL: https://imirezervimi.al
           HEADLESS: true
           
       - name: Upload test results
@@ -200,55 +162,17 @@ jobs:
         
       - name: Install Playwright
         run: npx playwright install chromium
-        
-      - name: Verify build output
+          
+      - name: Wait for production API to be ready
         run: |
-          echo "📁 Checking build output..."
-          ls -la frontend/.next/ || echo "No .next directory"
-        continue-on-error: true
+          echo "🌐 Testing API against production: https://imirezervimi.al"
+          timeout 60 bash -c 'until curl -f https://imirezervimi.al/api/health-simple; do sleep 5; done'
           
-      - name: Install frontend dependencies
-        working-directory: ./frontend
-        run: npm install
-          
-      - name: Build application in test job
-        working-directory: ./frontend
-        run: npm run build
-        env:
-          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co' }}
-          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'placeholder-key' }}
-          NEXTAUTH_SECRET: ${{ secrets.NEXTAUTH_SECRET || 'placeholder-secret' }}
-          NEXTAUTH_URL: ${{ secrets.NEXTAUTH_URL || 'http://localhost:3000' }}
-          TWILIO_ACCOUNT_SID: ${{ secrets.TWILIO_ACCOUNT_SID || 'placeholder' }}
-          TWILIO_AUTH_TOKEN: ${{ secrets.TWILIO_AUTH_TOKEN || 'placeholder' }}
-          TWILIO_WHATSAPP_NUMBER: ${{ secrets.TWILIO_WHATSAPP_NUMBER || '+1234567890' }}
-          INSTAGRAM_CLIENT_ID: ${{ secrets.INSTAGRAM_CLIENT_ID || 'placeholder' }}
-          INSTAGRAM_CLIENT_SECRET: ${{ secrets.INSTAGRAM_CLIENT_SECRET || 'placeholder' }}
-          
-      - name: Start application for API testing
-        run: |
-          cd frontend && npm run start &
-          sleep 30
-          curl -f http://localhost:3000 || exit 1
-        env:
-          PORT: 3000
-          NODE_ENV: production
-          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
-          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
-          TWILIO_ACCOUNT_SID: ${{ secrets.TWILIO_ACCOUNT_SID }}
-          TWILIO_AUTH_TOKEN: ${{ secrets.TWILIO_AUTH_TOKEN }}
-          TWILIO_WHATSAPP_NUMBER: ${{ secrets.TWILIO_WHATSAPP_NUMBER }}
-          NEXTAUTH_SECRET: ${{ secrets.NEXTAUTH_SECRET }}
-          NEXTAUTH_URL: ${{ secrets.NEXTAUTH_URL || 'http://localhost:3000' }}
-          
-      - name: Wait for API application to be ready
-        run: |
-          timeout 60 bash -c 'until curl -f http://localhost:3000/api/health-simple; do sleep 2; done'
-          
-      - name: Run API tests
+      - name: Run API tests against production
         run: npx playwright test tests/api-endpoints.spec.ts
         env:
-          BASE_URL: http://localhost:3000
+          BASE_URL: https://imirezervimi.al
+          TEST_BASE_URL: https://imirezervimi.al
           
       - name: Upload API test results
         if: always()
@@ -280,55 +204,18 @@ jobs:
         
       - name: Install Playwright
         run: npx playwright install chromium
-        
-      - name: Verify build output
+          
+      - name: Wait for production site to be ready
         run: |
-          echo "📁 Checking build output..."
-          ls -la frontend/.next/ || echo "No .next directory"
-        continue-on-error: true
+          echo "🌐 Testing mobile against production: https://imirezervimi.al"
+          timeout 60 bash -c 'until curl -f https://imirezervimi.al/api/health-simple; do sleep 5; done'
           
-      - name: Install frontend dependencies
-        working-directory: ./frontend
-        run: npm install
-          
-      - name: Build application in test job
-        working-directory: ./frontend
-        run: npm run build
-        env:
-          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co' }}
-          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'placeholder-key' }}
-          NEXTAUTH_SECRET: ${{ secrets.NEXTAUTH_SECRET || 'placeholder-secret' }}
-          NEXTAUTH_URL: ${{ secrets.NEXTAUTH_URL || 'http://localhost:3000' }}
-          TWILIO_ACCOUNT_SID: ${{ secrets.TWILIO_ACCOUNT_SID || 'placeholder' }}
-          TWILIO_AUTH_TOKEN: ${{ secrets.TWILIO_AUTH_TOKEN || 'placeholder' }}
-          TWILIO_WHATSAPP_NUMBER: ${{ secrets.TWILIO_WHATSAPP_NUMBER || '+1234567890' }}
-          INSTAGRAM_CLIENT_ID: ${{ secrets.INSTAGRAM_CLIENT_ID || 'placeholder' }}
-          INSTAGRAM_CLIENT_SECRET: ${{ secrets.INSTAGRAM_CLIENT_SECRET || 'placeholder' }}
-          
-      - name: Start application
-        run: |
-          cd frontend && npm run start &
-          sleep 30
-          curl -f http://localhost:3000 || exit 1
-        env:
-          PORT: 3000
-          NODE_ENV: production
-          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
-          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
-          TWILIO_ACCOUNT_SID: ${{ secrets.TWILIO_ACCOUNT_SID }}
-          TWILIO_AUTH_TOKEN: ${{ secrets.TWILIO_AUTH_TOKEN }}
-          TWILIO_WHATSAPP_NUMBER: ${{ secrets.TWILIO_WHATSAPP_NUMBER }}
-          NEXTAUTH_SECRET: ${{ secrets.NEXTAUTH_SECRET }}
-          NEXTAUTH_URL: ${{ secrets.NEXTAUTH_URL || 'http://localhost:3000' }}
-          
-      - name: Wait for mobile application to be ready
-        run: |
-          timeout 60 bash -c 'until curl -f http://localhost:3000/api/health-simple; do sleep 2; done'
-          
-      - name: Run mobile device tests
+      - name: Run mobile device tests against production
         run: npx playwright test --project="Mobile Chrome"
         env:
-          BASE_URL: http://localhost:3000
+          BASE_URL: https://imirezervimi.al
+          TEST_BASE_URL: https://imirezervimi.al
+          HEADLESS: true
           
       - name: Upload mobile test results
         if: always()
