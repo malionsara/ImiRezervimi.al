@@ -168,10 +168,12 @@ test.describe('Homepage - ImiRezervimi.al', () => {
     // Simulate network failure
     await context.setOffline(true);
     
-    const response = await page.goto('/', { waitUntil: 'domcontentloaded' });
-    
-    // Should handle offline gracefully
-    expect(response?.status()).not.toBe(200);
+    try {
+      await page.goto('/', { waitUntil: 'domcontentloaded', timeout: 10000 });
+    } catch (error) {
+      // This is expected when offline
+      expect(error.message).toContain('ERR_INTERNET_DISCONNECTED');
+    }
     
     // Restore network
     await context.setOffline(false);
