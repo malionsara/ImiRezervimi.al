@@ -91,7 +91,7 @@ export default defineConfig({
     // },
   ],
 
-  /* Run your local dev server before starting the tests */
+  /* Run your local dev server before starting the tests - disabled in CI */
   webServer: process.env.CI ? undefined : {
     command: 'cd frontend && npm run dev',
     url: 'http://127.0.0.1:3000',
@@ -99,9 +99,9 @@ export default defineConfig({
     timeout: 120 * 1000, // 2 minutes
   },
 
-  /* Global setup and teardown */
-  globalSetup: require.resolve('./tests/global.setup.ts'),
-  globalTeardown: require.resolve('./tests/global.teardown.ts'),
+  /* Global setup and teardown - disabled for production CI testing */
+  globalSetup: process.env.CI ? undefined : require.resolve('./tests/global.setup.ts'),
+  globalTeardown: process.env.CI ? undefined : require.resolve('./tests/global.teardown.ts'),
 
   /* Output directory for test artifacts */
   outputDir: 'test-results/',
