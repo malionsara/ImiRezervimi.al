@@ -124,9 +124,8 @@ jobs:
         continue-on-error: true
           
       - name: Start application for testing
-        working-directory: ./frontend
         run: |
-          npm run start &
+          cd frontend && npm run start &
           sleep 30  # Wait for app to start
           curl -f http://localhost:3000 || exit 1
         env:
@@ -183,9 +182,8 @@ jobs:
         continue-on-error: true
           
       - name: Start application for API testing
-        working-directory: ./frontend
         run: |
-          npm run start &
+          cd frontend && npm run start &
           sleep 30
         env:
           PORT: 3000
@@ -234,15 +232,14 @@ jobs:
         continue-on-error: true
           
       - name: Start application
-        working-directory: ./frontend
         run: |
-          npm run start &
+          cd frontend && npm run start &
           sleep 30
         env:
           PORT: 3000
           
       - name: Run mobile device tests
-        run: npx playwright test --project=Mobile
+        run: npx playwright test --project="Mobile Chrome"
         env:
           BASE_URL: http://localhost:3000
           
