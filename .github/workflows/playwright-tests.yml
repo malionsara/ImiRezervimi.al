@@ -119,23 +119,29 @@ jobs:
       - name: Install Playwright browsers
         run: npx playwright install --with-deps ${{ matrix.browser }}
         
-      - name: Download build artifacts
-        uses: actions/download-artifact@v4
-        with:
-          name: build-artifacts
-          path: ./
-        continue-on-error: true
-          
-      - name: Verify build artifacts
+      - name: Verify build output
         run: |
-          echo "📁 Checking downloaded artifacts..."
-          ls -la frontend/ || echo "No frontend directory"
+          echo "📁 Checking build output..."
           ls -la frontend/.next/ || echo "No .next directory"
         continue-on-error: true
           
       - name: Install frontend dependencies
         working-directory: ./frontend
         run: npm install
+          
+      - name: Build application in test job
+        working-directory: ./frontend
+        run: npm run build
+        env:
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co' }}
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'placeholder-key' }}
+          NEXTAUTH_SECRET: ${{ secrets.NEXTAUTH_SECRET || 'placeholder-secret' }}
+          NEXTAUTH_URL: ${{ secrets.NEXTAUTH_URL || 'http://localhost:3000' }}
+          TWILIO_ACCOUNT_SID: ${{ secrets.TWILIO_ACCOUNT_SID || 'placeholder' }}
+          TWILIO_AUTH_TOKEN: ${{ secrets.TWILIO_AUTH_TOKEN || 'placeholder' }}
+          TWILIO_WHATSAPP_NUMBER: ${{ secrets.TWILIO_WHATSAPP_NUMBER || '+1234567890' }}
+          INSTAGRAM_CLIENT_ID: ${{ secrets.INSTAGRAM_CLIENT_ID || 'placeholder' }}
+          INSTAGRAM_CLIENT_SECRET: ${{ secrets.INSTAGRAM_CLIENT_SECRET || 'placeholder' }}
           
       - name: Start application for testing
         run: |
@@ -188,23 +194,29 @@ jobs:
       - name: Install Playwright
         run: npx playwright install chromium
         
-      - name: Download build artifacts
-        uses: actions/download-artifact@v4
-        with:
-          name: build-artifacts
-          path: ./
-        continue-on-error: true
-          
-      - name: Verify build artifacts
+      - name: Verify build output
         run: |
-          echo "📁 Checking downloaded artifacts..."
-          ls -la frontend/ || echo "No frontend directory"
+          echo "📁 Checking build output..."
           ls -la frontend/.next/ || echo "No .next directory"
         continue-on-error: true
           
       - name: Install frontend dependencies
         working-directory: ./frontend
         run: npm install
+          
+      - name: Build application in test job
+        working-directory: ./frontend
+        run: npm run build
+        env:
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co' }}
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'placeholder-key' }}
+          NEXTAUTH_SECRET: ${{ secrets.NEXTAUTH_SECRET || 'placeholder-secret' }}
+          NEXTAUTH_URL: ${{ secrets.NEXTAUTH_URL || 'http://localhost:3000' }}
+          TWILIO_ACCOUNT_SID: ${{ secrets.TWILIO_ACCOUNT_SID || 'placeholder' }}
+          TWILIO_AUTH_TOKEN: ${{ secrets.TWILIO_AUTH_TOKEN || 'placeholder' }}
+          TWILIO_WHATSAPP_NUMBER: ${{ secrets.TWILIO_WHATSAPP_NUMBER || '+1234567890' }}
+          INSTAGRAM_CLIENT_ID: ${{ secrets.INSTAGRAM_CLIENT_ID || 'placeholder' }}
+          INSTAGRAM_CLIENT_SECRET: ${{ secrets.INSTAGRAM_CLIENT_SECRET || 'placeholder' }}
           
       - name: Start application for API testing
         run: |
@@ -249,23 +261,29 @@ jobs:
       - name: Install Playwright
         run: npx playwright install chromium
         
-      - name: Download build artifacts
-        uses: actions/download-artifact@v4
-        with:
-          name: build-artifacts
-          path: ./
-        continue-on-error: true
-          
-      - name: Verify build artifacts
+      - name: Verify build output
         run: |
-          echo "📁 Checking downloaded artifacts..."
-          ls -la frontend/ || echo "No frontend directory"
+          echo "📁 Checking build output..."
           ls -la frontend/.next/ || echo "No .next directory"
         continue-on-error: true
           
       - name: Install frontend dependencies
         working-directory: ./frontend
         run: npm install
+          
+      - name: Build application in test job
+        working-directory: ./frontend
+        run: npm run build
+        env:
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co' }}
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'placeholder-key' }}
+          NEXTAUTH_SECRET: ${{ secrets.NEXTAUTH_SECRET || 'placeholder-secret' }}
+          NEXTAUTH_URL: ${{ secrets.NEXTAUTH_URL || 'http://localhost:3000' }}
+          TWILIO_ACCOUNT_SID: ${{ secrets.TWILIO_ACCOUNT_SID || 'placeholder' }}
+          TWILIO_AUTH_TOKEN: ${{ secrets.TWILIO_AUTH_TOKEN || 'placeholder' }}
+          TWILIO_WHATSAPP_NUMBER: ${{ secrets.TWILIO_WHATSAPP_NUMBER || '+1234567890' }}
+          INSTAGRAM_CLIENT_ID: ${{ secrets.INSTAGRAM_CLIENT_ID || 'placeholder' }}
+          INSTAGRAM_CLIENT_SECRET: ${{ secrets.INSTAGRAM_CLIENT_SECRET || 'placeholder' }}
           
       - name: Start application
         run: |
