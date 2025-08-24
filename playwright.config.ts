@@ -93,13 +93,8 @@ export default defineConfig({
     // },
   ],
 
-  /* Run your local dev server before starting the tests - disabled in CI */
-  webServer: process.env.CI ? undefined : {
-    command: 'cd frontend && npm run dev',
-    url: 'http://127.0.0.1:3000',
-    reuseExistingServer: !process.env.CI,
-    timeout: 120 * 1000, // 2 minutes
-  },
+  /* Run your local dev server before starting the tests - disabled in CI and locally for now */
+  webServer: process.env.CI ? undefined : undefined,
 
   /* Global setup and teardown - disabled for production CI testing */
   globalSetup: process.env.CI ? undefined : require.resolve('./tests/global.setup.ts'),

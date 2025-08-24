@@ -62,6 +62,7 @@ export const TEST_DATA = {
 
   // Test URLs
   URLS: {
+    BASE: process.env.BASE_URL || process.env.TEST_BASE_URL || 'http://localhost:3000',
     HOME: '/',
     LOGIN: '/login',
     DASHBOARD: '/dashboard',
@@ -96,4 +97,22 @@ export function generateTestPhone(): string {
 export function generateTestEmail(): string {
   const timestamp = Date.now();
   return `test.user.${timestamp}@example.com`;
+}
+
+// Generate unique test data
+export function generateUniqueTestData() {
+  const timestamp = Date.now();
+  const randomId = Math.floor(Math.random() * 10000);
+  
+  return {
+    phone: generateTestPhone(),
+    email: generateTestEmail(),
+    firstName: `Test`,
+    lastName: `User${randomId}`,
+    salonName: `Test Salon ${randomId}`,
+    appointmentId: `test-appointment-${timestamp}`,
+    verificationCode: '123456', // Test code
+    timestamp,
+    randomId
+  };
 }
