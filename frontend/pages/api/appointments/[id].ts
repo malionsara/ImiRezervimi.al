@@ -267,8 +267,27 @@ async function handleUpdateAppointmentStatus(
   
   console.log(`✅ Appointment status updated: ${appointmentId} -> ${status}`)
   
-  // TODO: Send notification to customer about status change
-  // await sendStatusChangeNotification(updatedAppointment, status)
+  // Send WhatsApp notification about status change
+  try {
+    const { sendAppointmentStatusChangeNotification } = await import('../../../lib/appointment-notifications')
+    
+    console.log(`🔔 Sending ${status} notification for appointment ${appointmentId}`)
+    const notificationResult = await sendAppointmentStatusChangeNotification(
+      updatedAppointment, 
+      status,
+      salonNotes
+    )
+    
+    if (notificationResult.success) {
+      console.log(`✅ Status change notification sent successfully. SID: ${notificationResult.messageSid}`)
+    } else {
+      console.error(`❌ Failed to send status change notification: ${notificationResult.error}`)
+      // Don't fail the entire request if notification fails
+    }
+  } catch (notificationError) {
+    console.error('❌ Error sending status change notification:', notificationError)
+    // Don't fail the entire request if notification fails
+  }
   
   return res.status(200).json({
     success: true,

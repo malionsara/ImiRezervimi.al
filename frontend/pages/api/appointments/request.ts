@@ -20,7 +20,6 @@ import {
   checkAppointmentConflict,
   createAppointmentRequest,
   validateWorkingHours,
-  formatAppointmentResponse,
   cleanupRateLimit
 } from '../../../lib/appointments'
 import { SalonRow, ServiceRow, CustomerRow, AppointmentRow } from '../../../types/database'
@@ -248,8 +247,24 @@ export default async function handler(
         service
       )
       
-      // Send salon notification
-      await sendSalonNotification(appointment, salon, customer, service)
+      // Send salon notification using the new notification service
+      const { sendNewAppointmentRequestNotification } = await import('../../../lib/appointment-notifications')
+      
+      // We need to convert the appointment data to the expected format
+      const appointmentWithRelations = {
+        ...appointment,
+        salons: salon,
+        customers: customer,
+        services: service,
+        service_name: service.name
+      }
+      
+      const notificationResult = await sendNewAppointmentRequestNotification(appointmentWithRelations as any)
+      if (notificationResult.success) {
+        console.log(`✅ New appointment request notification sent to salon. SID: ${notificationResult.messageSid}`)
+      } else {
+        console.error(`❌ Failed to send new appointment request notification to salon: ${notificationResult.error}`)
+      }
     } catch (notificationError) {
       console.error('❌ Failed to send notifications:', notificationError)
       // Don't fail the request if notifications fail
@@ -319,43 +334,3 @@ async function sendCustomerConfirmation(
   }
 }
 
-/**
- * Send new booking notification to salon
- */
-async function sendSalonNotification(
-  appointment: AppointmentRow,
-  salon: SalonRow,
-  customer: CustomerRow,
-  service: ServiceRow
-): Promise<void> {
-  try {
-    const salonPhone = salon.phone
-    console.log(`🔍 Checking salon phone number: ${salonPhone}`)
-    if (!salonPhone) {
-      console.log('⚠️ Salon phone number not found, skipping notification')
-      console.log(`📋 Salon data:`, salon)
-      return
-    }
-    
-    const customerName = `${customer.first_name} ${customer.last_name}`
-    const appointmentDate = new Date(appointment.appointment_date).toLocaleDateString('sq-AL', {
-      day: 'numeric',
-      month: 'long',
-      year: 'numeric'
-    })
-    
-    await sendWhatsAppTemplate(salonPhone, 'SALON_NEW_REQUEST', {
-      customerName,
-      service: service.name,
-      date: appointmentDate,
-      time: appointment.start_time,
-      phone: customer.phone,
-      appointmentId: appointment.id
-    })
-    
-    console.log(`✅ Salon notification sent to ${salonPhone}`)
-  } catch (error) {
-    console.error('❌ Failed to send salon notification:', error)
-    // Don't throw - notification failure shouldn't break the booking flow
-  }
-}
