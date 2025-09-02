@@ -223,7 +223,7 @@ export async function validateSalonSession(sessionToken: string): Promise<{ succ
   }
 }
 
-// Send magic link via WhatsApp with SMS fallback
+// Send magic link via WhatsApp with graceful fallback
 export async function sendSalonMagicLink(phone: string, token: string, salonName?: string): Promise<boolean> {
   try {
     const baseUrl = process.env.NEXTAUTH_URL || 'https://www.imirezervimi.al'
@@ -232,13 +232,93 @@ export async function sendSalonMagicLink(phone: string, token: string, salonName
     console.log('📱 Sending salon magic link to:', phone)
     console.log('🔗 Magic link:', magicLink)
     
-    // For salon login, we need to send the actual magic link
-    // Since we don't have an approved salon-specific template, go straight to SMS
-    console.log('🏪 Sending salon magic link via SMS (no WhatsApp template for salon login)')
-    return await sendSalonMagicLinkSMS(phone, magicLink, salonName)
+    // Try WhatsApp first (will likely fail with 63016 for 24-hour window)
+    console.log('🏪 Trying WhatsApp for salon login...')
+    
+    try {
+      const whatsappSuccess = await sendSalonMagicLinkWhatsApp(phone, magicLink, salonName)
+      
+      if (whatsappSuccess) {
+        console.log('✅ Salon magic link sent via WhatsApp')
+        return true
+      } else {
+        console.log('⚠️ WhatsApp failed (likely 63016), cannot use SMS fallback for international numbers')
+        
+        // For Albanian numbers with US Twilio setup, we can't send SMS
+        // The API should handle this gracefully and show the link to the user
+        console.log('💡 Will rely on API to provide alternative solution')
+        return false
+      }
+      
+    } catch (error) {
+      console.error('❌ Error in salon WhatsApp sending:', error)
+      return false
+    }
     
   } catch (error) {
     console.error('❌ Error sending salon magic link:', error)
+    return false
+  }
+}
+
+// Check if SMS can be sent (same country compatibility)
+async function checkSMSCompatibility(phone: string): Promise<boolean> {
+  // US Twilio numbers can only send to US/Canada numbers reliably
+  // Albanian numbers (+355) cannot receive SMS from US numbers due to restrictions
+  return phone.startsWith('+1') // Only US/Canada numbers
+}
+
+// Send magic link via WhatsApp (direct API, will likely fail with 63016)
+async function sendSalonMagicLinkWhatsApp(phone: string, magicLink: string, salonName?: string): Promise<boolean> {
+  try {
+    const message = `🏪 SALON DASHBOARD - ImiRezervimi.al
+
+Përshëndetje ${salonName || 'Salon'}!
+
+Kliko për hyrje në dashboard-in tuaj:
+${magicLink}
+
+⚠️ Siguria:
+• Linku skadon për 24 orë  
+• Përdoret vetëm një herë
+• Vetëm për salon dashboard
+
+💼 ImiRezervimi.al`
+
+    const twilioAccountSid = process.env.TWILIO_ACCOUNT_SID
+    const twilioAuthToken = process.env.TWILIO_AUTH_TOKEN
+    const twilioWhatsAppNumber = process.env.TWILIO_WHATSAPP_NUMBER
+    
+    if (!twilioAccountSid || !twilioAuthToken || !twilioWhatsAppNumber) {
+      console.error('❌ Twilio WhatsApp credentials not configured')
+      return false
+    }
+    
+    const response = await fetch(`https://api.twilio.com/2010-04-01/Accounts/${twilioAccountSid}/Messages.json`, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Basic ${Buffer.from(`${twilioAccountSid}:${twilioAuthToken}`).toString('base64')}`,
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+      body: new URLSearchParams({
+        From: `whatsapp:${twilioWhatsAppNumber}`,
+        To: `whatsapp:${phone}`,
+        Body: message
+      }).toString()
+    })
+    
+    if (response.ok) {
+      const result = await response.json()
+      console.log('✅ Salon magic link sent via WhatsApp:', result.sid)
+      return true
+    } else {
+      const error = await response.text()
+      console.error('❌ Failed to send WhatsApp (expected 63016):', error)
+      return false
+    }
+    
+  } catch (error) {
+    console.error('❌ Error sending WhatsApp:', error)
     return false
   }
 }

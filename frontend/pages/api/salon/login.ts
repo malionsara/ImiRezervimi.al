@@ -11,6 +11,7 @@ interface LoginRequest {
 interface ApiResponse {
   success: boolean
   message?: string
+  magicLink?: string  // Provide link directly when messaging fails
   error?: {
     code: string
     message: string
@@ -66,14 +67,18 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
       tokenResult.salonName
     )
 
+    const baseUrl = process.env.NEXTAUTH_URL || 'https://www.imirezervimi.al'
+    const magicLink = `${baseUrl}/salon/auth/verify?token=${tokenResult.token}`
+
     if (!messageSent) {
-      console.error('❌ Failed to send magic link WhatsApp')
-      return res.status(500).json({
-        success: false,
-        error: {
-          code: 'MESSAGE_SEND_FAILED',
-          message: 'Nuk u dërgua mesazhi në WhatsApp. Provoni përsëri.'
-        }
+      console.log('⚠️ Message sending failed, providing direct link access')
+      
+      // When messaging fails (WhatsApp 63016 + SMS country mismatch), 
+      // provide the magic link directly to the user
+      return res.status(200).json({
+        success: true,
+        message: 'Për shkak të kufizimeve të WhatsApp, kliko linkun më poshtë për hyrje:',
+        magicLink: magicLink
       })
     }
 

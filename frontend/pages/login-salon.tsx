@@ -9,6 +9,7 @@ export default function SalonLoginPage() {
   const [phone, setPhone] = useState('')
   const [loading, setLoading] = useState(false)
   const [message, setMessage] = useState<{ text: string; type: 'success' | 'error' } | null>(null)
+  const [magicLink, setMagicLink] = useState<string | null>(null)
 
   const normalizePhoneNumber = (phoneNumber: string) => {
     // Remove all non-digit characters except +
@@ -64,6 +65,11 @@ export default function SalonLoginPage() {
           text: data.message || 'Linku i hyrjes u dërgua në WhatsApp. Kontrolloni mesazhet tuaja.', 
           type: 'success' 
         })
+        
+        // If a magic link was provided directly, store it
+        if (data.magicLink) {
+          setMagicLink(data.magicLink)
+        }
       } else {
         setMessage({ 
           text: data.error?.message || 'Nuk u dërgua. Provoni përsëri.', 
@@ -162,12 +168,33 @@ export default function SalonLoginPage() {
                 
                 {message.type === 'success' && (
                   <div className="mt-3 p-3 bg-white rounded border border-green-200">
-                    <p className="text-xs text-green-700 font-medium mb-2">Hapat e ardhshëm:</p>
-                    <ol className="text-xs text-green-600 space-y-1">
-                      <li>1. Hapni WhatsApp në telefon</li>
-                      <li>2. Kërkoni mesazhin nga ImiRezervimi.al</li>
-                      <li>3. Kliko linkun për të hyrë në dashboard</li>
-                    </ol>
+                    {magicLink ? (
+                      // Show direct magic link when messaging failed
+                      <div>
+                        <p className="text-xs text-green-700 font-medium mb-3">🔐 Link i hyrjes:</p>
+                        <a 
+                          href={magicLink} 
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="block w-full p-3 bg-gradient-to-r from-red-500 to-pink-500 text-white text-center rounded-lg hover:from-red-600 hover:to-pink-600 transition-all font-medium shadow-lg text-sm"
+                        >
+                          🏪 Hyr në Dashboard
+                        </a>
+                        <p className="text-xs text-green-600 mt-2 text-center">
+                          ⚠️ Linku skadon për 24 orë dhe përdoret vetëm një herë
+                        </p>
+                      </div>
+                    ) : (
+                      // Show WhatsApp instructions when message was sent
+                      <div>
+                        <p className="text-xs text-green-700 font-medium mb-2">Hapat e ardhshëm:</p>
+                        <ol className="text-xs text-green-600 space-y-1">
+                          <li>1. Hapni WhatsApp në telefon</li>
+                          <li>2. Kërkoni mesazhin nga ImiRezervimi.al</li>
+                          <li>3. Kliko linkun për të hyrë në dashboard</li>
+                        </ol>
+                      </div>
+                    )}
                   </div>
                 )}
               </div>
