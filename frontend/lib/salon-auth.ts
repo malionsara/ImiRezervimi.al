@@ -261,13 +261,6 @@ export async function sendSalonMagicLink(phone: string, token: string, salonName
   }
 }
 
-// Check if SMS can be sent (same country compatibility)
-async function checkSMSCompatibility(phone: string): Promise<boolean> {
-  // US Twilio numbers can only send to US/Canada numbers reliably
-  // Albanian numbers (+355) cannot receive SMS from US numbers due to restrictions
-  return phone.startsWith('+1') // Only US/Canada numbers
-}
-
 // Send magic link via WhatsApp (direct API, will likely fail with 63016)
 async function sendSalonMagicLinkWhatsApp(phone: string, magicLink: string, salonName?: string): Promise<boolean> {
   try {
@@ -319,66 +312,6 @@ ${magicLink}
     
   } catch (error) {
     console.error('❌ Error sending WhatsApp:', error)
-    return false
-  }
-}
-
-// Send magic link via SMS fallback
-async function sendSalonMagicLinkSMS(phone: string, magicLink: string, salonName?: string): Promise<boolean> {
-  try {
-    // Import SMS functionality
-    const { sendVerificationSMS } = await import('./sms')
-    
-    // Create a specific SMS message for salon login
-    const smsMessage = `🏪 SALON DASHBOARD - ImiRezervimi.al
-
-Përshëndetje ${salonName ? salonName : 'Salon'}!
-
-Kliko për hyrje në dashboard-in tuaj:
-${magicLink}
-
-⚠️ Siguria:
-• Linku skadon për 24 orë  
-• Përdoret vetëm një herë
-• Vetëm për salon dashboard
-
-💼 ImiRezervimi.al`
-    
-    // Use Twilio SMS directly for salon login
-    const twilioAccountSid = process.env.TWILIO_ACCOUNT_SID
-    const twilioAuthToken = process.env.TWILIO_AUTH_TOKEN
-    const twilioPhoneNumber = process.env.TWILIO_PHONE_NUMBER
-    
-    if (!twilioAccountSid || !twilioAuthToken || !twilioPhoneNumber) {
-      console.error('❌ Twilio SMS credentials not configured')
-      return false
-    }
-    
-    const response = await fetch(`https://api.twilio.com/2010-04-01/Accounts/${twilioAccountSid}/Messages.json`, {
-      method: 'POST',
-      headers: {
-        'Authorization': `Basic ${Buffer.from(`${twilioAccountSid}:${twilioAuthToken}`).toString('base64')}`,
-        'Content-Type': 'application/x-www-form-urlencoded',
-      },
-      body: new URLSearchParams({
-        From: twilioPhoneNumber,
-        To: phone,
-        Body: smsMessage
-      }).toString()
-    })
-    
-    if (response.ok) {
-      const result = await response.json()
-      console.log('✅ Salon magic link sent via SMS:', result.sid)
-      return true
-    } else {
-      const error = await response.text()
-      console.error('❌ Failed to send SMS:', error)
-      return false
-    }
-    
-  } catch (error) {
-    console.error('❌ Error sending salon magic link SMS:', error)
     return false
   }
 }
