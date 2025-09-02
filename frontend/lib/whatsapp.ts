@@ -283,7 +283,7 @@ export async function sendWhatsAppVerification(phone: string): Promise<WhatsAppV
     }
     console.log('✅ Verification code stored in database with ID:', recordId);
 
-    // Use new template system to send verification code
+    // Try WhatsApp template system first
     const templateResult = await sendWhatsAppTemplate(
       phone, 
       'VERIFICATION_CODE', 
@@ -299,16 +299,57 @@ export async function sendWhatsAppVerification(phone: string): Promise<WhatsAppV
         status: 'sent',
         recordId,
       });
+      return templateResult;
     } else {
-      // Log failed WhatsApp message  
-      await logWhatsAppNotification({
-        phone,
-        status: 'failed',
-        error: templateResult.error,
-      });
+      // Check if this is a 24-hour window error (error code 63016)
+      const isWindowError = templateResult.error?.includes('63016') || 
+                           templateResult.error?.includes('outside the allowed window');
+      
+      if (isWindowError) {
+        console.log('🔄 WhatsApp 24-hour window exceeded, falling back to SMS');
+        
+        // Import SMS functionality
+        const { sendVerificationSMS } = await import('./sms');
+        
+        // Try sending SMS instead
+        const smsResult = await sendVerificationSMS(phone);
+        
+        if (smsResult.success) {
+          console.log('✅ Fallback SMS sent successfully');
+          await logWhatsAppNotification({
+            phone,
+            code,
+            twilioSid: smsResult.messageSid!,
+            status: 'sent_via_sms',
+            recordId,
+            error: 'WhatsApp failed: ' + templateResult.error,
+          });
+          return {
+            success: true,
+            messageSid: smsResult.messageSid,
+          };
+        } else {
+          console.log('❌ Both WhatsApp and SMS failed');
+          await logWhatsAppNotification({
+            phone,
+            status: 'failed',
+            error: `WhatsApp: ${templateResult.error}, SMS: ${smsResult.error}`,
+          });
+          return {
+            success: false,
+            error: 'Gabim në dërgimin e kodit. Provoni përsëri.',
+          };
+        }
+      } else {
+        // Other WhatsApp error, log and return
+        await logWhatsAppNotification({
+          phone,
+          status: 'failed',
+          error: templateResult.error,
+        });
+        return templateResult;
+      }
     }
-    
-    return templateResult;
 
   } catch (error: unknown) {
     console.error('❌ WhatsApp verification error:', error);
@@ -410,7 +451,7 @@ async function logWhatsAppNotification(data: {
   phone: string;
   code?: string;
   twilioSid?: string;
-  status: 'sent' | 'failed' | 'verified';
+  status: 'sent' | 'failed' | 'verified' | 'sent_via_sms';
   error?: string;
   recordId?: string;
 }): Promise<void> {
