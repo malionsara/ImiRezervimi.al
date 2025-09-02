@@ -223,73 +223,112 @@ export async function validateSalonSession(sessionToken: string): Promise<{ succ
   }
 }
 
-// Send magic link via WhatsApp
+// Send magic link via WhatsApp with SMS fallback
 export async function sendSalonMagicLink(phone: string, token: string, salonName?: string): Promise<boolean> {
   try {
     const baseUrl = process.env.NEXTAUTH_URL || 'https://www.imirezervimi.al'
     const magicLink = `${baseUrl}/salon/auth/verify?token=${token}`
     
-    console.log('📱 Sending magic link WhatsApp to:', phone)
+    console.log('📱 Sending salon magic link to:', phone)
     console.log('🔗 Magic link:', magicLink)
     
-    // Format WhatsApp message for salon login
-    const whatsappMessage = `🏪 *ImiRezervimi.al - Hyrje në Dashboard*
+    // Try WhatsApp first using template system
+    try {
+      // Import WhatsApp template functions
+      const { sendWhatsAppTemplate } = await import('./whatsapp')
+      
+      // Try to send using WELCOME_MESSAGE template with salon name as variable
+      const whatsappResult = await sendWhatsAppTemplate(
+        phone,
+        'WELCOME_MESSAGE',
+        { firstName: salonName || 'Salon' }
+      )
+      
+      if (whatsappResult.success) {
+        console.log('✅ Salon magic link sent via WhatsApp template')
+        return true
+      } else {
+        console.log('⚠️ WhatsApp template failed, checking for 24-hour window error')
+        
+        // Check if this is a 24-hour window error
+        const isWindowError = whatsappResult.error?.includes('63016') || 
+                             whatsappResult.error?.includes('outside the allowed window')
+        
+        if (isWindowError) {
+          console.log('🔄 WhatsApp 24-hour window exceeded, falling back to SMS for salon login')
+          
+          // Try SMS fallback
+          return await sendSalonMagicLinkSMS(phone, magicLink, salonName)
+        } else {
+          console.error('❌ WhatsApp failed with other error:', whatsappResult.error)
+          return await sendSalonMagicLinkSMS(phone, magicLink, salonName)
+        }
+      }
+      
+    } catch (whatsappError) {
+      console.error('❌ WhatsApp import error:', whatsappError)
+      // Fall back to SMS
+      return await sendSalonMagicLinkSMS(phone, magicLink, salonName)
+    }
+    
+  } catch (error) {
+    console.error('❌ Error sending salon magic link:', error)
+    return false
+  }
+}
 
-Përshëndetje${salonName ? ` nga ${salonName}` : ''}!
+// Send magic link via SMS fallback
+async function sendSalonMagicLinkSMS(phone: string, magicLink: string, salonName?: string): Promise<boolean> {
+  try {
+    // Import SMS functionality
+    const { sendVerificationSMS } = await import('./sms')
+    
+    // Create a simple SMS message with the magic link
+    const smsMessage = `🏪 ImiRezervimi.al - Dashboard Hyrje
 
-Keni kërkuar hyrje në dashboard-in e sallonit tuaj.
+${salonName ? `Përshëndetje nga ${salonName}!` : 'Përshëndetje!'}
 
-🔐 *Kliko linkun për të hyrë:*
-${magicLink}
+Kliko për hyrje: ${magicLink}
 
-⚠️ *Siguria:*
-• Linku skadon për 24 orë
-• Mund të përdoret vetëm një herë
-• Nëse nuk keni kërkuar hyrje, injoroni këtë mesazh
+⚠️ Linku skadon për 24 orë dhe përdoret vetëm një herë.
 
 💼 ImiRezervimi.al`
     
-    // Send via Twilio WhatsApp API
+    // Use Twilio SMS directly for salon login
     const twilioAccountSid = process.env.TWILIO_ACCOUNT_SID
     const twilioAuthToken = process.env.TWILIO_AUTH_TOKEN
-    const twilioWhatsAppNumber = process.env.TWILIO_WHATSAPP_NUMBER
+    const twilioPhoneNumber = process.env.TWILIO_PHONE_NUMBER
     
-    if (!twilioAccountSid || !twilioAuthToken || !twilioWhatsAppNumber) {
-      console.error('❌ Twilio credentials not configured')
+    if (!twilioAccountSid || !twilioAuthToken || !twilioPhoneNumber) {
+      console.error('❌ Twilio SMS credentials not configured')
       return false
     }
     
-    try {
-      const response = await fetch(`https://api.twilio.com/2010-04-01/Accounts/${twilioAccountSid}/Messages.json`, {
-        method: 'POST',
-        headers: {
-          'Authorization': `Basic ${Buffer.from(`${twilioAccountSid}:${twilioAuthToken}`).toString('base64')}`,
-          'Content-Type': 'application/x-www-form-urlencoded',
-        },
-        body: new URLSearchParams({
-          From: `whatsapp:${twilioWhatsAppNumber}`,
-          To: `whatsapp:${phone}`,
-          Body: whatsappMessage
-        }).toString()
-      })
-      
-      if (response.ok) {
-        const result = await response.json()
-        console.log('✅ Magic link WhatsApp sent successfully:', result.sid)
-        return true
-      } else {
-        const error = await response.text()
-        console.error('❌ Failed to send WhatsApp:', error)
-        return false
-      }
-      
-    } catch (twilioError) {
-      console.error('❌ Twilio API error:', twilioError)
+    const response = await fetch(`https://api.twilio.com/2010-04-01/Accounts/${twilioAccountSid}/Messages.json`, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Basic ${Buffer.from(`${twilioAccountSid}:${twilioAuthToken}`).toString('base64')}`,
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+      body: new URLSearchParams({
+        From: twilioPhoneNumber,
+        To: phone,
+        Body: smsMessage
+      }).toString()
+    })
+    
+    if (response.ok) {
+      const result = await response.json()
+      console.log('✅ Salon magic link sent via SMS:', result.sid)
+      return true
+    } else {
+      const error = await response.text()
+      console.error('❌ Failed to send SMS:', error)
       return false
     }
     
   } catch (error) {
-    console.error('❌ Error sending magic link WhatsApp:', error)
+    console.error('❌ Error sending salon magic link SMS:', error)
     return false
   }
 }
