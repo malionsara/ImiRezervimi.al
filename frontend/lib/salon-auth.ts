@@ -232,44 +232,10 @@ export async function sendSalonMagicLink(phone: string, token: string, salonName
     console.log('📱 Sending salon magic link to:', phone)
     console.log('🔗 Magic link:', magicLink)
     
-    // Try WhatsApp first using template system
-    try {
-      // Import WhatsApp template functions
-      const { sendWhatsAppTemplate } = await import('./whatsapp')
-      
-      // Try to send using WELCOME_MESSAGE template with salon name as variable
-      const whatsappResult = await sendWhatsAppTemplate(
-        phone,
-        'WELCOME_MESSAGE',
-        { firstName: salonName || 'Salon' }
-      )
-      
-      if (whatsappResult.success) {
-        console.log('✅ Salon magic link sent via WhatsApp template')
-        return true
-      } else {
-        console.log('⚠️ WhatsApp template failed, checking for 24-hour window error')
-        
-        // Check if this is a 24-hour window error
-        const isWindowError = whatsappResult.error?.includes('63016') || 
-                             whatsappResult.error?.includes('outside the allowed window')
-        
-        if (isWindowError) {
-          console.log('🔄 WhatsApp 24-hour window exceeded, falling back to SMS for salon login')
-          
-          // Try SMS fallback
-          return await sendSalonMagicLinkSMS(phone, magicLink, salonName)
-        } else {
-          console.error('❌ WhatsApp failed with other error:', whatsappResult.error)
-          return await sendSalonMagicLinkSMS(phone, magicLink, salonName)
-        }
-      }
-      
-    } catch (whatsappError) {
-      console.error('❌ WhatsApp import error:', whatsappError)
-      // Fall back to SMS
-      return await sendSalonMagicLinkSMS(phone, magicLink, salonName)
-    }
+    // For salon login, we need to send the actual magic link
+    // Since we don't have an approved salon-specific template, go straight to SMS
+    console.log('🏪 Sending salon magic link via SMS (no WhatsApp template for salon login)')
+    return await sendSalonMagicLinkSMS(phone, magicLink, salonName)
     
   } catch (error) {
     console.error('❌ Error sending salon magic link:', error)
@@ -283,14 +249,18 @@ async function sendSalonMagicLinkSMS(phone: string, magicLink: string, salonName
     // Import SMS functionality
     const { sendVerificationSMS } = await import('./sms')
     
-    // Create a simple SMS message with the magic link
-    const smsMessage = `🏪 ImiRezervimi.al - Dashboard Hyrje
+    // Create a specific SMS message for salon login
+    const smsMessage = `🏪 SALON DASHBOARD - ImiRezervimi.al
 
-${salonName ? `Përshëndetje nga ${salonName}!` : 'Përshëndetje!'}
+Përshëndetje ${salonName ? salonName : 'Salon'}!
 
-Kliko për hyrje: ${magicLink}
+Kliko për hyrje në dashboard-in tuaj:
+${magicLink}
 
-⚠️ Linku skadon për 24 orë dhe përdoret vetëm një herë.
+⚠️ Siguria:
+• Linku skadon për 24 orë  
+• Përdoret vetëm një herë
+• Vetëm për salon dashboard
 
 💼 ImiRezervimi.al`
     
