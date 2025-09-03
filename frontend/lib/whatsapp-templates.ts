@@ -23,6 +23,7 @@ export type TemplateKey =
   | 'APPOINTMENT_REMINDER'
   | 'SALON_NEW_REQUEST'
   | 'SALON_MENU'
+  | 'SALON_LOGIN'
   | 'WELCOME_MESSAGE';
 
 // ==============================================
@@ -97,6 +98,16 @@ export const WHATSAPP_TEMPLATES: Record<TemplateKey, WhatsAppTemplate> = {
     category: 'UTILITY',
     variables: [],
     description: 'Interactive menu with buttons for salon commands'
+  },
+
+  SALON_LOGIN: {
+    id: 'salon_login',
+    name: 'Salon Login Link',
+    albanianName: 'Link Hyrjeje Saloni',
+    contentSid: 'HXd25a8b0dce128b05cabebfdd02bf8e00',
+    category: 'AUTHENTICATION',
+    variables: ['salonName', 'loginLink'],
+    description: 'Magic link for salon dashboard login'
   },
 
   WELCOME_MESSAGE: {

@@ -223,98 +223,40 @@ export async function validateSalonSession(sessionToken: string): Promise<{ succ
   }
 }
 
-// Send magic link via WhatsApp with graceful fallback
+// Send salon login notification via WhatsApp (using new SALON_LOGIN template)
 export async function sendSalonMagicLink(phone: string, token: string, salonName?: string): Promise<boolean> {
   try {
+    console.log('📱 Sending salon login notification to:', phone)
+    
     const baseUrl = process.env.NEXTAUTH_URL || 'https://www.imirezervimi.al'
     const magicLink = `${baseUrl}/salon/auth/verify?token=${token}`
     
-    console.log('📱 Sending salon magic link to:', phone)
-    console.log('🔗 Magic link:', magicLink)
+    // Use the new SALON_LOGIN template with magic link
+    const { sendWhatsAppTemplate } = await import('./whatsapp')
     
-    // Try WhatsApp first (will likely fail with 63016 for 24-hour window)
-    console.log('🏪 Trying WhatsApp for salon login...')
-    
-    try {
-      const whatsappSuccess = await sendSalonMagicLinkWhatsApp(phone, magicLink, salonName)
-      
-      if (whatsappSuccess) {
-        console.log('✅ Salon magic link sent via WhatsApp')
-        return true
-      } else {
-        console.log('⚠️ WhatsApp failed (likely 63016), cannot use SMS fallback for international numbers')
-        
-        // For Albanian numbers with US Twilio setup, we can't send SMS
-        // The API should handle this gracefully and show the link to the user
-        console.log('💡 Will rely on API to provide alternative solution')
-        return false
+    const templateResult = await sendWhatsAppTemplate(
+      phone,
+      'SALON_LOGIN',
+      {
+        salonName: salonName || 'Salon',
+        loginLink: magicLink
       }
-      
-    } catch (error) {
-      console.error('❌ Error in salon WhatsApp sending:', error)
-      return false
-    }
+    )
     
-  } catch (error) {
-    console.error('❌ Error sending salon magic link:', error)
-    return false
-  }
-}
-
-// Send magic link via WhatsApp (direct API, will likely fail with 63016)
-async function sendSalonMagicLinkWhatsApp(phone: string, magicLink: string, salonName?: string): Promise<boolean> {
-  try {
-    const message = `🏪 SALON DASHBOARD - ImiRezervimi.al
-
-Përshëndetje ${salonName || 'Salon'}!
-
-Kliko për hyrje në dashboard-in tuaj:
-${magicLink}
-
-⚠️ Siguria:
-• Linku skadon për 24 orë  
-• Përdoret vetëm një herë
-• Vetëm për salon dashboard
-
-💼 ImiRezervimi.al`
-
-    const twilioAccountSid = process.env.TWILIO_ACCOUNT_SID
-    const twilioAuthToken = process.env.TWILIO_AUTH_TOKEN
-    const twilioWhatsAppNumber = process.env.TWILIO_WHATSAPP_NUMBER
-    
-    if (!twilioAccountSid || !twilioAuthToken || !twilioWhatsAppNumber) {
-      console.error('❌ Twilio WhatsApp credentials not configured')
-      return false
-    }
-    
-    const response = await fetch(`https://api.twilio.com/2010-04-01/Accounts/${twilioAccountSid}/Messages.json`, {
-      method: 'POST',
-      headers: {
-        'Authorization': `Basic ${Buffer.from(`${twilioAccountSid}:${twilioAuthToken}`).toString('base64')}`,
-        'Content-Type': 'application/x-www-form-urlencoded',
-      },
-      body: new URLSearchParams({
-        From: `whatsapp:${twilioWhatsAppNumber}`,
-        To: `whatsapp:${phone}`,
-        Body: message
-      }).toString()
-    })
-    
-    if (response.ok) {
-      const result = await response.json()
-      console.log('✅ Salon magic link sent via WhatsApp:', result.sid)
+    if (templateResult.success) {
+      console.log('✅ Salon login notification sent via WhatsApp template with magic link')
       return true
     } else {
-      const error = await response.text()
-      console.error('❌ Failed to send WhatsApp (expected 63016):', error)
+      console.log('⚠️ WhatsApp template failed:', templateResult.error)
       return false
     }
     
   } catch (error) {
-    console.error('❌ Error sending WhatsApp:', error)
+    console.error('❌ Error sending WhatsApp template:', error)
     return false
   }
 }
+
 
 // Clean up expired tokens (call this periodically)
 export async function cleanupExpiredTokens(): Promise<void> {

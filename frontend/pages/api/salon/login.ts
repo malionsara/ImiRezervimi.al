@@ -67,26 +67,20 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
       tokenResult.salonName
     )
 
-    const baseUrl = process.env.NEXTAUTH_URL || 'https://www.imirezervimi.al'
-    const magicLink = `${baseUrl}/salon/auth/verify?token=${tokenResult.token}`
-
     if (!messageSent) {
-      console.log('⚠️ Message sending failed, providing direct link access')
+      console.log('⚠️ WhatsApp notification failed')
       
-      // When messaging fails (WhatsApp 63016 + SMS country mismatch), 
-      // provide the magic link directly to the user
       return res.status(200).json({
         success: true,
-        message: 'Për shkak të kufizimeve të WhatsApp, kliko linkun më poshtë për hyrje:',
-        magicLink: magicLink
+        message: 'WhatsApp njoftimi dështoi. Kontrolloni numrin dhe provoni përsëri.'
       })
     }
 
-    console.log('✅ Salon login magic link sent successfully')
+    console.log('✅ Salon login notification sent successfully')
     
     return res.status(200).json({ 
       success: true,
-      message: 'Linku i hyrjes u dërgua në WhatsApp. Kontrolloni mesazhet tuaja.'
+      message: 'Një njoftim u dërgua në WhatsApp. Kontrolloni mesazhet tuaja për linkun e hyrjes.'
     })
 
   } catch (error) {
