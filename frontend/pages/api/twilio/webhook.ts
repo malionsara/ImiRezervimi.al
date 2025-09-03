@@ -151,7 +151,8 @@ export default async function handler(
         
         // If it's a login command, check if they're a customer instead
         if (salonCommandType === 'login') {
-          return await handleCustomerLoginCommand(fromPhone, payload, res);
+          await handleCustomerLoginCommand(fromPhone, payload, res);
+          return res.status(200).end();
         }
         
         return res.status(200).end(); // Ignore other messages from unregistered salons
@@ -362,7 +363,7 @@ export default async function handler(
 /**
  * Handle customer login command - check if customer exists and provide login info
  */
-async function handleCustomerLoginCommand(customerPhone: string, payload: TwilioWebhookPayload, res: NextApiResponse): Promise<NextApiResponse> {
+async function handleCustomerLoginCommand(customerPhone: string, payload: TwilioWebhookPayload, res: NextApiResponse): Promise<void> {
   try {
     console.log(`👤 Processing customer login command from: ${customerPhone}`);
     
@@ -395,10 +396,11 @@ async function handleCustomerLoginCommand(customerPhone: string, payload: Twilio
         `💼 ImiRezervimi.al`
       );
       
-      return res.status(200).json({
+      res.status(200).json({
         success: true,
         message: 'Customer registration info sent'
       });
+      return;
     }
     
     const customer = customers[0];
@@ -418,10 +420,11 @@ async function handleCustomerLoginCommand(customerPhone: string, payload: Twilio
     
     if (templateResult.success) {
       console.log('✅ Customer login link sent via WhatsApp template');
-      return res.status(200).json({
+      res.status(200).json({
         success: true,
         message: 'Customer login template sent successfully'
       });
+      return;
     }
     
     // Fallback: Send simple login info
@@ -437,7 +440,7 @@ async function handleCustomerLoginCommand(customerPhone: string, payload: Twilio
       `💼 ImiRezervimi.al`
     );
     
-    return res.status(200).json({
+    res.status(200).json({
       success: true,
       message: 'Customer login info sent'
     });
@@ -452,7 +455,7 @@ async function handleCustomerLoginCommand(customerPhone: string, payload: Twilio
       `💼 ImiRezervimi.al`
     );
     
-    return res.status(200).json({
+    res.status(200).json({
       success: false,
       message: 'Error processing customer login command'
     });
