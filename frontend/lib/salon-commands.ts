@@ -19,7 +19,7 @@ const supabase = createClient(supabaseUrl, supabaseServiceKey, {
 // ==============================================
 
 export interface SalonCommand {
-  type: 'menu' | 'appointments' | 'pending' | 'tomorrow' | 'approve' | 'decline' | 'help' | 'unknown'
+  type: 'menu' | 'appointments' | 'pending' | 'tomorrow' | 'approve' | 'decline' | 'login' | 'help' | 'unknown'
   parameter?: string
   originalText: string
 }
@@ -62,6 +62,11 @@ export function parseCommand(text: string): SalonCommand {
   // Tomorrow commands
   if (['tomorrow', 'neser', 'nesër'].includes(normalized)) {
     return { type: 'tomorrow', originalText: text }
+  }
+  
+  // Login commands
+  if (['login', 'hyrje', 'log'].includes(normalized)) {
+    return { type: 'login', originalText: text }
   }
   
   // Help commands

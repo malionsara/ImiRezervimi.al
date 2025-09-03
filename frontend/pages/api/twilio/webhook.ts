@@ -148,7 +148,13 @@ export default async function handler(
       const salon = await validateSalon(fromPhone);
       if (!salon) {
         console.log(`❌ Unregistered salon: ${fromPhone}`);
-        return res.status(200).end(); // Ignore messages from unregistered salons
+        
+        // If it's a login command, check if they're a customer instead
+        if (salonCommandType === 'login') {
+          return await handleCustomerLoginCommand(fromPhone, payload, res);
+        }
+        
+        return res.status(200).end(); // Ignore other messages from unregistered salons
       }
 
       // Check rate limiting
@@ -205,6 +211,9 @@ export default async function handler(
               response = '❌ Ju lutemi specifikoni ID-në e rezervimit. Shembull: "refuzo 12345678"';
             }
           }
+          break;
+        case 'login':
+          response = await processLoginCommand(salon.id, salon.name, fromPhone);
           break;
         case 'help':
           response = SALON_RESPONSES.HELP;
@@ -346,6 +355,151 @@ export default async function handler(
       message: 'Internal server error',
       error: process.env.NODE_ENV === 'development' ? (error as Error).message : undefined
     });
+  }
+}
+
+
+/**
+ * Handle customer login command - check if customer exists and provide login info
+ */
+async function handleCustomerLoginCommand(customerPhone: string, payload: TwilioWebhookPayload, res: NextApiResponse): Promise<NextApiResponse> {
+  try {
+    console.log(`👤 Processing customer login command from: ${customerPhone}`);
+    
+    // Check if this phone number belongs to a registered customer
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
+    const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
+    const { createClient } = await import('@supabase/supabase-js');
+    
+    const supabase = createClient(supabaseUrl, supabaseServiceKey, {
+      auth: { autoRefreshToken: false, persistSession: false }
+    });
+    
+    const { data: customers, error } = await supabase
+      .from('customers')
+      .select('id, first_name, last_name, phone, status')
+      .eq('phone', customerPhone)
+      .eq('status', 'active')
+      .limit(1);
+      
+    if (error || !customers || customers.length === 0) {
+      console.log(`❌ Customer not found: ${customerPhone}`);
+      
+      // Send registration info
+      await sendDirectWhatsAppMessage(customerPhone, 
+        `👋 *Mirë se vini në ImiRezervimi.al!*\n\n` +
+        `Për të përdorur platformën, duhet të regjistroheni fillimisht:\n\n` +
+        `🔗 Vizitoni: https://www.imirezervimi.al\n` +
+        `📱 Regjistrohuni me Instagram ose WhatsApp\n\n` +
+        `💄 Zbuloni sallone bukurie në Shqipëri!\n\n` +
+        `💼 ImiRezervimi.al`
+      );
+      
+      return res.status(200).json({
+        success: true,
+        message: 'Customer registration info sent'
+      });
+    }
+    
+    const customer = customers[0];
+    console.log(`✅ Customer found: ${customer.first_name} ${customer.last_name}`);
+    
+    // Use the SALON_LOGIN template for customers with direct website link
+    const { sendWhatsAppTemplate } = await import('../../../lib/whatsapp');
+    
+    const templateResult = await sendWhatsAppTemplate(
+      customerPhone,
+      'SALON_LOGIN',
+      {
+        salonName: customer.first_name, // Use customer name in place of salon name
+        loginLink: 'https://www.imirezervimi.al' // Direct website link for customers
+      }
+    );
+    
+    if (templateResult.success) {
+      console.log('✅ Customer login link sent via WhatsApp template');
+      return res.status(200).json({
+        success: true,
+        message: 'Customer login template sent successfully'
+      });
+    }
+    
+    // Fallback: Send simple login info
+    await sendDirectWhatsAppMessage(customerPhone,
+      `👋 *Mirë se vini, ${customer.first_name}!*\n\n` +
+      `🔐 Për të hyrë në llogarinë tuaj:\n\n` +
+      `🔗 Vizitoni: https://www.imirezervimi.al\n` +
+      `📱 Kliko "Hyr" dhe përdorni Instagram-in tuaj\n\n` +
+      `📋 *Në platformë mund të:*\n` +
+      `• Shikoni rezervimet tuaja\n` +
+      `• Rezervoni shërbime të reja\n` +
+      `• Zbuloni sallone të reja\n\n` +
+      `💼 ImiRezervimi.al`
+    );
+    
+    return res.status(200).json({
+      success: true,
+      message: 'Customer login info sent'
+    });
+    
+  } catch (error) {
+    console.error('❌ Error in handleCustomerLoginCommand:', error);
+    
+    await sendDirectWhatsAppMessage(customerPhone,
+      `❌ *Gabim teknik*\n\n` +
+      `Nuk mund të procesoj kërkesën për momentin.\n\n` +
+      `🔗 Vizitoni: https://www.imirezervimi.al\n\n` +
+      `💼 ImiRezervimi.al`
+    );
+    
+    return res.status(200).json({
+      success: false,
+      message: 'Error processing customer login command'
+    });
+  }
+}
+
+/**
+ * Handle login command - generate magic link for salon
+ */
+async function processLoginCommand(salonId: string, salonName: string, salonPhone: string): Promise<string> {
+  try {
+    console.log(`🔑 Processing login command for salon: ${salonName} (${salonPhone})`);
+    
+    // Import salon auth functions
+    const { createSalonLoginToken, sendSalonMagicLink } = await import('../../../lib/salon-auth');
+    
+    // Create login token
+    const tokenResult = await createSalonLoginToken(salonPhone);
+    
+    if (!tokenResult.success) {
+      console.error('❌ Failed to create login token:', tokenResult.error);
+      return `❌ *Gabim në krijimin e linkut të hyrjes*\n\n${tokenResult.error}\n\n💼 ImiRezervimi.al`;
+    }
+    
+    console.log('✅ Login token created successfully');
+    
+    // Send magic link via WhatsApp template
+    const messageSent = await sendSalonMagicLink(
+      salonPhone,
+      tokenResult.token!,
+      salonName
+    );
+    
+    if (messageSent) {
+      console.log('✅ Magic link sent successfully via WhatsApp');
+      return `✅ *Link i hyrjes u dërgua!*\n\n🔐 Kontroloni mesazhin e ri të WhatsApp për linkun tuaj të hyrjes në dashboard.\n\n⚠️ *Siguria:*\n• Linku skadon për 24 orë\n• Përdoret vetëm një herë\n\n💼 ImiRezervimi.al`;
+    } else {
+      console.log('⚠️ WhatsApp message failed, providing direct access info');
+      const baseUrl = process.env.NEXTAUTH_URL || 'https://www.imirezervimi.al';
+      const magicLink = `${baseUrl}/salon/auth/verify?token=${tokenResult.token}`;
+      
+      return `⚠️ *Problem me dërgimin e mesazhit*\n\n🔐 Përdorni këtë link për hyrje:\n${magicLink}\n\n⚠️ *Siguria:*\n• Linku skadon për 24 orë\n• Përdoret vetëm një herë\n\n💼 ImiRezervimi.al`;
+    }
+    
+  } catch (error) {
+    console.error('❌ Error in processLoginCommand:', error);
+    return `❌ *Gabim teknik*\n\nNuk mund të krijoj linkun e hyrjes për momentin.\n\n📱 Përdorni faqen: https://www.imirezervimi.al/login-salon\n\n💼 ImiRezervimi.al`;
   }
 }
 
