@@ -161,7 +161,8 @@ export default async function handler(
       // Check rate limiting
       const rateLimitPassed = await checkRateLimit(fromPhone);
       if (!rateLimitPassed) {
-        await sendDirectWhatsAppMessage(fromPhone, SALON_RESPONSES.RATE_LIMIT);
+        console.log(`⏱️ Rate limited salon command from ${fromPhone}`);
+        // Don't send response to avoid 63016 error - rate limiting should be silent
         return res.status(200).end();
       }
 
@@ -174,9 +175,9 @@ export default async function handler(
           await sendWhatsAppTemplate(fromPhone, 'SALON_MENU', {});
           console.log(`📤 Interactive menu sent to ${fromPhone}`);
         } catch (error) {
-          console.error('Error sending menu template:', error);
-          // Fallback to plain text menu
-          await sendDirectWhatsAppMessage(fromPhone, SALON_RESPONSES.MENU);
+          console.error('❌ Menu template failed:', error);
+          // Don't fallback to direct message to avoid 63016 error
+          console.log('⚠️ Menu template not available - no response sent');
         }
         return res.status(200).end();
       }
@@ -214,8 +215,10 @@ export default async function handler(
           }
           break;
         case 'login':
-          response = await processLoginCommand(salon.id, salon.name, fromPhone);
-          break;
+          // Process login command - template is sent directly, no need for additional response
+          await processLoginCommand(salon.id, salon.name, fromPhone);
+          // Return early to avoid sending duplicate message via sendDirectWhatsAppMessage
+          return res.status(200).end();
         case 'help':
           response = SALON_RESPONSES.HELP;
           break;
@@ -223,8 +226,14 @@ export default async function handler(
           response = SALON_RESPONSES.UNKNOWN_COMMAND(salonCommandType);
       }
 
-      // Send response
-      await sendDirectWhatsAppMessage(fromPhone, response);
+      // Send response (note: may get 63016 error outside 24-hour window)
+      try {
+        await sendDirectWhatsAppMessage(fromPhone, response);
+        console.log(`✅ Salon command response sent: ${salonCommandType}`);
+      } catch (error) {
+        console.error(`❌ Failed to send salon command response (likely 63016 error): ${error}`);
+        console.log(`📝 Command was: ${salonCommandType}`);
+      }
       return res.status(200).end();
     }
 
@@ -490,14 +499,15 @@ async function processLoginCommand(salonId: string, salonName: string, salonPhon
     );
     
     if (messageSent) {
-      console.log('✅ Magic link sent successfully via WhatsApp');
-      return `✅ *Link i hyrjes u dërgua!*\n\n🔐 Kontroloni mesazhin e ri të WhatsApp për linkun tuaj të hyrjes në dashboard.\n\n⚠️ *Siguria:*\n• Linku skadon për 24 orë\n• Përdoret vetëm një herë\n\n💼 ImiRezervimi.al`;
+      console.log('✅ Magic link sent successfully via WhatsApp template');
+      // Template already contains all the info, no need for additional message
+      return `✅ *Sukses!* Template i hyrjes u dërgua në WhatsApp.`;
     } else {
-      console.log('⚠️ WhatsApp message failed, providing direct access info');
+      console.log('⚠️ WhatsApp template failed, providing direct access info');
       const baseUrl = process.env.NEXTAUTH_URL || 'https://www.imirezervimi.al';
       const magicLink = `${baseUrl}/salon/auth/verify?token=${tokenResult.token}`;
       
-      return `⚠️ *Problem me dërgimin e mesazhit*\n\n🔐 Përdorni këtë link për hyrje:\n${magicLink}\n\n⚠️ *Siguria:*\n• Linku skadon për 24 orë\n• Përdoret vetëm një herë\n\n💼 ImiRezervimi.al`;
+      return `⚠️ *Problem me template*\n\n🔐 Përdorni këtë link për hyrje:\n${magicLink}\n\n⚠️ *Siguria:*\n• Linku skadon për 24 orë\n• Përdoret vetëm një herë\n\n💼 ImiRezervimi.al`;
     }
     
   } catch (error) {
