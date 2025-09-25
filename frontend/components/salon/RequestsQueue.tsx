@@ -306,7 +306,7 @@ export default function RequestsQueue({
           )
         })}
       </div>
-    </div>
+
       {/* Filter Results Message */}
       {sortedAndFilteredRequests.length < requests.length && (
         <div className="mt-6 text-center text-sm text-gray-500">
