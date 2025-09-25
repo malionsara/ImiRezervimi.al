@@ -10,7 +10,7 @@ module.exports = {
       screens: {
         xs: '360px', // very small devices (e.g., older Androids)
       },
-      colors: {\r
+      colors: {
         'albanian-red': '#E31837',
         'albanian-black': '#000000',
       },
