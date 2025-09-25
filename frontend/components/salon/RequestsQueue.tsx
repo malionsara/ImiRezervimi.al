@@ -168,8 +168,8 @@ export default function RequestsQueue({
     <div>
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6">
         <div>
-          <h2 className="text-lg font-semibold text-gray-900">⏳ Kërkesat në pritje</h2>
-          <p className="text-sm text-gray-600 mt-1">
+          <h2 className="section-title">⏳ Kërkesat në pritje</h2>
+          <p className="subtitle mt-1">
             {sortedAndFilteredRequests.length} nga {requests.length} kërkesa
           </p>
         </div>
@@ -211,10 +211,10 @@ export default function RequestsQueue({
           return (
             <div
               key={request.id}
-              className="bg-white rounded-xl shadow-sm border hover:shadow-md transition-all duration-200"
+              className="card hover:shadow-md transition-all duration-200"
             >
               {/* Main Request Card */}
-              <div className="p-6">
+              <div className="card-lg">
                 <div className="flex justify-between items-start mb-4">
                   <div className="flex-1">
                     {/* Customer Info */}
@@ -234,16 +234,16 @@ export default function RequestsQueue({
 
                     {/* Badges */}
                     <div className="flex flex-wrap gap-2 mb-3">
-                      <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${priorityBadge.color}`}>
+                      <span className={`pill ${priorityBadge.color}`}>
                         <span className="mr-1">{priorityBadge.icon}</span>
                         {priorityBadge.label}
                       </span>
-                      <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${customerBadge.color}`}>
+                      <span className={`pill ${customerBadge.color}`}>
                         <span className="mr-1">{customerBadge.icon}</span>
                         {customerBadge.label}
                       </span>
                       {request.customer.rating > 0 && (
-                        <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
+                        <span className="pill bg-yellow-100 text-yellow-800">
                           ⭐ {request.customer.rating.toFixed(1)}
                         </span>
                       )}
@@ -306,7 +306,7 @@ export default function RequestsQueue({
           )
         })}
       </div>
-
+    </div>
       {/* Filter Results Message */}
       {sortedAndFilteredRequests.length < requests.length && (
         <div className="mt-6 text-center text-sm text-gray-500">

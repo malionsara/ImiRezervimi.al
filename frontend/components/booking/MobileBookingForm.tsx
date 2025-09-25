@@ -427,7 +427,7 @@ export default function MobileBookingForm({ salon, onSuccess, onError }: MobileB
                       <p className="text-gray-500 text-center">Nuk ka orare të disponueshme për këtë datë</p>
                     </div>
                   ) : (
-                    <div className="grid grid-cols-3 gap-2">
+                    <div className="grid grid-cols-2 xs:grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-2">
                       {timeSlots.map((slot) => (
                         <button
                           key={slot.time}
@@ -435,7 +435,7 @@ export default function MobileBookingForm({ salon, onSuccess, onError }: MobileB
                           onClick={() => slot.available && setSelectedTime(slot.time)}
                           disabled={!slot.available}
                           title={slot.reason}
-                          className={`p-3 rounded-lg text-sm font-medium transition-all duration-200 touch-manipulation ${
+                          className={`min-h-[44px] p-3 rounded-lg text-sm font-medium transition-all duration-200 touch-manipulation ${
                             selectedTime === slot.time
                               ? 'bg-red-500 text-white shadow-md'
                               : slot.available
@@ -581,7 +581,7 @@ export default function MobileBookingForm({ salon, onSuccess, onError }: MobileB
       </div>
 
       {/* Navigation Buttons */}
-      <div className="p-6 bg-gray-50 flex space-x-3">
+      <div className="sticky-actions flex space-x-3">
         {currentStep !== 'service' && (
           <button
             type="button"

@@ -404,44 +404,49 @@ export default function TimeSlotPicker({
                 </p>
               </div>
             ) : (
-              <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 max-h-80 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
-                {availableSlots.map((slot) => (
-                  <button
-                    type="button"
-                    key={slot.time}
-                    onClick={() => handleTimeSelect(slot.time)}
-                    disabled={!slot.available}
-                    title={slot.reason || (slot.available ? `Rezervo në orën ${slot.time}` : undefined)}
-                    className={`
-                      relative py-4 px-4 rounded-xl text-sm font-semibold transition-all duration-300 time-slot-btn border
-                      ${selectedTime === slot.time
-                        ? 'bg-gradient-to-br from-red-500 to-pink-600 text-white shadow-xl scale-110 border-red-400 ring-2 ring-red-200'
-                        : slot.available
-                        ? 'bg-white text-gray-900 hover:bg-red-50 hover:text-red-600 hover:scale-105 border-gray-200 hover:border-red-300 hover:shadow-md transform hover:-translate-y-1'
-                        : 'bg-gray-50 text-gray-400 cursor-not-allowed border-gray-100 opacity-60'
-                      }
-                    `}
-                  >
-                    <div className="flex flex-col items-center">
-                      <span className="text-base">{slot.time}</span>
-                      {!slot.available && slot.reason && (
-                        <div className="text-xs mt-1 opacity-75">{slot.reason}</div>
-                      )}
-                      {slot.available && selectedTime !== slot.time && (
-                        <div className="text-xs text-gray-500 mt-1">Disponueshëm</div>
-                      )}
-                    </div>
-                    
-                    {/* Selected indicator */}
-                    {selectedTime === slot.time && (
-                      <div className="absolute -top-1 -right-1 w-4 h-4 bg-white rounded-full shadow-lg flex items-center justify-center">
-                        <svg className="w-2 h-2 text-red-500" fill="currentColor" viewBox="0 0 20 20">
-                          <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                        </svg>
+              <div className="relative">
+                {/* Scroll shadows */}
+                <div className="sticky top-0 h-4 bg-gradient-to-b from-white to-transparent pointer-events-none z-10" />
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 max-h-80 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
+                  {availableSlots.map((slot) => (
+                    <button
+                      type="button"
+                      key={slot.time}
+                      onClick={() => handleTimeSelect(slot.time)}
+                      disabled={!slot.available}
+                      title={slot.reason || (slot.available ? `Rezervo në orën ${slot.time}` : undefined)}
+                      className={`
+                        relative py-4 px-4 rounded-xl text-sm font-semibold transition-all duration-300 time-slot-btn border
+                        ${selectedTime === slot.time
+                          ? 'bg-gradient-to-br from-red-500 to-pink-600 text-white shadow-xl scale-110 border-red-400 ring-2 ring-red-200'
+                          : slot.available
+                          ? 'bg-white text-gray-900 hover:bg-red-50 hover:text-red-600 hover:scale-105 border-gray-200 hover:border-red-300 hover:shadow-md transform hover:-translate-y-1'
+                          : 'bg-gray-50 text-gray-400 cursor-not-allowed border-gray-100 opacity-60'
+                        }
+                      `}
+                    >
+                      <div className="flex flex-col items-center">
+                        <span className="text-base">{slot.time}</span>
+                        {!slot.available && slot.reason && (
+                          <div className="text-xs mt-1 opacity-75">{slot.reason}</div>
+                        )}
+                        {slot.available && selectedTime !== slot.time && (
+                          <div className="text-xs text-gray-500 mt-1">Disponueshëm</div>
+                        )}
                       </div>
-                    )}
-                  </button>
-                ))}
+                      
+                      {/* Selected indicator */}
+                      {selectedTime === slot.time && (
+                        <div className="absolute -top-1 -right-1 w-4 h-4 bg-white rounded-full shadow-lg flex items-center justify-center">
+                          <svg className="w-2 h-2 text-red-500" fill="currentColor" viewBox="0 0 20 20">
+                            <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                          </svg>
+                        </div>
+                      )}
+                    </button>
+                  ))}
+                </div>
+                <div className="sticky bottom-0 h-4 bg-gradient-to-t from-white to-transparent pointer-events-none z-10" />
               </div>
             )}
           </div>

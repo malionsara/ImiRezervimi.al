@@ -7,6 +7,7 @@ import { useRouter } from 'next/router'
 import Head from 'next/head'
 import Link from 'next/link'
 import BookingForm from '../../../components/booking/BookingForm'
+import MobileBookingForm from '../../../components/booking/MobileBookingForm'
 
 // ==============================================
 // TYPES AND INTERFACES
@@ -313,6 +314,15 @@ export default function BookingPage() {
   // ==============================================
   // MAIN BOOKING PAGE
   // ==============================================
+  const [isMobile, setIsMobile] = useState(false)
+
+  useEffect(() => {
+    const check = () => setIsMobile(window.innerWidth < 768)
+    check()
+    window.addEventListener('resize', check)
+    return () => window.removeEventListener('resize', check)
+  }, [])
+
   if (!salon) return null
 
   return (
@@ -320,8 +330,6 @@ export default function BookingPage() {
       <Head>
         <title>Rezervo - {salon.name} | ImiRezervimi.al</title>
         <meta name="description" content={`Rezervoni një termin në ${salon.name} - ${salon.description}`} />
-        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
-        
         {/* Open Graph / Facebook */}
         <meta property="og:type" content="website" />
         <meta property="og:title" content={`Rezervo - ${salon.name} | ImiRezervimi.al`} />
@@ -356,8 +364,17 @@ export default function BookingPage() {
 
         {/* Page Content */}
         <div className="max-w-4xl mx-auto px-4 py-8 sm:px-6 lg:px-8">
-          {/* Page Header */}
-          <div className="text-center mb-12">
+          {/* Mobile-optimized flow */}
+          {isMobile ? (
+            <MobileBookingForm 
+              salon={salon}
+              onSuccess={handleBookingSuccess}
+              onError={handleBookingError}
+            />
+          ) : (
+            <>
+            {/* Page Header */}
+            <div className="text-center mb-12">
             <div className="flex items-center justify-center mb-6">
               <div className="w-16 h-16 bg-gradient-to-r from-red-500 to-pink-500 rounded-2xl flex items-center justify-center mr-4">
                 <span className="text-2xl text-white">💅</span>
@@ -397,6 +414,8 @@ export default function BookingPage() {
                 </div>
               </div>
             </div>
+          )}
+          </>
           )}
 
           {/* Booking Form */}

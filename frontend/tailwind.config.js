@@ -7,7 +7,10 @@ module.exports = {
   ],
   theme: {
     extend: {
-      colors: {
+      screens: {
+        xs: '360px', // very small devices (e.g., older Androids)
+      },
+      colors: {\r
         'albanian-red': '#E31837',
         'albanian-black': '#000000',
       },

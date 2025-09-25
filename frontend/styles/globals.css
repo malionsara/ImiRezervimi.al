@@ -28,6 +28,36 @@
     @apply w-full max-w-none;
   }
 
+  /* Reusable responsive container */
+  .container-responsive {
+    @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+  }
+
+  /* Reusable cards and typography for consistent spacing */
+  .card {
+    @apply bg-white rounded-2xl border border-gray-200 shadow-sm;
+  }
+  .card-lg {
+    @apply p-6 sm:p-8;
+  }
+  .section-title {
+    @apply text-lg sm:text-xl font-semibold text-gray-900;
+  }
+  .subtitle {
+    @apply text-sm text-gray-600;
+  }\r
+  .divider {
+    @apply my-6 border-t border-gray-100;
+  }
+  .pill {
+    @apply inline-flex items-center px-3 py-1 rounded-full text-xs font-medium;
+  }
+  .badge-green { @apply pill bg-green-50 text-green-700; }
+  .badge-red { @apply pill bg-red-50 text-red-700; }
+  .badge-orange { @apply pill bg-orange-50 text-orange-700; }
+  .badge-blue { @apply pill bg-blue-50 text-blue-700; }
+  .badge-gray { @apply pill bg-gray-100 text-gray-800; }
+
   /* Header animations and utilities */
   .animate-slideDown {
     animation: slideDown 0.2s ease-out;
@@ -87,6 +117,14 @@
   /* Mobile navigation */
   .mobile-nav {
     @apply fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 p-4 z-50;
+    /* Respect notches / safe-area on iOS and similar */
+    padding-bottom: max(env(safe-area-inset-bottom), 1rem);
+  }
+
+  /* Sticky actions footer for forms */
+  .sticky-actions {
+    @apply sticky bottom-0 left-0 right-0 bg-white/95 backdrop-blur border-t border-gray-200 p-4 z-10;
+    padding-bottom: max(env(safe-area-inset-bottom), 1rem);
   }
 
   /* Loading spinner */

@@ -95,7 +95,7 @@ const CalendarView: React.FC<CalendarViewProps> = ({
     const isSelected = selectedDate === day.date
     const hasSelectedSlots = selectedSlotDates.has(day.date)
     
-    let classes = 'relative p-2 h-20 border border-gray-200 cursor-pointer transition-all duration-200 '
+    let classes = 'relative p-2 h-20 border border-gray-100 cursor-pointer transition-all duration-200 '
 
     // Base status colors
     switch (status) {
@@ -132,13 +132,13 @@ const CalendarView: React.FC<CalendarViewProps> = ({
   }
 
   return (
-    <div className="bg-white rounded-lg border overflow-hidden">
+    <div className="card overflow-hidden">
       {/* Month header */}
       <div className="bg-gray-50 px-4 py-3 border-b">
-        <h3 className="text-lg font-semibold text-gray-900">
+        <h3 className="section-title">
           {month.monthName} {month.year}
         </h3>
-        <div className="text-sm text-gray-600 mt-1">
+        <div className="subtitle mt-1">
           {month.stats.totalWorkingDays} ditë pune • {month.stats.totalAvailableSlots} orë të lira
         </div>
       </div>
