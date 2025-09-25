@@ -901,7 +901,6 @@ export default function SalonDashboard() {
             </div>
             <span className="text-xs">Kryesore</span>
           </Link>
-        </div>
       </div>
     </>
   )
