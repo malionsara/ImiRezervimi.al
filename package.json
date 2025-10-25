@@ -19,16 +19,20 @@
     "test:api": "playwright test tests/api-endpoints.spec.ts",
     "test:mobile": "playwright test --project='Mobile Chrome'",
     "test:report": "playwright show-report",
+    "mcp:status": "claude-playwright mcp-status",
+    "mcp:init": "claude-playwright mcp init --base-url http://localhost:3000",
+    "mcp:profiles": "claude-playwright profile list",
     "lint": "cd frontend && npm run lint",
     "typecheck": "cd frontend && npm run typecheck"
   },
   "dependencies": {
-    "dotenv": "^17.2.1",
-    "@supabase/supabase-js": "^2.39.0"
+    "@supabase/supabase-js": "^2.39.0",
+    "dotenv": "^17.2.1"
   },
   "devDependencies": {
-    "tsx": "^4.7.0",
+    "@playwright/test": "^1.48.0",
     "@types/node": "^20.11.0",
-    "@playwright/test": "^1.48.0"
+    "claude-playwright": "^0.1.1",
+    "tsx": "^4.7.0"
   }
 }
