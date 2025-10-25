@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="sq">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PWA Test - ImiRezervimi.al</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: linear-gradient(135deg, #fdf2f8 0%, #fce7f3 100%);
+      padding: 20px;
+      min-height: 100vh;
+    }
+
+    .container {
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    h1 {
+      color: #dc2626;
+      margin-bottom: 10px;
+    }
+
+    .subtitle {
+      color: #6b7280;
+      margin-bottom: 30px;
+    }
+
+    .card {
+      background: white;
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .card h2 {
+      color: #dc2626;
+      font-size: 18px;
+      margin-bottom: 15px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .status {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px;
+      border-radius: 8px;
+      margin-bottom: 10px;
+    }
+
+    .status.success {
+      background: #d1fae5;
+      color: #065f46;
+    }
+
+    .status.error {
+      background: #fee2e2;
+      color: #991b1b;
+    }
+
+    .status.warning {
+      background: #fef3c7;
+      color: #92400e;
+    }
+
+    .icon {
+      font-size: 24px;
+    }
+
+    .details {
+      background: #f9fafb;
+      border-radius: 8px;
+      padding: 12px;
+      margin-top: 10px;
+      font-size: 14px;
+      color: #4b5563;
+      font-family: 'Courier New', monospace;
+    }
+
+    button {
+      background: #dc2626;
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 8px;
+      font-size: 16px;
+      cursor: pointer;
+      width: 100%;
+      margin-top: 10px;
+    }
+
+    button:hover {
+      background: #b91c1c;
+    }
+
+    button:disabled {
+      background: #9ca3af;
+      cursor: not-allowed;
+    }
+
+    .back-link {
+      display: inline-block;
+      color: #dc2626;
+      text-decoration: none;
+      margin-top: 20px;
+      font-weight: 600;
+    }
+
+    .back-link:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🔍 PWA Test Page</h1>
+    <p class="subtitle">ImiRezervimi.al - Progressive Web App Diagnostics</p>
+
+    <!-- HTTPS Status -->
+    <div class="card">
+      <h2><span class="icon">🔒</span> HTTPS Status</h2>
+      <div id="https-status" class="status">Checking...</div>
+    </div>
+
+    <!-- Service Worker Status -->
+    <div class="card">
+      <h2><span class="icon">⚙️</span> Service Worker</h2>
+      <div id="sw-status" class="status">Checking...</div>
+      <div id="sw-details" class="details" style="display: none;"></div>
+    </div>
+
+    <!-- Manifest Status -->
+    <div class="card">
+      <h2><span class="icon">📱</span> Web App Manifest</h2>
+      <div id="manifest-status" class="status">Checking...</div>
+      <div id="manifest-details" class="details" style="display: none;"></div>
+    </div>
+
+    <!-- Install Prompt -->
+    <div class="card">
+      <h2><span class="icon">⬇️</span> Installation</h2>
+      <div id="install-status" class="status">Checking...</div>
+      <button id="install-btn" style="display: none;">Install App</button>
+    </div>
+
+    <!-- Cache Status -->
+    <div class="card">
+      <h2><span class="icon">💾</span> Cache Storage</h2>
+      <div id="cache-status" class="status">Checking...</div>
+      <div id="cache-details" class="details" style="display: none;"></div>
+    </div>
+
+    <a href="/" class="back-link">← Back to Home</a>
+  </div>
+
+  <script>
+    let deferredPrompt;
+
+    // Check HTTPS
+    function checkHTTPS() {
+      const status = document.getElementById('https-status');
+      if (window.location.protocol === 'https:') {
+        status.className = 'status success';
+        status.textContent = '✅ Site is served over HTTPS';
+      } else {
+        status.className = 'status error';
+        status.textContent = '❌ Site must be served over HTTPS for PWA features';
+      }
+    }
+
+    // Check Service Worker
+    async function checkServiceWorker() {
+      const status = document.getElementById('sw-status');
+      const details = document.getElementById('sw-details');
+
+      if ('serviceWorker' in navigator) {
+        try {
+          const registration = await navigator.serviceWorker.getRegistration();
+          if (registration) {
+            status.className = 'status success';
+            status.textContent = '✅ Service Worker is registered';
+            details.style.display = 'block';
+            details.innerHTML = `
+              State: ${registration.active ? registration.active.state : 'N/A'}<br>
+              Scope: ${registration.scope}<br>
+              Update on Reload: ${registration.updateViaCache}
+            `;
+          } else {
+            status.className = 'status warning';
+            status.textContent = '⚠️ Service Worker not found. Build in production mode.';
+          }
+        } catch (error) {
+          status.className = 'status error';
+          status.textContent = `❌ Error: ${error.message}`;
+        }
+      } else {
+        status.className = 'status error';
+        status.textContent = '❌ Service Workers not supported';
+      }
+    }
+
+    // Check Manifest
+    async function checkManifest() {
+      const status = document.getElementById('manifest-status');
+      const details = document.getElementById('manifest-details');
+
+      try {
+        const response = await fetch('/manifest.json');
+        if (response.ok) {
+          const manifest = await response.json();
+          status.className = 'status success';
+          status.textContent = '✅ Manifest loaded successfully';
+          details.style.display = 'block';
+          details.innerHTML = `
+            Name: ${manifest.name}<br>
+            Short Name: ${manifest.short_name}<br>
+            Display: ${manifest.display}<br>
+            Theme Color: ${manifest.theme_color}<br>
+            Icons: ${manifest.icons ? manifest.icons.length : 0} defined
+          `;
+        } else {
+          status.className = 'status error';
+          status.textContent = `❌ Manifest not found (${response.status})`;
+        }
+      } catch (error) {
+        status.className = 'status error';
+        status.textContent = `❌ Error loading manifest: ${error.message}`;
+      }
+    }
+
+    // Check Installation
+    function checkInstallation() {
+      const status = document.getElementById('install-status');
+      const installBtn = document.getElementById('install-btn');
+
+      window.addEventListener('beforeinstallprompt', (e) => {
+        e.preventDefault();
+        deferredPrompt = e;
+        status.className = 'status success';
+        status.textContent = '✅ App is installable';
+        installBtn.style.display = 'block';
+      });
+
+      window.addEventListener('appinstalled', () => {
+        status.className = 'status success';
+        status.textContent = '✅ App installed successfully!';
+        installBtn.style.display = 'none';
+      });
+
+      // Check if already installed
+      if (window.matchMedia('(display-mode: standalone)').matches) {
+        status.className = 'status success';
+        status.textContent = '✅ App is already installed';
+      } else {
+        setTimeout(() => {
+          if (!deferredPrompt) {
+            status.className = 'status warning';
+            status.textContent = '⚠️ Install prompt not available. Ensure PWA requirements are met.';
+          }
+        }, 2000);
+      }
+
+      installBtn.addEventListener('click', async () => {
+        if (!deferredPrompt) return;
+
+        deferredPrompt.prompt();
+        const { outcome } = await deferredPrompt.userChoice;
+
+        if (outcome === 'accepted') {
+          status.textContent = '✅ App installation accepted';
+        } else {
+          status.textContent = '⚠️ App installation dismissed';
+        }
+
+        deferredPrompt = null;
+        installBtn.style.display = 'none';
+      });
+    }
+
+    // Check Cache Storage
+    async function checkCache() {
+      const status = document.getElementById('cache-status');
+      const details = document.getElementById('cache-details');
+
+      if ('caches' in window) {
+        try {
+          const cacheNames = await caches.keys();
+          if (cacheNames.length > 0) {
+            status.className = 'status success';
+            status.textContent = `✅ ${cacheNames.length} cache(s) found`;
+            details.style.display = 'block';
+            details.innerHTML = `Caches:<br>${cacheNames.join('<br>')}`;
+          } else {
+            status.className = 'status warning';
+            status.textContent = '⚠️ No caches found yet. Visit some pages first.';
+          }
+        } catch (error) {
+          status.className = 'status error';
+          status.textContent = `❌ Error: ${error.message}`;
+        }
+      } else {
+        status.className = 'status error';
+        status.textContent = '❌ Cache API not supported';
+      }
+    }
+
+    // Run all checks
+    checkHTTPS();
+    checkServiceWorker();
+    checkManifest();
+    checkInstallation();
+    checkCache();
+  </script>
+</body>
+</html>

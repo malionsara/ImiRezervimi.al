@@ -45,12 +45,51 @@ export default function App({
   return (
     <>
       <Head>
+        {/* Standard Favicon */}
         <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
         <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
         <link rel="shortcut icon" href="/favicon.ico" />
-        <link rel="apple-touch-icon" sizes="180x180" href="/favicon-32x32.png" />
+
+        {/* PWA Manifest */}
+        <link rel="manifest" href="/manifest.json" />
+
+        {/* Apple Touch Icons */}
+        <link rel="apple-touch-icon" sizes="180x180" href="/icons/icon-192x192.png" />
+        <link rel="apple-touch-icon" sizes="152x152" href="/icons/icon-152x152.png" />
+        <link rel="apple-touch-icon" sizes="144x144" href="/icons/icon-144x144.png" />
+        <link rel="apple-touch-icon" sizes="120x120" href="/icons/icon-128x128.png" />
+
+        {/* iOS Meta Tags */}
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+        <meta name="apple-mobile-web-app-title" content="ImiRezervimi" />
+
+        {/* Theme Colors */}
         <meta name="theme-color" content="#dc2626" />
         <meta name="msapplication-TileColor" content="#dc2626" />
+        <meta name="msapplication-TileImage" content="/icons/icon-144x144.png" />
+
+        {/* PWA Meta Tags */}
+        <meta name="application-name" content="ImiRezervimi.al" />
+        <meta name="mobile-web-app-capable" content="yes" />
+
+        {/* SEO & Description */}
+        <meta name="description" content="Platforma shqiptare për rezervime në sallone bukurie. Gjej dhe rezervo takimin tënd lehtësisht." />
+        <meta name="keywords" content="rezervime, sallone bukurie, Shqipëri, beauty, salon, booking" />
+
+        {/* Open Graph / Facebook */}
+        <meta property="og:type" content="website" />
+        <meta property="og:title" content="ImiRezervimi.al - Rezervo takimin tënd" />
+        <meta property="og:description" content="Platforma shqiptare për rezervime në sallone bukurie" />
+        <meta property="og:site_name" content="ImiRezervimi.al" />
+
+        {/* Twitter */}
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="ImiRezervimi.al - Rezervo takimin tënd" />
+        <meta name="twitter:description" content="Platforma shqiptare për rezervime në sallone bukurie" />
+
+        {/* Viewport for mobile */}
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5, user-scalable=yes" />
       </Head>
       <SessionProvider session={session}>
         <ToastProvider>
