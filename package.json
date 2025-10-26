@@ -30,7 +30,7 @@
     "dotenv": "^17.2.1"
   },
   "devDependencies": {
-    "@playwright/test": "^1.48.0",
+    "@playwright/test": "^1.56.1",
     "@types/node": "^20.11.0",
     "claude-playwright": "^0.1.1",
     "tsx": "^4.7.0"
