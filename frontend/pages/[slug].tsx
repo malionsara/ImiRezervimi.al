@@ -358,7 +358,7 @@ export default function SalonBookingPage() {
         showHeader: true,
         headerVariant: 'minimal'
       })}>
-        <div className="min-h-screen bg-gradient-to-br from-pink-50 via-red-50 to-orange-50 py-6 px-4">
+        <div className="bg-gradient-to-br from-pink-50 via-red-50 to-orange-50 py-4 sm:py-6 px-2 sm:px-4">
 
           {/* Enhanced Booking Form with Albanian Calendar */}
           <BookingForm
@@ -367,10 +367,10 @@ export default function SalonBookingPage() {
             onError={handleBookingError}
           />
 
-          {/* Additional Info */}
-          <div className="max-w-md mx-auto mt-6 text-center">
-            <div className="bg-white/80 backdrop-blur rounded-xl p-4 text-sm text-gray-600">
-              <p className="mb-2">🔒 Rezervimi juaj është i sigurt dhe privat</p>
+          {/* Additional Info - Mobile Optimized */}
+          <div className="max-w-md mx-auto mt-4 sm:mt-6 text-center">
+            <div className="bg-white/80 backdrop-blur rounded-lg sm:rounded-xl p-3 sm:p-4 text-xs sm:text-sm text-gray-600">
+              <p className="mb-1 sm:mb-2">🔒 Rezervimi juaj është i sigurt dhe privat</p>
               <p>💬 Do të merrni konfirmim automatik në WhatsApp</p>
             </div>
           </div>

@@ -429,7 +429,7 @@ export default function BookingForm({
   }
 
   // ==============================================
-  // RENDER STEP INDICATOR
+  // RENDER STEP INDICATOR - Mobile Optimized
   // ==============================================
   const renderStepIndicator = () => {
     const allSteps = [
@@ -446,47 +446,47 @@ export default function BookingForm({
     const currentIndex = steps.findIndex(step => step.key === currentStep)
 
     return (
-      <div className="mb-12">
-        {/* Progress Bar */}
-        <div className="relative mb-8">
-          <div className="absolute top-1/2 left-0 w-full h-1 bg-gray-200 rounded-full transform -translate-y-1/2"></div>
+      <div className="mb-6 sm:mb-12">
+        {/* Progress Bar - Mobile Optimized */}
+        <div className="relative mb-4 sm:mb-8">
+          <div className="absolute top-1/2 left-0 w-full h-0.5 sm:h-1 bg-gray-200 rounded-full transform -translate-y-1/2"></div>
           <div 
-            className="absolute top-1/2 left-0 h-1 bg-gradient-to-r from-red-500 to-pink-500 rounded-full transform -translate-y-1/2 transition-all duration-500 ease-out"
+            className="absolute top-1/2 left-0 h-0.5 sm:h-1 bg-gradient-to-r from-red-500 to-pink-500 rounded-full transform -translate-y-1/2 transition-all duration-500 ease-out"
             style={{ width: `${(currentIndex / (steps.length - 1)) * 100}%` }}
           ></div>
         </div>
 
-        {/* Step Indicators */}
+        {/* Step Indicators - Mobile Optimized */}
         <div className="flex justify-between relative">
           {steps.map((step, index) => (
             <div key={step.key} className="flex flex-col items-center relative z-10">
-              {/* Step Circle */}
+              {/* Step Circle - Mobile Optimized */}
               <div className={`
-                flex items-center justify-center w-14 h-14 rounded-full text-lg font-bold transition-all duration-300 transform
+                flex items-center justify-center w-10 h-10 sm:w-14 sm:h-14 rounded-full text-sm sm:text-lg font-bold transition-all duration-300 transform
                 ${index <= currentIndex 
                   ? 'bg-gradient-to-br from-red-500 to-pink-600 text-white shadow-lg scale-110' 
                   : 'bg-white border-2 border-gray-300 text-gray-400 hover:border-gray-400'
                 }
-                ${index === currentIndex ? 'ring-4 ring-red-200 ring-opacity-50 animate-pulse' : ''}
+                ${index === currentIndex ? 'ring-2 sm:ring-4 ring-red-200 ring-opacity-50 animate-pulse' : ''}
               `}>
                 {index < currentIndex ? (
-                  <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+                  <svg className="w-4 h-4 sm:w-6 sm:h-6" fill="currentColor" viewBox="0 0 20 20">
                     <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                   </svg>
                 ) : (
-                  <span className="text-xl">{step.icon}</span>
+                  <span className="text-lg sm:text-xl">{step.icon}</span>
                 )}
               </div>
 
-              {/* Step Label */}
-              <div className="mt-3 text-center">
-                <p className={`text-sm font-semibold transition-colors duration-300 ${
+              {/* Step Label - Mobile Optimized */}
+              <div className="mt-2 sm:mt-3 text-center">
+                <p className={`text-xs sm:text-sm font-semibold transition-colors duration-300 ${
                   index <= currentIndex ? 'text-red-600' : 'text-gray-500'
                 }`}>
                   {step.label}
                 </p>
                 {index === currentIndex && (
-                  <div className="mt-1 w-2 h-2 bg-red-500 rounded-full mx-auto animate-bounce"></div>
+                  <div className="mt-1 w-1.5 h-1.5 sm:w-2 sm:h-2 bg-red-500 rounded-full mx-auto animate-bounce"></div>
                 )}
               </div>
             </div>
@@ -797,30 +797,31 @@ export default function BookingForm({
   }
 
   // ==============================================
-  // RENDER NAVIGATION BUTTONS
+  // RENDER NAVIGATION BUTTONS - Mobile Optimized
   // ==============================================
   const renderNavigationButtons = () => {
     return (
-      <div className="flex items-center justify-between space-x-6 mt-12">
-        {/* Back Button */}
+      <div className="flex items-center justify-between space-x-3 sm:space-x-6 mt-6 sm:mt-12">
+        {/* Back Button - Mobile Optimized */}
         {currentStep !== 'service' && (
           <button
             type="button"
             onClick={goToPreviousStep}
             disabled={isSubmitting}
-            className="group flex items-center justify-center py-4 px-8 bg-white border-2 border-gray-300 rounded-2xl text-gray-700 
+            className="group flex items-center justify-center py-3 px-4 sm:py-4 sm:px-8 bg-white border-2 border-gray-300 rounded-xl sm:rounded-2xl text-gray-700 
                      font-semibold hover:border-red-300 hover:text-red-600 focus:outline-none focus:ring-4 
                      focus:ring-red-100 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 
                      transform hover:scale-105 disabled:transform-none shadow-sm hover:shadow-md"
           >
-            <svg className="w-5 h-5 mr-2 transition-transform duration-300 group-hover:-translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="w-4 h-4 sm:w-5 sm:h-5 mr-1 sm:mr-2 transition-transform duration-300 group-hover:-translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
             </svg>
-            Kthehu
+            <span className="hidden sm:inline">Kthehu</span>
+            <span className="sm:hidden">←</span>
           </button>
         )}
 
-        {/* Next/Submit Button */}
+        {/* Next/Submit Button - Mobile Optimized */}
         {currentStep === 'confirm' ? (
           <button
             type="button"
@@ -936,8 +937,8 @@ export default function BookingForm({
               }
             }}
             disabled={!isStepValid(currentStep) || isSubmitting}
-            className="group flex-1 flex justify-center items-center py-4 px-8 bg-gradient-to-r from-red-600 to-pink-600 
-                     hover:from-red-700 hover:to-pink-700 rounded-2xl text-white text-lg font-bold
+            className="group flex-1 flex justify-center items-center py-3 px-4 sm:py-4 sm:px-8 bg-gradient-to-r from-red-600 to-pink-600 
+                     hover:from-red-700 hover:to-pink-700 rounded-xl sm:rounded-2xl text-white text-base sm:text-lg font-bold
                      focus:outline-none focus:ring-4 focus:ring-red-200 disabled:opacity-50 
                      disabled:cursor-not-allowed transition-all duration-300 transform 
                      hover:scale-105 disabled:transform-none shadow-lg hover:shadow-xl
@@ -948,15 +949,15 @@ export default function BookingForm({
             
             {isSubmitting ? (
               <>
-                <div className="animate-spin rounded-full h-6 w-6 border-2 border-white border-t-transparent mr-3"></div>
-                <span className="relative">Po dërgon rezervimin...</span>
+                <div className="animate-spin rounded-full h-5 w-5 sm:h-6 sm:w-6 border-2 border-white border-t-transparent mr-2 sm:mr-3"></div>
+                <span className="relative text-sm sm:text-base">Po dërgon...</span>
               </>
             ) : (
               <>
-                <svg className="w-6 h-6 mr-3 transition-transform duration-300 group-hover:rotate-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-5 h-5 sm:w-6 sm:h-6 mr-2 sm:mr-3 transition-transform duration-300 group-hover:rotate-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
                 </svg>
-                <span className="relative">🎉 Dërgo Rezervimin</span>
+                <span className="relative text-sm sm:text-base">🎉 Dërgo</span>
               </>
             )}
           </button>
@@ -965,8 +966,8 @@ export default function BookingForm({
             type="button"
             onClick={goToNextStep}
             disabled={!isStepValid(currentStep)}
-            className="group flex-1 flex items-center justify-center py-4 px-8 bg-gradient-to-r from-red-600 to-pink-600 
-                     hover:from-red-700 hover:to-pink-700 rounded-2xl text-white text-lg font-semibold
+            className="group flex-1 flex items-center justify-center py-3 px-4 sm:py-4 sm:px-8 bg-gradient-to-r from-red-600 to-pink-600 
+                     hover:from-red-700 hover:to-pink-700 rounded-xl sm:rounded-2xl text-white text-base sm:text-lg font-semibold
                      focus:outline-none focus:ring-4 focus:ring-red-200 disabled:opacity-50 
                      disabled:cursor-not-allowed transition-all duration-300 transform 
                      hover:scale-105 disabled:transform-none shadow-lg hover:shadow-xl
@@ -975,8 +976,8 @@ export default function BookingForm({
             {/* Animated background shine effect */}
             <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white to-transparent opacity-20 -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></div>
             
-            <span className="relative mr-2">Vazhdo</span>
-            <svg className="w-5 h-5 transition-transform duration-300 group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <span className="relative mr-1 sm:mr-2 text-sm sm:text-base">Vazhdo</span>
+            <svg className="w-4 h-4 sm:w-5 sm:h-5 transition-transform duration-300 group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
             </svg>
           </button>
@@ -989,9 +990,9 @@ export default function BookingForm({
   // MAIN RENDER
   // ==============================================
   return (
-    <div className={`booking-form ${className} min-h-screen bg-gradient-to-br from-red-50 via-pink-50 to-purple-50`}>
-      <div className="max-w-4xl mx-auto px-4 py-8">
-        <form onSubmit={handleSubmit(onSubmit)} className="bg-white rounded-3xl shadow-2xl overflow-hidden">
+    <div className={`booking-form ${className} bg-gradient-to-br from-red-50 via-pink-50 to-purple-50`}>
+      <div className="max-w-4xl mx-auto px-2 sm:px-4 py-4 sm:py-8">
+        <form onSubmit={handleSubmit(onSubmit)} className="bg-white rounded-2xl sm:rounded-3xl shadow-xl sm:shadow-2xl overflow-hidden">
           {/* Hidden form fields to ensure React Hook Form has all required data */}
           <input {...register('salonId')} type="hidden" />
           <input {...register('serviceId')} type="hidden" />
@@ -999,23 +1000,23 @@ export default function BookingForm({
           <input {...register('startTime')} type="hidden" />
           <input {...register('duration')} type="hidden" />
           
-          {/* Header Section */}
-          <div className="bg-gradient-to-r from-red-600 to-pink-600 p-8 text-white">
+          {/* Header Section - Mobile Optimized */}
+          <div className="bg-gradient-to-r from-red-600 to-pink-600 p-4 sm:p-8 text-white">
             <div className="text-center">
-              <h1 className="text-3xl font-bold mb-2">✨ Rezervo Takimin</h1>
-              <p className="text-red-100 text-lg">Zgjidh shërbimin dhe orarin që të përshtatet më së miri</p>
+              <h1 className="text-xl sm:text-3xl font-bold mb-1 sm:mb-2">✨ Rezervo Takimin</h1>
+              <p className="text-red-100 text-sm sm:text-lg">Zgjidh shërbimin dhe orarin që të përshtatet më së miri</p>
             </div>
           </div>
 
-          {/* Form Content */}
-          <div className="p-8">
+          {/* Form Content - Mobile Optimized */}
+          <div className="p-4 sm:p-8">
             {/* Form values are set programmatically via setValue() before submission */}
 
             {/* Step Indicator */}
             {renderStepIndicator()}
 
-            {/* Step Content */}
-            <div className="min-h-[500px] bg-gray-50 rounded-2xl p-8 mb-8 shadow-inner">
+            {/* Step Content - Mobile Optimized */}
+            <div className="min-h-[300px] sm:min-h-[500px] bg-gray-50 rounded-xl sm:rounded-2xl p-4 sm:p-8 mb-4 sm:mb-8 shadow-inner">
               {renderStepContent()}
             </div>
 
@@ -1023,57 +1024,57 @@ export default function BookingForm({
             {renderNavigationButtons()}
           </div>
 
-          {/* Success Message */}
+          {/* Success Message - Mobile Optimized */}
           {successMessage && (
-            <div className="mx-8 mb-8 p-6 bg-gradient-to-r from-green-500 to-emerald-600 text-white rounded-2xl shadow-lg animate-pulse">
+            <div className="mx-4 sm:mx-8 mb-4 sm:mb-8 p-4 sm:p-6 bg-gradient-to-r from-green-500 to-emerald-600 text-white rounded-xl sm:rounded-2xl shadow-lg animate-pulse">
               <div className="flex items-center">
-                <div className="flex-shrink-0 mr-4">
-                  <div className="w-12 h-12 bg-white bg-opacity-20 rounded-full flex items-center justify-center">
-                    <svg className="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 20 20">
+                <div className="flex-shrink-0 mr-3 sm:mr-4">
+                  <div className="w-8 h-8 sm:w-12 sm:h-12 bg-white bg-opacity-20 rounded-full flex items-center justify-center">
+                    <svg className="w-4 h-4 sm:w-6 sm:h-6 text-white" fill="currentColor" viewBox="0 0 20 20">
                       <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                     </svg>
                   </div>
                 </div>
                 <div>
-                  <h3 className="text-lg font-bold mb-1">🎉 Sukses!</h3>
-                  <p className="text-green-100 font-medium">{successMessage}</p>
+                  <h3 className="text-base sm:text-lg font-bold mb-1">🎉 Sukses!</h3>
+                  <p className="text-green-100 font-medium text-sm sm:text-base">{successMessage}</p>
                 </div>
               </div>
             </div>
           )}
 
-          {/* Error Message */}
+          {/* Error Message - Mobile Optimized */}
           {submitError && (
-            <div className="mx-8 mb-8">
+            <div className="mx-4 sm:mx-8 mb-4 sm:mb-8">
               {submitError === 'PENDING_LIMIT_REACHED' ? (
-                // Special UI for pending limit error
-                <div className="p-8 bg-gradient-to-r from-orange-400 to-yellow-500 text-white rounded-2xl shadow-lg">
+                // Special UI for pending limit error - Mobile Optimized
+                <div className="p-4 sm:p-8 bg-gradient-to-r from-orange-400 to-yellow-500 text-white rounded-xl sm:rounded-2xl shadow-lg">
                   <div className="text-center">
-                    <div className="w-16 h-16 bg-white bg-opacity-20 rounded-full flex items-center justify-center mx-auto mb-4">
-                      <svg className="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 20 20">
+                    <div className="w-12 h-12 sm:w-16 sm:h-16 bg-white bg-opacity-20 rounded-full flex items-center justify-center mx-auto mb-3 sm:mb-4">
+                      <svg className="w-6 h-6 sm:w-8 sm:h-8 text-white" fill="currentColor" viewBox="0 0 20 20">
                         <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clipRule="evenodd" />
                       </svg>
                     </div>
-                    <h3 className="text-2xl font-bold mb-2">⏳ Limit i rezervimeve për këtë sallon u arrit</h3>
-                    <p className="text-orange-100 font-medium mb-6 text-lg">
+                    <h3 className="text-lg sm:text-2xl font-bold mb-2">⏳ Limit i rezervimeve për këtë sallon u arrit</h3>
+                    <p className="text-orange-100 font-medium mb-4 sm:mb-6 text-sm sm:text-lg">
                       Keni arritur limitin maksimal të rezervimeve në pritje për këtë sallon (2). Ju lutemi menaxhoni rezervimet ekzistuese me këtë sallon para se të bëni një të re, ose provoni me sallone të tjerë.
                     </p>
-                    <div className="flex flex-col sm:flex-row gap-3 justify-center">
+                    <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 justify-center">
                       <button
                         onClick={() => window.location.href = '/dashboard/bookings'}
-                        className="px-6 py-3 bg-white text-orange-600 rounded-xl font-semibold hover:bg-orange-50 transition-colors shadow-lg"
+                        className="px-4 py-2 sm:px-6 sm:py-3 bg-white text-orange-600 rounded-lg sm:rounded-xl font-semibold hover:bg-orange-50 transition-colors shadow-lg text-sm sm:text-base"
                       >
                         📅 Shiko Rezervimet e Mia
                       </button>
                       <button
                         onClick={() => window.location.href = '/salon'}
-                        className="px-6 py-3 bg-white text-orange-600 rounded-xl font-semibold hover:bg-orange-50 transition-colors shadow-lg"
+                        className="px-4 py-2 sm:px-6 sm:py-3 bg-white text-orange-600 rounded-lg sm:rounded-xl font-semibold hover:bg-orange-50 transition-colors shadow-lg text-sm sm:text-base"
                       >
                         🔍 Zbulo Sallone të Tjerë
                       </button>
                       <button
                         onClick={() => setSubmitError('')}
-                        className="px-6 py-3 bg-orange-600 bg-opacity-20 text-white rounded-xl font-semibold hover:bg-opacity-30 transition-colors border border-white border-opacity-30"
+                        className="px-4 py-2 sm:px-6 sm:py-3 bg-orange-600 bg-opacity-20 text-white rounded-lg sm:rounded-xl font-semibold hover:bg-opacity-30 transition-colors border border-white border-opacity-30 text-sm sm:text-base"
                       >
                         ✕ Mbyll
                       </button>
@@ -1081,19 +1082,19 @@ export default function BookingForm({
                   </div>
                 </div>
               ) : (
-                // Regular error message
-                <div className="p-6 bg-gradient-to-r from-red-500 to-pink-600 text-white rounded-2xl shadow-lg">
+                // Regular error message - Mobile Optimized
+                <div className="p-4 sm:p-6 bg-gradient-to-r from-red-500 to-pink-600 text-white rounded-xl sm:rounded-2xl shadow-lg">
                   <div className="flex items-center">
-                    <div className="flex-shrink-0 mr-4">
-                      <div className="w-12 h-12 bg-white bg-opacity-20 rounded-full flex items-center justify-center">
-                        <svg className="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 20 20">
+                    <div className="flex-shrink-0 mr-3 sm:mr-4">
+                      <div className="w-8 h-8 sm:w-12 sm:h-12 bg-white bg-opacity-20 rounded-full flex items-center justify-center">
+                        <svg className="w-4 h-4 sm:w-6 sm:h-6 text-white" fill="currentColor" viewBox="0 0 20 20">
                           <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
                         </svg>
                       </div>
                     </div>
                     <div>
-                      <h3 className="text-lg font-bold mb-1">⚠️ Gabim</h3>
-                      <p className="text-red-100 font-medium">{submitError}</p>
+                      <h3 className="text-base sm:text-lg font-bold mb-1">⚠️ Gabim</h3>
+                      <p className="text-red-100 font-medium text-sm sm:text-base">{submitError}</p>
                     </div>
                   </div>
                 </div>
