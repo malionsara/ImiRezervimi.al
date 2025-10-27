@@ -404,10 +404,7 @@ export default function TimeSlotPicker({
                 </p>
               </div>
             ) : (
-              <div className="relative">
-                {/* Scroll shadows */}
-                <div className="sticky top-0 h-4 bg-gradient-to-b from-white to-transparent pointer-events-none z-10" />
-                <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 max-h-80 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
                   {availableSlots.map((slot) => (
                     <button
                       type="button"
@@ -416,7 +413,7 @@ export default function TimeSlotPicker({
                       disabled={!slot.available}
                       title={slot.reason || (slot.available ? `Rezervo në orën ${slot.time}` : undefined)}
                       className={`
-                        relative py-4 px-4 rounded-xl text-sm font-semibold transition-all duration-300 time-slot-btn border
+                        relative py-2 px-3 sm:py-4 sm:px-4 rounded-lg sm:rounded-xl text-xs sm:text-sm font-semibold transition-all duration-300 time-slot-btn border
                         ${selectedTime === slot.time
                           ? 'bg-gradient-to-br from-red-500 to-pink-600 text-white shadow-xl scale-110 border-red-400 ring-2 ring-red-200'
                           : slot.available
@@ -426,12 +423,12 @@ export default function TimeSlotPicker({
                       `}
                     >
                       <div className="flex flex-col items-center">
-                        <span className="text-base">{slot.time}</span>
+                        <span className="text-sm sm:text-base">{slot.time}</span>
                         {!slot.available && slot.reason && (
                           <div className="text-xs mt-1 opacity-75">{slot.reason}</div>
                         )}
                         {slot.available && selectedTime !== slot.time && (
-                          <div className="text-xs text-gray-500 mt-1">Disponueshëm</div>
+                          <div className="text-xs text-gray-500 mt-1 hidden sm:block">Disponueshëm</div>
                         )}
                       </div>
                       
@@ -445,8 +442,6 @@ export default function TimeSlotPicker({
                       )}
                     </button>
                   ))}
-                </div>
-                <div className="sticky bottom-0 h-4 bg-gradient-to-t from-white to-transparent pointer-events-none z-10" />
               </div>
             )}
           </div>
