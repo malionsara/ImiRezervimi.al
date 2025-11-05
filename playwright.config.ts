@@ -97,8 +97,8 @@ export default defineConfig({
   webServer: process.env.CI ? undefined : undefined,
 
   /* Global setup and teardown - disabled for production CI testing */
-  globalSetup: process.env.CI ? undefined : require.resolve('./tests/global.setup.ts'),
-  globalTeardown: process.env.CI ? undefined : require.resolve('./tests/global.teardown.ts'),
+  globalSetup: undefined, // Temporarily disabled
+  globalTeardown: undefined, // Temporarily disabled
 
   /* Output directory for test artifacts */
   outputDir: 'test-results/',
