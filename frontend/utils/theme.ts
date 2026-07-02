@@ -1,18 +1,19 @@
 // frontend/utils/theme.ts
-// Theme system for salon categories - supports beauty salons and barbershops
+// Theme system for salon categories - supports beauty salons and barbershops.
+// Visuals are driven by CSS variables: set data-theme={theme.dataTheme} on the
+// page root and every accent-* Tailwind class re-resolves to the category color
+// (tokens defined in styles/globals.css).
+
+import type { LucideIcon } from 'lucide-react'
+import { Sparkles, Scissors, Flower2, Heart, Star, Brush } from 'lucide-react'
 
 export type SalonCategory = 'beauty' | 'barbershop' | 'unisex'
 
 export interface ThemeConfig {
   name: string
-  primaryGradient: string
-  primaryGradientHover: string
-  backgroundGradient: string
-  backgroundGradientLight: string
-  accentColor: string
-  accentColorLight: string
-  icon: string
-  icons: string[]
+  dataTheme: 'beauty' | 'barbershop' | 'unisex'
+  icon: LucideIcon
+  icons: LucideIcon[]
   messaging: {
     heroTitle: string
     heroSubtitle: string
@@ -24,14 +25,9 @@ export interface ThemeConfig {
 export const themes: Record<SalonCategory, ThemeConfig> = {
   beauty: {
     name: 'Beauty Salon',
-    primaryGradient: 'from-red-500 via-pink-500 to-orange-500',
-    primaryGradientHover: 'from-red-600 via-pink-600 to-orange-600',
-    backgroundGradient: 'from-pink-50 via-red-50 to-orange-50',
-    backgroundGradientLight: 'from-pink-100 via-red-100 to-orange-100',
-    accentColor: 'red-500',
-    accentColorLight: 'red-100',
-    icon: '💅',
-    icons: ['💅', '✨', '💄', '💋', '🌸'],
+    dataTheme: 'beauty',
+    icon: Sparkles,
+    icons: [Sparkles, Brush, Flower2, Heart, Star],
     messaging: {
       heroTitle: 'Rezervo te salloni yt i preferuar',
       heroSubtitle: 'Platforma e parë shqiptare për rezervime online në sallone bukurie.',
@@ -41,14 +37,9 @@ export const themes: Record<SalonCategory, ThemeConfig> = {
   },
   barbershop: {
     name: 'Barbershop',
-    primaryGradient: 'from-slate-700 via-gray-800 to-slate-900',
-    primaryGradientHover: 'from-slate-800 via-gray-900 to-black',
-    backgroundGradient: 'from-slate-50 via-gray-50 to-slate-100',
-    backgroundGradientLight: 'from-slate-100 via-gray-100 to-slate-200',
-    accentColor: 'slate-700',
-    accentColorLight: 'slate-100',
-    icon: '✂️',
-    icons: ['✂️', '💈', '🪒', '💼', '⭐'],
+    dataTheme: 'barbershop',
+    icon: Scissors,
+    icons: [Scissors, Star, Sparkles],
     messaging: {
       heroTitle: 'Rezervo te berberi yt i preferuar',
       heroSubtitle: 'Platforma e parë shqiptare për rezervime online në berberi dhe sallone për meshkuj.',
@@ -58,14 +49,9 @@ export const themes: Record<SalonCategory, ThemeConfig> = {
   },
   unisex: {
     name: 'Unisex',
-    primaryGradient: 'from-blue-500 via-indigo-500 to-purple-500',
-    primaryGradientHover: 'from-blue-600 via-indigo-600 to-purple-600',
-    backgroundGradient: 'from-blue-50 via-indigo-50 to-purple-50',
-    backgroundGradientLight: 'from-blue-100 via-indigo-100 to-purple-100',
-    accentColor: 'blue-500',
-    accentColorLight: 'blue-100',
-    icon: '💇',
-    icons: ['💇', '✨', '💆', '🌟', '⭐'],
+    dataTheme: 'unisex',
+    icon: Scissors,
+    icons: [Scissors, Sparkles, Star],
     messaging: {
       heroTitle: 'Rezervo te salloni yt i preferuar',
       heroSubtitle: 'Platforma e parë shqiptare për rezervime online në sallone bukurie dhe berberi.',
@@ -78,19 +64,3 @@ export const themes: Record<SalonCategory, ThemeConfig> = {
 export function getTheme(category: SalonCategory = 'beauty'): ThemeConfig {
   return themes[category] || themes.beauty
 }
-
-export function getThemeClasses(category: SalonCategory = 'beauty', type: 'primary' | 'background' | 'accent' = 'primary'): string {
-  const theme = getTheme(category)
-  
-  switch (type) {
-    case 'primary':
-      return theme.primaryGradient
-    case 'background':
-      return theme.backgroundGradient
-    case 'accent':
-      return theme.accentColor
-    default:
-      return theme.primaryGradient
-  }
-}
-

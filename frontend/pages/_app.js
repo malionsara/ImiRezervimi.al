@@ -7,8 +7,21 @@ import { useState, useEffect } from 'react'
 import { SpeedInsights } from "@vercel/speed-insights/next"
 import { Analytics } from "@vercel/analytics/next"
 import Head from 'next/head'
+import Image from 'next/image'
+import { Fraunces, Figtree } from 'next/font/google'
 import ToastProvider from '../components/ToastProvider'
 import '../styles/globals.css'
+
+const fontDisplay = Fraunces({
+  subsets: ['latin', 'latin-ext'],
+  variable: '--font-display',
+  axes: ['opsz'],
+})
+
+const fontSans = Figtree({
+  subsets: ['latin', 'latin-ext'],
+  variable: '--font-sans',
+})
 
 // Removed Twilio validation from frontend - only runs on server-side
 
@@ -31,12 +44,17 @@ export default function App({
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-pink-50 to-red-50 flex items-center justify-center">
+      <div className={`${fontDisplay.variable} ${fontSans.variable} min-h-screen bg-cream flex items-center justify-center font-sans`}>
         <div className="text-center">
-          <div className="mx-auto h-16 w-16 rounded-2xl bg-gradient-to-br from-red-500 to-pink-500 flex items-center justify-center mb-4 shadow-lg animate-pulse">
-            <span className="text-2xl font-bold text-white">IR</span>
-          </div>
-          <p className="text-gray-600">Po ngarkohet...</p>
+          <Image
+            src="/brand/logo.png"
+            alt="ImiRezervimi"
+            width={64}
+            height={64}
+            className="mx-auto mb-4 rounded-lg animate-pulse"
+            priority
+          />
+          <p className="text-clay">Po ngarkohet...</p>
         </div>
       </div>
     )
@@ -65,8 +83,8 @@ export default function App({
         <meta name="apple-mobile-web-app-title" content="ImiRezervimi" />
 
         {/* Theme Colors */}
-        <meta name="theme-color" content="#dc2626" />
-        <meta name="msapplication-TileColor" content="#dc2626" />
+        <meta name="theme-color" content="#FAF7F2" />
+        <meta name="msapplication-TileColor" content="#FAF7F2" />
         <meta name="msapplication-TileImage" content="/icons/icon-144x144.png" />
 
         {/* PWA Meta Tags */}
@@ -93,7 +111,9 @@ export default function App({
       </Head>
       <SessionProvider session={session}>
         <ToastProvider>
-          <Component {...pageProps} supabase={supabase} />
+          <div className={`${fontDisplay.variable} ${fontSans.variable} font-sans`}>
+            <Component {...pageProps} supabase={supabase} />
+          </div>
           {/* Vercel Features */}
           <SpeedInsights />
           <Analytics />
