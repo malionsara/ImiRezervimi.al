@@ -5,6 +5,7 @@ export type AppointmentStatus = 'pending' | 'approved' | 'declined' | 'completed
 export type AccountType = 'guest' | 'social' | 'verified';
 export type AuthProvider = 'instagram' | 'google' | 'phone';
 export type SalonStatus = 'active' | 'inactive' | 'pending' | 'suspended';
+export type SalonCategory = 'beauty' | 'barbershop' | 'unisex';
 
 // Raw database row types (snake_case as they come from DB)
 export interface CustomerRow {
@@ -47,6 +48,7 @@ export interface SalonRow {
   facebook_page?: string;
   website_url?: string;
   status: SalonStatus;
+  category: SalonCategory;
   auto_approve_vips: boolean;
   max_advance_days: number;
   min_cancellation_minutes: number;
@@ -121,6 +123,7 @@ export interface Salon {
   email?: string;
   address: string;
   city: string;
+  category: SalonCategory;
   workingHours: Record<string, { open: string; close: string; closed: boolean }>;
   instagramHandle?: string;
   facebookHandle?: string;

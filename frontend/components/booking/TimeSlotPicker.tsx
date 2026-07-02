@@ -245,9 +245,9 @@ export default function TimeSlotPicker({
           </p>
         </div>
       ) : (
-        <div className="grid lg:grid-cols-2 gap-8 lg:gap-12">
+        <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 relative z-10">
           {/* Calendar - Enhanced Layout */}
-          <div className="bg-white rounded-2xl border border-gray-200 p-6 shadow-lg">
+          <div className="bg-white rounded-2xl border border-gray-200 p-6 shadow-lg relative z-10">
             {/* Calendar Header */}
             <div className="flex items-center justify-between mb-6">
               <button
@@ -307,7 +307,7 @@ export default function TimeSlotPicker({
                     disabled={!selectable}
                     title={reason || (selectable ? `Zgjidh ${ALBANIAN_DAYS[date.getDay()]}, ${date.getDate()} ${ALBANIAN_MONTHS[date.getMonth()]}` : undefined)}
                     className={`
-                      relative w-full h-12 text-sm font-semibold rounded-xl transition-all duration-300 calendar-day
+                      relative w-full h-12 text-sm font-semibold rounded-xl transition-all duration-300 calendar-day z-20
                       ${isSelected
                         ? 'bg-gradient-to-br from-red-500 to-pink-600 text-white shadow-xl scale-110 ring-2 ring-red-200'
                         : selectable && isCurrentMonth

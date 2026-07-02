@@ -50,8 +50,8 @@ export default function Homepage() {
 
   return (
     <Layout {...homeLayout({
-      title: "Rezervime Online për Sallone Bukurie",
-      description: "Platforma e parë shqiptare për rezervime online në sallone bukurie. Rezervo me Instagram, konfirmo me WhatsApp."
+      title: "Rezervime Online për Sallone & Berberi",
+      description: "Platforma e parë shqiptare për rezervime online në sallone bukurie dhe berberi. Rezervo me Instagram, konfirmo me WhatsApp."
     })}>
       <div className="relative overflow-hidden">
         {/* Dynamic Background */}
@@ -69,7 +69,7 @@ export default function Homepage() {
             style={{ transform: `translateY(${scrollY * 0.4}px)` }}
           ></div>
           
-          {/* Floating Icons */}
+          {/* Floating Icons - Mixed for both audiences */}
           <div className="absolute top-32 left-1/4 animate-float-icon">
             <div className="w-16 h-16 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center shadow-lg">
               <span className="text-3xl">💅</span>
@@ -77,12 +77,17 @@ export default function Homepage() {
           </div>
           <div className="absolute top-64 right-1/4 animate-float-icon-delayed">
             <div className="w-14 h-14 bg-white/20 backdrop-blur-sm rounded-xl flex items-center justify-center shadow-lg">
-              <span className="text-2xl">✨</span>
+              <span className="text-2xl">✂️</span>
             </div>
           </div>
           <div className="absolute bottom-96 left-1/3 animate-float-icon-slow">
             <div className="w-12 h-12 bg-white/20 backdrop-blur-sm rounded-lg flex items-center justify-center shadow-lg">
-              <span className="text-xl">💄</span>
+              <span className="text-xl">✨</span>
+            </div>
+          </div>
+          <div className="absolute top-96 right-1/3 animate-float-icon">
+            <div className="w-12 h-12 bg-white/20 backdrop-blur-sm rounded-lg flex items-center justify-center shadow-lg">
+              <span className="text-xl">💈</span>
             </div>
           </div>
         </div>
@@ -101,19 +106,40 @@ export default function Homepage() {
               {/* Main Heading */}
               <div className="mb-8">
                 <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold text-gray-900 mb-6 leading-tight">
-                  Rezervo te salloni yt{' '}
+                  Rezervo te{' '}
                   <span className="relative inline-block">
                     <span className="text-transparent bg-clip-text bg-gradient-to-r from-red-500 via-pink-500 to-orange-500 animate-gradient-shift">
-                      i preferuar
+                      salloni
                     </span>
-                  </span>
+                  </span>{' '}
+                  ose{' '}
+                  <span className="relative inline-block">
+                    <span className="text-transparent bg-clip-text bg-gradient-to-r from-slate-600 via-gray-700 to-slate-800 animate-gradient-shift">
+                      berberi
+                    </span>
+                  </span>{' '}
+                  yt i preferuar
                 </h1>
                 
-                <p className="text-2xl md:text-3xl text-gray-600 mb-12 max-w-5xl mx-auto leading-relaxed">
-                  Platforma e parë shqiptare për rezervime online në sallone bukurie.
+                <p className="text-2xl md:text-3xl text-gray-600 mb-8 max-w-5xl mx-auto leading-relaxed">
+                  Platforma e parë shqiptare për rezervime online në sallone bukurie dhe berberi.
                   <br className="hidden md:block" />
                   <span className="text-red-500 font-semibold">Identifikohu me Instagram</span>, rezervo me 1 klik, <span className="text-green-500 font-semibold">konfirmo me WhatsApp</span>.
                 </p>
+
+                {/* Category Selector */}
+                <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-12">
+                  <Link href="/salons?category=beauty" className="group px-8 py-4 bg-gradient-to-r from-red-500 via-pink-500 to-orange-500 text-white rounded-2xl font-semibold hover:shadow-xl transition-all duration-300 transform hover:scale-105 flex items-center">
+                    <span className="mr-3 text-2xl">💅</span>
+                    Sallone Bukurie
+                    <span className="ml-3 transform group-hover:translate-x-1 transition-transform">→</span>
+                  </Link>
+                  <Link href="/salons?category=barbershop" className="group px-8 py-4 bg-gradient-to-r from-slate-700 via-gray-800 to-slate-900 text-white rounded-2xl font-semibold hover:shadow-xl transition-all duration-300 transform hover:scale-105 flex items-center">
+                    <span className="mr-3 text-2xl">✂️</span>
+                    Berberi & Sallone për Meshkuj
+                    <span className="ml-3 transform group-hover:translate-x-1 transition-transform">→</span>
+                  </Link>
+                </div>
               </div>
 
               {/* CTA Buttons */}
@@ -194,7 +220,7 @@ export default function Homepage() {
                     </div>
                   </div>
                   <h3 className="text-2xl font-bold text-gray-900 mb-4">Zbulo në Instagram</h3>
-                  <p className="text-gray-600 leading-relaxed text-lg">Shfleto sallone bukurie në Instagram dhe kliko linkun në bio për të rezervuar</p>
+                  <p className="text-gray-600 leading-relaxed text-lg">Shfleto sallone ose berberi në Instagram dhe kliko linkun në bio për të rezervuar</p>
                 </div>
               </div>
 
@@ -241,13 +267,13 @@ export default function Homepage() {
               <div className="relative z-10 text-center">
                 <div className="mb-8">
                   <div className="inline-block px-6 py-2 bg-purple-100 text-purple-600 rounded-full text-sm font-semibold mb-6">
-                    PËR PRONARËT E SALLONEVE
+                    PËR PRONARËT E SALLONEVE & BERBERIVE
                   </div>
                   <h2 className="text-4xl md:text-6xl font-bold text-gray-900 mb-6">
-                    Je pronare salloni?
+                    Je pronare salloni ose berberi?
                   </h2>
                   <p className="text-2xl text-gray-600 mb-8 max-w-3xl mx-auto leading-relaxed">
-                    Bashkohu me <span className="text-purple-500 font-bold">500+ sallone</span> që kanë rritur rezervimet me <span className="text-green-500 font-bold">+150%</span> falë ImiRezervimi.al
+                    Bashkohu me <span className="text-purple-500 font-bold">500+ sallone dhe berberi</span> që kanë rritur rezervimet me <span className="text-green-500 font-bold">+150%</span> falë ImiRezervimi.al
                   </p>
                 </div>
                 
@@ -413,7 +439,7 @@ export default function Homepage() {
                 Gati për rezervimin tuaj të parë?
               </h2>
               <p className="text-2xl text-white/95 mb-12 leading-relaxed max-w-3xl mx-auto">
-                Bashkohu me <span className="font-bold text-yellow-300">10,000+</span> klienta që kanë zgjedhur ImiRezervimi.al për nevojat e tyre të bukurisë
+                Bashkohu me <span className="font-bold text-yellow-300">10,000+</span> klienta që kanë zgjedhur ImiRezervimi.al për rezervime në sallone bukurie dhe berberi
               </p>
             </div>
             

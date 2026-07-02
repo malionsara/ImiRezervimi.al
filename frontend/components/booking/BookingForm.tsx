@@ -446,20 +446,20 @@ export default function BookingForm({
     const currentIndex = steps.findIndex(step => step.key === currentStep)
 
     return (
-      <div className="mb-6 sm:mb-12">
+      <div className="mb-8 sm:mb-12 relative z-0 overflow-hidden">
         {/* Progress Bar - Mobile Optimized */}
-        <div className="relative mb-4 sm:mb-8">
-          <div className="absolute top-1/2 left-0 w-full h-0.5 sm:h-1 bg-gray-200 rounded-full transform -translate-y-1/2"></div>
+        <div className="relative mb-4 sm:mb-8 z-0">
+          <div className="absolute top-1/2 left-0 w-full h-0.5 sm:h-1 bg-gray-200 rounded-full transform -translate-y-1/2 z-0"></div>
           <div 
-            className="absolute top-1/2 left-0 h-0.5 sm:h-1 bg-gradient-to-r from-red-500 to-pink-500 rounded-full transform -translate-y-1/2 transition-all duration-500 ease-out"
+            className="absolute top-1/2 left-0 h-0.5 sm:h-1 bg-gradient-to-r from-red-500 to-pink-500 rounded-full transform -translate-y-1/2 transition-all duration-500 ease-out z-0"
             style={{ width: `${(currentIndex / (steps.length - 1)) * 100}%` }}
           ></div>
         </div>
 
         {/* Step Indicators - Mobile Optimized */}
-        <div className="flex justify-between relative">
+        <div className="flex justify-between relative z-0 overflow-visible">
           {steps.map((step, index) => (
-            <div key={step.key} className="flex flex-col items-center relative z-10">
+            <div key={step.key} className="flex flex-col items-center relative z-0">
               {/* Step Circle - Mobile Optimized */}
               <div className={`
                 flex items-center justify-center w-10 h-10 sm:w-14 sm:h-14 rounded-full text-sm sm:text-lg font-bold transition-all duration-300 transform
@@ -1016,7 +1016,7 @@ export default function BookingForm({
             {renderStepIndicator()}
 
             {/* Step Content - Mobile Optimized */}
-            <div className="min-h-[300px] sm:min-h-[500px] bg-gray-50 rounded-xl sm:rounded-2xl p-4 sm:p-8 mb-4 sm:mb-8 shadow-inner">
+            <div className="min-h-[300px] sm:min-h-[500px] bg-gray-50 rounded-xl sm:rounded-2xl p-4 sm:p-8 mb-4 sm:mb-8 shadow-inner relative z-10">
               {renderStepContent()}
             </div>
 
