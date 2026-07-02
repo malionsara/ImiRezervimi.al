@@ -9,6 +9,7 @@ import { useSession } from 'next-auth/react'
 import { appointmentRequestSchema, CustomerInfo, ALBANIAN_ERRORS } from '../../lib/validation'
 import ServiceSelector from './ServiceSelector'
 import TimeSlotPicker from './TimeSlotPicker'
+import { Check, ChevronLeft, ChevronRight, Send, Sparkles, CalendarDays, User, Smartphone, Info, Clock, AlertTriangle, X, Search, MessageCircle } from 'lucide-react'
 
 // ==============================================
 // TYPES AND INTERFACES
@@ -433,11 +434,11 @@ export default function BookingForm({
   // ==============================================
   const renderStepIndicator = () => {
     const allSteps = [
-      { key: 'service', label: 'Shërbimi', icon: '💅' },
-      { key: 'datetime', label: 'Data & Ora', icon: '📅' },
-      { key: 'customer', label: 'Të dhënat', icon: '👤' },
-      { key: 'phone', label: 'Telefoni', icon: '📱' },
-      { key: 'confirm', label: 'Konfirmo', icon: '✅' }
+      { key: 'service', label: 'Shërbimi', icon: Sparkles },
+      { key: 'datetime', label: 'Data & Ora', icon: CalendarDays },
+      { key: 'customer', label: 'Të dhënat', icon: User },
+      { key: 'phone', label: 'Telefoni', icon: Smartphone },
+      { key: 'confirm', label: 'Konfirmo', icon: Check }
     ]
     
     // Use stable steps instead of dynamic calculation
@@ -449,48 +450,45 @@ export default function BookingForm({
       <div className="mb-8 sm:mb-12 relative z-0 overflow-hidden">
         {/* Progress Bar - Mobile Optimized */}
         <div className="relative mb-4 sm:mb-8 z-0">
-          <div className="absolute top-1/2 left-0 w-full h-0.5 sm:h-1 bg-gray-200 rounded-full transform -translate-y-1/2 z-0"></div>
-          <div 
-            className="absolute top-1/2 left-0 h-0.5 sm:h-1 bg-gradient-to-r from-red-500 to-pink-500 rounded-full transform -translate-y-1/2 transition-all duration-500 ease-out z-0"
+          <div className="absolute top-1/2 left-0 w-full h-0.5 bg-linen rounded-full transform -translate-y-1/2 z-0"></div>
+          <div
+            className="absolute top-1/2 left-0 h-0.5 bg-accent rounded-full transform -translate-y-1/2 transition-all duration-500 ease-out z-0"
             style={{ width: `${(currentIndex / (steps.length - 1)) * 100}%` }}
           ></div>
         </div>
 
         {/* Step Indicators - Mobile Optimized */}
         <div className="flex justify-between relative z-0 overflow-visible">
-          {steps.map((step, index) => (
+          {steps.map((step, index) => {
+            const StepIcon = step.icon
+            return (
             <div key={step.key} className="flex flex-col items-center relative z-0">
               {/* Step Circle - Mobile Optimized */}
               <div className={`
-                flex items-center justify-center w-10 h-10 sm:w-14 sm:h-14 rounded-full text-sm sm:text-lg font-bold transition-all duration-300 transform
-                ${index <= currentIndex 
-                  ? 'bg-gradient-to-br from-red-500 to-pink-600 text-white shadow-lg scale-110' 
-                  : 'bg-white border-2 border-gray-300 text-gray-400 hover:border-gray-400'
+                flex items-center justify-center w-10 h-10 sm:w-12 sm:h-12 rounded-full transition-all duration-300
+                ${index <= currentIndex
+                  ? 'bg-accent text-white shadow-soft'
+                  : 'bg-paper border border-linen text-clay/60'
                 }
-                ${index === currentIndex ? 'ring-2 sm:ring-4 ring-red-200 ring-opacity-50 animate-pulse' : ''}
+                ${index === currentIndex ? 'ring-2 ring-accent/25' : ''}
               `}>
                 {index < currentIndex ? (
-                  <svg className="w-4 h-4 sm:w-6 sm:h-6" fill="currentColor" viewBox="0 0 20 20">
-                    <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                  </svg>
+                  <Check size={18} strokeWidth={2.5} aria-hidden="true" />
                 ) : (
-                  <span className="text-lg sm:text-xl">{step.icon}</span>
+                  <StepIcon size={18} strokeWidth={1.75} aria-hidden="true" />
                 )}
               </div>
 
               {/* Step Label - Mobile Optimized */}
               <div className="mt-2 sm:mt-3 text-center">
-                <p className={`text-xs sm:text-sm font-semibold transition-colors duration-300 ${
-                  index <= currentIndex ? 'text-red-600' : 'text-gray-500'
+                <p className={`text-xs sm:text-sm font-medium transition-colors duration-300 ${
+                  index <= currentIndex ? 'text-accent' : 'text-clay'
                 }`}>
                   {step.label}
                 </p>
-                {index === currentIndex && (
-                  <div className="mt-1 w-1.5 h-1.5 sm:w-2 sm:h-2 bg-red-500 rounded-full mx-auto animate-bounce"></div>
-                )}
               </div>
             </div>
-          ))}
+          )})}
         </div>
       </div>
     )
@@ -527,93 +525,93 @@ export default function BookingForm({
         return (
           <div className="space-y-6 mb-6">
             <div className="text-center mb-6">
-              <h3 className="text-xl font-semibold text-gray-900 mb-2">
+              <h3 className="font-display text-xl text-ink mb-2">
                 Të dhënat tuaja
               </h3>
-              <p className="text-gray-600">
+              <p className="text-clay">
                 Plotësoni informacionet për të vazhduar me rezervimin
               </p>
             </div>
 
             {/* First Name */}
             <div>
-              <label htmlFor="firstName" className="block text-sm font-medium text-gray-700 mb-2">
+              <label htmlFor="firstName" className="block text-sm font-medium text-ink mb-2">
                 Emri *
               </label>
               <input
                 {...register('customerInfo.firstName')}
                 type="text"
                 id="firstName"
-                className="block w-full px-4 py-3 border border-gray-300 rounded-xl text-lg
-                         placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-red-500 
-                         focus:border-transparent transition-all duration-200 form-input-mobile"
+                className="block w-full px-4 py-3 border border-linen bg-paper rounded text-base
+                         placeholder:text-clay/60 focus:outline-none focus:ring-2 focus:ring-accent/25
+                         focus:border-accent transition-all duration-200 form-input-mobile"
                 placeholder="Emri juaj"
               />
               {errors.customerInfo?.firstName && (
-                <p className="mt-1 text-sm text-red-600">{errors.customerInfo.firstName.message}</p>
+                <p className="mt-1 text-sm text-danger">{errors.customerInfo.firstName.message}</p>
               )}
             </div>
 
             {/* Last Name */}
             <div>
-              <label htmlFor="lastName" className="block text-sm font-medium text-gray-700 mb-2">
+              <label htmlFor="lastName" className="block text-sm font-medium text-ink mb-2">
                 Mbiemri *
               </label>
               <input
                 {...register('customerInfo.lastName')}
                 type="text"
                 id="lastName"
-                className="block w-full px-4 py-3 border border-gray-300 rounded-xl text-lg
-                         placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-red-500 
-                         focus:border-transparent transition-all duration-200 form-input-mobile"
+                className="block w-full px-4 py-3 border border-linen bg-paper rounded text-base
+                         placeholder:text-clay/60 focus:outline-none focus:ring-2 focus:ring-accent/25
+                         focus:border-accent transition-all duration-200 form-input-mobile"
                 placeholder="Mbiemri juaj"
               />
               {errors.customerInfo?.lastName && (
-                <p className="mt-1 text-sm text-red-600">{errors.customerInfo.lastName.message}</p>
+                <p className="mt-1 text-sm text-danger">{errors.customerInfo.lastName.message}</p>
               )}
             </div>
 
             {/* Phone */}
             <div>
-              <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-2">
+              <label htmlFor="phone" className="block text-sm font-medium text-ink mb-2">
                 Numri i Telefonit *
               </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                  <span className="text-gray-500 sm:text-sm">🇦🇱</span>
+                  <span className="text-clay text-sm font-medium">+355</span>
                 </div>
                 <input
                   {...register('customerInfo.phone')}
                   type="tel"
                   id="phone"
-                  className="block w-full pl-12 pr-4 py-3 border border-gray-300 rounded-xl text-lg
-                           placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-red-500 
-                           focus:border-transparent transition-all duration-200 form-input-mobile"
+                  className="block w-full pl-14 pr-4 py-3 border border-linen bg-paper rounded text-base
+                           placeholder:text-clay/60 focus:outline-none focus:ring-2 focus:ring-accent/25
+                           focus:border-accent transition-all duration-200 form-input-mobile"
                   placeholder="+355 69 123 4567"
                 />
               </div>
               {errors.customerInfo?.phone && (
-                <p className="mt-1 text-sm text-red-600">{errors.customerInfo.phone.message}</p>
+                <p className="mt-1 text-sm text-danger">{errors.customerInfo.phone.message}</p>
               )}
             </div>
 
             {/* Customer Notes */}
             <div>
-              <label htmlFor="customerNotes" className="block text-sm font-medium text-gray-700 mb-2">
+              <label htmlFor="customerNotes" className="block text-sm font-medium text-ink mb-2">
                 Shënime shtesë (opsionale)
               </label>
               <textarea
                 {...register('customerNotes')}
                 id="customerNotes"
                 rows={3}
-                className="block w-full px-4 py-3 border border-gray-300 rounded-xl text-lg
-                         placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-red-500 
-                         focus:border-transparent transition-all duration-200 resize-none form-input-mobile"
+                className="block w-full px-4 py-3 border border-linen bg-paper rounded text-base
+                         placeholder:text-clay/60 focus:outline-none focus:ring-2 focus:ring-accent/25
+                         focus:border-accent transition-all duration-200 resize-none form-input-mobile"
                 placeholder="Ngjyra e preferuar, kërkesa të veçanta, etj..."
                 maxLength={500}
               />
               {errors.customerNotes && (
-                <p className="mt-1 text-sm text-red-600">{errors.customerNotes.message}</p>
+                <p className="mt-1 text-sm text-danger">{errors.customerNotes.message}</p>
               )}
             </div>
           </div>
@@ -623,45 +621,43 @@ export default function BookingForm({
         return (
           <div className="space-y-6 mb-6">
             <div className="text-center mb-6">
-              <h3 className="text-xl font-semibold text-gray-900 mb-2">
+              <h3 className="font-display text-xl text-ink mb-2">
                 Numri i telefonit
               </h3>
-              <p className="text-gray-600">
+              <p className="text-clay">
                 Na duhet numri juaj i telefonit për të dërguar njoftimet në WhatsApp
               </p>
             </div>
 
             {/* Phone Number */}
             <div>
-              <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-2">
+              <label htmlFor="phone" className="block text-sm font-medium text-ink mb-2">
                 Numri i telefonit *
               </label>
               <input
                 {...register('customerInfo.phone')}
                 type="tel"
                 id="phone"
-                className="block w-full px-4 py-3 border border-gray-300 rounded-xl text-lg
-                         placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-red-500 
-                         focus:border-transparent transition-all duration-200 form-input-mobile"
+                className="block w-full px-4 py-3 border border-linen bg-paper rounded text-base
+                         placeholder:text-clay/60 focus:outline-none focus:ring-2 focus:ring-accent/25
+                         focus:border-accent transition-all duration-200 form-input-mobile"
                 placeholder="+355 69 123 4567"
               />
               {errors.customerInfo?.phone && (
-                <p className="mt-1 text-sm text-red-600">{errors.customerInfo.phone.message}</p>
+                <p className="mt-1 text-sm text-danger">{errors.customerInfo.phone.message}</p>
               )}
-              <p className="mt-2 text-sm text-gray-500">
+              <p className="mt-2 text-sm text-clay">
                 Format: +355 XX XXX XXXX (numër shqiptar)
               </p>
             </div>
 
             {/* WhatsApp Info */}
-            <div className="bg-green-50 border border-green-200 rounded-xl p-4">
-              <div className="flex items-start">
-                <svg className="w-5 h-5 text-green-400 mr-3 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
-                  <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
-                </svg>
+            <div className="bg-success/5 border border-success/20 rounded p-4">
+              <div className="flex items-start gap-3">
+                <MessageCircle size={18} strokeWidth={1.75} className="text-success mt-0.5 shrink-0" aria-hidden="true" />
                 <div>
-                  <h4 className="font-medium text-green-800 mb-1">WhatsApp Njoftimet</h4>
-                  <p className="text-sm text-green-700">
+                  <h4 className="font-medium text-ink mb-1">WhatsApp Njoftimet</h4>
+                  <p className="text-sm text-clay">
                     Do të merrni një mesazh konfirmimi në WhatsApp kur salloni të aprovojë rezervimin tuaj.
                   </p>
                 </div>
@@ -674,31 +670,31 @@ export default function BookingForm({
         return (
           <div className="space-y-6 mb-6">
             <div className="text-center mb-6">
-              <h3 className="text-xl font-semibold text-gray-900 mb-2">
+              <h3 className="font-display text-xl text-ink mb-2">
                 Konfirmoni rezervimin
               </h3>
-              <p className="text-gray-600">
+              <p className="text-clay">
                 Kontrolloni të dhënat para se të dërgoni kërkesën
               </p>
             </div>
 
             {/* Booking Summary */}
-            <div className="bg-gray-50 rounded-2xl p-6 space-y-4">
+            <div className="bg-paper border border-linen rounded-lg p-6 space-y-4">
               <div className="flex items-center justify-between">
-                <span className="text-gray-600">Salloni:</span>
-                <span className="font-semibold text-gray-900">{salon.name}</span>
+                <span className="text-clay">Salloni:</span>
+                <span className="font-semibold text-ink">{salon.name}</span>
               </div>
-              
+
               {selectedService && (
                 <div className="flex items-center justify-between">
-                  <span className="text-gray-600">Shërbimi:</span>
-                  <span className="font-semibold text-gray-900">{selectedService.name}</span>
+                  <span className="text-clay">Shërbimi:</span>
+                  <span className="font-semibold text-ink">{selectedService.name}</span>
                 </div>
               )}
-              
+
               <div className="flex items-center justify-between">
-                <span className="text-gray-600">Data:</span>
-                <span className="font-semibold text-gray-900">
+                <span className="text-clay">Data:</span>
+                <span className="font-semibold text-ink">
                   {watchedValues.appointmentDate && new Date(watchedValues.appointmentDate).toLocaleDateString('sq-AL', {
                     weekday: 'long',
                     year: 'numeric',
@@ -707,51 +703,49 @@ export default function BookingForm({
                   })}
                 </span>
               </div>
-              
+
               <div className="flex items-center justify-between">
-                <span className="text-gray-600">Ora:</span>
-                <span className="font-semibold text-gray-900">{watchedValues.startTime}</span>
+                <span className="text-clay">Ora:</span>
+                <span className="font-semibold text-ink">{watchedValues.startTime}</span>
               </div>
-              
+
               {selectedService?.duration_minutes && (
                 <div className="flex items-center justify-between">
-                  <span className="text-gray-600">Kohëzgjatja:</span>
-                  <span className="font-semibold text-gray-900">{selectedService.duration_minutes} minuta</span>
+                  <span className="text-clay">Kohëzgjatja:</span>
+                  <span className="font-semibold text-ink">{selectedService.duration_minutes} minuta</span>
                 </div>
               )}
-              
+
               {selectedService?.price && (
                 <div className="flex items-center justify-between">
-                  <span className="text-gray-600">Çmimi:</span>
-                  <span className="font-semibold text-gray-900">{selectedService.price}€</span>
+                  <span className="text-clay">Çmimi:</span>
+                  <span className="font-display font-semibold text-accent text-lg">{selectedService.price}€</span>
                 </div>
               )}
-              
-              <div className="border-t border-gray-200 pt-4">
+
+              <div className="border-t border-linen pt-4">
                 {isAuthenticated && (
-                  <div className="bg-green-50 border border-green-200 rounded-xl p-3 mb-4">
-                    <div className="flex items-center">
-                      <svg className="w-4 h-4 text-green-400 mr-2" fill="currentColor" viewBox="0 0 20 20">
-                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                      </svg>
-                      <span className="text-sm font-medium text-green-800">
+                  <div className="bg-success/5 border border-success/20 rounded p-3 mb-4">
+                    <div className="flex items-center gap-2">
+                      <Check size={16} strokeWidth={2} className="text-success shrink-0" aria-hidden="true" />
+                      <span className="text-sm font-medium text-ink">
                         Përdorur nga profili juaj i Instagram
                       </span>
                     </div>
                   </div>
                 )}
-                
+
                 <div className="flex items-center justify-between">
-                  <span className="text-gray-600">Emri:</span>
-                  <span className="font-semibold text-gray-900">
+                  <span className="text-clay">Emri:</span>
+                  <span className="font-semibold text-ink">
                     {watchedValues.customerInfo?.firstName} {watchedValues.customerInfo?.lastName}
                   </span>
                 </div>
-                
+
                 <div className="flex items-center justify-between mt-2">
-                  <span className="text-gray-600">Telefoni:</span>
+                  <span className="text-clay">Telefoni:</span>
                   <div className="flex items-center">
-                    <span className="font-semibold text-gray-900">
+                    <span className="font-semibold text-ink">
                       {watchedValues.customerInfo?.phone || 'Nuk është dhënë'}
                     </span>
                   </div>
@@ -759,26 +753,24 @@ export default function BookingForm({
               </div>
 
               {watchedValues.customerNotes && (
-                <div className="border-t border-gray-200 pt-4">
-                  <span className="text-gray-600 block mb-1">Shënime:</span>
-                  <span className="text-gray-900">{watchedValues.customerNotes}</span>
+                <div className="border-t border-linen pt-4">
+                  <span className="text-clay block mb-1">Shënime:</span>
+                  <span className="text-ink">{watchedValues.customerNotes}</span>
                 </div>
               )}
             </div>
 
             {/* Important Notice */}
-            <div className="bg-blue-50 border border-blue-200 rounded-2xl p-4">
+            <div className="bg-accent-soft/60 border border-accent/15 rounded-lg p-4">
               <div className="flex items-start">
                 <div className="flex-shrink-0">
-                  <svg className="h-5 w-5 text-blue-400" fill="currentColor" viewBox="0 0 20 20">
-                    <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
-                  </svg>
+                  <Info size={18} strokeWidth={1.75} className="text-accent" aria-hidden="true" />
                 </div>
                 <div className="ml-3">
-                  <h3 className="text-sm font-medium text-blue-800">
+                  <h3 className="text-sm font-medium text-ink">
                     Informacion i rëndësishëm
                   </h3>
-                  <div className="mt-2 text-sm text-blue-700">
+                  <div className="mt-2 text-sm text-clay">
                     <ul className="list-disc list-inside space-y-1">
                       <li>Rezervimi juaj do të dërgohet për miratim</li>
                       <li>{salon.name} do t&apos;ju kontaktojë brenda 2 orësh</li>
@@ -808,16 +800,12 @@ export default function BookingForm({
             type="button"
             onClick={goToPreviousStep}
             disabled={isSubmitting}
-            className="group flex items-center justify-center py-3 px-4 sm:py-4 sm:px-8 bg-white border-2 border-gray-300 rounded-xl sm:rounded-2xl text-gray-700 
-                     font-semibold hover:border-red-300 hover:text-red-600 focus:outline-none focus:ring-4 
-                     focus:ring-red-100 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 
-                     transform hover:scale-105 disabled:transform-none shadow-sm hover:shadow-md"
+            className="group flex items-center justify-center py-3 px-4 sm:py-3.5 sm:px-7 bg-paper border border-linen rounded text-ink
+                     font-medium hover:border-clay focus:outline-none focus:ring-2
+                     focus:ring-accent/25 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 btn-touch"
           >
-            <svg className="w-4 h-4 sm:w-5 sm:h-5 mr-1 sm:mr-2 transition-transform duration-300 group-hover:-translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-            </svg>
+            <ChevronLeft size={18} strokeWidth={1.75} className="sm:mr-2 transition-transform duration-300 group-hover:-translate-x-0.5" aria-hidden="true" />
             <span className="hidden sm:inline">Kthehu</span>
-            <span className="sm:hidden">←</span>
           </button>
         )}
 
@@ -937,27 +925,20 @@ export default function BookingForm({
               }
             }}
             disabled={!isStepValid(currentStep) || isSubmitting}
-            className="group flex-1 flex justify-center items-center py-3 px-4 sm:py-4 sm:px-8 bg-gradient-to-r from-red-600 to-pink-600 
-                     hover:from-red-700 hover:to-pink-700 rounded-xl sm:rounded-2xl text-white text-base sm:text-lg font-bold
-                     focus:outline-none focus:ring-4 focus:ring-red-200 disabled:opacity-50 
-                     disabled:cursor-not-allowed transition-all duration-300 transform 
-                     hover:scale-105 disabled:transform-none shadow-lg hover:shadow-xl
-                     relative overflow-hidden"
+            className="group flex-1 flex justify-center items-center py-3 px-4 sm:py-3.5 sm:px-7 bg-accent
+                     hover:bg-accent-strong rounded text-white text-base font-semibold
+                     focus:outline-none focus:ring-2 focus:ring-accent/25 disabled:opacity-50
+                     disabled:cursor-not-allowed transition-colors duration-200 btn-touch"
           >
-            {/* Animated background shine effect */}
-            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white to-transparent opacity-20 -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></div>
-            
             {isSubmitting ? (
               <>
-                <div className="animate-spin rounded-full h-5 w-5 sm:h-6 sm:w-6 border-2 border-white border-t-transparent mr-2 sm:mr-3"></div>
-                <span className="relative text-sm sm:text-base">Po dërgon...</span>
+                <div className="animate-spin rounded-full h-5 w-5 border-2 border-white border-t-transparent mr-2 sm:mr-3"></div>
+                <span className="text-sm sm:text-base">Po dërgon...</span>
               </>
             ) : (
               <>
-                <svg className="w-5 h-5 sm:w-6 sm:h-6 mr-2 sm:mr-3 transition-transform duration-300 group-hover:rotate-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
-                </svg>
-                <span className="relative text-sm sm:text-base">🎉 Dërgo</span>
+                <Send size={18} strokeWidth={1.75} className="mr-2" aria-hidden="true" />
+                <span className="text-sm sm:text-base">Dërgo</span>
               </>
             )}
           </button>
@@ -966,20 +947,13 @@ export default function BookingForm({
             type="button"
             onClick={goToNextStep}
             disabled={!isStepValid(currentStep)}
-            className="group flex-1 flex items-center justify-center py-3 px-4 sm:py-4 sm:px-8 bg-gradient-to-r from-red-600 to-pink-600 
-                     hover:from-red-700 hover:to-pink-700 rounded-xl sm:rounded-2xl text-white text-base sm:text-lg font-semibold
-                     focus:outline-none focus:ring-4 focus:ring-red-200 disabled:opacity-50 
-                     disabled:cursor-not-allowed transition-all duration-300 transform 
-                     hover:scale-105 disabled:transform-none shadow-lg hover:shadow-xl
-                     relative overflow-hidden"
+            className="group flex-1 flex items-center justify-center py-3 px-4 sm:py-3.5 sm:px-7 bg-accent
+                     hover:bg-accent-strong rounded text-white text-base font-semibold
+                     focus:outline-none focus:ring-2 focus:ring-accent/25 disabled:opacity-50
+                     disabled:cursor-not-allowed transition-colors duration-200 btn-touch"
           >
-            {/* Animated background shine effect */}
-            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white to-transparent opacity-20 -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></div>
-            
-            <span className="relative mr-1 sm:mr-2 text-sm sm:text-base">Vazhdo</span>
-            <svg className="w-4 h-4 sm:w-5 sm:h-5 transition-transform duration-300 group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-            </svg>
+            <span className="mr-1 sm:mr-2 text-sm sm:text-base">Vazhdo</span>
+            <ChevronRight size={18} strokeWidth={1.75} className="transition-transform duration-300 group-hover:translate-x-0.5" aria-hidden="true" />
           </button>
         )}
       </div>
@@ -990,9 +964,9 @@ export default function BookingForm({
   // MAIN RENDER
   // ==============================================
   return (
-    <div className={`booking-form ${className} bg-gradient-to-br from-red-50 via-pink-50 to-purple-50`}>
+    <div className={`booking-form ${className}`}>
       <div className="max-w-4xl mx-auto px-2 sm:px-4 py-4 sm:py-8">
-        <form onSubmit={handleSubmit(onSubmit)} className="bg-white rounded-2xl sm:rounded-3xl shadow-xl sm:shadow-2xl overflow-hidden">
+        <form onSubmit={handleSubmit(onSubmit)} className="bg-paper rounded-lg border border-linen shadow-soft overflow-hidden">
           {/* Hidden form fields to ensure React Hook Form has all required data */}
           <input {...register('salonId')} type="hidden" />
           <input {...register('serviceId')} type="hidden" />
@@ -1001,10 +975,10 @@ export default function BookingForm({
           <input {...register('duration')} type="hidden" />
           
           {/* Header Section - Mobile Optimized */}
-          <div className="bg-gradient-to-r from-red-600 to-pink-600 p-4 sm:p-8 text-white">
+          <div className="bg-ink p-4 sm:p-8 text-cream">
             <div className="text-center">
-              <h1 className="text-xl sm:text-3xl font-bold mb-1 sm:mb-2">✨ Rezervo Takimin</h1>
-              <p className="text-red-100 text-sm sm:text-lg">Zgjidh shërbimin dhe orarin që të përshtatet më së miri</p>
+              <h1 className="font-display text-xl sm:text-3xl mb-1 sm:mb-2">Rezervo Takimin</h1>
+              <p className="text-cream/70 text-sm sm:text-base">Zgjidh shërbimin dhe orarin që të përshtatet më së miri</p>
             </div>
           </div>
 
@@ -1016,7 +990,7 @@ export default function BookingForm({
             {renderStepIndicator()}
 
             {/* Step Content - Mobile Optimized */}
-            <div className="min-h-[300px] sm:min-h-[500px] bg-gray-50 rounded-xl sm:rounded-2xl p-4 sm:p-8 mb-4 sm:mb-8 shadow-inner relative z-10">
+            <div className="min-h-[300px] sm:min-h-[500px] bg-cream rounded-lg p-4 sm:p-8 mb-4 sm:mb-8 relative z-10">
               {renderStepContent()}
             </div>
 
@@ -1026,18 +1000,16 @@ export default function BookingForm({
 
           {/* Success Message - Mobile Optimized */}
           {successMessage && (
-            <div className="mx-4 sm:mx-8 mb-4 sm:mb-8 p-4 sm:p-6 bg-gradient-to-r from-green-500 to-emerald-600 text-white rounded-xl sm:rounded-2xl shadow-lg animate-pulse">
+            <div className="mx-4 sm:mx-8 mb-4 sm:mb-8 p-4 sm:p-6 bg-success/5 border border-success/20 rounded-lg">
               <div className="flex items-center">
                 <div className="flex-shrink-0 mr-3 sm:mr-4">
-                  <div className="w-8 h-8 sm:w-12 sm:h-12 bg-white bg-opacity-20 rounded-full flex items-center justify-center">
-                    <svg className="w-4 h-4 sm:w-6 sm:h-6 text-white" fill="currentColor" viewBox="0 0 20 20">
-                      <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                    </svg>
+                  <div className="w-9 h-9 bg-success rounded-full flex items-center justify-center">
+                    <Check size={18} strokeWidth={2.5} className="text-white" aria-hidden="true" />
                   </div>
                 </div>
                 <div>
-                  <h3 className="text-base sm:text-lg font-bold mb-1">🎉 Sukses!</h3>
-                  <p className="text-green-100 font-medium text-sm sm:text-base">{successMessage}</p>
+                  <h3 className="text-base sm:text-lg font-semibold text-ink mb-1">Sukses!</h3>
+                  <p className="text-clay font-medium text-sm sm:text-base">{successMessage}</p>
                 </div>
               </div>
             </div>
@@ -1048,53 +1020,52 @@ export default function BookingForm({
             <div className="mx-4 sm:mx-8 mb-4 sm:mb-8">
               {submitError === 'PENDING_LIMIT_REACHED' ? (
                 // Special UI for pending limit error - Mobile Optimized
-                <div className="p-4 sm:p-8 bg-gradient-to-r from-orange-400 to-yellow-500 text-white rounded-xl sm:rounded-2xl shadow-lg">
+                <div className="p-4 sm:p-8 bg-warning/5 border border-warning/25 rounded-lg">
                   <div className="text-center">
-                    <div className="w-12 h-12 sm:w-16 sm:h-16 bg-white bg-opacity-20 rounded-full flex items-center justify-center mx-auto mb-3 sm:mb-4">
-                      <svg className="w-6 h-6 sm:w-8 sm:h-8 text-white" fill="currentColor" viewBox="0 0 20 20">
-                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clipRule="evenodd" />
-                      </svg>
+                    <div className="w-12 h-12 bg-warning/10 rounded-full flex items-center justify-center mx-auto mb-3 sm:mb-4">
+                      <Clock size={24} strokeWidth={1.75} className="text-warning" aria-hidden="true" />
                     </div>
-                    <h3 className="text-lg sm:text-2xl font-bold mb-2">⏳ Limit i rezervimeve për këtë sallon u arrit</h3>
-                    <p className="text-orange-100 font-medium mb-4 sm:mb-6 text-sm sm:text-lg">
+                    <h3 className="font-display text-lg sm:text-2xl text-ink mb-2">Limit i rezervimeve për këtë sallon u arrit</h3>
+                    <p className="text-clay font-medium mb-4 sm:mb-6 text-sm sm:text-base">
                       Keni arritur limitin maksimal të rezervimeve në pritje për këtë sallon (2). Ju lutemi menaxhoni rezervimet ekzistuese me këtë sallon para se të bëni një të re, ose provoni me sallone të tjerë.
                     </p>
                     <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 justify-center">
                       <button
                         onClick={() => window.location.href = '/dashboard/bookings'}
-                        className="px-4 py-2 sm:px-6 sm:py-3 bg-white text-orange-600 rounded-lg sm:rounded-xl font-semibold hover:bg-orange-50 transition-colors shadow-lg text-sm sm:text-base"
+                        className="inline-flex items-center justify-center gap-2 px-4 py-2.5 sm:px-6 bg-accent text-white rounded font-medium hover:bg-accent-strong transition-colors text-sm sm:text-base btn-touch"
                       >
-                        📅 Shiko Rezervimet e Mia
+                        <CalendarDays size={16} strokeWidth={1.75} aria-hidden="true" />
+                        Shiko Rezervimet e Mia
                       </button>
                       <button
-                        onClick={() => window.location.href = '/salon'}
-                        className="px-4 py-2 sm:px-6 sm:py-3 bg-white text-orange-600 rounded-lg sm:rounded-xl font-semibold hover:bg-orange-50 transition-colors shadow-lg text-sm sm:text-base"
+                        onClick={() => window.location.href = '/salons'}
+                        className="inline-flex items-center justify-center gap-2 px-4 py-2.5 sm:px-6 bg-paper border border-linen text-ink rounded font-medium hover:border-clay transition-colors text-sm sm:text-base btn-touch"
                       >
-                        🔍 Zbulo Sallone të Tjerë
+                        <Search size={16} strokeWidth={1.75} aria-hidden="true" />
+                        Zbulo Sallone të Tjerë
                       </button>
                       <button
                         onClick={() => setSubmitError('')}
-                        className="px-4 py-2 sm:px-6 sm:py-3 bg-orange-600 bg-opacity-20 text-white rounded-lg sm:rounded-xl font-semibold hover:bg-opacity-30 transition-colors border border-white border-opacity-30 text-sm sm:text-base"
+                        className="inline-flex items-center justify-center gap-2 px-4 py-2.5 sm:px-6 text-clay rounded font-medium hover:text-ink hover:bg-sand transition-colors text-sm sm:text-base btn-touch"
                       >
-                        ✕ Mbyll
+                        <X size={16} strokeWidth={1.75} aria-hidden="true" />
+                        Mbyll
                       </button>
                     </div>
                   </div>
                 </div>
               ) : (
                 // Regular error message - Mobile Optimized
-                <div className="p-4 sm:p-6 bg-gradient-to-r from-red-500 to-pink-600 text-white rounded-xl sm:rounded-2xl shadow-lg">
+                <div className="p-4 sm:p-6 bg-danger/5 border border-danger/25 rounded-lg">
                   <div className="flex items-center">
                     <div className="flex-shrink-0 mr-3 sm:mr-4">
-                      <div className="w-8 h-8 sm:w-12 sm:h-12 bg-white bg-opacity-20 rounded-full flex items-center justify-center">
-                        <svg className="w-4 h-4 sm:w-6 sm:h-6 text-white" fill="currentColor" viewBox="0 0 20 20">
-                          <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
-                        </svg>
+                      <div className="w-9 h-9 bg-danger/10 rounded-full flex items-center justify-center">
+                        <AlertTriangle size={18} strokeWidth={1.75} className="text-danger" aria-hidden="true" />
                       </div>
                     </div>
                     <div>
-                      <h3 className="text-base sm:text-lg font-bold mb-1">⚠️ Gabim</h3>
-                      <p className="text-red-100 font-medium text-sm sm:text-base">{submitError}</p>
+                      <h3 className="text-base sm:text-lg font-semibold text-ink mb-1">Gabim</h3>
+                      <p className="text-clay font-medium text-sm sm:text-base">{submitError}</p>
                     </div>
                   </div>
                 </div>

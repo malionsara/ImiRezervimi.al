@@ -3,6 +3,7 @@
 // Albanian Beauty Salon Booking Platform
 
 import { useState, useEffect, useMemo, useCallback } from 'react'
+import { ChevronLeft, ChevronRight, CalendarDays, Clock, AlertTriangle, Check, Info } from 'lucide-react'
 
 // ==============================================
 // TYPES AND INTERFACES
@@ -221,68 +222,63 @@ export default function TimeSlotPicker({
     <div className={`time-slot-picker ${className}`}>
       {/* Header */}
       <div className="text-center mb-8">
-        <h2 className="text-2xl font-bold text-gray-900 mb-3">
+        <h2 className="font-display text-2xl text-ink mb-3">
           Zgjidhni datën dhe orën
         </h2>
-        <p className="text-gray-600">
+        <p className="text-clay">
           {selectedService ? `${selectedService.name} - ${selectedService.duration_minutes} min` : 'Zgjidhni një shërbim më parë'}
         </p>
       </div>
 
       {!selectedService ? (
         <div className="text-center py-12">
-          <div className="mx-auto w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mb-4">
-            <svg className="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} 
-                    d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-            </svg>
+          <div className="mx-auto w-16 h-16 bg-sand rounded-full flex items-center justify-center mb-4">
+            <CalendarDays size={26} strokeWidth={1.75} className="text-clay" aria-hidden="true" />
           </div>
-          <h3 className="text-lg font-medium text-gray-900 mb-2">
+          <h3 className="font-display text-lg text-ink mb-2">
             Zgjidhni një shërbim më parë
           </h3>
-          <p className="text-gray-600">
+          <p className="text-clay">
             Për të vazhduar me zgjedhjen e datës dhe orës, duhet të zgjidhni një shërbim.
           </p>
         </div>
       ) : (
         <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 relative z-10">
           {/* Calendar - Enhanced Layout */}
-          <div className="bg-white rounded-2xl border border-gray-200 p-6 shadow-lg relative z-10">
+          <div className="bg-paper rounded-lg border border-linen p-6 shadow-soft relative z-10">
             {/* Calendar Header */}
             <div className="flex items-center justify-between mb-6">
               <button
                 type="button"
                 onClick={goToPreviousMonth}
-                className="p-2 hover:bg-gray-100 rounded-xl transition-colors duration-200"
+                className="p-2 hover:bg-sand rounded transition-colors duration-200 btn-touch"
+                aria-label="Muaji i mëparshëm"
               >
-                <svg className="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-                </svg>
+                <ChevronLeft size={20} strokeWidth={1.75} className="text-clay" aria-hidden="true" />
               </button>
-              
-              <h3 className="text-lg font-semibold text-gray-900">
+
+              <h3 className="font-display text-lg text-ink">
                 {ALBANIAN_MONTHS[currentMonth.getMonth()]} {currentMonth.getFullYear()}
               </h3>
-              
+
               <button
                 type="button"
                 onClick={goToNextMonth}
-                className="p-2 hover:bg-gray-100 rounded-xl transition-colors duration-200"
+                className="p-2 hover:bg-sand rounded transition-colors duration-200 btn-touch"
+                aria-label="Muaji i ardhshëm"
               >
-                <svg className="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                </svg>
+                <ChevronRight size={20} strokeWidth={1.75} className="text-clay" aria-hidden="true" />
               </button>
             </div>
 
             {/* Day Labels - Enhanced Albanian Localization */}
-            <div className="grid grid-cols-7 gap-1 mb-3 border-b border-gray-100 pb-2">
+            <div className="grid grid-cols-7 gap-1 mb-3 border-b border-linen pb-2">
               {ALBANIAN_DAY_ABBREVIATIONS.map((dayAbbr, index) => (
                 <div key={dayAbbr} className="p-3 text-center">
-                  <div className="text-xs font-bold text-gray-800 uppercase tracking-wide">
+                  <div className="text-xs font-semibold text-ink uppercase tracking-wide">
                     {dayAbbr}
                   </div>
-                  <div className="text-xs text-gray-500 mt-1">
+                  <div className="text-xs text-clay mt-1">
                     {ALBANIAN_DAYS[index].slice(0, 3)}
                   </div>
                 </div>
@@ -307,52 +303,44 @@ export default function TimeSlotPicker({
                     disabled={!selectable}
                     title={reason || (selectable ? `Zgjidh ${ALBANIAN_DAYS[date.getDay()]}, ${date.getDate()} ${ALBANIAN_MONTHS[date.getMonth()]}` : undefined)}
                     className={`
-                      relative w-full h-12 text-sm font-semibold rounded-xl transition-all duration-300 calendar-day z-20
+                      relative w-full h-12 text-sm font-medium rounded transition-all duration-200 calendar-day z-20
                       ${isSelected
-                        ? 'bg-gradient-to-br from-red-500 to-pink-600 text-white shadow-xl scale-110 ring-2 ring-red-200'
+                        ? 'bg-accent text-white shadow-soft ring-2 ring-accent/25'
                         : selectable && isCurrentMonth
-                        ? 'hover:bg-red-50 hover:text-red-600 text-gray-900 hover:scale-105 hover:shadow-md border border-transparent hover:border-red-200'
+                        ? 'hover:bg-accent-soft hover:text-accent-strong text-ink border border-transparent hover:border-accent/20'
                         : selectable
-                        ? 'hover:bg-gray-100 text-gray-500 hover:text-gray-700'
-                        : 'text-gray-300 cursor-not-allowed bg-gray-50'
+                        ? 'hover:bg-sand text-clay'
+                        : 'text-linen cursor-not-allowed bg-cream'
                       }
-                      ${isToday && !isSelected ? 'ring-2 ring-orange-400 bg-orange-50 text-orange-600 font-bold' : ''}
+                      ${isToday && !isSelected ? 'ring-1 ring-warning/60 bg-warning/5 text-warning font-semibold' : ''}
                       ${!isCurrentMonth ? 'opacity-40' : ''}
-                      ${selectable ? 'transform hover:-translate-y-1' : ''}
                     `}
                   >
                     <div className="flex flex-col items-center justify-center h-full">
                       <span className="text-base">{date.getDate()}</span>
                       {isToday && !isSelected && (
-                        <div className="text-xs text-orange-500 font-bold mt-0.5">Sot</div>
+                        <div className="text-xs text-warning font-semibold mt-0.5">Sot</div>
                       )}
                     </div>
-                    
-                    {/* Selection indicator */}
-                    {isSelected && (
-                      <div className="absolute -top-1 -right-1 w-3 h-3 bg-white rounded-full shadow-sm flex items-center justify-center">
-                        <div className="w-1.5 h-1.5 bg-red-500 rounded-full"></div>
-                      </div>
-                    )}
                   </button>
                 )
               })}
             </div>
 
             {/* Calendar Legend - Enhanced */}
-            <div className="mt-6 pt-4 border-t border-gray-100 space-y-2">
+            <div className="mt-6 pt-4 border-t border-linen space-y-2">
               <div className="flex items-center justify-between text-xs">
                 <div className="flex items-center space-x-4">
                   <div className="flex items-center">
-                    <div className="w-3 h-3 bg-gradient-to-br from-red-500 to-pink-600 rounded mr-2"></div>
-                    <span className="text-gray-700 font-medium">E zgjedhur</span>
+                    <div className="w-3 h-3 bg-accent rounded mr-2"></div>
+                    <span className="text-ink font-medium">E zgjedhur</span>
                   </div>
                   <div className="flex items-center">
-                    <div className="w-3 h-3 ring-2 ring-orange-400 bg-orange-50 rounded mr-2"></div>
-                    <span className="text-gray-700 font-medium">Sot</span>
+                    <div className="w-3 h-3 ring-1 ring-warning/60 bg-warning/5 rounded mr-2"></div>
+                    <span className="text-ink font-medium">Sot</span>
                   </div>
                 </div>
-                <div className="text-gray-500">
+                <div className="text-clay">
                   Maksimumi 10 ditë përpara
                 </div>
               </div>
@@ -360,13 +348,13 @@ export default function TimeSlotPicker({
           </div>
 
           {/* Time Slots - Enhanced Layout */}
-          <div className="bg-white rounded-2xl border border-gray-200 p-6 shadow-lg">
+          <div className="bg-paper rounded-lg border border-linen p-6 shadow-soft">
             <div className="mb-6">
-              <h3 className="text-lg font-semibold text-gray-900 mb-1">
+              <h3 className="font-display text-lg text-ink mb-1">
                 {selectedDate ? formatDate(new Date(selectedDate)) : 'Zgjidhni një datë'}
               </h3>
               {selectedDate && (
-                <p className="text-sm text-gray-500">
+                <p className="text-sm text-clay">
                   {availableSlots.filter(slot => slot.available).length} nga {availableSlots.length} orë të disponueshme
                 </p>
               )}
@@ -374,32 +362,26 @@ export default function TimeSlotPicker({
 
             {!selectedDate ? (
               <div className="text-center py-8">
-                <div className="mx-auto w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center mb-3">
-                  <svg className="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} 
-                          d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                  </svg>
+                <div className="mx-auto w-12 h-12 bg-sand rounded-full flex items-center justify-center mb-3">
+                  <Clock size={20} strokeWidth={1.75} className="text-clay" aria-hidden="true" />
                 </div>
-                <p className="text-gray-600 text-sm">
+                <p className="text-clay text-sm">
                   Zgjidhni një datë nga kalendari për të parë orët e disponueshme
                 </p>
               </div>
             ) : loadingSlots ? (
               <div className="text-center py-8">
                 <div className="mx-auto w-8 h-8 mb-3">
-                  <div className="animate-spin rounded-full h-8 w-8 border-2 border-red-500 border-t-transparent"></div>
+                  <div className="animate-spin rounded-full h-8 w-8 border-2 border-accent border-t-transparent"></div>
                 </div>
-                <p className="text-gray-600 text-sm">Po ngarkon orët e disponueshme...</p>
+                <p className="text-clay text-sm">Po ngarkon orët e disponueshme...</p>
               </div>
             ) : availableSlots.length === 0 ? (
               <div className="text-center py-8">
-                <div className="mx-auto w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center mb-3">
-                  <svg className="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} 
-                          d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16c-.77.833.192 2.5 1.732 2.5z" />
-                  </svg>
+                <div className="mx-auto w-12 h-12 bg-sand rounded-full flex items-center justify-center mb-3">
+                  <AlertTriangle size={20} strokeWidth={1.75} className="text-clay" aria-hidden="true" />
                 </div>
-                <p className="text-gray-600 text-sm">
+                <p className="text-clay text-sm">
                   Nuk ka orë të disponueshme për këtë datë
                 </p>
               </div>
@@ -413,12 +395,12 @@ export default function TimeSlotPicker({
                       disabled={!slot.available}
                       title={slot.reason || (slot.available ? `Rezervo në orën ${slot.time}` : undefined)}
                       className={`
-                        relative py-2 px-3 sm:py-4 sm:px-4 rounded-lg sm:rounded-xl text-xs sm:text-sm font-semibold transition-all duration-300 time-slot-btn border
+                        relative py-2 px-3 sm:py-4 sm:px-4 rounded text-xs sm:text-sm font-medium transition-all duration-200 time-slot-btn border
                         ${selectedTime === slot.time
-                          ? 'bg-gradient-to-br from-red-500 to-pink-600 text-white shadow-xl scale-110 border-red-400 ring-2 ring-red-200'
+                          ? 'bg-accent text-white shadow-soft border-accent ring-2 ring-accent/25'
                           : slot.available
-                          ? 'bg-white text-gray-900 hover:bg-red-50 hover:text-red-600 hover:scale-105 border-gray-200 hover:border-red-300 hover:shadow-md transform hover:-translate-y-1'
-                          : 'bg-gray-50 text-gray-400 cursor-not-allowed border-gray-100 opacity-60'
+                          ? 'bg-paper text-ink hover:bg-accent-soft hover:text-accent-strong border-linen hover:border-accent/30'
+                          : 'bg-cream text-clay/50 cursor-not-allowed border-linen/50 opacity-60'
                         }
                       `}
                     >
@@ -428,16 +410,14 @@ export default function TimeSlotPicker({
                           <div className="text-xs mt-1 opacity-75">{slot.reason}</div>
                         )}
                         {slot.available && selectedTime !== slot.time && (
-                          <div className="text-xs text-gray-500 mt-1 hidden sm:block">Disponueshëm</div>
+                          <div className="text-xs text-clay mt-1 hidden sm:block">Disponueshëm</div>
                         )}
                       </div>
-                      
+
                       {/* Selected indicator */}
                       {selectedTime === slot.time && (
-                        <div className="absolute -top-1 -right-1 w-4 h-4 bg-white rounded-full shadow-lg flex items-center justify-center">
-                          <svg className="w-2 h-2 text-red-500" fill="currentColor" viewBox="0 0 20 20">
-                            <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                          </svg>
+                        <div className="absolute -top-1 -right-1 w-4 h-4 bg-white rounded-full shadow-soft flex items-center justify-center">
+                          <Check size={10} strokeWidth={3} className="text-accent" aria-hidden="true" />
                         </div>
                       )}
                     </button>
@@ -450,45 +430,41 @@ export default function TimeSlotPicker({
 
       {/* Enhanced Selection Summary */}
       {selectedDate && selectedTime && selectedService && (
-        <div className="mt-8 p-6 bg-gradient-to-br from-green-50 to-emerald-50 border-2 border-green-200 rounded-2xl shadow-lg">
+        <div className="mt-8 p-6 bg-success/5 border border-success/20 rounded-lg">
           <div className="flex items-center mb-4">
-            <div className="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center mr-3">
-              <svg className="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20">
-                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-              </svg>
+            <div className="w-8 h-8 bg-success rounded-full flex items-center justify-center mr-3">
+              <Check size={16} strokeWidth={2.5} className="text-white" aria-hidden="true" />
             </div>
-            <h4 className="text-green-800 font-bold text-lg">Rezervimi juaj</h4>
+            <h4 className="font-display text-ink text-lg">Rezervimi juaj</h4>
           </div>
-          
-          <div className="bg-white rounded-xl p-4 space-y-3 text-sm border border-green-100">
+
+          <div className="bg-paper rounded p-4 space-y-3 text-sm border border-linen">
             <div className="flex justify-between items-center">
-              <span className="text-gray-600">Shërbimi:</span>
-              <span className="text-gray-900 font-semibold">{selectedService.name}</span>
+              <span className="text-clay">Shërbimi:</span>
+              <span className="text-ink font-semibold">{selectedService.name}</span>
             </div>
             <div className="flex justify-between items-center">
-              <span className="text-gray-600">Data:</span>
-              <span className="text-gray-900 font-semibold">{formatDate(new Date(selectedDate))}</span>
+              <span className="text-clay">Data:</span>
+              <span className="text-ink font-semibold">{formatDate(new Date(selectedDate))}</span>
             </div>
             <div className="flex justify-between items-center">
-              <span className="text-gray-600">Ora:</span>
-              <span className="text-gray-900 font-semibold">{selectedTime}</span>
+              <span className="text-clay">Ora:</span>
+              <span className="text-ink font-semibold">{selectedTime}</span>
             </div>
             <div className="flex justify-between items-center">
-              <span className="text-gray-600">Kohëzgjatja:</span>
-              <span className="text-gray-900 font-semibold">{selectedService.duration_minutes} min</span>
+              <span className="text-clay">Kohëzgjatja:</span>
+              <span className="text-ink font-semibold">{selectedService.duration_minutes} min</span>
             </div>
             {selectedService.price > 0 && (
-              <div className="flex justify-between items-center pt-2 border-t border-gray-100">
-                <span className="text-gray-600">Çmimi:</span>
-                <span className="text-green-600 font-bold text-base">{selectedService.price}€</span>
+              <div className="flex justify-between items-center pt-2 border-t border-linen">
+                <span className="text-clay">Çmimi:</span>
+                <span className="font-display text-accent font-semibold text-base">{selectedService.price}€</span>
               </div>
             )}
           </div>
-          
-          <div className="mt-4 flex items-center text-green-700 text-sm">
-            <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-            </svg>
+
+          <div className="mt-4 flex items-center text-clay text-sm">
+            <Info size={15} strokeWidth={1.75} className="mr-2 shrink-0" aria-hidden="true" />
             <span>Shtypni "Vazhdo" për të plotësuar të dhënat tuaja.</span>
           </div>
         </div>

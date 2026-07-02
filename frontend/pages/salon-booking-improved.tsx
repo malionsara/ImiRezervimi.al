@@ -86,16 +86,16 @@ export default function ImprovedSalonBookingPage() {
       <Layout {...bookingLayout({ title: 'Po ngarkon...', showHeader: false })}>
         <div className="min-h-screen flex items-center justify-center p-4">
           <div className="text-center">
-            <div className="h-16 w-16 mx-auto rounded-2xl bg-gradient-to-br from-red-500 to-pink-500 flex items-center justify-center mb-4 shadow-2xl animate-pulse">
+            <div className="h-16 w-16 mx-auto rounded-lg bg-accent flex items-center justify-center mb-4 shadow-lifted animate-pulse">
               <span className="text-2xl">💅</span>
             </div>
             <div className="flex space-x-1 justify-center mb-4">
-              <div className="w-2 h-2 bg-red-500 rounded-full animate-bounce"></div>
+              <div className="w-2 h-2 bg-accent rounded-full animate-bounce"></div>
               <div className="w-2 h-2 bg-pink-500 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
               <div className="w-2 h-2 bg-orange-500 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
             </div>
-            <h2 className="text-xl font-semibold text-gray-900 mb-2">Po ngarkon...</h2>
-            <p className="text-gray-600">Po marrim informacionet e sallonit</p>
+            <h2 className="text-xl font-semibold text-ink mb-2">Po ngarkon...</h2>
+            <p className="text-clay">Po marrim informacionet e sallonit</p>
           </div>
         </div>
       </Layout>
@@ -108,21 +108,21 @@ export default function ImprovedSalonBookingPage() {
       <Layout {...bookingLayout({ title: 'Gabim', showHeader: false })}>
         <div className="min-h-screen flex items-center justify-center p-4">
           <div className="text-center max-w-md mx-auto">
-            <div className="mx-auto w-16 h-16 bg-red-100 rounded-2xl flex items-center justify-center mb-6">
+            <div className="mx-auto w-16 h-16 bg-accent-soft rounded-lg flex items-center justify-center mb-6">
               <span className="text-3xl">❌</span>
             </div>
-            <h2 className="text-xl font-semibold text-gray-900 mb-2">Gabim</h2>
-            <p className="text-gray-600 mb-8">{error}</p>
+            <h2 className="text-xl font-semibold text-ink mb-2">Gabim</h2>
+            <p className="text-clay mb-8">{error}</p>
             <div className="space-y-4">
               <button
                 onClick={() => window.location.reload()}
-                className="w-full py-3 px-6 bg-gradient-to-r from-red-500 to-pink-500 text-white font-medium rounded-xl hover:from-red-600 hover:to-pink-600 transition-all touch-manipulation"
+                className="w-full py-3 px-6 bg-accent text-white font-medium rounded hover:bg-accent-strong transition-all touch-manipulation"
               >
                 🔄 Provo përsëri
               </button>
               <Link
                 href="/salons"
-                className="block w-full py-3 px-6 bg-white border border-gray-300 text-gray-700 font-medium rounded-xl hover:bg-gray-50 transition-colors text-center touch-manipulation"
+                className="block w-full py-3 px-6 bg-paper border border-linen text-ink font-medium rounded hover:bg-cream transition-colors text-center touch-manipulation"
               >
                 ← Kthehu te sallone
               </Link>
@@ -142,34 +142,34 @@ export default function ImprovedSalonBookingPage() {
       })}>
         <div className="min-h-screen flex items-center justify-center p-4">
           <div className="max-w-md mx-auto">
-            <div className="bg-white rounded-2xl shadow-xl p-8 text-center">
+            <div className="bg-paper rounded-lg shadow-soft p-8 text-center">
               {/* Success Animation */}
-              <div className="mx-auto w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mb-6">
-                <div className="w-12 h-12 bg-green-500 rounded-full flex items-center justify-center animate-bounce">
+              <div className="mx-auto w-20 h-20 bg-success/10 rounded-full flex items-center justify-center mb-6">
+                <div className="w-12 h-12 bg-success rounded-full flex items-center justify-center animate-bounce">
                   <span className="text-white text-xl">✓</span>
                 </div>
               </div>
 
-              <h2 className="text-2xl font-bold text-gray-900 mb-2">Rezervimi u dërgua!</h2>
+              <h2 className="text-2xl font-bold text-ink mb-2">Rezervimi u dërgua!</h2>
               
-              <div className="space-y-3 text-left bg-gray-50 rounded-xl p-4 mb-6">
+              <div className="space-y-3 text-left bg-cream rounded p-4 mb-6">
                 <div className="flex justify-between">
-                  <span className="text-gray-600">Salloni:</span>
+                  <span className="text-clay">Salloni:</span>
                   <span className="font-medium">{salon?.name}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-gray-600">ID Rezervimi:</span>
+                  <span className="text-clay">ID Rezervimi:</span>
                   <span className="font-mono text-sm font-medium">{appointmentId.slice(0, 8)}</span>
                 </div>
               </div>
 
-              <div className="space-y-4 text-sm text-gray-600 mb-8">
-                <div className="flex items-center justify-center space-x-2 p-3 bg-blue-50 rounded-xl">
+              <div className="space-y-4 text-sm text-clay mb-8">
+                <div className="flex items-center justify-center space-x-2 p-3 bg-accent-soft/40 rounded">
                   <span className="text-lg">💬</span>
                   <p>Do të merrni konfirmim në WhatsApp nga salloni</p>
                 </div>
                 
-                <div className="flex items-center justify-center space-x-2 p-3 bg-green-50 rounded-xl">
+                <div className="flex items-center justify-center space-x-2 p-3 bg-success/5 rounded">
                   <span className="text-lg">📱</span>
                   <p>Mund të ndiqni statusin e rezervimit tuaj</p>
                 </div>
@@ -178,26 +178,26 @@ export default function ImprovedSalonBookingPage() {
               <div className="space-y-3">
                 <Link
                   href={`/booking/${appointmentId}/status`}
-                  className="block w-full py-3 px-6 bg-gradient-to-r from-blue-500 to-blue-600 text-white font-medium rounded-xl hover:from-blue-600 hover:to-blue-700 transition-all touch-manipulation"
+                  className="block w-full py-3 px-6 bg-accent text-white font-medium rounded hover:bg-accent-strong transition-all touch-manipulation"
                 >
                   📋 Shiko Statusin
                 </Link>
                 
                 <Link
                   href="/salons"
-                  className="block w-full py-3 px-6 bg-white border border-gray-300 text-gray-700 font-medium rounded-xl hover:bg-gray-50 transition-colors text-center touch-manipulation"
+                  className="block w-full py-3 px-6 bg-paper border border-linen text-ink font-medium rounded hover:bg-cream transition-colors text-center touch-manipulation"
                 >
                   ← Rezervo në sallone të tjerë
                 </Link>
               </div>
 
               {/* Contact Info */}
-              <div className="mt-6 pt-4 border-t border-gray-200">
-                <p className="text-xs text-gray-500 mb-2">Keni pyetje? Kontaktoni</p>
+              <div className="mt-6 pt-4 border-t border-linen">
+                <p className="text-xs text-clay mb-2">Keni pyetje? Kontaktoni</p>
                 <div className="flex justify-center space-x-4">
                   <Link
                     href={`tel:${salon?.phone}`}
-                    className="text-red-600 hover:text-red-700 font-medium text-sm"
+                    className="text-accent hover:text-accent-strong font-medium text-sm"
                   >
                     📞 {salon?.phone}
                   </Link>
@@ -226,13 +226,13 @@ export default function ImprovedSalonBookingPage() {
         title: `Rezervo në ${salon?.name}`,
         description: `Rezervoni online në ${salon?.name}. Identifikohuni për të vazhduar.`
       })}>
-        <div className="min-h-screen flex items-center justify-center p-4 bg-gradient-to-br from-pink-50 via-red-50 to-orange-50">
+        <div className="min-h-screen flex items-center justify-center p-4 bg-cream">
           <div className="max-w-md mx-auto">
-            <div className="bg-white rounded-2xl shadow-xl overflow-hidden">
+            <div className="bg-paper rounded-lg shadow-soft overflow-hidden">
               {/* Header */}
-              <div className="bg-gradient-to-r from-red-500 to-pink-500 p-6 text-white">
+              <div className="bg-accent p-6 text-white">
                 <div className="flex items-center space-x-3">
-                  <div className="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center">
+                  <div className="w-12 h-12 bg-white/20 rounded flex items-center justify-center">
                     <span className="text-2xl">💅</span>
                   </div>
                   <div>
@@ -245,29 +245,29 @@ export default function ImprovedSalonBookingPage() {
               {/* Content */}
               <div className="p-6">
                 <div className="text-center mb-6">
-                  <h2 className="text-lg font-semibold text-gray-900 mb-2">
+                  <h2 className="text-lg font-semibold text-ink mb-2">
                     Identifikohuni për të vazhduar
                   </h2>
-                  <p className="text-gray-600 text-sm">
+                  <p className="text-clay text-sm">
                     Për të bërë një rezervim në {salon?.name}, ju lutemi identifikohuni ose regjistrohuni.
                   </p>
                 </div>
 
                 <Link
                   href={`/login?callbackUrl=${encodeURIComponent(router.asPath)}`}
-                  className="block w-full py-3 px-6 bg-gradient-to-r from-red-500 to-pink-500 text-white font-medium rounded-xl hover:from-red-600 hover:to-pink-600 transition-all text-center touch-manipulation mb-4"
+                  className="block w-full py-3 px-6 bg-accent text-white font-medium rounded hover:bg-accent-strong transition-all text-center touch-manipulation mb-4"
                 >
                   🔐 Identifikohu / Regjistrohu →
                 </Link>
 
-                <div className="text-center text-xs text-gray-500 mb-4">
+                <div className="text-center text-xs text-clay mb-4">
                   Keni pyetje? Kontaktoni
                 </div>
 
                 <div className="flex justify-center space-x-4 text-sm">
                   <Link
                     href={`tel:${salon?.phone}`}
-                    className="text-red-600 hover:text-red-700 font-medium"
+                    className="text-accent hover:text-accent-strong font-medium"
                   >
                     📞 {salon?.phone}
                   </Link>
@@ -297,12 +297,12 @@ export default function ImprovedSalonBookingPage() {
         description: `Rezervoni online në ${salon.name}. ${salon.description || ''}`,
         showHeader: false
       })}>
-        <div className="min-h-screen bg-gradient-to-br from-pink-50 via-red-50 to-orange-50 py-6 px-4">
+        <div className="min-h-screen bg-cream py-6 px-4">
           {/* Back Navigation */}
           <div className="max-w-md mx-auto mb-4">
             <Link
               href="/"
-              className="inline-flex items-center space-x-2 text-gray-600 hover:text-gray-900 transition-colors"
+              className="inline-flex items-center space-x-2 text-clay hover:text-ink transition-colors"
             >
               <span>←</span>
               <span className="text-sm font-medium">ImiRezervimi.al</span>
@@ -318,7 +318,7 @@ export default function ImprovedSalonBookingPage() {
 
           {/* Additional Info */}
           <div className="max-w-md mx-auto mt-6 text-center">
-            <div className="bg-white/80 backdrop-blur rounded-xl p-4 text-sm text-gray-600">
+            <div className="bg-white/80 backdrop-blur rounded p-4 text-sm text-clay">
               <p className="mb-2">🔒 Rezervimi juaj është i sigurt dhe privat</p>
               <p>💬 Do të merrni konfirmim automatik në WhatsApp</p>
             </div>

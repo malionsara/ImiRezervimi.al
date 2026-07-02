@@ -33,9 +33,9 @@ export default function ConfirmationModal({
 
   const variantStyles = {
     danger: {
-      iconBg: 'bg-red-100',
-      iconColor: 'text-red-600',
-      confirmButton: 'bg-red-500 hover:bg-red-600 focus:ring-red-500',
+      iconBg: 'bg-danger/10',
+      iconColor: 'text-danger',
+      confirmButton: 'bg-danger hover:bg-accent-strong focus:ring-danger',
       defaultIcon: (
         <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.93L13.732 4.242a2 2 0 00-3.464 0L3.34 16.07c-.77 1.263.192 2.93 1.732 2.93z" />
@@ -43,9 +43,9 @@ export default function ConfirmationModal({
       )
     },
     warning: {
-      iconBg: 'bg-yellow-100',
-      iconColor: 'text-yellow-600',
-      confirmButton: 'bg-yellow-500 hover:bg-yellow-600 focus:ring-yellow-500',
+      iconBg: 'bg-warning/10',
+      iconColor: 'text-warning',
+      confirmButton: 'bg-warning hover:bg-warning/80 focus:ring-warning',
       defaultIcon: (
         <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.93L13.732 4.242a2 2 0 00-3.464 0L3.34 16.07c-.77 1.263.192 2.93 1.732 2.93z" />
@@ -53,9 +53,9 @@ export default function ConfirmationModal({
       )
     },
     info: {
-      iconBg: 'bg-blue-100',
-      iconColor: 'text-blue-600',
-      confirmButton: 'bg-blue-500 hover:bg-blue-600 focus:ring-blue-500',
+      iconBg: 'bg-accent-soft',
+      iconColor: 'text-accent',
+      confirmButton: 'bg-accent hover:bg-accent-strong focus:ring-accent',
       defaultIcon: (
         <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -63,9 +63,9 @@ export default function ConfirmationModal({
       )
     },
     success: {
-      iconBg: 'bg-green-100',
-      iconColor: 'text-green-600',
-      confirmButton: 'bg-green-500 hover:bg-green-600 focus:ring-green-500',
+      iconBg: 'bg-success/10',
+      iconColor: 'text-success',
+      confirmButton: 'bg-success hover:bg-success/80 focus:ring-success',
       defaultIcon: (
         <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
@@ -100,7 +100,7 @@ export default function ConfirmationModal({
       aria-labelledby="modal-title"
       aria-describedby="modal-description"
     >
-      <div className="bg-white rounded-xl max-w-md w-full p-6 shadow-2xl transform transition-all duration-200 scale-100">
+      <div className="bg-paper rounded-lg border border-linen max-w-md w-full p-6 shadow-lifted transform transition-all duration-200 scale-100">
         {/* Header with Icon and Title */}
         <div className="flex items-start mb-4">
           <div className={`w-10 h-10 ${styles.iconBg} rounded-full flex items-center justify-center flex-shrink-0 mr-4`}>
@@ -109,10 +109,10 @@ export default function ConfirmationModal({
             </div>
           </div>
           <div className="flex-1">
-            <h3 id="modal-title" className="text-lg font-semibold text-gray-900 mb-1">
+            <h3 id="modal-title" className="font-display text-lg text-ink mb-1">
               {title}
             </h3>
-            <div id="modal-description" className="text-gray-600 text-sm">
+            <div id="modal-description" className="text-clay text-sm">
               {typeof message === 'string' ? (
                 <p>{message}</p>
               ) : (
@@ -128,7 +128,7 @@ export default function ConfirmationModal({
             type="button"
             onClick={onClose}
             disabled={loading}
-            className="w-full sm:w-auto px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed font-medium"
+            className="w-full sm:w-auto px-4 py-2 border border-linen text-ink rounded hover:bg-sand transition-colors disabled:opacity-50 disabled:cursor-not-allowed font-medium"
           >
             {cancelText}
           </button>
@@ -136,7 +136,7 @@ export default function ConfirmationModal({
             type="button"
             onClick={onConfirm}
             disabled={loading}
-            className={`w-full sm:w-auto px-4 py-2 text-white rounded-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed font-medium flex items-center justify-center ${styles.confirmButton} focus:outline-none focus:ring-2 focus:ring-offset-2`}
+            className={`w-full sm:w-auto px-4 py-2 text-white rounded transition-all disabled:opacity-50 disabled:cursor-not-allowed font-medium flex items-center justify-center ${styles.confirmButton} focus:outline-none focus:ring-2 focus:ring-offset-2`}
           >
             {loading ? (
               <>
@@ -175,9 +175,9 @@ export function AlertModal({
 
   const variantStyles = {
     error: {
-      iconBg: 'bg-red-100',
-      iconColor: 'text-red-600',
-      button: 'bg-red-500 hover:bg-red-600',
+      iconBg: 'bg-danger/10',
+      iconColor: 'text-danger',
+      button: 'bg-danger hover:bg-accent-strong',
       icon: (
         <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -185,9 +185,9 @@ export function AlertModal({
       )
     },
     warning: {
-      iconBg: 'bg-yellow-100',
-      iconColor: 'text-yellow-600',
-      button: 'bg-yellow-500 hover:bg-yellow-600',
+      iconBg: 'bg-warning/10',
+      iconColor: 'text-warning',
+      button: 'bg-warning hover:bg-warning/80',
       icon: (
         <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.93L13.732 4.242a2 2 0 00-3.464 0L3.34 16.07c-.77 1.263.192 2.93 1.732 2.93z" />
@@ -195,9 +195,9 @@ export function AlertModal({
       )
     },
     info: {
-      iconBg: 'bg-blue-100',
-      iconColor: 'text-blue-600',
-      button: 'bg-blue-500 hover:bg-blue-600',
+      iconBg: 'bg-accent-soft',
+      iconColor: 'text-accent',
+      button: 'bg-accent hover:bg-accent-strong',
       icon: (
         <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -205,9 +205,9 @@ export function AlertModal({
       )
     },
     success: {
-      iconBg: 'bg-green-100',
-      iconColor: 'text-green-600',
-      button: 'bg-green-500 hover:bg-green-600',
+      iconBg: 'bg-success/10',
+      iconColor: 'text-success',
+      button: 'bg-success hover:bg-success/80',
       icon: (
         <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
@@ -242,7 +242,7 @@ export function AlertModal({
       aria-labelledby="alert-title"
       aria-describedby="alert-description"
     >
-      <div className="bg-white rounded-xl max-w-md w-full p-6 shadow-2xl transform transition-all duration-200 scale-100">
+      <div className="bg-paper rounded-lg border border-linen max-w-md w-full p-6 shadow-lifted transform transition-all duration-200 scale-100">
         {/* Header with Icon and Title */}
         <div className="flex items-start mb-4">
           <div className={`w-10 h-10 ${styles.iconBg} rounded-full flex items-center justify-center flex-shrink-0 mr-4`}>
@@ -251,10 +251,10 @@ export function AlertModal({
             </div>
           </div>
           <div className="flex-1">
-            <h3 id="alert-title" className="text-lg font-semibold text-gray-900 mb-1">
+            <h3 id="alert-title" className="font-display text-lg text-ink mb-1">
               {title}
             </h3>
-            <div id="alert-description" className="text-gray-600 text-sm">
+            <div id="alert-description" className="text-clay text-sm">
               {typeof message === 'string' ? (
                 <p>{message}</p>
               ) : (
@@ -269,7 +269,7 @@ export function AlertModal({
           <button
             type="button"
             onClick={onClose}
-            className={`px-4 py-2 text-white rounded-lg transition-colors font-medium ${styles.button} focus:outline-none focus:ring-2 focus:ring-offset-2`}
+            className={`px-4 py-2 text-white rounded transition-colors font-medium ${styles.button} focus:outline-none focus:ring-2 focus:ring-offset-2`}
           >
             {buttonText}
           </button>

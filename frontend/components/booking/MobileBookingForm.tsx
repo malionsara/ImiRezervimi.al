@@ -223,28 +223,28 @@ export default function MobileBookingForm({ salon, onSuccess, onError }: MobileB
 
   return (
     <>
-      <div className="max-w-md md:max-w-2xl mx-auto bg-white rounded-2xl shadow-xl overflow-hidden">
+      <div className="max-w-md md:max-w-2xl mx-auto bg-paper rounded-lg shadow-soft overflow-hidden">
 
       {/* Progress Bar - moved to be below header/within container */}
-      <div className="bg-white border-b border-gray-100">
-        <div className="h-1 bg-gray-200">
+      <div className="bg-paper border-b border-linen">
+        <div className="h-1 bg-linen">
           <div 
-            className="h-1 bg-gradient-to-r from-red-500 to-pink-500 transition-all duration-500 ease-out"
+            className="h-1 bg-accent transition-all duration-500 ease-out"
             style={{ width: `${progress}%` }}
           />
         </div>
         {/* Step indicator text */}
         <div className="px-4 py-2 text-center">
-          <span className="text-sm text-gray-600">
+          <span className="text-sm text-clay">
             Hapi {currentStepIndex + 1} nga {steps.length}
           </span>
         </div>
       </div>
 
       {/* Header */}
-      <div className="p-6 bg-gradient-to-r from-red-500 to-pink-500 text-white">
+      <div className="p-6 bg-accent text-white">
         <div className="flex items-center space-x-3">
-          <div className="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center">
+          <div className="w-10 h-10 bg-white/20 rounded flex items-center justify-center">
             <span className="text-xl">💅</span>
           </div>
           <div>
@@ -259,7 +259,7 @@ export default function MobileBookingForm({ salon, onSuccess, onError }: MobileB
             <div
               key={step}
               className={`w-2 h-2 rounded-full transition-all duration-300 ${
-                index <= currentStepIndex ? 'bg-white' : 'bg-white/30'
+                index <= currentStepIndex ? 'bg-paper' : 'bg-white/30'
               }`}
             />
           ))}
@@ -269,8 +269,8 @@ export default function MobileBookingForm({ salon, onSuccess, onError }: MobileB
       {/* Form Content */}
       <div className="p-6">
         {error && (
-          <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg">
-            <p className="text-red-600 text-sm">{error}</p>
+          <div className="mb-4 p-3 bg-accent-soft/60 border border-accent/25 rounded-lg">
+            <p className="text-accent text-sm">{error}</p>
           </div>
         )}
 
@@ -279,37 +279,37 @@ export default function MobileBookingForm({ salon, onSuccess, onError }: MobileB
           {/* Step 1: Service Selection */}
           {currentStep === 'service' && (
             <div className="space-y-4">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">Zgjidh shërbimin</h3>
+              <h3 className="text-lg font-semibold text-ink mb-4">Zgjidh shërbimin</h3>
               {/* Responsive services grid - 1 column on mobile, 2 columns on desktop */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                 {salon.services.map((service) => (
                   <div
                     key={service.id}
                     onClick={() => setSelectedService(service)}
-                    className={`p-4 rounded-xl border-2 cursor-pointer transition-all duration-200 touch-manipulation ${
+                    className={`p-4 rounded border-2 cursor-pointer transition-all duration-200 touch-manipulation ${
                       selectedService?.id === service.id
-                        ? 'border-red-500 bg-red-50'
-                        : 'border-gray-200 hover:border-gray-300'
+                        ? 'border-accent bg-accent-soft/60'
+                        : 'border-linen hover:border-linen'
                     }`}
                   >
                     <div className="flex justify-between items-start">
                       <div className="flex-1">
-                        <h4 className="font-medium text-gray-900">{service.name}</h4>
+                        <h4 className="font-medium text-ink">{service.name}</h4>
                         {service.description && (
-                          <p className="text-gray-600 text-sm mt-1">{service.description}</p>
+                          <p className="text-clay text-sm mt-1">{service.description}</p>
                         )}
                         <div className="flex items-center space-x-3 mt-2">
-                          <span className="text-red-600 font-medium">{service.price} Lekë</span>
-                          <span className="text-gray-500 text-sm">{service.duration_minutes} min</span>
+                          <span className="text-accent font-medium">{service.price} Lekë</span>
+                          <span className="text-clay text-sm">{service.duration_minutes} min</span>
                         </div>
                       </div>
                       <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${
                         selectedService?.id === service.id
-                          ? 'border-red-500 bg-red-500'
-                          : 'border-gray-300'
+                          ? 'border-accent bg-accent'
+                          : 'border-linen'
                       }`}>
                         {selectedService?.id === service.id && (
-                          <div className="w-2 h-2 bg-white rounded-full" />
+                          <div className="w-2 h-2 bg-paper rounded-full" />
                         )}
                       </div>
                     </div>
@@ -322,7 +322,7 @@ export default function MobileBookingForm({ salon, onSuccess, onError }: MobileB
           {/* Step 2: Date & Time Selection */}
           {currentStep === 'datetime' && (
             <div className="space-y-4">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">Zgjidh datën dhe orën</h3>
+              <h3 className="text-lg font-semibold text-ink mb-4">Zgjidh datën dhe orën</h3>
               
               {/* Date Picker */}
               <div>
@@ -343,27 +343,27 @@ export default function MobileBookingForm({ salon, onSuccess, onError }: MobileB
               {/* Availability Status */}
               {selectedDate && (
                 <div className={`p-3 rounded-lg border flex items-center justify-between ${
-                  availabilityStatus.type === 'error' ? 'bg-red-50 border-red-200' :
-                  availabilityStatus.type === 'warning' ? 'bg-yellow-50 border-yellow-200' :
-                  availabilityStatus.type === 'success' ? 'bg-green-50 border-green-200' :
-                  'bg-blue-50 border-blue-200'
+                  availabilityStatus.type === 'error' ? 'bg-accent-soft/60 border-accent/25' :
+                  availabilityStatus.type === 'warning' ? 'bg-yellow-50 border-warning/25' :
+                  availabilityStatus.type === 'success' ? 'bg-success/5 border-success/25' :
+                  'bg-accent-soft/40 border-accent/25'
                 }`}>
                   <div className="flex items-center space-x-2">
                     {availabilityLoading || isRefreshing ? (
                       <div className="w-4 h-4 border-2 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
                     ) : (
                       <div className={`w-2 h-2 rounded-full ${
-                        availabilityStatus.type === 'error' ? 'bg-red-500' :
+                        availabilityStatus.type === 'error' ? 'bg-accent' :
                         availabilityStatus.type === 'warning' ? 'bg-yellow-500' :
-                        availabilityStatus.type === 'success' ? 'bg-green-500' :
-                        'bg-blue-500'
+                        availabilityStatus.type === 'success' ? 'bg-success' :
+                        'bg-accent'
                       }`}></div>
                     )}
                     <span className={`text-sm font-medium ${
-                      availabilityStatus.type === 'error' ? 'text-red-700' :
+                      availabilityStatus.type === 'error' ? 'text-accent-strong' :
                       availabilityStatus.type === 'warning' ? 'text-yellow-700' :
-                      availabilityStatus.type === 'success' ? 'text-green-700' :
-                      'text-blue-700'
+                      availabilityStatus.type === 'success' ? 'text-success' :
+                      'text-accent-strong'
                     }`}>
                       {availabilityStatus.message}
                     </span>
@@ -372,7 +372,7 @@ export default function MobileBookingForm({ salon, onSuccess, onError }: MobileB
                   {/* Refresh button and last update */}
                   <div className="flex items-center space-x-2">
                     {lastRefresh && (
-                      <span className="text-xs text-gray-500">
+                      <span className="text-xs text-clay">
                         {formatLastRefresh(lastRefresh)}
                       </span>
                     )}
@@ -380,10 +380,10 @@ export default function MobileBookingForm({ salon, onSuccess, onError }: MobileB
                       type="button"
                       onClick={refreshAvailability}
                       disabled={isRefreshing}
-                      className="p-1 hover:bg-gray-200 rounded-md transition-colors touch-manipulation disabled:opacity-50"
+                      className="p-1 hover:bg-linen rounded-md transition-colors touch-manipulation disabled:opacity-50"
                       title="Rifresko disponueshmërinë"
                     >
-                      <svg className={`w-4 h-4 text-gray-600 ${isRefreshing ? 'animate-spin' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <svg className={`w-4 h-4 text-clay ${isRefreshing ? 'animate-spin' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
                       </svg>
                     </button>
@@ -394,37 +394,37 @@ export default function MobileBookingForm({ salon, onSuccess, onError }: MobileB
               {/* Time Slots */}
               {selectedDate && (
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Ora</label>
+                  <label className="block text-sm font-medium text-ink mb-2">Ora</label>
                   
                   {availabilityLoading ? (
                     <div className="text-center py-8">
-                      <div className="w-8 h-8 border-2 border-red-500 border-t-transparent rounded-full animate-spin mx-auto mb-3"></div>
-                      <p className="text-gray-600 text-sm">Po kontrollon disponueshmërinë...</p>
+                      <div className="w-8 h-8 border-2 border-accent border-t-transparent rounded-full animate-spin mx-auto mb-3"></div>
+                      <p className="text-clay text-sm">Po kontrollon disponueshmërinë...</p>
                     </div>
                   ) : availabilityError ? (
                     <div className="text-center py-8">
-                      <div className="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-3">
-                        <svg className="w-6 h-6 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <div className="w-12 h-12 bg-accent-soft rounded-full flex items-center justify-center mx-auto mb-3">
+                        <svg className="w-6 h-6 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16c-.77.833.192 2.5 1.732 2.5z" />
                         </svg>
                       </div>
-                      <p className="text-red-600 text-sm mb-2">{availabilityError.message}</p>
+                      <p className="text-accent text-sm mb-2">{availabilityError.message}</p>
                       <button
                         type="button"
                         onClick={refreshAvailability}
-                        className="text-sm text-red-600 hover:text-red-700 underline"
+                        className="text-sm text-accent hover:text-accent-strong underline"
                       >
                         Provo përsëri
                       </button>
                     </div>
                   ) : timeSlots.length === 0 ? (
                     <div className="text-center py-8">
-                      <div className="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-3">
-                        <svg className="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <div className="w-12 h-12 bg-sand rounded-full flex items-center justify-center mx-auto mb-3">
+                        <svg className="w-6 h-6 text-clay/70" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                         </svg>
                       </div>
-                      <p className="text-gray-500 text-center">Nuk ka orare të disponueshme për këtë datë</p>
+                      <p className="text-clay text-center">Nuk ka orare të disponueshme për këtë datë</p>
                     </div>
                   ) : (
                     <div className="grid grid-cols-2 xs:grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-2">
@@ -437,10 +437,10 @@ export default function MobileBookingForm({ salon, onSuccess, onError }: MobileB
                           title={slot.reason}
                           className={`min-h-[44px] p-3 rounded-lg text-sm font-medium transition-all duration-200 touch-manipulation ${
                             selectedTime === slot.time
-                              ? 'bg-red-500 text-white shadow-md'
+                              ? 'bg-accent text-white shadow-md'
                               : slot.available
-                              ? 'bg-gray-100 text-gray-700 hover:bg-red-50 hover:text-red-600 hover:border-red-200 border border-transparent'
-                              : 'bg-gray-50 text-gray-400 cursor-not-allowed border border-gray-200'
+                              ? 'bg-sand text-ink hover:bg-accent-soft/60 hover:text-accent hover:border-accent/25 border border-transparent'
+                              : 'bg-cream text-clay/70 cursor-not-allowed border border-linen'
                           }`}
                         >
                           {slot.time}
@@ -461,52 +461,52 @@ export default function MobileBookingForm({ salon, onSuccess, onError }: MobileB
           {/* Step 3: Customer Details - Only for non-authenticated users */}
           {currentStep === 'details' && !session && (
             <div className="space-y-4">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">Detajet tuaja</h3>
+              <h3 className="text-lg font-semibold text-ink mb-4">Detajet tuaja</h3>
               
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Emri</label>
+                  <label className="block text-sm font-medium text-ink mb-1">Emri</label>
                   <input
                     {...register('customerInfo.firstName')}
-                    className="w-full p-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-red-500 focus:border-transparent text-base"
+                    className="w-full p-3 border border-linen rounded focus:ring-2 focus:ring-accent/25 focus:border-transparent text-base"
                     placeholder="Emri"
                   />
                   {errors.customerInfo?.firstName && (
-                    <p className="mt-1 text-sm text-red-600">{errors.customerInfo.firstName.message}</p>
+                    <p className="mt-1 text-sm text-accent">{errors.customerInfo.firstName.message}</p>
                   )}
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Mbiemri</label>
+                  <label className="block text-sm font-medium text-ink mb-1">Mbiemri</label>
                   <input
                     {...register('customerInfo.lastName')}
-                    className="w-full p-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-red-500 focus:border-transparent text-base"
+                    className="w-full p-3 border border-linen rounded focus:ring-2 focus:ring-accent/25 focus:border-transparent text-base"
                     placeholder="Mbiemri"
                   />
                   {errors.customerInfo?.lastName && (
-                    <p className="mt-1 text-sm text-red-600">{errors.customerInfo.lastName.message}</p>
+                    <p className="mt-1 text-sm text-accent">{errors.customerInfo.lastName.message}</p>
                   )}
                 </div>
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Numri i telefonit</label>
+                <label className="block text-sm font-medium text-ink mb-1">Numri i telefonit</label>
                 <input
                   {...register('customerInfo.phone')}
                   type="tel"
-                  className="w-full p-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-red-500 focus:border-transparent text-base"
+                  className="w-full p-3 border border-linen rounded focus:ring-2 focus:ring-accent/25 focus:border-transparent text-base"
                   placeholder="+355 69 123 4567"
                 />
                 {errors.customerInfo?.phone && (
-                  <p className="mt-1 text-sm text-red-600">{errors.customerInfo.phone.message}</p>
+                  <p className="mt-1 text-sm text-accent">{errors.customerInfo.phone.message}</p>
                 )}
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Shënime (opsionale)</label>
+                <label className="block text-sm font-medium text-ink mb-1">Shënime (opsionale)</label>
                 <textarea
                   {...register('customerNotes')}
                   rows={3}
-                  className="w-full p-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-red-500 focus:border-transparent text-base resize-none"
+                  className="w-full p-3 border border-linen rounded focus:ring-2 focus:ring-accent/25 focus:border-transparent text-base resize-none"
                   placeholder="Çfarë dëshironi të na tregoni për rezervimin tuaj?"
                 />
               </div>
@@ -516,45 +516,45 @@ export default function MobileBookingForm({ salon, onSuccess, onError }: MobileB
           {/* Step 4: Confirmation */}
           {currentStep === 'confirm' && (
             <div className="space-y-4">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">Konfirmo rezervimin</h3>
+              <h3 className="text-lg font-semibold text-ink mb-4">Konfirmo rezervimin</h3>
               
               {/* Show user info for authenticated users */}
               {session && (
-                <div className="bg-blue-50 rounded-xl p-4 mb-4">
+                <div className="bg-accent-soft/40 rounded p-4 mb-4">
                   <div className="flex items-center space-x-3">
-                    <div className="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center">
+                    <div className="w-10 h-10 bg-accent rounded-full flex items-center justify-center">
                       <span className="text-white font-semibold text-sm">
                         {session.user?.name?.charAt(0)?.toUpperCase() || 'U'}
                       </span>
                     </div>
                     <div>
-                      <p className="font-medium text-gray-900">{session.user?.name}</p>
-                      <p className="text-gray-600 text-sm">{(session.user as any)?.phone || 'Telefoni në profil'}</p>
+                      <p className="font-medium text-ink">{session.user?.name}</p>
+                      <p className="text-clay text-sm">{(session.user as any)?.phone || 'Telefoni në profil'}</p>
                     </div>
                   </div>
                 </div>
               )}
               
               {/* Appointment details */}
-              <div className="bg-gray-50 rounded-xl p-4 space-y-3">
+              <div className="bg-cream rounded p-4 space-y-3">
                 <div className="flex justify-between">
-                  <span className="text-gray-600">Shërbimi:</span>
+                  <span className="text-clay">Shërbimi:</span>
                   <span className="font-medium">{selectedService?.name}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-gray-600">Data:</span>
+                  <span className="text-clay">Data:</span>
                   <span className="font-medium">{selectedDate?.toLocaleDateString('sq-AL') || ''}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-gray-600">Ora:</span>
+                  <span className="text-clay">Ora:</span>
                   <span className="font-medium">{selectedTime}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-gray-600">Çmimi:</span>
-                  <span className="font-medium text-red-600">{selectedService?.price} Lekë</span>
+                  <span className="text-clay">Çmimi:</span>
+                  <span className="font-medium text-accent">{selectedService?.price} Lekë</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-gray-600">Kohëzgjatja:</span>
+                  <span className="text-clay">Kohëzgjatja:</span>
                   <span className="font-medium">{selectedService?.duration_minutes} min</span>
                 </div>
               </div>
@@ -562,17 +562,17 @@ export default function MobileBookingForm({ salon, onSuccess, onError }: MobileB
               {/* Notes field for authenticated users */}
               {session && (
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Shënime (opsionale)</label>
+                  <label className="block text-sm font-medium text-ink mb-1">Shënime (opsionale)</label>
                   <textarea
                     {...register('customerNotes')}
                     rows={3}
-                    className="w-full p-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-red-500 focus:border-transparent text-base resize-none"
+                    className="w-full p-3 border border-linen rounded focus:ring-2 focus:ring-accent/25 focus:border-transparent text-base resize-none"
                     placeholder="Çfarë dëshironi të na tregoni për rezervimin tuaj?"
                   />
                 </div>
               )}
 
-              <div className="text-center text-sm text-gray-600 p-4 bg-blue-50 rounded-xl">
+              <div className="text-center text-sm text-clay p-4 bg-accent-soft/40 rounded">
                 💬 Do të merrni konfirmim në WhatsApp nga salloni
               </div>
             </div>
@@ -586,7 +586,7 @@ export default function MobileBookingForm({ salon, onSuccess, onError }: MobileB
           <button
             type="button"
             onClick={prevStep}
-            className="flex-1 py-3 px-4 bg-white border border-gray-300 text-gray-700 rounded-xl font-medium hover:bg-gray-50 transition-colors touch-manipulation"
+            className="flex-1 py-3 px-4 bg-paper border border-linen text-ink rounded font-medium hover:bg-cream transition-colors touch-manipulation"
           >
             ← Mbrapa
           </button>
@@ -597,10 +597,10 @@ export default function MobileBookingForm({ salon, onSuccess, onError }: MobileB
             type="button"
             onClick={nextStep}
             disabled={!canContinue()}
-            className={`flex-1 py-3 px-4 rounded-xl font-medium transition-all touch-manipulation ${
+            className={`flex-1 py-3 px-4 rounded font-medium transition-all touch-manipulation ${
               canContinue()
-                ? 'bg-gradient-to-r from-red-500 to-pink-500 text-white hover:from-red-600 hover:to-pink-600'
-                : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                ? 'bg-accent text-white hover:bg-accent-strong'
+                : 'bg-gray-300 text-clay cursor-not-allowed'
             }`}
           >
             Vazhdo →
@@ -610,10 +610,10 @@ export default function MobileBookingForm({ salon, onSuccess, onError }: MobileB
             type="button"
             onClick={handleSubmit(onSubmit)}
             disabled={loading}
-            className={`flex-1 py-3 px-4 rounded-xl font-medium transition-all touch-manipulation ${
+            className={`flex-1 py-3 px-4 rounded font-medium transition-all touch-manipulation ${
               loading
                 ? 'bg-gray-400 text-white cursor-not-allowed'
-                : 'bg-gradient-to-r from-green-500 to-green-600 text-white hover:from-green-600 hover:to-green-700'
+                : 'bg-success text-white hover:bg-accent-strong'
             }`}
           >
             {loading ? 'Po dërgohet...' : '✓ Konfirmo Rezervimin'}

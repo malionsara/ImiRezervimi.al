@@ -113,13 +113,13 @@ export default function BookingPage() {
   // ==============================================
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen bg-cream flex items-center justify-center">
         <div className="text-center">
           <div className="mx-auto w-16 h-16 mb-4">
-            <div className="animate-spin rounded-full h-16 w-16 border-4 border-red-500 border-t-transparent"></div>
+            <div className="animate-spin rounded-full h-16 w-16 border-4 border-accent border-t-transparent"></div>
           </div>
-          <h2 className="text-xl font-semibold text-gray-900 mb-2">Po ngarkon...</h2>
-          <p className="text-gray-600">Po marrim informacionet e sallonit</p>
+          <h2 className="text-xl font-semibold text-ink mb-2">Po ngarkon...</h2>
+          <p className="text-clay">Po marrim informacionet e sallonit</p>
         </div>
       </div>
     )
@@ -130,29 +130,29 @@ export default function BookingPage() {
   // ==============================================
   if (error && !salon) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen bg-cream flex items-center justify-center">
         <div className="text-center max-w-md mx-auto px-6">
-          <div className="mx-auto w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mb-4">
-            <svg className="w-8 h-8 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <div className="mx-auto w-16 h-16 bg-accent-soft rounded-full flex items-center justify-center mb-4">
+            <svg className="w-8 h-8 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} 
                     d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16c-.77.833.192 2.5 1.732 2.5z" />
             </svg>
           </div>
-          <h2 className="text-xl font-semibold text-gray-900 mb-2">Gabim</h2>
-          <p className="text-gray-600 mb-6">{error}</p>
+          <h2 className="text-xl font-semibold text-ink mb-2">Gabim</h2>
+          <p className="text-clay mb-6">{error}</p>
           <div className="space-y-3">
             <button
               onClick={() => window.location.reload()}
               className="w-full py-3 px-6 border border-transparent text-base font-medium 
-                       rounded-xl text-white bg-red-600 hover:bg-red-700 focus:outline-none 
-                       focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-colors duration-200"
+                       rounded text-white bg-accent hover:bg-accent-strong focus:outline-none 
+                       focus:ring-2 focus:ring-offset-2 focus:ring-accent/25 transition-colors duration-200"
             >
               Provo përsëri
             </button>
             <Link href="/">
-              <a className="block w-full py-3 px-6 border border-gray-300 text-base font-medium 
-                          rounded-xl text-gray-700 hover:bg-gray-50 focus:outline-none 
-                          focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-colors duration-200">
+              <a className="block w-full py-3 px-6 border border-linen text-base font-medium 
+                          rounded text-ink hover:bg-cream focus:outline-none 
+                          focus:ring-2 focus:ring-offset-2 focus:ring-accent/25 transition-colors duration-200">
                 Kthehu në fillim
               </a>
             </Link>
@@ -173,16 +173,16 @@ export default function BookingPage() {
           <meta name="description" content={`Rezervimi juaj për ${salon.name} u dërgua me sukses. Do të kontaktoheni brenda 2 orësh.`} />
         </Head>
 
-        <div className="min-h-screen bg-gray-50">
+        <div className="min-h-screen bg-cream">
           {/* Header */}
-          <div className="bg-white shadow-sm">
+          <div className="bg-paper shadow-sm">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
               <div className="flex items-center justify-between h-16">
                 <Link href="/">
-                  <a className="text-2xl font-bold text-red-600">ImiRezervimi.al</a>
+                  <a className="text-2xl font-bold text-accent">ImiRezervimi.al</a>
                 </Link>
                 <Link href={`/salon/${salon.slug}`}>
-                  <a className="text-gray-600 hover:text-gray-900 font-medium">
+                  <a className="text-clay hover:text-ink font-medium">
                     ← Kthehu te {salon.name}
                   </a>
                 </Link>
@@ -193,43 +193,43 @@ export default function BookingPage() {
           {/* Success Content */}
           <div className="max-w-2xl mx-auto px-4 py-16">
             <div className="text-center mb-8">
-              <div className="mx-auto w-20 h-20 bg-green-500 rounded-full flex items-center justify-center mb-6">
+              <div className="mx-auto w-20 h-20 bg-success rounded-full flex items-center justify-center mb-6">
                 <svg className="w-10 h-10 text-white" fill="currentColor" viewBox="0 0 20 20">
                   <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                 </svg>
               </div>
-              <h1 className="text-3xl font-bold text-gray-900 mb-4">
+              <h1 className="text-3xl font-bold text-ink mb-4">
                 Rezervimi u dërgua me sukses! 🎉
               </h1>
-              <p className="text-lg text-gray-600 mb-8">
+              <p className="text-lg text-clay mb-8">
                 Faleminderit! Rezervimi juaj për <strong>{salon.name}</strong> u dërgua me sukses.
               </p>
             </div>
 
             {/* What happens next */}
-            <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-8 mb-8">
-              <h2 className="text-xl font-semibold text-gray-900 mb-6">Çfarë ndodh më pas?</h2>
+            <div className="bg-paper rounded-lg shadow-sm border border-linen p-8 mb-8">
+              <h2 className="text-xl font-semibold text-ink mb-6">Çfarë ndodh më pas?</h2>
               
               <div className="space-y-6">
                 <div className="flex items-start">
-                  <div className="flex-shrink-0 w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center mr-4">
+                  <div className="flex-shrink-0 w-8 h-8 bg-accent rounded-full flex items-center justify-center mr-4">
                     <span className="text-white font-bold text-sm">1</span>
                   </div>
                   <div>
-                    <h3 className="font-medium text-gray-900 mb-1">Kontakt nga salloni</h3>
-                    <p className="text-gray-600 text-sm">
+                    <h3 className="font-medium text-ink mb-1">Kontakt nga salloni</h3>
+                    <p className="text-clay text-sm">
                       {salon.name} do t&apos;ju kontaktojë në WhatsApp brenda 2 orësh për të konfirmuar rezervimin.
                     </p>
                   </div>
                 </div>
 
                 <div className="flex items-start">
-                  <div className="flex-shrink-0 w-8 h-8 bg-green-500 rounded-full flex items-center justify-center mr-4">
+                  <div className="flex-shrink-0 w-8 h-8 bg-success rounded-full flex items-center justify-center mr-4">
                     <span className="text-white font-bold text-sm">2</span>
                   </div>
                   <div>
-                    <h3 className="font-medium text-gray-900 mb-1">Konfirmimi</h3>
-                    <p className="text-gray-600 text-sm">
+                    <h3 className="font-medium text-ink mb-1">Konfirmimi</h3>
+                    <p className="text-clay text-sm">
                       Pasi të konfirmohet, do të merrni një mesazh me detajet e rezervimit dhe udhëzimet.
                     </p>
                   </div>
@@ -240,8 +240,8 @@ export default function BookingPage() {
                     <span className="text-white font-bold text-sm">3</span>
                   </div>
                   <div>
-                    <h3 className="font-medium text-gray-900 mb-1">Kujtesë</h3>
-                    <p className="text-gray-600 text-sm">
+                    <h3 className="font-medium text-ink mb-1">Kujtesë</h3>
+                    <p className="text-clay text-sm">
                       Do të merrni një kujtesë 24 orë para takimit për të mos e harruar.
                     </p>
                   </div>
@@ -250,18 +250,18 @@ export default function BookingPage() {
             </div>
 
             {/* Appointment Details */}
-            <div className="bg-gray-50 rounded-2xl p-6 mb-8">
-              <h3 className="font-semibold text-gray-900 mb-4">ID i Rezervimit</h3>
-              <div className="bg-white rounded-xl p-4 border-2 border-dashed border-gray-300">
-                <code className="text-lg font-mono text-gray-800">{appointmentId}</code>
+            <div className="bg-cream rounded-lg p-6 mb-8">
+              <h3 className="font-semibold text-ink mb-4">ID i Rezervimit</h3>
+              <div className="bg-paper rounded p-4 border-2 border-dashed border-linen">
+                <code className="text-lg font-mono text-ink">{appointmentId}</code>
               </div>
-              <p className="text-sm text-gray-600 mt-2">
+              <p className="text-sm text-clay mt-2">
                 Ruajeni këtë kod për referencë të ardhshme.
               </p>
             </div>
 
             {/* Contact Info */}
-            <div className="bg-blue-50 border border-blue-200 rounded-2xl p-6 mb-8">
+            <div className="bg-accent-soft/40 border border-accent/25 rounded-lg p-6 mb-8">
               <div className="flex items-start">
                 <svg className="w-6 h-6 text-blue-500 mr-3 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} 
@@ -269,7 +269,7 @@ export default function BookingPage() {
                 </svg>
                 <div>
                   <h3 className="font-medium text-blue-900 mb-2">Informacion i rëndësishëm</h3>
-                  <ul className="text-sm text-blue-800 space-y-1">
+                  <ul className="text-sm text-accent-strong space-y-1">
                     <li>• Ju lutem jini të disponueshëm në numrin tuaj të telefonit</li>
                     <li>• Nëse keni nevojë të ndryshoni rezervimin, kontaktoni {salon.name}</li>
                     <li>• Për anulime, njoftoni të paktën 2 orë para</li>
@@ -282,25 +282,25 @@ export default function BookingPage() {
             <div className="flex flex-col sm:flex-row gap-4">
               <button
                 onClick={resetBookingState}
-                className="flex-1 py-3 px-6 border border-red-300 text-red-700 font-medium 
-                         rounded-xl hover:bg-red-50 focus:outline-none focus:ring-2 
-                         focus:ring-offset-2 focus:ring-red-500 transition-colors duration-200"
+                className="flex-1 py-3 px-6 border border-accent/40 text-accent-strong font-medium 
+                         rounded hover:bg-accent-soft/60 focus:outline-none focus:ring-2 
+                         focus:ring-offset-2 focus:ring-accent/25 transition-colors duration-200"
               >
                 Rezervo përsëri
               </button>
               
               <Link href={`/salon/${salon.slug}`}>
-                <a className="flex-1 py-3 px-6 border border-gray-300 text-gray-700 font-medium 
-                             rounded-xl hover:bg-gray-50 focus:outline-none focus:ring-2 
-                             focus:ring-offset-2 focus:ring-red-500 transition-colors duration-200 text-center">
+                <a className="flex-1 py-3 px-6 border border-linen text-ink font-medium 
+                             rounded hover:bg-cream focus:outline-none focus:ring-2 
+                             focus:ring-offset-2 focus:ring-accent/25 transition-colors duration-200 text-center">
                   Shiko sallonin
                 </a>
               </Link>
               
               <Link href="/">
-                <a className="flex-1 py-3 px-6 bg-red-600 text-white font-medium rounded-xl 
-                             hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 
-                             focus:ring-red-500 transition-colors duration-200 text-center">
+                <a className="flex-1 py-3 px-6 bg-accent text-white font-medium rounded 
+                             hover:bg-accent-strong focus:outline-none focus:ring-2 focus:ring-offset-2 
+                             focus:ring-accent/25 transition-colors duration-200 text-center">
                   Kthehu në fillim
                 </a>
               </Link>
@@ -342,18 +342,18 @@ export default function BookingPage() {
         <meta property="twitter:description" content={`Rezervoni një termin në ${salon.name} - ${salon.description}`} />
       </Head>
 
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen bg-cream">
         {/* Header */}
-        <div className="bg-white shadow-sm">
+        <div className="bg-paper shadow-sm">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex items-center justify-between h-16">
               <Link href="/">
-                <a className="text-2xl font-bold text-red-600">ImiRezervimi.al</a>
+                <a className="text-2xl font-bold text-accent">ImiRezervimi.al</a>
               </Link>
               
               <div className="flex items-center space-x-4">
                 <Link href={`/salon/${salon.slug}`}>
-                  <a className="text-gray-600 hover:text-gray-900 font-medium">
+                  <a className="text-clay hover:text-ink font-medium">
                     ← Kthehu te {salon.name}
                   </a>
                 </Link>
@@ -376,21 +376,21 @@ export default function BookingPage() {
             {/* Page Header */}
             <div className="text-center mb-12">
             <div className="flex items-center justify-center mb-6">
-              <div className="w-16 h-16 bg-gradient-to-r from-red-500 to-pink-500 rounded-2xl flex items-center justify-center mr-4">
+              <div className="w-16 h-16 bg-accent rounded-lg flex items-center justify-center mr-4">
                 <span className="text-2xl text-white">💅</span>
               </div>
               <div className="text-left">
-                <h1 className="text-3xl font-bold text-gray-900">
+                <h1 className="text-3xl font-bold text-ink">
                   Rezervo në {salon.name}
                 </h1>
-                <p className="text-gray-600 mt-1">
+                <p className="text-clay mt-1">
                   {salon.address}, {salon.city}
                 </p>
               </div>
             </div>
             
             {salon.description && (
-              <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+              <p className="text-lg text-clay max-w-2xl mx-auto">
                 {salon.description}
               </p>
             )}
@@ -398,16 +398,16 @@ export default function BookingPage() {
 
           {/* Error Message */}
           {error && (
-            <div className="mb-8 p-4 bg-red-50 border border-red-200 rounded-2xl shadow-sm">
+            <div className="mb-8 p-4 bg-accent-soft/60 border border-accent/25 rounded-lg shadow-sm">
               <div className="flex items-center">
                 <svg className="w-5 h-5 text-red-400 mr-2 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
                   <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
                 </svg>
                 <div>
-                  <p className="text-red-700 text-sm font-medium">{error}</p>
+                  <p className="text-accent-strong text-sm font-medium">{error}</p>
                   <button
                     onClick={() => setError('')}
-                    className="text-red-600 hover:text-red-800 text-xs mt-1 underline"
+                    className="text-accent hover:text-red-800 text-xs mt-1 underline"
                   >
                     Mbyll
                   </button>
@@ -419,7 +419,7 @@ export default function BookingPage() {
           )}
 
           {/* Booking Form */}
-          <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6 sm:p-8">
+          <div className="bg-paper rounded-lg shadow-sm border border-linen p-6 sm:p-8">
             <BookingForm
               salon={salon}
               onSuccess={handleBookingSuccess}
@@ -429,24 +429,24 @@ export default function BookingPage() {
 
           {/* Contact Info */}
           <div className="mt-8 text-center">
-            <p className="text-gray-600 text-sm">
+            <p className="text-clay text-sm">
               Keni pyetje? Kontaktoni{' '}
               <a 
                 href={`tel:${salon.phone}`}
-                className="text-red-600 hover:text-red-700 font-medium"
+                className="text-accent hover:text-accent-strong font-medium"
               >
                 {salon.phone}
               </a>
             </p>
             
             {salon.instagram_handle && (
-              <p className="text-gray-600 text-sm mt-1">
+              <p className="text-clay text-sm mt-1">
                 Ose vizitoni{' '}
                 <a 
                   href={`https://instagram.com/${salon.instagram_handle}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-red-600 hover:text-red-700 font-medium"
+                  className="text-accent hover:text-accent-strong font-medium"
                 >
                   @{salon.instagram_handle}
                 </a>

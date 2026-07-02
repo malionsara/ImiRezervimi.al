@@ -6,9 +6,12 @@ import { useState, useEffect } from 'react'
 import { useRouter } from 'next/router'
 import { useSession } from 'next-auth/react'
 import Link from 'next/link'
-import Image from 'next/image'
+import { XCircle, RefreshCw, ArrowLeft, Check, MessageCircle, Smartphone, ClipboardList, Phone, Lock, ShieldCheck } from 'lucide-react'
 import Layout, { bookingLayout } from '../components/layout/Layout'
 import BookingForm from '../components/booking/BookingForm'
+import Spinner from '../components/ui/Spinner'
+import Button from '../components/ui/Button'
+import Card, { CardBody } from '../components/ui/Card'
 
 // ==============================================
 // TYPES AND INTERFACES
@@ -105,22 +108,9 @@ export default function SalonBookingPage() {
       <Layout {...bookingLayout({ title: 'Po ngarkon...', showHeader: false })}>
         <div className="min-h-screen flex items-center justify-center p-4">
           <div className="text-center">
-            <div className="h-16 w-16 mx-auto rounded-2xl bg-white shadow-2xl animate-pulse overflow-hidden">
-              <Image 
-                src="/favicon-96x96.png" 
-                alt="ImiRezervimi Logo" 
-                width={64} 
-                height={64} 
-                className="w-full h-full object-contain"
-              />
-            </div>
-            <div className="flex space-x-1 justify-center mb-4">
-              <div className="w-2 h-2 bg-red-500 rounded-full animate-bounce"></div>
-              <div className="w-2 h-2 bg-pink-500 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
-              <div className="w-2 h-2 bg-orange-500 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
-            </div>
-            <h2 className="text-xl font-semibold text-gray-900 mb-2">Po ngarkon...</h2>
-            <p className="text-gray-600">Po marrim informacionet e sallonit</p>
+            <Spinner size="lg" />
+            <h2 className="font-display text-xl text-ink mt-6 mb-2">Po ngarkon...</h2>
+            <p className="text-clay">Po marrim informacionet e sallonit</p>
           </div>
         </div>
       </Layout>
@@ -135,24 +125,20 @@ export default function SalonBookingPage() {
       <Layout {...bookingLayout({ title: 'Gabim', showHeader: false })}>
         <div className="min-h-screen flex items-center justify-center p-4">
           <div className="text-center max-w-md mx-auto">
-            <div className="mx-auto w-16 h-16 bg-red-100 rounded-2xl flex items-center justify-center mb-6">
-              <span className="text-3xl">❌</span>
+            <div className="mx-auto w-16 h-16 bg-accent-soft rounded-full flex items-center justify-center mb-6">
+              <XCircle size={28} strokeWidth={1.75} className="text-accent" aria-hidden="true" />
             </div>
-            <h2 className="text-xl font-semibold text-gray-900 mb-2">Gabim</h2>
-            <p className="text-gray-600 mb-8">{error}</p>
-            <div className="space-y-4">
-              <button
-                onClick={() => window.location.reload()}
-                className="w-full py-3 px-6 bg-gradient-to-r from-red-500 to-pink-500 text-white font-medium rounded-xl hover:from-red-600 hover:to-pink-600 transition-all touch-manipulation"
-              >
-                🔄 Provo përsëri
-              </button>
-              <Link
-                href="/salons"
-                className="block w-full py-3 px-6 bg-white border border-gray-300 text-gray-700 font-medium rounded-xl hover:bg-gray-50 transition-colors text-center touch-manipulation"
-              >
-                ← Kthehu te sallone
-              </Link>
+            <h2 className="font-display text-xl text-ink mb-2">Gabim</h2>
+            <p className="text-clay mb-8">{error}</p>
+            <div className="space-y-3">
+              <Button onClick={() => window.location.reload()} className="w-full">
+                <RefreshCw size={18} strokeWidth={1.75} aria-hidden="true" />
+                Provo përsëri
+              </Button>
+              <Button href="/salons" variant="outline" className="w-full">
+                <ArrowLeft size={18} strokeWidth={1.75} aria-hidden="true" />
+                Kthehu te sallone
+              </Button>
             </div>
           </div>
         </div>
@@ -165,83 +151,82 @@ export default function SalonBookingPage() {
   // ==============================================
   if (bookingSuccess && appointmentId) {
     return (
-      <Layout {...bookingLayout({ 
+      <Layout {...bookingLayout({
         title: `Rezervimi u dërgua - ${salon?.name}`,
         description: 'Rezervimi juaj u dërgua me sukses. Do të merrni konfirmim në WhatsApp.'
       })}>
         <div className="min-h-screen flex items-center justify-center p-4">
-          <div className="max-w-md mx-auto">
-            <div className="bg-white rounded-2xl shadow-xl p-8 text-center">
-              {/* Success Animation */}
-              <div className="mx-auto w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mb-6">
-                <div className="w-12 h-12 bg-green-500 rounded-full flex items-center justify-center animate-bounce">
-                  <span className="text-white text-xl">✓</span>
+          <div className="max-w-md mx-auto w-full">
+            <Card>
+              <CardBody className="text-center p-8">
+                {/* Success mark */}
+                <div className="mx-auto w-16 h-16 bg-success/10 rounded-full flex items-center justify-center mb-6">
+                  <span className="w-10 h-10 bg-success rounded-full flex items-center justify-center">
+                    <Check size={22} strokeWidth={2.5} className="text-white" aria-hidden="true" />
+                  </span>
                 </div>
-              </div>
 
-              <h2 className="text-2xl font-bold text-gray-900 mb-2">Rezervimi u dërgua!</h2>
-              
-              <div className="space-y-3 text-left bg-gray-50 rounded-xl p-4 mb-6">
-                <div className="flex justify-between">
-                  <span className="text-gray-600">Salloni:</span>
-                  <span className="font-medium">{salon?.name}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-gray-600">ID Rezervimi:</span>
-                  <span className="font-mono text-sm font-medium">{appointmentId.slice(0, 8)}</span>
-                </div>
-              </div>
+                <h2 className="font-display text-2xl text-ink mb-4">Rezervimi u dërgua!</h2>
 
-              <div className="space-y-4 text-sm text-gray-600 mb-8">
-                <div className="flex items-center justify-center space-x-2 p-3 bg-blue-50 rounded-xl">
-                  <span className="text-lg">💬</span>
-                  <p>Do të merrni konfirmim në WhatsApp nga salloni</p>
+                <div className="space-y-3 text-left bg-sand rounded p-4 mb-6">
+                  <div className="flex justify-between">
+                    <span className="text-clay">Salloni:</span>
+                    <span className="font-medium text-ink">{salon?.name}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-clay">ID Rezervimi:</span>
+                    <span className="font-mono text-sm font-medium text-ink">{appointmentId.slice(0, 8)}</span>
+                  </div>
                 </div>
-                
-                <div className="flex items-center justify-center space-x-2 p-3 bg-green-50 rounded-xl">
-                  <span className="text-lg">📱</span>
-                  <p>Mund të ndiqni statusin e rezervimit tuaj</p>
+
+                <div className="space-y-3 text-sm text-clay mb-8">
+                  <div className="flex items-center gap-3 p-3 bg-cream rounded text-left">
+                    <MessageCircle size={18} strokeWidth={1.75} className="shrink-0 text-success" aria-hidden="true" />
+                    <p>Do të merrni konfirmim në WhatsApp nga salloni</p>
+                  </div>
+
+                  <div className="flex items-center gap-3 p-3 bg-cream rounded text-left">
+                    <Smartphone size={18} strokeWidth={1.75} className="shrink-0 text-accent" aria-hidden="true" />
+                    <p>Mund të ndiqni statusin e rezervimit tuaj</p>
+                  </div>
                 </div>
-              </div>
 
-              <div className="space-y-3">
-                <Link
-                  href={`/booking/${appointmentId}/status`}
-                  className="block w-full py-3 px-6 bg-gradient-to-r from-blue-500 to-blue-600 text-white font-medium rounded-xl hover:from-blue-600 hover:to-blue-700 transition-all touch-manipulation"
-                >
-                  📋 Shiko Statusin
-                </Link>
-                
-                <Link
-                  href="/salons"
-                  className="block w-full py-3 px-6 bg-white border border-gray-300 text-gray-700 font-medium rounded-xl hover:bg-gray-50 transition-colors text-center touch-manipulation"
-                >
-                  ← Rezervo në sallone të tjerë
-                </Link>
-              </div>
+                <div className="space-y-3">
+                  <Button href={`/booking/${appointmentId}/status`} className="w-full">
+                    <ClipboardList size={18} strokeWidth={1.75} aria-hidden="true" />
+                    Shiko Statusin
+                  </Button>
 
-              {/* Contact Info */}
-              <div className="mt-6 pt-4 border-t border-gray-200">
-                <p className="text-xs text-gray-500 mb-2">Keni pyetje? Kontaktoni</p>
-                <div className="flex justify-center space-x-4">
-                  <Link
-                    href={`tel:${salon?.phone}`}
-                    className="text-red-600 hover:text-red-700 font-medium text-sm"
-                  >
-                    📞 {salon?.phone}
-                  </Link>
-                  {salon?.instagram_handle && (
+                  <Button href="/salons" variant="outline" className="w-full">
+                    <ArrowLeft size={18} strokeWidth={1.75} aria-hidden="true" />
+                    Rezervo në sallone të tjerë
+                  </Button>
+                </div>
+
+                {/* Contact Info */}
+                <div className="mt-6 pt-4 border-t border-linen">
+                  <p className="text-xs text-clay mb-2">Keni pyetje? Kontaktoni</p>
+                  <div className="flex justify-center gap-4">
                     <Link
-                      href={`https://instagram.com/${salon.instagram_handle}`}
-                      target="_blank"
-                      className="text-purple-600 hover:text-purple-700 font-medium text-sm"
+                      href={`tel:${salon?.phone}`}
+                      className="inline-flex items-center gap-1.5 text-accent hover:text-accent-strong font-medium text-sm"
                     >
-                      📱 @{salon.instagram_handle}
+                      <Phone size={15} strokeWidth={1.75} aria-hidden="true" />
+                      {salon?.phone}
                     </Link>
-                  )}
+                    {salon?.instagram_handle && (
+                      <Link
+                        href={`https://instagram.com/${salon.instagram_handle}`}
+                        target="_blank"
+                        className="text-accent hover:text-accent-strong font-medium text-sm"
+                      >
+                        @{salon.instagram_handle}
+                      </Link>
+                    )}
+                  </div>
                 </div>
-              </div>
-            </div>
+              </CardBody>
+            </Card>
           </div>
         </div>
       </Layout>
@@ -253,67 +238,62 @@ export default function SalonBookingPage() {
   // ==============================================
   if (status !== 'loading' && !session) {
     return (
-      <Layout {...bookingLayout({ 
+      <Layout {...bookingLayout({
         title: `Rezervo në ${salon?.name}`,
         description: `Rezervoni online në ${salon?.name}. Identifikohuni për të vazhduar.`
       })}>
-        <div className="min-h-screen flex items-center justify-center p-4 bg-gradient-to-br from-pink-50 via-red-50 to-orange-50">
-          <div className="max-w-md mx-auto">
-            <div className="bg-white rounded-2xl shadow-xl overflow-hidden">
+        <div className="min-h-screen flex items-center justify-center p-4">
+          <div className="max-w-md mx-auto w-full">
+            <Card className="overflow-hidden">
               {/* Header */}
-              <div className="bg-gradient-to-r from-red-500 to-pink-500 p-6 text-white">
-                <div className="flex items-center space-x-3">
-                  <div className="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center">
-                    <span className="text-2xl">💅</span>
-                  </div>
-                  <div>
-                    <h1 className="text-xl font-bold">Rezervo në {salon?.name}</h1>
-                    <p className="text-white/80 text-sm">{salon?.address}</p>
-                  </div>
-                </div>
+              <div className="bg-ink p-6 text-cream">
+                <h1 className="font-display text-xl">Rezervo në {salon?.name}</h1>
+                {salon?.address && <p className="text-cream/60 text-sm mt-1">{salon.address}</p>}
               </div>
 
               {/* Content */}
-              <div className="p-6">
+              <CardBody>
                 <div className="text-center mb-6">
-                  <h2 className="text-lg font-semibold text-gray-900 mb-2">
+                  <h2 className="font-display text-lg text-ink mb-2">
                     Identifikohuni për të vazhduar
                   </h2>
-                  <p className="text-gray-600 text-sm">
+                  <p className="text-clay text-sm">
                     Për të bërë një rezervim në {salon?.name}, ju lutemi identifikohuni ose regjistrohuni.
                   </p>
                 </div>
 
-                <Link
+                <Button
                   href={`/login?callbackUrl=${encodeURIComponent(router.asPath)}`}
-                  className="block w-full py-3 px-6 bg-gradient-to-r from-red-500 to-pink-500 text-white font-medium rounded-xl hover:from-red-600 hover:to-pink-600 transition-all text-center touch-manipulation mb-4"
+                  className="w-full mb-4"
                 >
-                  🔐 Identifikohu / Regjistrohu →
-                </Link>
+                  <Lock size={18} strokeWidth={1.75} aria-hidden="true" />
+                  Identifikohu / Regjistrohu
+                </Button>
 
-                <div className="text-center text-xs text-gray-500 mb-4">
+                <div className="text-center text-xs text-clay mb-4">
                   Keni pyetje? Kontaktoni
                 </div>
 
-                <div className="flex justify-center space-x-4 text-sm">
+                <div className="flex justify-center gap-4 text-sm">
                   <Link
                     href={`tel:${salon?.phone}`}
-                    className="text-red-600 hover:text-red-700 font-medium"
+                    className="inline-flex items-center gap-1.5 text-accent hover:text-accent-strong font-medium"
                   >
-                    📞 {salon?.phone}
+                    <Phone size={15} strokeWidth={1.75} aria-hidden="true" />
+                    {salon?.phone}
                   </Link>
                   {salon?.instagram_handle && (
                     <Link
                       href={`https://instagram.com/${salon.instagram_handle}`}
                       target="_blank"
-                      className="text-purple-600 hover:text-purple-700 font-medium"
+                      className="text-accent hover:text-accent-strong font-medium"
                     >
-                      📱 @{salon.instagram_handle}
+                      @{salon.instagram_handle}
                     </Link>
                   )}
                 </div>
-              </div>
-            </div>
+              </CardBody>
+            </Card>
           </div>
         </div>
       </Layout>
@@ -325,22 +305,24 @@ export default function SalonBookingPage() {
   // ==============================================
   if ((session?.user as any)?.isRegistered === false) {
     return (
-      <Layout {...bookingLayout({ 
+      <Layout {...bookingLayout({
         title: `Përfundoni regjistrimin - ${salon?.name}`,
         description: 'Përfundoni regjistrimin për të vazhduar me rezervimin.'
       })}>
         <div className="min-h-screen flex items-center justify-center p-4">
-          <div className="max-w-md mx-auto">
-            <div className="bg-white rounded-2xl shadow-xl p-8 text-center">
-              <h2 className="text-xl font-semibold text-gray-900 mb-2">Përfundoni regjistrimin</h2>
-              <p className="text-gray-600 mb-6">Ju lutemi verifikoni numrin e telefonit për të vazhduar me rezervimin.</p>
-              <Link
-                href={`/complete-registration?callbackUrl=${encodeURIComponent(router.asPath)}`}
-                className="block w-full py-3 px-6 bg-gradient-to-r from-red-500 to-pink-500 text-white font-medium rounded-xl hover:from-red-600 hover:to-pink-600 transition-all text-center touch-manipulation"
-              >
-                Vazhdo regjistrimin →
-              </Link>
-            </div>
+          <div className="max-w-md mx-auto w-full">
+            <Card>
+              <CardBody className="text-center p-8">
+                <h2 className="font-display text-xl text-ink mb-2">Përfundoni regjistrimin</h2>
+                <p className="text-clay mb-6">Ju lutemi verifikoni numrin e telefonit për të vazhduar me rezervimin.</p>
+                <Button
+                  href={`/complete-registration?callbackUrl=${encodeURIComponent(router.asPath)}`}
+                  className="w-full"
+                >
+                  Vazhdo regjistrimin
+                </Button>
+              </CardBody>
+            </Card>
           </div>
         </div>
       </Layout>
@@ -352,13 +334,13 @@ export default function SalonBookingPage() {
   // ==============================================
   if (salon) {
     return (
-      <Layout {...bookingLayout({ 
+      <Layout {...bookingLayout({
         title: `Rezervo në ${salon.name}`,
         description: `Rezervoni online në ${salon.name}. ${salon.description || ''}`,
         showHeader: true,
         headerVariant: 'minimal'
       })}>
-        <div className="bg-gradient-to-br from-pink-50 via-red-50 to-orange-50 py-4 sm:py-6 px-2 sm:px-4">
+        <div className="py-4 sm:py-6 px-2 sm:px-4">
 
           {/* Enhanced Booking Form with Albanian Calendar */}
           <BookingForm
@@ -368,10 +350,16 @@ export default function SalonBookingPage() {
           />
 
           {/* Additional Info - Mobile Optimized */}
-          <div className="max-w-md mx-auto mt-4 sm:mt-6 text-center">
-            <div className="bg-white/80 backdrop-blur rounded-lg sm:rounded-xl p-3 sm:p-4 text-xs sm:text-sm text-gray-600">
-              <p className="mb-1 sm:mb-2">🔒 Rezervimi juaj është i sigurt dhe privat</p>
-              <p>💬 Do të merrni konfirmim automatik në WhatsApp</p>
+          <div className="max-w-md mx-auto mt-4 sm:mt-6">
+            <div className="bg-paper/80 backdrop-blur rounded border border-linen p-3 sm:p-4 text-xs sm:text-sm text-clay space-y-1.5">
+              <p className="flex items-center gap-2">
+                <ShieldCheck size={15} strokeWidth={1.75} className="shrink-0 text-success" aria-hidden="true" />
+                Rezervimi juaj është i sigurt dhe privat
+              </p>
+              <p className="flex items-center gap-2">
+                <MessageCircle size={15} strokeWidth={1.75} className="shrink-0 text-success" aria-hidden="true" />
+                Do të merrni konfirmim automatik në WhatsApp
+              </p>
             </div>
           </div>
         </div>
