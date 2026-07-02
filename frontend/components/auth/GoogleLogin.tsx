@@ -68,7 +68,7 @@ export default function GoogleLogin({
       <button
         onClick={handleGoogleLogin}
         disabled={loading}
-        className="group relative w-full flex justify-center items-center py-4 px-6 border border-transparent text-lg font-semibold rounded-2xl text-gray-700 bg-gradient-to-r from-white via-gray-50 to-white hover:from-gray-50 hover:via-gray-100 hover:to-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-500 transform hover:scale-105 hover:-translate-y-1 shadow-xl hover:shadow-2xl border-gray-200 overflow-hidden"
+        className="group relative w-full flex justify-center items-center py-4 px-6 border border-transparent text-lg font-semibold rounded-lg text-ink bg-gradient-to-r from-white via-gray-50 to-white hover:bg-accent-strong focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-500 shadow-soft hover:shadow-lifted border-linen overflow-hidden"
       >
         {/* Background Animation */}
         <div className="absolute inset-0 bg-gradient-to-r from-gray-100 via-gray-200 to-gray-100 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
@@ -82,7 +82,7 @@ export default function GoogleLogin({
           ) : (
             <>
               {/* Google Icon */}
-              <div className="flex items-center justify-center w-8 h-8 mr-4 bg-white rounded-lg shadow-sm">
+              <div className="flex items-center justify-center w-8 h-8 mr-4 bg-paper rounded-lg shadow-sm">
                 <svg className="w-6 h-6" viewBox="0 0 24 24">
                   <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
                   <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
@@ -102,27 +102,16 @@ export default function GoogleLogin({
 
       {/* Error Display */}
       {error && (
-        <div className="mt-4 p-4 bg-red-50 border border-red-200 rounded-2xl shadow-sm animate-shake">
+        <div className="mt-4 p-4 bg-accent-soft/60 border border-accent/25 rounded-lg shadow-sm animate-shake">
           <div className="flex items-center">
             <svg className="w-5 h-5 text-red-400 mr-2 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
               <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
             </svg>
-            <p className="text-red-700 text-sm font-medium">{error}</p>
+            <p className="text-accent-strong text-sm font-medium">{error}</p>
           </div>
         </div>
       )}
-
-      <style jsx>{`
-        @keyframes shake {
-          0%, 100% { transform: translateX(0px); }
-          25% { transform: translateX(-5px); }
-          75% { transform: translateX(5px); }
-        }
-        
-        .animate-shake {
-          animation: shake 0.5s ease-in-out;
-        }
-      `}</style>
+
     </div>
   );
 }

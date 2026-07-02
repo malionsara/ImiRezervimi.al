@@ -80,28 +80,28 @@ export default function SalonAuthVerify() {
         <meta name="robots" content="noindex, nofollow" />
       </Head>
 
-      <div className="min-h-screen bg-gradient-to-br from-pink-50 via-red-50 to-orange-50 flex items-center justify-center px-4">
-        <div className="bg-white rounded-2xl shadow-xl p-8 max-w-md w-full text-center">
+      <div className="min-h-screen bg-cream flex items-center justify-center px-4">
+        <div className="bg-paper rounded-lg shadow-soft p-8 max-w-md w-full text-center">
           {/* Logo */}
-          <div className="mx-auto h-16 w-16 rounded-2xl bg-gradient-to-br from-red-500 to-pink-500 flex items-center justify-center mb-6 shadow-lg">
+          <div className="mx-auto h-16 w-16 rounded-lg bg-accent flex items-center justify-center mb-6 shadow-soft">
             <Image src="/favicon-96x96.png" alt="ImiRezervimi Logo" width={48} height={48} className="w-full h-full object-contain" />
           </div>
 
           {status === 'loading' && (
             <>
-              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-red-500 mx-auto mb-6"></div>
-              <h1 className="text-2xl font-bold text-gray-900 mb-2">Po verifikohet...</h1>
-              <p className="text-gray-600">Ju lutemi prisni ndërsa verifikojmë linkun tuaj të hyrjes.</p>
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-accent mx-auto mb-6"></div>
+              <h1 className="text-2xl font-bold text-ink mb-2">Po verifikohet...</h1>
+              <p className="text-clay">Ju lutemi prisni ndërsa verifikojmë linkun tuaj të hyrjes.</p>
             </>
           )}
 
           {status === 'success' && (
             <>
-              <div className="text-green-500 text-6xl mb-6">✅</div>
-              <h1 className="text-2xl font-bold text-green-800 mb-2">Hyrja e suksesshme!</h1>
-              <p className="text-gray-600 mb-4">{message}</p>
-              <div className="bg-green-50 border border-green-200 rounded-lg p-4">
-                <p className="text-green-700 text-sm">
+              <div className="text-success text-6xl mb-6">✓</div>
+              <h1 className="text-2xl font-bold text-success mb-2">Hyrja e suksesshme!</h1>
+              <p className="text-clay mb-4">{message}</p>
+              <div className="bg-success/5 border border-success/25 rounded-lg p-4">
+                <p className="text-success text-sm">
                   Po ridrejtoheni në dashboard pas {countdown} sekondash...
                 </p>
               </div>
@@ -110,19 +110,19 @@ export default function SalonAuthVerify() {
 
           {status === 'error' && (
             <>
-              <div className="text-red-500 text-6xl mb-6">❌</div>
+              <div className="text-accent text-6xl mb-6">✕</div>
               <h1 className="text-2xl font-bold text-red-800 mb-2">Gabim në hyrje</h1>
-              <p className="text-gray-600 mb-6">{message}</p>
+              <p className="text-clay mb-6">{message}</p>
               
               <div className="space-y-3">
                 <button
                   onClick={handleRetry}
-                  className="w-full bg-red-500 text-white rounded-lg px-4 py-3 hover:bg-red-600 transition-colors font-medium"
+                  className="w-full bg-accent text-white rounded-lg px-4 py-3 hover:bg-accent transition-colors font-medium"
                 >
                   Provo përsëri hyrjen
                 </button>
                 
-                <div className="text-sm text-gray-500">
+                <div className="text-sm text-clay">
                   <p>Probleme të tjera?</p>
                   <p>Kontaktoni: support@imirezervimi.al</p>
                 </div>
@@ -131,10 +131,10 @@ export default function SalonAuthVerify() {
           )}
 
           {/* Security Note */}
-          <div className="mt-8 p-4 bg-gray-50 rounded-lg">
+          <div className="mt-8 p-4 bg-cream rounded-lg">
             <div className="flex items-start">
-              <div className="text-yellow-500 mr-2">⚠️</div>
-              <div className="text-xs text-gray-600 text-left">
+              <div className="text-warning mr-2">!</div>
+              <div className="text-xs text-clay text-left">
                 <p className="font-medium mb-1">Siguria:</p>
                 <ul className="space-y-1">
                   <li>• Linqet e hyrjes skadojnë për 24 orë</li>

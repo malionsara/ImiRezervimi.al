@@ -104,8 +104,8 @@ export default function PhotoUpload({ photos = [], onChange, maxPhotos = 5 }) {
       <div
         className={`border-2 border-dashed rounded-lg p-6 text-center transition-colors ${
           dragOver 
-            ? 'border-red-400 bg-red-50' 
-            : 'border-gray-300 hover:border-red-400'
+            ? 'border-red-400 bg-accent-soft/60' 
+            : 'border-linen hover:border-red-400'
         } ${uploading ? 'opacity-50 pointer-events-none' : ''}`}
         onDrop={handleDrop}
         onDragOver={handleDragOver}
@@ -122,16 +122,16 @@ export default function PhotoUpload({ photos = [], onChange, maxPhotos = 5 }) {
         />
         
         <div className="space-y-2">
-          <div className="text-4xl text-gray-400">📸</div>
+          <Camera size={36} strokeWidth={1.5} className="text-clay/70 mx-auto" aria-hidden="true" />
           <div>
-            <p className="text-lg font-medium text-gray-900">
+            <p className="text-lg font-medium text-ink">
               {uploading ? 'Po ngarkohen...' : 'Ngarko foto të sallonit'}
             </p>
-            <p className="text-sm text-gray-500">
+            <p className="text-sm text-clay">
               Tërhiq fotot këtu ose kliko për të zgjedhur
             </p>
           </div>
-          <div className="text-xs text-gray-400">
+          <div className="text-xs text-clay/70">
             JPG, PNG, WebP deri në 5MB • Maksimumi {maxPhotos} foto
           </div>
         </div>
@@ -140,13 +140,13 @@ export default function PhotoUpload({ photos = [], onChange, maxPhotos = 5 }) {
       {/* Photo Grid */}
       {photos.length > 0 && (
         <div>
-          <h4 className="text-sm font-medium text-gray-900 mb-3">
+          <h4 className="text-sm font-medium text-ink mb-3">
             Foto të ngarkuara ({photos.length}/{maxPhotos})
           </h4>
           <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
             {photos.map((photo, index) => (
               <div key={photo.id} className="relative group">
-                <div className="aspect-square rounded-lg overflow-hidden bg-gray-100">
+                <div className="aspect-square rounded-lg overflow-hidden bg-sand">
                   <Image
                     src={photo.preview}
                     alt={`Salon photo ${index + 1}`}
@@ -158,8 +158,8 @@ export default function PhotoUpload({ photos = [], onChange, maxPhotos = 5 }) {
                 
                 {/* Photo info */}
                 <div className="mt-2">
-                  <p className="text-xs text-gray-600 truncate">{photo.name}</p>
-                  <p className="text-xs text-gray-400">{formatFileSize(photo.size)}</p>
+                  <p className="text-xs text-clay truncate">{photo.name}</p>
+                  <p className="text-xs text-clay/70">{formatFileSize(photo.size)}</p>
                 </div>
                 
                 {/* Remove button */}
@@ -168,14 +168,14 @@ export default function PhotoUpload({ photos = [], onChange, maxPhotos = 5 }) {
                     e.stopPropagation()
                     handleRemovePhoto(photo.id)
                   }}
-                  className="absolute top-2 right-2 w-6 h-6 bg-red-500 text-white rounded-full text-xs hover:bg-red-600 transition-colors opacity-0 group-hover:opacity-100"
+                  className="absolute top-2 right-2 w-6 h-6 bg-accent text-white rounded-full text-xs hover:bg-accent transition-colors opacity-0 group-hover:opacity-100"
                 >
                   ×
                 </button>
                 
                 {/* Primary photo indicator */}
                 {index === 0 && (
-                  <div className="absolute top-2 left-2 bg-green-500 text-white text-xs px-2 py-1 rounded">
+                  <div className="absolute top-2 left-2 bg-success text-white text-xs px-2 py-1 rounded">
                     Kryesore
                   </div>
                 )}
@@ -186,10 +186,10 @@ export default function PhotoUpload({ photos = [], onChange, maxPhotos = 5 }) {
       )}
 
       {/* Info */}
-      <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
+      <div className="bg-accent-soft/40 border border-accent/25 rounded-lg p-3">
         <div className="flex items-start">
-          <span className="text-blue-600 text-sm mr-2">💡</span>
-          <div className="text-sm text-blue-700">
+          
+          <div className="text-sm text-accent-strong">
             <p className="font-medium mb-1">Këshilla për foto më të mira:</p>
             <ul className="text-xs space-y-1">
               <li>• Përdorni foto me cilësi të lartë dhe dritë të mirë</li>

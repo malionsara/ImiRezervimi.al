@@ -152,129 +152,129 @@ export default function RegistrationForm({ data, onChange, onNext }) {
   }
 
   return (
-    <div className="bg-white rounded-2xl shadow-xl p-8">
+    <div className="bg-paper rounded-lg shadow-soft p-8">
       <form onSubmit={handleSubmit} className="space-y-6">
         {/* Basic Information */}
         <div>
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">Informacionet bazë</h3>
+          <h3 className="text-lg font-semibold text-ink mb-4">Informacionet bazë</h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-ink mb-2">
                 Emri i sallonit *
               </label>
               <input
                 type="text"
                 value={formData.name}
                 onChange={(e) => handleInputChange('name', e.target.value)}
-                className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent ${
-                  errors.name ? 'border-red-500' : 'border-gray-300'
+                className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-accent/25 focus:border-transparent ${
+                  errors.name ? 'border-accent' : 'border-linen'
                 }`}
                 placeholder="p.sh. Klea Nails Studio"
               />
-              {errors.name && <p className="mt-1 text-sm text-red-600">{errors.name}</p>}
+              {errors.name && <p className="mt-1 text-sm text-accent">{errors.name}</p>}
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-ink mb-2">
                 URL Slug *
               </label>
               <div className="flex items-center">
-                <span className="text-sm text-gray-500 mr-2">imirezervimi.al/</span>
+                <span className="text-sm text-clay mr-2">imirezervimi.al/</span>
                 <input
                   type="text"
                   value={formData.slug}
                   onChange={(e) => handleInputChange('slug', e.target.value.toLowerCase())}
-                  className={`flex-1 px-4 py-2 border rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent ${
-                    errors.slug ? 'border-red-500' : 'border-gray-300'
+                  className={`flex-1 px-4 py-2 border rounded-lg focus:ring-2 focus:ring-accent/25 focus:border-transparent ${
+                    errors.slug ? 'border-accent' : 'border-linen'
                   }`}
                   placeholder="klea_nails"
                 />
               </div>
-              {errors.slug && <p className="mt-1 text-sm text-red-600">{errors.slug}</p>}
+              {errors.slug && <p className="mt-1 text-sm text-accent">{errors.slug}</p>}
             </div>
           </div>
         </div>
 
         {/* Description */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
+          <label className="block text-sm font-medium text-ink mb-2">
             Përshkrimi i sallonit
           </label>
           <textarea
             value={formData.description}
             onChange={(e) => handleInputChange('description', e.target.value)}
             rows={3}
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
+            className="w-full px-4 py-2 border border-linen rounded-lg focus:ring-2 focus:ring-accent/25 focus:border-transparent"
             placeholder="Përshkruani shërbimet dhe atmosferën e sallonit tuaj..."
           />
         </div>
 
         {/* Contact Information */}
         <div>
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">Informacionet e kontaktit</h3>
+          <h3 className="text-lg font-semibold text-ink mb-4">Informacionet e kontaktit</h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-ink mb-2">
                 Numri i telefonit *
               </label>
               <input
                 type="tel"
                 value={formData.phone}
                 onChange={(e) => handleInputChange('phone', e.target.value)}
-                className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent ${
-                  errors.phone ? 'border-red-500' : 'border-gray-300'
+                className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-accent/25 focus:border-transparent ${
+                  errors.phone ? 'border-accent' : 'border-linen'
                 }`}
                 placeholder="+355 XX XXX XXXX"
               />
-              {errors.phone && <p className="mt-1 text-sm text-red-600">{errors.phone}</p>}
+              {errors.phone && <p className="mt-1 text-sm text-accent">{errors.phone}</p>}
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-ink mb-2">
                 Email (opsional)
               </label>
               <input
                 type="email"
                 value={formData.email}
                 onChange={(e) => handleInputChange('email', e.target.value)}
-                className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent ${
-                  errors.email ? 'border-red-500' : 'border-gray-300'
+                className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-accent/25 focus:border-transparent ${
+                  errors.email ? 'border-accent' : 'border-linen'
                 }`}
                 placeholder="info@salloni.al"
               />
-              {errors.email && <p className="mt-1 text-sm text-red-600">{errors.email}</p>}
+              {errors.email && <p className="mt-1 text-sm text-accent">{errors.email}</p>}
             </div>
           </div>
         </div>
 
         {/* Location */}
         <div>
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">Lokacioni</h3>
+          <h3 className="text-lg font-semibold text-ink mb-4">Lokacioni</h3>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div className="md:col-span-2">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-ink mb-2">
                 Adresa *
               </label>
               <input
                 type="text"
                 value={formData.address}
                 onChange={(e) => handleInputChange('address', e.target.value)}
-                className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent ${
-                  errors.address ? 'border-red-500' : 'border-gray-300'
+                className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-accent/25 focus:border-transparent ${
+                  errors.address ? 'border-accent' : 'border-linen'
                 }`}
                 placeholder="Rruga Barrikadave, Tirana"
               />
-              {errors.address && <p className="mt-1 text-sm text-red-600">{errors.address}</p>}
+              {errors.address && <p className="mt-1 text-sm text-accent">{errors.address}</p>}
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-ink mb-2">
                 Qyteti
               </label>
               <select
                 value={formData.city}
                 onChange={(e) => handleInputChange('city', e.target.value)}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
+                className="w-full px-4 py-2 border border-linen rounded-lg focus:ring-2 focus:ring-accent/25 focus:border-transparent"
               >
                 <option value="Tirana">Tirana</option>
                 <option value="Durrës">Durrës</option>
@@ -295,61 +295,61 @@ export default function RegistrationForm({ data, onChange, onNext }) {
 
         {/* Social Media */}
         <div>
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">Rrjetet sociale (opsionale)</h3>
+          <h3 className="text-lg font-semibold text-ink mb-4">Rrjetet sociale (opsionale)</h3>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-ink mb-2">
                 Instagram Handle
               </label>
               <div className="flex items-center">
-                <span className="text-sm text-gray-500 mr-2">@</span>
+                <span className="text-sm text-clay mr-2">@</span>
                 <input
                   type="text"
                   value={formData.instagramHandle}
                   onChange={(e) => handleInputChange('instagramHandle', e.target.value)}
-                  className={`flex-1 px-4 py-2 border rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent ${
-                    errors.instagramHandle ? 'border-red-500' : 'border-gray-300'
+                  className={`flex-1 px-4 py-2 border rounded-lg focus:ring-2 focus:ring-accent/25 focus:border-transparent ${
+                    errors.instagramHandle ? 'border-accent' : 'border-linen'
                   }`}
                   placeholder="klea_nails_studio"
                 />
               </div>
-              {errors.instagramHandle && <p className="mt-1 text-sm text-red-600">{errors.instagramHandle}</p>}
+              {errors.instagramHandle && <p className="mt-1 text-sm text-accent">{errors.instagramHandle}</p>}
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-ink mb-2">
                 Facebook Page
               </label>
               <input
                 type="text"
                 value={formData.facebookPage}
                 onChange={(e) => handleInputChange('facebookPage', e.target.value)}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
+                className="w-full px-4 py-2 border border-linen rounded-lg focus:ring-2 focus:ring-accent/25 focus:border-transparent"
                 placeholder="facebook.com/klea.nails"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-ink mb-2">
                 Website
               </label>
               <input
                 type="url"
                 value={formData.websiteUrl}
                 onChange={(e) => handleInputChange('websiteUrl', e.target.value)}
-                className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent ${
-                  errors.websiteUrl ? 'border-red-500' : 'border-gray-300'
+                className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-accent/25 focus:border-transparent ${
+                  errors.websiteUrl ? 'border-accent' : 'border-linen'
                 }`}
                 placeholder="https://salloni.al"
               />
-              {errors.websiteUrl && <p className="mt-1 text-sm text-red-600">{errors.websiteUrl}</p>}
+              {errors.websiteUrl && <p className="mt-1 text-sm text-accent">{errors.websiteUrl}</p>}
             </div>
           </div>
         </div>
 
         {/* Photos */}
         <div>
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">Foto të sallonit (opsionale)</h3>
+          <h3 className="text-lg font-semibold text-ink mb-4">Foto të sallonit (opsionale)</h3>
           <PhotoUpload
             photos={formData.photos || []}
             onChange={(photos) => handleInputChange('photos', photos)}
@@ -359,11 +359,11 @@ export default function RegistrationForm({ data, onChange, onNext }) {
 
         {/* Working Hours */}
         <div>
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">Oraret e punës</h3>
+          <h3 className="text-lg font-semibold text-ink mb-4">Oraret e punës</h3>
           <div className="space-y-4">
             {Object.entries(formData.workingHours).map(([day, hours]) => (
               <div key={day} className="flex items-center space-x-4">
-                <div className="w-20 text-sm font-medium text-gray-700">
+                <div className="w-20 text-sm font-medium text-ink">
                   {dayNames[day]}
                 </div>
                 <div className="flex items-center space-x-2">
@@ -372,9 +372,9 @@ export default function RegistrationForm({ data, onChange, onNext }) {
                       type="checkbox"
                       checked={!hours.closed}
                       onChange={(e) => handleWorkingHoursChange(day, 'closed', !e.target.checked)}
-                      className="mr-2 rounded border-gray-300 text-red-500 focus:ring-red-500"
+                      className="mr-2 rounded border-linen text-accent focus:ring-accent/25"
                     />
-                    <span className="text-sm text-gray-700">E hapur</span>
+                    <span className="text-sm text-ink">E hapur</span>
                   </label>
                 </div>
                 {!hours.closed && (
@@ -383,14 +383,14 @@ export default function RegistrationForm({ data, onChange, onNext }) {
                       type="time"
                       value={hours.open}
                       onChange={(e) => handleWorkingHoursChange(day, 'open', e.target.value)}
-                      className="px-3 py-1 border border-gray-300 rounded focus:ring-2 focus:ring-red-500 focus:border-transparent"
+                      className="px-3 py-1 border border-linen rounded focus:ring-2 focus:ring-accent/25 focus:border-transparent"
                     />
-                    <span className="text-gray-500">-</span>
+                    <span className="text-clay">-</span>
                     <input
                       type="time"
                       value={hours.close}
                       onChange={(e) => handleWorkingHoursChange(day, 'close', e.target.value)}
-                      className="px-3 py-1 border border-gray-300 rounded focus:ring-2 focus:ring-red-500 focus:border-transparent"
+                      className="px-3 py-1 border border-linen rounded focus:ring-2 focus:ring-accent/25 focus:border-transparent"
                     />
                   </>
                 )}
@@ -401,7 +401,7 @@ export default function RegistrationForm({ data, onChange, onNext }) {
 
         {/* WhatsApp */}
         <div>
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">WhatsApp Integration</h3>
+          <h3 className="text-lg font-semibold text-ink mb-4">WhatsApp Integration</h3>
           <div className="space-y-4">
             <div>
               <label className="flex items-center">
@@ -409,30 +409,30 @@ export default function RegistrationForm({ data, onChange, onNext }) {
                   type="checkbox"
                   checked={formData.whatsappEnabled}
                   onChange={(e) => handleInputChange('whatsappEnabled', e.target.checked)}
-                  className="mr-3 rounded border-gray-300 text-red-500 focus:ring-red-500"
+                  className="mr-3 rounded border-linen text-accent focus:ring-accent/25"
                 />
-                <span className="text-sm font-medium text-gray-700">
+                <span className="text-sm font-medium text-ink">
                   Aktivizo njoftimet në WhatsApp
                 </span>
               </label>
-              <p className="text-sm text-gray-500 mt-1">
+              <p className="text-sm text-clay mt-1">
                 Klientët do të marrin konfirmimet e rezervimeve në WhatsApp
               </p>
             </div>
 
             {formData.whatsappEnabled && (
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-ink mb-2">
                   Numri i WhatsApp (opsional)
                 </label>
                 <input
                   type="tel"
                   value={formData.whatsappNumber}
                   onChange={(e) => handleInputChange('whatsappNumber', e.target.value)}
-                  className="w-full md:w-1/2 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
+                  className="w-full md:w-1/2 px-4 py-2 border border-linen rounded-lg focus:ring-2 focus:ring-accent/25 focus:border-transparent"
                   placeholder="+355 XX XXX XXXX"
                 />
-                <p className="text-sm text-gray-500 mt-1">
+                <p className="text-sm text-clay mt-1">
                   Lëreni bosh për të përdorur numrin kryesor të telefonit
                 </p>
               </div>
@@ -445,7 +445,7 @@ export default function RegistrationForm({ data, onChange, onNext }) {
           <button
             type="submit"
             disabled={isValidating}
-            className="px-8 py-3 bg-red-500 text-white rounded-lg font-medium hover:bg-red-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            className="px-8 py-3 bg-accent text-white rounded-lg font-medium hover:bg-accent transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {isValidating ? 'Po vërtetohet...' : 'Vazhdo në hapin tjetër'}
           </button>
