@@ -173,12 +173,12 @@ export default function AdminSalons() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen bg-cream flex items-center justify-center">
         <div className="text-center">
-          <div className="mx-auto h-16 w-16 rounded-2xl bg-gradient-to-br from-red-500 to-pink-500 flex items-center justify-center mb-4 shadow-lg animate-pulse">
+          <div className="mx-auto h-16 w-16 rounded-lg bg-accent flex items-center justify-center mb-4 shadow-soft animate-pulse">
             <span className="text-2xl font-bold text-white">IR</span>
           </div>
-          <p className="text-gray-600">Po ngarkohen sallone...</p>
+          <p className="text-clay">Po ngarkohen sallone...</p>
         </div>
       </div>
     )
@@ -192,20 +192,20 @@ export default function AdminSalons() {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
       </Head>
 
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen bg-cream">
         {/* Header */}
-        <header className="bg-white shadow-sm border-b">
+        <header className="bg-paper shadow-sm border-b">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex justify-between items-center h-16">
               <div className="flex items-center">
                 <Link href="/" className="flex items-center">
-                  <div className="h-10 w-10 rounded-2xl bg-gradient-to-br from-red-500 to-pink-500 flex items-center justify-center mr-3 shadow-lg">
+                  <div className="h-10 w-10 rounded-lg bg-accent flex items-center justify-center mr-3 shadow-soft">
                     <span className="text-lg font-bold text-white">IR</span>
                   </div>
-                  <span className="text-xl font-bold text-gray-900">Admin Panel</span>
+                  <span className="text-xl font-bold text-ink">Admin Panel</span>
                 </Link>
               </div>
-              <Link href="/" className="text-gray-500 hover:text-gray-700 px-3 py-2 rounded-md text-sm font-medium">
+              <Link href="/" className="text-clay hover:text-ink px-3 py-2 rounded-md text-sm font-medium">
                 Kthehu në faqen kryesore
               </Link>
             </div>
@@ -215,20 +215,20 @@ export default function AdminSalons() {
         {/* Main Content */}
         <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <div className="mb-8">
-            <h1 className="text-3xl font-bold text-gray-900">Menaxhimi i Salloneve</h1>
-            <p className="text-gray-600 mt-2">Shqyrto dhe miratu regjistrime të reja sallonesh</p>
+            <h1 className="text-3xl font-bold text-ink">Menaxhimi i Salloneve</h1>
+            <p className="text-clay mt-2">Shqyrto dhe miratu regjistrime të reja sallonesh</p>
           </div>
 
           {/* Tabs */}
-          <div className="bg-white rounded-lg shadow-sm border mb-6">
-            <div className="border-b border-gray-200">
+          <div className="bg-paper rounded-lg shadow-sm border mb-6">
+            <div className="border-b border-linen">
               <nav className="flex space-x-8 px-6">
                 <button
                   onClick={() => setSelectedTab('pending')}
                   className={`py-4 px-1 border-b-2 font-medium text-sm ${
                     selectedTab === 'pending'
-                      ? 'border-red-500 text-red-600'
-                      : 'border-transparent text-gray-500 hover:text-gray-700'
+                      ? 'border-accent text-accent'
+                      : 'border-transparent text-clay hover:text-ink'
                   }`}
                 >
                   Në pritje ({pendingSalons.length})
@@ -237,8 +237,8 @@ export default function AdminSalons() {
                   onClick={() => setSelectedTab('active')}
                   className={`py-4 px-1 border-b-2 font-medium text-sm ${
                     selectedTab === 'active'
-                      ? 'border-red-500 text-red-600'
-                      : 'border-transparent text-gray-500 hover:text-gray-700'
+                      ? 'border-accent text-accent'
+                      : 'border-transparent text-clay hover:text-ink'
                   }`}
                 >
                   Aktive ({activeSalons.length})
@@ -251,60 +251,60 @@ export default function AdminSalons() {
                 <div>
                   {pendingSalons.length === 0 ? (
                     <div className="text-center py-12">
-                      <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                        <span className="text-2xl">📋</span>
+                      <div className="w-16 h-16 bg-sand rounded-full flex items-center justify-center mx-auto mb-4">
+                        <span className="text-2xl"></span>
                       </div>
-                      <h3 className="text-lg font-medium text-gray-900 mb-2">Nuk ka sallone në pritje</h3>
-                      <p className="text-gray-500">Të gjitha regjitrimet janë shqyrtuar.</p>
+                      <h3 className="text-lg font-medium text-ink mb-2">Nuk ka sallone në pritje</h3>
+                      <p className="text-clay">Të gjitha regjitrimet janë shqyrtuar.</p>
                     </div>
                   ) : (
                     <div className="space-y-6">
                       {pendingSalons.map((salon) => (
-                        <div key={salon.id} className="bg-gray-50 rounded-lg p-6 border">
+                        <div key={salon.id} className="bg-cream rounded-lg p-6 border">
                           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                             {/* Basic Info */}
                             <div>
-                              <h3 className="text-xl font-bold text-gray-900 mb-4">{salon.name}</h3>
+                              <h3 className="text-xl font-bold text-ink mb-4">{salon.name}</h3>
                               
                               <div className="space-y-3">
                                 <div>
-                                  <span className="font-medium text-gray-700">URL Slug:</span>
-                                  <span className="ml-2 text-blue-600">imirezervimi.al/{salon.slug}</span>
+                                  <span className="font-medium text-ink">URL Slug:</span>
+                                  <span className="ml-2 text-accent">imirezervimi.al/{salon.slug}</span>
                                 </div>
                                 
                                 <div>
-                                  <span className="font-medium text-gray-700">Telefoni:</span>
+                                  <span className="font-medium text-ink">Telefoni:</span>
                                   <span className="ml-2">{salon.phone}</span>
                                 </div>
                                 
                                 {salon.email && (
                                   <div>
-                                    <span className="font-medium text-gray-700">Email:</span>
+                                    <span className="font-medium text-ink">Email:</span>
                                     <span className="ml-2">{salon.email}</span>
                                   </div>
                                 )}
                                 
                                 <div>
-                                  <span className="font-medium text-gray-700">Adresa:</span>
+                                  <span className="font-medium text-ink">Adresa:</span>
                                   <span className="ml-2">{salon.address}, {salon.city}</span>
                                 </div>
                                 
                                 {salon.instagram_handle && (
                                   <div>
-                                    <span className="font-medium text-gray-700">Instagram:</span>
+                                    <span className="font-medium text-ink">Instagram:</span>
                                     <span className="ml-2">@{salon.instagram_handle}</span>
                                   </div>
                                 )}
                                 
                                 <div>
-                                  <span className="font-medium text-gray-700">Regjistruar:</span>
+                                  <span className="font-medium text-ink">Regjistruar:</span>
                                   <span className="ml-2">{formatDate(salon.created_at)}</span>
                                 </div>
                                 
                                 {salon.description && (
                                   <div>
-                                    <span className="font-medium text-gray-700">Përshkrimi:</span>
-                                    <p className="mt-1 text-gray-600">{salon.description}</p>
+                                    <span className="font-medium text-ink">Përshkrimi:</span>
+                                    <p className="mt-1 text-clay">{salon.description}</p>
                                   </div>
                                 )}
                               </div>
@@ -312,20 +312,20 @@ export default function AdminSalons() {
 
                             {/* Working Hours & Services */}
                             <div>
-                              <h4 className="font-bold text-gray-900 mb-3">Oraret e Punës</h4>
+                              <h4 className="font-bold text-ink mb-3">Oraret e Punës</h4>
                               <div className="space-y-1 mb-6">
                                 {formatWorkingHours(salon.working_hours)}
                               </div>
 
                               {salon.services && salon.services.length > 0 && (
                                 <div>
-                                  <h4 className="font-bold text-gray-900 mb-3">Shërbimet</h4>
+                                  <h4 className="font-bold text-ink mb-3">Shërbimet</h4>
                                   <div className="space-y-2">
                                     {salon.services.map((service, index) => (
-                                      <div key={service.id || index} className="bg-white p-3 rounded border">
+                                      <div key={service.id || index} className="bg-paper p-3 rounded border">
                                         <div className="flex justify-between items-center">
                                           <span className="font-medium">{service.name}</span>
-                                          <div className="text-sm text-gray-500">
+                                          <div className="text-sm text-clay">
                                             {service.duration_minutes} min
                                             {service.price && ` • ${service.price}€`}
                                           </div>
@@ -339,21 +339,21 @@ export default function AdminSalons() {
                           </div>
 
                           {/* Action Buttons */}
-                          <div className="mt-6 pt-6 border-t border-gray-200 flex space-x-4">
+                          <div className="mt-6 pt-6 border-t border-linen flex space-x-4">
                             <button
                               onClick={() => handleApprove(salon.id)}
                               disabled={processingId === salon.id}
-                              className="bg-green-500 text-white px-6 py-2 rounded-lg font-medium hover:bg-green-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                              className="bg-success text-white px-6 py-2 rounded-lg font-medium hover:bg-green-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                             >
-                              {processingId === salon.id ? 'Po përpunohet...' : '✅ Mirато'}
+                              {processingId === salon.id ? 'Po përpunohet...' : 'Mirато'}
                             </button>
                             
                             <button
                               onClick={() => handleReject(salon.id)}
                               disabled={processingId === salon.id}
-                              className="bg-red-500 text-white px-6 py-2 rounded-lg font-medium hover:bg-red-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                              className="bg-accent text-white px-6 py-2 rounded-lg font-medium hover:bg-accent transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                             >
-                              {processingId === salon.id ? 'Po përpunohet...' : '❌ Refuzo'}
+                              {processingId === salon.id ? 'Po përpunohet...' : 'Refuzo'}
                             </button>
                           </div>
                         </div>
@@ -365,27 +365,27 @@ export default function AdminSalons() {
                 <div>
                   {activeSalons.length === 0 ? (
                     <div className="text-center py-12">
-                      <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                        <span className="text-2xl">🏪</span>
+                      <div className="w-16 h-16 bg-sand rounded-full flex items-center justify-center mx-auto mb-4">
+                        <span className="text-2xl"></span>
                       </div>
-                      <h3 className="text-lg font-medium text-gray-900 mb-2">Nuk ka sallone aktive</h3>
-                      <p className="text-gray-500">Mirato disa sallone për t&apos;i parë këtu.</p>
+                      <h3 className="text-lg font-medium text-ink mb-2">Nuk ka sallone aktive</h3>
+                      <p className="text-clay">Mirato disa sallone për t&apos;i parë këtu.</p>
                     </div>
                   ) : (
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                       {activeSalons.map((salon) => (
-                        <div key={salon.id} className="bg-white rounded-lg p-6 border shadow-sm">
-                          <h3 className="text-lg font-bold text-gray-900 mb-2">{salon.name}</h3>
-                          <div className="space-y-2 text-sm text-gray-600">
-                            <div>📍 {salon.address}, {salon.city}</div>
-                            <div>📞 {salon.phone}</div>
-                            {salon.instagram_handle && <div>📸 @{salon.instagram_handle}</div>}
-                            <div>📅 {formatDate(salon.created_at)}</div>
+                        <div key={salon.id} className="bg-paper rounded-lg p-6 border shadow-sm">
+                          <h3 className="text-lg font-bold text-ink mb-2">{salon.name}</h3>
+                          <div className="space-y-2 text-sm text-clay">
+                            <div>{salon.address}, {salon.city}</div>
+                            <div>{salon.phone}</div>
+                            {salon.instagram_handle && <div>@{salon.instagram_handle}</div>}
+                            <div>{formatDate(salon.created_at)}</div>
                           </div>
                           <div className="mt-4">
                             <Link 
                               href={`/${salon.slug}`}
-                              className="text-blue-600 hover:text-blue-800 font-medium"
+                              className="text-accent hover:text-accent-strong font-medium"
                             >
                               Shiko faqen →
                             </Link>

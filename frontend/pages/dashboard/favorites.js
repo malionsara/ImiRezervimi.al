@@ -48,12 +48,12 @@ export default function FavoritesPage() {
 
   if (status === 'loading' || loading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen bg-cream flex items-center justify-center">
         <div className="text-center">
-          <div className="mx-auto h-16 w-16 rounded-2xl bg-white flex items-center justify-center mb-4 shadow-lg animate-pulse p-2">
+          <div className="mx-auto h-16 w-16 rounded-lg bg-paper flex items-center justify-center mb-4 shadow-soft animate-pulse p-2">
             <Image src="/favicon-96x96.png" alt="ImiRezervimi Logo" width={64} height={64} />
           </div>
-          <p className="text-gray-600">Po ngarkon...</p>
+          <p className="text-clay">Po ngarkon...</p>
         </div>
       </div>
     )
@@ -68,26 +68,26 @@ export default function FavoritesPage() {
         <meta name="description" content="Sallone që keni shënuar si të preferuara" />
       </Head>
 
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen bg-cream">
         {/* Header */}
-        <header className="bg-white shadow-sm border-b">
+        <header className="bg-paper shadow-sm border-b">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex justify-between items-center h-16">
               <div className="flex items-center">
                 <Link href="/dashboard">
                   <a className="flex items-center">
-                    <div className="h-8 w-8 rounded-lg bg-white flex items-center justify-center mr-3 p-1 border">
+                    <div className="h-8 w-8 rounded-lg bg-paper flex items-center justify-center mr-3 p-1 border">
                       <Image src="/favicon-96x96.png" alt="ImiRezervimi Logo" width={32} height={32} />
                     </div>
-                    <span className="text-xl font-bold text-gray-900">ImiRezervimi</span>
+                    <span className="text-xl font-bold text-ink">ImiRezervimi</span>
                   </a>
                 </Link>
-                <span className="ml-4 text-gray-400">•</span>
-                <span className="ml-4 text-gray-600">Sallone të Preferuara</span>
+                <span className="ml-4 text-clay/70">•</span>
+                <span className="ml-4 text-clay">Sallone të Preferuara</span>
               </div>
               
               <Link href="/dashboard">
-                <a className="text-gray-500 hover:text-gray-700 text-sm">
+                <a className="text-clay hover:text-ink text-sm">
                   ← Kthehu te Dashboard
                 </a>
               </Link>
@@ -98,54 +98,54 @@ export default function FavoritesPage() {
         {/* Main Content */}
         <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <div className="mb-8">
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">Sallone të Preferuara</h1>
-            <p className="text-gray-600">Sallone që keni shënuar si të preferuara për rezervim të shpejtë</p>
+            <h1 className="text-3xl font-bold text-ink mb-2">Sallone të Preferuara</h1>
+            <p className="text-clay">Sallone që keni shënuar si të preferuara për rezervim të shpejtë</p>
           </div>
 
           {/* Favorites List */}
           {favorites.length === 0 ? (
-            <div className="text-center py-12 bg-white rounded-xl border">
-              <div className="text-gray-400 text-6xl mb-4">⭐</div>
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">
+            <div className="text-center py-12 bg-paper rounded border">
+              <div className="text-clay/70 text-6xl mb-4">⭐</div>
+              <h3 className="text-lg font-semibold text-ink mb-2">
                 Nuk keni sallone të preferuara ende
               </h3>
-              <p className="text-gray-600 mb-6">
+              <p className="text-clay mb-6">
                 Zbuloni sallone dhe shtojini në listën tuaj të preferuarash për rezervim më të lehtë.
               </p>
               <Link href="/salon">
-                <a className="inline-flex items-center px-6 py-3 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors">
-                  🔍 Zbulo Sallone
+                <a className="inline-flex items-center px-6 py-3 bg-accent text-white rounded-lg hover:bg-accent-strong transition-colors">
+                  Zbulo Sallone
                 </a>
               </Link>
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {favorites.map((salon) => (
-                <div key={salon.id} className="bg-white rounded-xl shadow-sm p-6 border hover:shadow-md transition-shadow">
-                  <div className="w-full h-32 bg-gradient-to-br from-pink-100 to-red-100 rounded-lg mb-4 flex items-center justify-center">
-                    <span className="text-gray-400 text-4xl">💅</span>
+                <div key={salon.id} className="bg-paper rounded shadow-sm p-6 border hover:shadow-md transition-shadow">
+                  <div className="w-full h-32 bg-accent rounded-lg mb-4 flex items-center justify-center">
+                    <span className="text-clay/70 text-4xl"></span>
                   </div>
                   
-                  <h3 className="font-semibold text-gray-900 mb-2">{salon.name}</h3>
-                  <p className="text-gray-600 text-sm mb-3">{salon.description}</p>
-                  <p className="text-gray-500 text-xs mb-4">📍 {salon.address}, {salon.city}</p>
+                  <h3 className="font-semibold text-ink mb-2">{salon.name}</h3>
+                  <p className="text-clay text-sm mb-3">{salon.description}</p>
+                  <p className="text-clay text-xs mb-4">{salon.address}, {salon.city}</p>
                   
                   <div className="flex items-center justify-between mb-4">
                     <div className="flex items-center">
                       <span className="text-yellow-400">⭐</span>
-                      <span className="text-sm text-gray-600 ml-1">4.8</span>
+                      <span className="text-sm text-clay ml-1">4.8</span>
                     </div>
                     <button
                       onClick={() => handleRemoveFavorite(salon.id)}
-                      className="text-red-400 hover:text-red-600 text-sm"
+                      className="text-red-400 hover:text-accent text-sm"
                     >
-                      🗑️ Hiq
+                      Hiq
                     </button>
                   </div>
                   
                   <button 
                     onClick={() => handleBookSalon(salon.slug)}
-                    className="w-full px-4 py-2 bg-red-500 text-white rounded-lg text-sm hover:bg-red-600 transition-colors"
+                    className="w-full px-4 py-2 bg-accent text-white rounded-lg text-sm hover:bg-accent transition-colors"
                   >
                     Rezervo Tani
                   </button>
@@ -155,9 +155,9 @@ export default function FavoritesPage() {
           )}
 
           {/* Tips Section */}
-          <div className="mt-12 bg-blue-50 border border-blue-200 rounded-xl p-6">
-            <h3 className="font-semibold text-blue-900 mb-2">💡 Këshilla</h3>
-            <div className="text-blue-800 text-sm space-y-1">
+          <div className="mt-12 bg-accent-soft/40 border border-accent/25 rounded p-6">
+            <h3 className="font-semibold text-blue-900 mb-2">Këshilla</h3>
+            <div className="text-accent-strong text-sm space-y-1">
               <p>• Shtoni sallone në të preferuara për t'i gjetur më lehtë</p>
               <p>• Sallone të preferuara shfaqen në krye të listës gjatë kërkimit</p>
               <p>• Merrni njoftime për ofertat speciale nga sallone të preferuara</p>

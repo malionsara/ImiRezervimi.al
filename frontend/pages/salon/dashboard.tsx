@@ -134,7 +134,7 @@ export default function SalonDashboard() {
         
         // Show success message if just verified via magic link
         if (verified === 'true') {
-          addNotification('🎉 Hyrja u krye me sukses! Mirë se erdhe në dashboard.', 'success')
+          addNotification('Hyrja u krye me sukses! Mirë se erdhe në dashboard.', 'success')
         }
       } else {
         // Redirect to salon login
@@ -167,7 +167,7 @@ export default function SalonDashboard() {
     if (!salonId) return
 
     const unsubscribe = subscribeToRealtimeUpdates(salonId, (update) => {
-      console.log('🔄 Real-time update received:', update.eventType)
+      console.log('Real-time update received:', update.eventType)
       
       // Refresh dashboard data on updates
       loadDashboardData()
@@ -205,7 +205,7 @@ export default function SalonDashboard() {
       if (response.ok) {
         // Show success notification
         addNotification(
-          `✅ Rezervimi u ${action === 'approve' ? 'miratua' : 'refuzua'} me sukses`,
+          `Rezervimi u ${action === 'approve' ? 'miratua' : 'refuzua'} me sukses`,
           'success'
         )
         
@@ -259,7 +259,7 @@ export default function SalonDashboard() {
     document.cookie = 'salon_session=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;'
     
     // Show logout notification
-    addNotification('👋 Dolët me sukses nga dashboard-i', 'info')
+    addNotification('Dolët me sukses nga dashboard-i', 'info')
     
     // Redirect to login after a short delay
     setTimeout(() => {
@@ -303,10 +303,10 @@ export default function SalonDashboard() {
   // ==============================================
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen bg-cream flex items-center justify-center">
         <div className="text-center">
-          <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-red-500"></div>
-          <p className="text-gray-600 mt-4">Po ngarkohet dashboard-i...</p>
+          <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-accent"></div>
+          <p className="text-clay mt-4">Po ngarkohet dashboard-i...</p>
         </div>
       </div>
     )
@@ -314,14 +314,14 @@ export default function SalonDashboard() {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center bg-white p-8 rounded-xl shadow-sm max-w-md">
-          <div className="text-red-500 text-4xl mb-4">❌</div>
-          <h2 className="text-xl font-semibold text-gray-900 mb-2">Gabim</h2>
-          <p className="text-gray-600 mb-4">{error}</p>
+      <div className="min-h-screen bg-cream flex items-center justify-center">
+        <div className="text-center bg-paper p-8 rounded shadow-sm max-w-md">
+          <div className="text-accent text-4xl mb-4"></div>
+          <h2 className="text-xl font-semibold text-ink mb-2">Gabim</h2>
+          <p className="text-clay mb-4">{error}</p>
           <button
             onClick={handleRefresh}
-            className="bg-red-500 text-white px-6 py-2 rounded-lg hover:bg-red-600 transition-colors"
+            className="bg-accent text-white px-6 py-2 rounded-lg hover:bg-accent transition-colors"
           >
             Provo përsëri
           </button>
@@ -332,9 +332,9 @@ export default function SalonDashboard() {
 
   if (!dashboardData) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen bg-cream flex items-center justify-center">
         <div className="text-center">
-          <p className="text-gray-600">Nuk ka të dhëna për të shfaqur</p>
+          <p className="text-clay">Nuk ka të dhëna për të shfaqur</p>
         </div>
       </div>
     )
@@ -349,34 +349,19 @@ export default function SalonDashboard() {
         <title>Dashboard - {dashboardData.salon.name} | ImiRezervimi.al</title>
         <meta name="description" content="Menaxho rezervimet e sallonit tuaj" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <meta name="robots" content="noindex, nofollow" />
-        <style jsx>{`
-          @keyframes slide-in {
-            from {
-              transform: translateX(100%);
-              opacity: 0;
-            }
-            to {
-              transform: translateX(0);
-              opacity: 1;
-            }
-          }
-          .animate-slide-in {
-            animation: slide-in 0.3s ease-out;
-          }
-        `}</style>
+        <meta name="robots" content="noindex, nofollow" />
       </Head>
 
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen bg-cream">
         {/* Notification System */}
         <div className="fixed top-4 right-4 z-50 space-y-2">
           {notifications.map((notification) => (
             <div
               key={notification.id}
-              className={`max-w-sm px-4 py-3 rounded-lg shadow-lg border ${
-                notification.type === 'success' ? 'bg-green-50 border-green-200 text-green-800' :
-                notification.type === 'error' ? 'bg-red-50 border-red-200 text-red-800' :
-                'bg-blue-50 border-blue-200 text-blue-800'
+              className={`max-w-sm px-4 py-3 rounded-lg shadow-soft border ${
+                notification.type === 'success' ? 'bg-success/5 border-success/25 text-success' :
+                notification.type === 'error' ? 'bg-accent-soft/60 border-accent/25 text-accent-strong' :
+                'bg-accent-soft/40 border-accent/25 text-accent-strong'
               } animate-slide-in`}
             >
               <div className="flex items-start">
@@ -403,7 +388,7 @@ export default function SalonDashboard() {
                 <div className="ml-auto pl-3">
                   <button
                     onClick={() => setNotifications(prev => prev.filter(n => n.id !== notification.id))}
-                    className="inline-flex text-gray-400 hover:text-gray-600 focus:outline-none"
+                    className="inline-flex text-clay/70 hover:text-clay focus:outline-none"
                   >
                     <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 20 20">
                       <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
@@ -421,12 +406,12 @@ export default function SalonDashboard() {
             <div className="flex justify-between items-center h-16">
               <div className="flex items-center">
                 <Link href="/" className="flex items-center">
-                  <div className="h-10 w-10 rounded-2xl bg-gradient-to-br from-red-500 to-pink-500 flex items-center justify-center mr-3 shadow-lg">
+                  <div className="h-10 w-10 rounded-lg bg-accent flex items-center justify-center mr-3 shadow-soft">
                     <span className="text-lg font-bold text-white">IR</span>
                   </div>
                   <div>
-                    <span className="text-xl font-bold text-gray-900">{dashboardData.salon.name}</span>
-                    <p className="text-sm text-gray-500">Dashboard</p>
+                    <span className="text-xl font-bold text-ink">{dashboardData.salon.name}</span>
+                    <p className="text-sm text-clay">Dashboard</p>
                   </div>
                 </Link>
               </div>
@@ -435,7 +420,7 @@ export default function SalonDashboard() {
                 {/* Search (desktop) */}
                 <div className="hidden md:block relative">
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <svg className="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg className="h-5 w-5 text-clay/70" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                     </svg>
                   </div>
@@ -444,7 +429,7 @@ export default function SalonDashboard() {
                     placeholder="Kërko klient, shërbim..."
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    className="block w-64 pl-10 pr-3 py-2 border border-gray-300 rounded-md leading-5 bg-white placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-1 focus:ring-red-500 focus:border-red-500 text-sm"
+                    className="block w-64 pl-10 pr-3 py-2 border border-linen rounded-md leading-5 bg-paper placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-1 focus:ring-accent/25 focus:border-accent text-sm"
                   />
                 </div>
 
@@ -452,7 +437,7 @@ export default function SalonDashboard() {
                 <button
                   onClick={() => setShowFilters(!showFilters)}
                   className={`p-2 rounded-lg transition-colors ${
-                    showFilters ? 'bg-red-100 text-red-600' : 'text-gray-500 hover:text-gray-700 hover:bg-gray-100'
+                    showFilters ? 'bg-accent-soft text-accent' : 'text-clay hover:text-ink hover:bg-sand'
                   }`}
                   title="Filtrat"
                 >
@@ -462,13 +447,13 @@ export default function SalonDashboard() {
                 </button>
 
                 {/* View toggle buttons */}
-                <div className="hidden md:flex items-center gap-1 bg-gray-100 rounded-lg p-1">
+                <div className="hidden md:flex items-center gap-1 bg-sand rounded-lg p-1">
                   <button
                     onClick={() => setCurrentView('requests')}
                     className={`px-3 py-1 text-sm font-medium rounded transition-colors ${
                       currentView === 'requests' 
-                        ? 'bg-white text-gray-900 shadow-sm' 
-                        : 'text-gray-600 hover:text-gray-900'
+                        ? 'bg-paper text-ink shadow-sm' 
+                        : 'text-clay hover:text-ink'
                     }`}
                   >
                     Kërkesat
@@ -477,8 +462,8 @@ export default function SalonDashboard() {
                     onClick={() => setCurrentView('availability')}
                     className={`px-3 py-1 text-sm font-medium rounded transition-colors ${
                       currentView === 'availability' 
-                        ? 'bg-white text-gray-900 shadow-sm' 
-                        : 'text-gray-600 hover:text-gray-900'
+                        ? 'bg-paper text-ink shadow-sm' 
+                        : 'text-clay hover:text-ink'
                     }`}
                   >
                     Kalendari
@@ -487,8 +472,8 @@ export default function SalonDashboard() {
                     onClick={() => setCurrentView('working-hours')}
                     className={`px-3 py-1 text-sm font-medium rounded transition-colors ${
                       currentView === 'working-hours' 
-                        ? 'bg-white text-gray-900 shadow-sm' 
-                        : 'text-gray-600 hover:text-gray-900'
+                        ? 'bg-paper text-ink shadow-sm' 
+                        : 'text-clay hover:text-ink'
                     }`}
                   >
                     Orët
@@ -497,7 +482,7 @@ export default function SalonDashboard() {
 
                 <button
                   onClick={handleRefresh}
-                  className="p-2 text-gray-500 hover:text-gray-700 rounded-lg hover:bg-gray-100 transition-colors"
+                  className="p-2 text-clay hover:text-ink rounded-lg hover:bg-sand transition-colors"
                   title="Rifresko"
                 >
                   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -507,7 +492,7 @@ export default function SalonDashboard() {
 
                 <button
                   onClick={handleLogout}
-                  className="text-red-500 hover:text-red-700 px-3 py-2 rounded-md text-sm font-medium hover:bg-red-50 transition-colors"
+                  className="text-accent hover:text-accent-strong px-3 py-2 rounded-md text-sm font-medium hover:bg-accent-soft/60 transition-colors"
                   title="Dil nga dashboard-i"
                 >
                   <div className="flex items-center">
@@ -518,7 +503,7 @@ export default function SalonDashboard() {
                   </div>
                 </button>
                 
-                <Link href="/" className="text-gray-500 hover:text-gray-700 px-3 py-2 rounded-md text-sm font-medium">
+                <Link href="/" className="text-clay hover:text-ink px-3 py-2 rounded-md text-sm font-medium">
                   Faqja kryesore
                 </Link>
               </div>
@@ -528,7 +513,7 @@ export default function SalonDashboard() {
             <div className="md:hidden pb-4">
               <div className="relative mb-3">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <svg className="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg className="h-5 w-5 text-clay/70" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                   </svg>
                 </div>
@@ -537,18 +522,18 @@ export default function SalonDashboard() {
                   placeholder="Kërko klient, shërbim..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md leading-5 bg-white placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-1 focus:ring-red-500 focus:border-red-500 text-sm"
+                  className="block w-full pl-10 pr-3 py-2 border border-linen rounded-md leading-5 bg-paper placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-1 focus:ring-accent/25 focus:border-accent text-sm"
                 />
               </div>
               
               {/* Mobile view toggle */}
-              <div className="flex bg-gray-100 rounded-lg p-1 mb-3">
+              <div className="flex bg-sand rounded-lg p-1 mb-3">
                 <button
                   onClick={() => setCurrentView('requests')}
                   className={`flex-1 px-3 py-2 text-sm font-medium rounded transition-colors ${
                     currentView === 'requests' 
-                      ? 'bg-white text-gray-900 shadow-sm' 
-                      : 'text-gray-600'
+                      ? 'bg-paper text-ink shadow-sm' 
+                      : 'text-clay'
                   }`}
                 >
                   Kërkesat
@@ -557,8 +542,8 @@ export default function SalonDashboard() {
                   onClick={() => setCurrentView('availability')}
                   className={`flex-1 px-3 py-2 text-sm font-medium rounded transition-colors ${
                     currentView === 'availability' 
-                      ? 'bg-white text-gray-900 shadow-sm' 
-                      : 'text-gray-600'
+                      ? 'bg-paper text-ink shadow-sm' 
+                      : 'text-clay'
                   }`}
                 >
                   Kalendari
@@ -567,8 +552,8 @@ export default function SalonDashboard() {
                   onClick={() => setCurrentView('working-hours')}
                   className={`flex-1 px-3 py-2 text-sm font-medium rounded transition-colors ${
                     currentView === 'working-hours' 
-                      ? 'bg-white text-gray-900 shadow-sm' 
-                      : 'text-gray-600'
+                      ? 'bg-paper text-ink shadow-sm' 
+                      : 'text-clay'
                   }`}
                 >
                   Orët
@@ -578,7 +563,7 @@ export default function SalonDashboard() {
 
             {/* Filter Bar */}
             {showFilters && (
-              <div className="border-t border-gray-200 py-3">
+              <div className="border-t border-linen py-3">
                 <div className="flex flex-wrap gap-2">
                   {[
                     { key: 'all', label: 'Të gjitha', count: dashboardData.pendingRequests.length },
@@ -591,8 +576,8 @@ export default function SalonDashboard() {
                       onClick={() => setFilterStatus(filter.key as typeof filterStatus)}
                       className={`px-3 py-1 rounded-full text-sm font-medium transition-colors ${
                         filterStatus === filter.key
-                          ? 'bg-red-100 text-red-700 border border-red-200'
-                          : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                          ? 'bg-accent-soft text-accent-strong border border-accent/25'
+                          : 'bg-sand text-ink hover:bg-linen'
                       }`}
                     >
                       {filter.label} ({filter.count})
@@ -608,7 +593,7 @@ export default function SalonDashboard() {
         <div className="container-responsive md:hidden py-3">
           <div className="relative">
             <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-              <svg className="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="h-5 w-5 text-clay/70" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
               </svg>
             </div>
@@ -617,7 +602,7 @@ export default function SalonDashboard() {
               placeholder="Kërko klient, shërbim..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg bg-white placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-red-500 focus:border-red-500 text-sm"
+              className="block w-full pl-10 pr-3 py-2 border border-linen rounded-lg bg-paper placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-accent/25 focus:border-accent text-sm"
             />
           </div>
         </div>
@@ -626,80 +611,80 @@ export default function SalonDashboard() {
         <div className="container-responsive py-6">
           {/* Enhanced Dashboard Stats */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-            <div className="bg-white rounded-xl p-4 shadow-sm border hover:shadow-md transition-shadow cursor-pointer" 
+            <div className="bg-paper rounded p-4 shadow-sm border hover:shadow-md transition-shadow cursor-pointer" 
                  onClick={() => setFilterStatus('all')}>
               <div className="flex items-center justify-between">
                 <div className="flex items-center">
-                  <div className="p-2 rounded-full bg-yellow-100">
+                  <div className="p-2 rounded-full bg-warning/10">
                     <span className="text-xl">⏳</span>
                   </div>
                   <div className="ml-3">
-                    <p className="text-sm font-medium text-gray-600">Në pritje</p>
-                    <p className="text-2xl font-bold text-gray-900">{dashboardData.stats.pendingCount}</p>
+                    <p className="text-sm font-medium text-clay">Në pritje</p>
+                    <p className="text-2xl font-bold text-ink">{dashboardData.stats.pendingCount}</p>
                   </div>
                 </div>
                 {dashboardData.stats.pendingCount > 5 && (
-                  <div className="bg-red-100 text-red-600 text-xs font-medium px-2 py-1 rounded-full">
-                    🔥 Shtypesë
+                  <div className="bg-accent-soft text-accent text-xs font-medium px-2 py-1 rounded-full">
+                    Shtypesë
                   </div>
                 )}
               </div>
             </div>
 
-            <div className="bg-white rounded-xl p-4 shadow-sm border hover:shadow-md transition-shadow cursor-pointer"
+            <div className="bg-paper rounded p-4 shadow-sm border hover:shadow-md transition-shadow cursor-pointer"
                  onClick={() => setFilterStatus('today')}>
               <div className="flex items-center justify-between">
                 <div className="flex items-center">
-                  <div className="p-2 rounded-full bg-green-100">
-                    <span className="text-xl">📅</span>
+                  <div className="p-2 rounded-full bg-success/10">
+                    <span className="text-xl"></span>
                   </div>
                   <div className="ml-3">
-                    <p className="text-sm font-medium text-gray-600">Sot</p>
-                    <p className="text-2xl font-bold text-gray-900">{dashboardData.stats.todayCount}</p>
+                    <p className="text-sm font-medium text-clay">Sot</p>
+                    <p className="text-2xl font-bold text-ink">{dashboardData.stats.todayCount}</p>
                   </div>
                 </div>
                 {dashboardData.todaySchedule.length > 0 && (
-                  <div className="text-green-600 text-xs">
-                    ✅ Aktiv
+                  <div className="text-success text-xs">
+                    Aktiv
                   </div>
                 )}
               </div>
             </div>
 
-            <div className="bg-white rounded-xl p-4 shadow-sm border hover:shadow-md transition-shadow">
+            <div className="bg-paper rounded p-4 shadow-sm border hover:shadow-md transition-shadow">
               <div className="flex items-center justify-between">
                 <div className="flex items-center">
-                  <div className="p-2 rounded-full bg-blue-100">
-                    <span className="text-xl">📊</span>
+                  <div className="p-2 rounded-full bg-accent-soft">
+                    <span className="text-xl"></span>
                   </div>
                   <div className="ml-3">
-                    <p className="text-sm font-medium text-gray-600">Java</p>
-                    <p className="text-2xl font-bold text-gray-900">{dashboardData.stats.weeklyBookings}</p>
+                    <p className="text-sm font-medium text-clay">Java</p>
+                    <p className="text-2xl font-bold text-ink">{dashboardData.stats.weeklyBookings}</p>
                   </div>
                 </div>
                 {dashboardData.stats.weeklyBookings > 20 && (
-                  <div className="text-blue-600 text-xs">
-                    📈 Lartë
+                  <div className="text-accent text-xs">
+                    Lartë
                   </div>
                 )}
               </div>
             </div>
 
-            <div className="bg-white rounded-xl p-4 shadow-sm border hover:shadow-md transition-shadow">
+            <div className="bg-paper rounded p-4 shadow-sm border hover:shadow-md transition-shadow">
               <div className="flex items-center justify-between">
                 <div className="flex items-center">
                   <div className="p-2 rounded-full bg-purple-100">
                     <span className="text-xl">⭐</span>
                   </div>
                   <div className="ml-3">
-                    <p className="text-sm font-medium text-gray-600">Vlerësimi</p>
-                    <p className="text-2xl font-bold text-gray-900">{dashboardData.stats.averageRating.toFixed(1)}</p>
+                    <p className="text-sm font-medium text-clay">Vlerësimi</p>
+                    <p className="text-2xl font-bold text-ink">{dashboardData.stats.averageRating.toFixed(1)}</p>
                   </div>
                 </div>
                 <div className="flex">
                   {[1, 2, 3, 4, 5].map((star) => (
                     <svg key={star} className={`w-4 h-4 ${
-                      star <= dashboardData.stats.averageRating ? 'text-yellow-400' : 'text-gray-300'
+                      star <= dashboardData.stats.averageRating ? 'text-yellow-400' : 'text-linen'
                     }`} fill="currentColor" viewBox="0 0 20 20">
                       <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
                     </svg>
@@ -711,12 +696,12 @@ export default function SalonDashboard() {
 
           {/* Quick Stats Summary */}
           {(searchQuery || filterStatus !== 'all') && (
-            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
+            <div className="bg-accent-soft/40 border border-accent/25 rounded-lg p-4 mb-6">
               <div className="flex items-center">
                 <svg className="w-5 h-5 text-blue-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
-                <p className="text-blue-800 text-sm">
+                <p className="text-accent-strong text-sm">
                   <span className="font-medium">Po shfaqen {filteredRequests.length}</span> nga {dashboardData.pendingRequests.length} kërkesat
                   {searchQuery && <span> • Kërkim: &quot;{searchQuery}&quot;</span>}
                   {filterStatus !== 'all' && <span> • Filtri: {{
@@ -731,7 +716,7 @@ export default function SalonDashboard() {
                       setSearchQuery('')
                       setFilterStatus('all')
                     }}
-                    className="ml-auto text-blue-600 hover:text-blue-700 text-sm font-medium"
+                    className="ml-auto text-accent hover:text-accent-strong text-sm font-medium"
                   >
                     Pastro filtrat
                   </button>
@@ -746,10 +731,10 @@ export default function SalonDashboard() {
               {/* Left Column - Requests Queue */}
               <div className="lg:col-span-2">
                 {filteredRequests.length === 0 && dashboardData.pendingRequests.length > 0 ? (
-                  <div className="bg-white rounded-xl shadow-sm border p-8 text-center">
-                    <div className="text-gray-400 text-5xl mb-4">🔍</div>
-                    <h3 className="text-lg font-medium text-gray-900 mb-2">Asnjë rezultat</h3>
-                    <p className="text-gray-600 mb-4">
+                  <div className="bg-paper rounded shadow-sm border p-8 text-center">
+                    <div className="text-clay/70 text-5xl mb-4"></div>
+                    <h3 className="text-lg font-medium text-ink mb-2">Asnjë rezultat</h3>
+                    <p className="text-clay mb-4">
                       Nuk u gjet asnjë kërkesë me kriteret e zgjedhura
                     </p>
                     <button
@@ -757,7 +742,7 @@ export default function SalonDashboard() {
                         setSearchQuery('')
                         setFilterStatus('all')
                       }}
-                      className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition-colors"
+                      className="bg-accent text-white px-4 py-2 rounded-lg hover:bg-accent transition-colors"
                     >
                       Pastro filtrat
                     </button>
@@ -773,20 +758,20 @@ export default function SalonDashboard() {
               {/* Today's Schedule */}
               {dashboardData.todaySchedule.length > 0 && (
                 <div className="mt-8">
-                  <h2 className="text-lg font-semibold text-gray-900 mb-4">📅 Orari i sotëm</h2>
-                  <div className="bg-white rounded-xl shadow-sm border overflow-hidden">
+                  <h2 className="text-lg font-semibold text-ink mb-4">Orari i sotëm</h2>
+                  <div className="bg-paper rounded shadow-sm border overflow-hidden">
                     {dashboardData.todaySchedule.map((appointment) => (
-                      <div key={appointment.id} className="p-4 border-b border-gray-100 last:border-b-0">
+                      <div key={appointment.id} className="p-4 border-b border-linen last:border-b-0">
                         <div className="flex justify-between items-center">
                           <div>
-                            <p className="font-medium text-gray-900">
+                            <p className="font-medium text-ink">
                               {appointment.customer.firstName} {appointment.customer.lastName}
                             </p>
-                            <p className="text-sm text-gray-600">{appointment.service.name}</p>
+                            <p className="text-sm text-clay">{appointment.service.name}</p>
                           </div>
                           <div className="text-right">
-                            <p className="font-medium text-gray-900">{appointment.startTime}</p>
-                            <p className="text-sm text-gray-600">{appointment.service.duration} min</p>
+                            <p className="font-medium text-ink">{appointment.startTime}</p>
+                            <p className="text-sm text-clay">{appointment.service.duration} min</p>
                           </div>
                         </div>
                       </div>
@@ -798,23 +783,23 @@ export default function SalonDashboard() {
               {/* Recent Activity */}
               {dashboardData.recentActivity.length > 0 && (
                 <div className="mt-8">
-                  <h2 className="text-lg font-semibold text-gray-900 mb-4">🕒 Aktiviteti i fundit</h2>
-                  <div className="bg-white rounded-xl shadow-sm border overflow-hidden">
+                  <h2 className="text-lg font-semibold text-ink mb-4">Aktiviteti i fundit</h2>
+                  <div className="bg-paper rounded shadow-sm border overflow-hidden">
                     {dashboardData.recentActivity.slice(0, 5).map((appointment) => (
-                      <div key={appointment.id} className="p-4 border-b border-gray-100 last:border-b-0">
+                      <div key={appointment.id} className="p-4 border-b border-linen last:border-b-0">
                         <div className="flex justify-between items-center">
                           <div>
-                            <p className="font-medium text-gray-900">
+                            <p className="font-medium text-ink">
                               {appointment.customer.firstName} {appointment.customer.lastName}
                             </p>
-                            <p className="text-sm text-gray-600">{appointment.service.name}</p>
+                            <p className="text-sm text-clay">{appointment.service.name}</p>
                           </div>
                           <div className="text-right">
                             <span className={`inline-block px-2 py-1 rounded-full text-xs font-medium ${
-                              appointment.status === 'approved' ? 'bg-green-100 text-green-800' :
-                              appointment.status === 'declined' ? 'bg-red-100 text-red-800' :
-                              appointment.status === 'completed' ? 'bg-blue-100 text-blue-800' :
-                              'bg-gray-100 text-gray-800'
+                              appointment.status === 'approved' ? 'bg-success/10 text-success' :
+                              appointment.status === 'declined' ? 'bg-accent-soft text-accent-strong' :
+                              appointment.status === 'completed' ? 'bg-accent-soft text-accent-strong' :
+                              'bg-sand text-ink'
                             }`}>
                               {appointment.status === 'approved' ? 'I miratuar' :
                                appointment.status === 'declined' ? 'I refuzuar' :
@@ -840,10 +825,10 @@ export default function SalonDashboard() {
                     }}
                   />
                 ) : (
-                  <div className="bg-white rounded-xl shadow-sm border p-6 text-center">
-                    <div className="text-gray-400 text-4xl mb-4">👤</div>
-                    <h3 className="text-lg font-medium text-gray-900 mb-2">Detajet e klientit</h3>
-                    <p className="text-gray-600 text-sm">
+                  <div className="bg-paper rounded shadow-sm border p-6 text-center">
+                    <div className="text-clay/70 text-4xl mb-4"></div>
+                    <h3 className="text-lg font-medium text-ink mb-2">Detajet e klientit</h3>
+                    <p className="text-clay text-sm">
                       Kliko mbi një kërkesë për të parë detajet e klientit dhe historikun e rezervimeve.
                     </p>
                   </div>
@@ -878,24 +863,24 @@ export default function SalonDashboard() {
         </div>
 
         {/* Footer info */}
-        <div className="text-center py-4 text-sm text-gray-500">
+        <div className="text-center py-4 text-sm text-clay">
           Përditësuar më: {lastUpdate.toLocaleTimeString('sq-AL')}
         </div>
       </div>
 
       {/* Mobile bottom actions */}
         <div className="mobile-nav md:hidden flex justify-around">
-          <button onClick={handleRefresh} className="flex flex-col items-center text-gray-700">
-            <div className="w-10 h-10 rounded-xl bg-gray-100 flex items-center justify-center mb-1">
-              <svg className="w-5 h-5 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <button onClick={handleRefresh} className="flex flex-col items-center text-ink">
+            <div className="w-10 h-10 rounded bg-sand flex items-center justify-center mb-1">
+              <svg className="w-5 h-5 text-ink" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
               </svg>
             </div>
             <span className="text-xs">Rifresko</span>
           </button>
-          <Link href="/" className="flex flex-col items-center text-gray-700">
-            <div className="w-10 h-10 rounded-xl bg-gray-100 flex items-center justify-center mb-1">
-              <svg className="w-5 h-5 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <Link href="/" className="flex flex-col items-center text-ink">
+            <div className="w-10 h-10 rounded bg-sand flex items-center justify-center mb-1">
+              <svg className="w-5 h-5 text-ink" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 9.75L12 4l9 5.75V20a2 2 0 01-2 2H5a2 2 0 01-2-2V9.75z" />
               </svg>
             </div>

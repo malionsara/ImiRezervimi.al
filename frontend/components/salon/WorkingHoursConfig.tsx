@@ -62,14 +62,14 @@ const TimeInput: React.FC<TimeInputProps> = ({ value, onChange, placeholder = "0
       onChange={handleChange}
       placeholder={placeholder}
       disabled={disabled}
-      className={`px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-red-500 focus:border-red-500 ${
+      className={`px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-accent/25 focus:border-accent ${
         isValid 
-          ? 'border-gray-300' 
-          : 'border-red-300 bg-red-50'
+          ? 'border-linen' 
+          : 'border-accent/40 bg-accent-soft/60'
       } ${
         disabled 
-          ? 'bg-gray-100 text-gray-500 cursor-not-allowed' 
-          : 'bg-white'
+          ? 'bg-sand text-clay cursor-not-allowed' 
+          : 'bg-paper'
       }`}
     />
   )
@@ -264,11 +264,11 @@ export default function WorkingHoursConfig({
   // RENDER
   // ==============================================
   return (
-    <div className="bg-white rounded-xl shadow-sm border p-6">
+    <div className="bg-paper rounded shadow-sm border p-6">
       <div className="flex justify-between items-center mb-6">
         <div>
-          <h3 className="text-lg font-semibold text-gray-900">Orët e punës</h3>
-          <p className="text-sm text-gray-600 mt-1">
+          <h3 className="text-lg font-semibold text-ink">Orët e punës</h3>
+          <p className="text-sm text-clay mt-1">
             Konfiguroni orët e punës për secilën ditë të javës
           </p>
         </div>
@@ -277,14 +277,14 @@ export default function WorkingHoursConfig({
         <div className="flex gap-2">
           <button
             onClick={() => handleSetCommonHours('weekdays')}
-            className="px-3 py-1 text-xs font-medium bg-blue-100 text-blue-700 rounded-full hover:bg-blue-200 transition-colors"
+            className="px-3 py-1 text-xs font-medium bg-accent-soft text-accent-strong rounded-full hover:bg-blue-200 transition-colors"
             disabled={saving || isLoading}
           >
             Ditët e javës
           </button>
           <button
             onClick={() => handleSetCommonHours('everyday')}
-            className="px-3 py-1 text-xs font-medium bg-green-100 text-green-700 rounded-full hover:bg-green-200 transition-colors"
+            className="px-3 py-1 text-xs font-medium bg-success/10 text-success rounded-full hover:bg-green-200 transition-colors"
             disabled={saving || isLoading}
           >
             Çdo ditë
@@ -302,15 +302,15 @@ export default function WorkingHoursConfig({
             <div
               key={day.key}
               className={`border rounded-lg p-4 transition-colors ${
-                hasError ? 'border-red-300 bg-red-50' : 'border-gray-200'
+                hasError ? 'border-accent/40 bg-accent-soft/60' : 'border-linen'
               }`}
             >
               <div className="flex items-center justify-between">
                 {/* Day name and toggle */}
                 <div className="flex items-center gap-4">
                   <div className="w-16">
-                    <span className="font-medium text-gray-900">{day.name}</span>
-                    <span className="block text-xs text-gray-500 md:hidden">{day.shortName}</span>
+                    <span className="font-medium text-ink">{day.name}</span>
+                    <span className="block text-xs text-clay md:hidden">{day.shortName}</span>
                   </div>
                   
                   <label className="flex items-center">
@@ -319,9 +319,9 @@ export default function WorkingHoursConfig({
                       checked={!dayHours.closed}
                       onChange={() => handleDayToggle(day.key)}
                       disabled={saving || isLoading}
-                      className="w-4 h-4 text-red-600 bg-gray-100 border-gray-300 rounded focus:ring-red-500 focus:ring-2"
+                      className="w-4 h-4 text-accent bg-sand border-linen rounded focus:ring-accent/25 focus:ring-2"
                     />
-                    <span className="ml-2 text-sm text-gray-700">
+                    <span className="ml-2 text-sm text-ink">
                       {dayHours.closed ? 'E mbyllur' : 'E hapur'}
                     </span>
                   </label>
@@ -331,7 +331,7 @@ export default function WorkingHoursConfig({
                 {!dayHours.closed && (
                   <div className="flex items-center gap-3">
                     <div className="flex items-center gap-2">
-                      <span className="text-sm text-gray-600 hidden sm:inline">Nga:</span>
+                      <span className="text-sm text-clay hidden sm:inline">Nga:</span>
                       <TimeInput
                         value={dayHours.open}
                         onChange={(value) => handleTimeChange(day.key, 'open', value)}
@@ -339,10 +339,10 @@ export default function WorkingHoursConfig({
                       />
                     </div>
                     
-                    <span className="text-gray-400">-</span>
+                    <span className="text-clay/70">-</span>
                     
                     <div className="flex items-center gap-2">
-                      <span className="text-sm text-gray-600 hidden sm:inline">Deri:</span>
+                      <span className="text-sm text-clay hidden sm:inline">Deri:</span>
                       <TimeInput
                         value={dayHours.close}
                         onChange={(value) => handleTimeChange(day.key, 'close', value)}
@@ -353,7 +353,7 @@ export default function WorkingHoursConfig({
                     {/* Copy to all button */}
                     <button
                       onClick={() => handleCopyToAll(day.key)}
-                      className="p-2 text-gray-400 hover:text-gray-600 rounded-lg hover:bg-gray-100 transition-colors"
+                      className="p-2 text-clay/70 hover:text-clay rounded-lg hover:bg-sand transition-colors"
                       title="Kopjo për të gjitha ditët"
                       disabled={saving || isLoading}
                     >
@@ -367,7 +367,7 @@ export default function WorkingHoursConfig({
 
               {/* Error message */}
               {hasError && (
-                <div className="mt-2 text-sm text-red-600 flex items-center">
+                <div className="mt-2 text-sm text-accent flex items-center">
                   <svg className="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
                     <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
                   </svg>
@@ -380,9 +380,9 @@ export default function WorkingHoursConfig({
       </div>
 
       {/* Summary and actions */}
-      <div className="mt-6 pt-6 border-t border-gray-200">
+      <div className="mt-6 pt-6 border-t border-linen">
         {/* Working days summary */}
-        <div className="mb-4 text-sm text-gray-600">
+        <div className="mb-4 text-sm text-clay">
           <span className="font-medium">Ditët e punës:</span>{' '}
           {days
             .filter(day => !workingHours[day.key].closed)
@@ -396,7 +396,7 @@ export default function WorkingHoursConfig({
             <button
               onClick={handleCancel}
               disabled={saving || isLoading}
-              className="px-4 py-2 text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              className="px-4 py-2 text-ink bg-sand hover:bg-linen rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
               Anulo
             </button>
@@ -405,7 +405,7 @@ export default function WorkingHoursConfig({
           <button
             onClick={handleSave}
             disabled={saving || isLoading || !hasChanges || Object.keys(errors).length > 0}
-            className="px-6 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
+            className="px-6 py-2 bg-accent text-white rounded-lg hover:bg-accent transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
           >
             {saving ? (
               <>
@@ -422,9 +422,9 @@ export default function WorkingHoursConfig({
         </div>
 
         {/* Help text */}
-        <div className="mt-4 text-xs text-gray-500">
-          <p>💡 Këshilla: Përdorni butonat e kopjimit për të aplikuar të njëjtat orë në ditë të ndryshme.</p>
-          <p>⚠️ Ndryshimet do të aplikohen vetëm për rezervimet e ardhshme.</p>
+        <div className="mt-4 text-xs text-clay">
+          <p>Këshilla: Përdorni butonat e kopjimit për të aplikuar të njëjtat orë në ditë të ndryshme.</p>
+          <p>Ndryshimet do të aplikohen vetëm për rezervimet e ardhshme.</p>
         </div>
       </div>
 

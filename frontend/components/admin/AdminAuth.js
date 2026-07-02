@@ -94,10 +94,10 @@ export default function AdminAuth({ children }) {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen bg-cream flex items-center justify-center">
         <div className="text-center">
-          <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-red-500 mb-4"></div>
-          <p className="text-gray-600">Po verifikohet qasja admin...</p>
+          <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-accent mb-4"></div>
+          <p className="text-clay">Po verifikohet qasja admin...</p>
         </div>
       </div>
     )
@@ -105,16 +105,16 @@ export default function AdminAuth({ children }) {
 
   if (!isAuthenticated) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen bg-cream flex items-center justify-center">
         <div className="max-w-md w-full space-y-8">
           <div>
-            <div className="mx-auto h-20 w-20 rounded-2xl bg-gradient-to-br from-red-500 to-pink-500 flex items-center justify-center shadow-lg">
+            <div className="mx-auto h-20 w-20 rounded-lg bg-accent flex items-center justify-center shadow-soft">
               <span className="text-2xl font-bold text-white">IR</span>
             </div>
-            <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
+            <h2 className="mt-6 text-center text-3xl font-extrabold text-ink">
               Admin Portal
             </h2>
-            <p className="mt-2 text-center text-sm text-gray-600">
+            <p className="mt-2 text-center text-sm text-clay">
               Futni çelësin e admin për të vazhduar
             </p>
           </div>
@@ -129,7 +129,7 @@ export default function AdminAuth({ children }) {
                 name="admin-key"
                 type="password"
                 required
-                className="appearance-none rounded-lg relative block w-full px-3 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-red-500 focus:border-red-500 focus:z-10 sm:text-sm"
+                className="appearance-none rounded-lg relative block w-full px-3 py-3 border border-linen placeholder-gray-500 text-ink focus:outline-none focus:ring-accent/25 focus:border-accent focus:z-10 sm:text-sm"
                 placeholder="Çelësi Admin"
                 value={adminKey}
                 onChange={(e) => setAdminKey(e.target.value)}
@@ -137,15 +137,15 @@ export default function AdminAuth({ children }) {
             </div>
 
             {error && (
-              <div className="bg-red-50 border border-red-200 rounded-lg p-4">
-                <p className="text-red-700 text-sm">{error}</p>
+              <div className="bg-accent-soft/60 border border-accent/25 rounded-lg p-4">
+                <p className="text-accent-strong text-sm">{error}</p>
               </div>
             )}
 
             <div>
               <button
                 type="submit"
-                className="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-lg text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-colors"
+                className="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-lg text-white bg-accent hover:bg-accent-strong focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-accent/25 transition-colors"
               >
                 <span className="absolute left-0 inset-y-0 flex items-center pl-3">
                   🔐
@@ -156,7 +156,7 @@ export default function AdminAuth({ children }) {
           </form>
 
           <div className="mt-6 text-center">
-            <p className="text-xs text-gray-500">
+            <p className="text-xs text-clay">
               Nëse nuk keni çelësin e admin, kontaktoni administratorin e sistemit.
             </p>
           </div>
@@ -174,7 +174,7 @@ export default function AdminAuth({ children }) {
       <div className="fixed bottom-4 right-4">
         <button
           onClick={handleLogout}
-          className="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-lg shadow-lg text-sm transition-colors"
+          className="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-lg shadow-soft text-sm transition-colors"
           title="Dil nga Admin Panel"
         >
           🚪 Dil

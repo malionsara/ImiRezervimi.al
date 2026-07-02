@@ -108,12 +108,12 @@ export default function ProfilePage() {
 
   if (status === 'loading') {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen bg-cream flex items-center justify-center">
         <div className="text-center">
-          <div className="mx-auto h-16 w-16 rounded-2xl bg-white flex items-center justify-center mb-4 shadow-lg animate-pulse p-2">
+          <div className="mx-auto h-16 w-16 rounded-lg bg-paper flex items-center justify-center mb-4 shadow-soft animate-pulse p-2">
             <Image src="/favicon-96x96.png" alt="ImiRezervimi Logo" width={64} height={64} />
           </div>
-          <p className="text-gray-600">Po ngarkon...</p>
+          <p className="text-clay">Po ngarkon...</p>
         </div>
       </div>
     )
@@ -126,19 +126,19 @@ export default function ProfilePage() {
       title: 'Profili Im - ImiRezervimi.al',
       description: 'Menaxho informacionet e profilit tuaj'
     })}>
-      <div className="min-h-screen bg-gray-50 py-8">
+      <div className="min-h-screen bg-cream py-8">
         {/* Main Content */}
         <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="mb-8">
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">Profili Im</h1>
-            <p className="text-gray-600">Menaxho informacionet tuaja personale</p>
+            <h1 className="text-3xl font-bold text-ink mb-2">Profili Im</h1>
+            <p className="text-clay">Menaxho informacionet tuaja personale</p>
           </div>
 
           {message && (
             <div className={`mb-6 p-4 rounded-lg ${
               message.includes('sukses') 
-                ? 'bg-green-50 text-green-700 border border-green-200'
-                : 'bg-red-50 text-red-700 border border-red-200'
+                ? 'bg-success/5 text-success border border-success/25'
+                : 'bg-accent-soft/60 text-accent-strong border border-accent/25'
             }`}>
               {message}
             </div>
@@ -146,15 +146,15 @@ export default function ProfilePage() {
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             {/* Profile Info Card */}
-            <div className="lg:col-span-2 bg-white rounded-xl shadow-sm border p-6">
+            <div className="lg:col-span-2 bg-paper rounded shadow-sm border p-6">
               <div className="flex items-center justify-between mb-6">
-                <h2 className="text-xl font-semibold text-gray-900">Informacionet Personale</h2>
+                <h2 className="text-xl font-semibold text-ink">Informacionet Personale</h2>
                 {!isEditing && (
                   <button
                     onClick={() => setIsEditing(true)}
-                    className="px-4 py-2 text-red-600 border border-red-300 rounded-lg hover:bg-red-50 transition-colors"
+                    className="px-4 py-2 text-accent border border-accent/40 rounded-lg hover:bg-accent-soft/60 transition-colors"
                   >
-                    ✏️ Ndrysho
+                    Ndrysho
                   </button>
                 )}
               </div>
@@ -162,7 +162,7 @@ export default function ProfilePage() {
               <div className="space-y-6">
                 {/* First Name */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-ink mb-2">
                     Emri
                   </label>
                   {isEditing ? (
@@ -171,17 +171,17 @@ export default function ProfilePage() {
                       name="firstName"
                       value={formData.firstName}
                       onChange={handleInputChange}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500"
+                      className="w-full px-4 py-2 border border-linen rounded-lg focus:ring-2 focus:ring-accent/25 focus:border-accent"
                       placeholder="Emri juaj"
                     />
                   ) : (
-                    <p className="text-gray-900 py-2">{formData.firstName || 'Pa emër'}</p>
+                    <p className="text-ink py-2">{formData.firstName || 'Pa emër'}</p>
                   )}
                 </div>
 
                 {/* Last Name */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-ink mb-2">
                     Mbiemri
                   </label>
                   {isEditing ? (
@@ -190,17 +190,17 @@ export default function ProfilePage() {
                       name="lastName"
                       value={formData.lastName}
                       onChange={handleInputChange}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500"
+                      className="w-full px-4 py-2 border border-linen rounded-lg focus:ring-2 focus:ring-accent/25 focus:border-accent"
                       placeholder="Mbiemri juaj"
                     />
                   ) : (
-                    <p className="text-gray-900 py-2">{formData.lastName || 'Pa mbiemër'}</p>
+                    <p className="text-ink py-2">{formData.lastName || 'Pa mbiemër'}</p>
                   )}
                 </div>
 
                 {/* Phone */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-ink mb-2">
                     Numri i Telefonit
                   </label>
                   {isEditing ? (
@@ -209,13 +209,13 @@ export default function ProfilePage() {
                       name="phone"
                       value={formData.phone}
                       onChange={handleInputChange}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500"
+                      className="w-full px-4 py-2 border border-linen rounded-lg focus:ring-2 focus:ring-accent/25 focus:border-accent"
                       placeholder="+355 69 123 4567"
                     />
                   ) : (
-                    <p className="text-gray-900 py-2">
+                    <p className="text-ink py-2">
                       {formData.phone || (
-                        <span className="text-gray-500">Nuk është shtuar</span>
+                        <span className="text-clay">Nuk është shtuar</span>
                       )}
                     </p>
                   )}
@@ -223,11 +223,11 @@ export default function ProfilePage() {
 
                 {/* Email (read-only) */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-ink mb-2">
                     Email
                   </label>
-                  <p className="text-gray-900 py-2">{profile.email || 'Nuk është disponueshëm'}</p>
-                  <p className="text-xs text-gray-500">Email nuk mund të ndryshohet</p>
+                  <p className="text-ink py-2">{profile.email || 'Nuk është disponueshëm'}</p>
+                  <p className="text-xs text-clay">Email nuk mund të ndryshohet</p>
                 </div>
 
                 {/* Action Buttons */}
@@ -236,9 +236,9 @@ export default function ProfilePage() {
                     <button
                       onClick={handleSave}
                       disabled={saving}
-                      className="px-6 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                      className="px-6 py-2 bg-accent text-white rounded-lg hover:bg-accent-strong disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                     >
-                      {saving ? 'Po ruhet...' : '💾 Ruaj Ndryshimet'}
+                      {saving ? 'Po ruhet...' : 'Ruaj Ndryshimet'}
                     </button>
                     <button
                       onClick={() => {
@@ -252,7 +252,7 @@ export default function ProfilePage() {
                           email: profile.email || ''
                         })
                       }}
-                      className="px-6 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
+                      className="px-6 py-2 border border-linen text-ink rounded-lg hover:bg-cream transition-colors"
                     >
                       Anulloje
                     </button>
@@ -264,8 +264,8 @@ export default function ProfilePage() {
             {/* Account Info Sidebar */}
             <div className="space-y-6">
               {/* Account Status */}
-              <div className="bg-white rounded-xl shadow-sm border p-6">
-                <h3 className="font-semibold text-gray-900 mb-4">Statusi i Llogarisë</h3>
+              <div className="bg-paper rounded shadow-sm border p-6">
+                <h3 className="font-semibold text-ink mb-4">Statusi i Llogarisë</h3>
                 
                 <div className="space-y-4">
                   <div className="flex items-center">
@@ -279,16 +279,16 @@ export default function ProfilePage() {
                       />
                     )}
                     <div>
-                      <p className="font-medium text-gray-900">{profile.name}</p>
-                      <p className="text-sm text-gray-500">
+                      <p className="font-medium text-ink">{profile.name}</p>
+                      <p className="text-sm text-clay">
                         Identifikuar me {profile.provider === 'instagram' ? 'Instagram' : 'Google'}
                       </p>
                     </div>
                   </div>
 
                   <div className="border-t pt-4">
-                    <div className="flex items-center text-green-600 text-sm">
-                      <span className="w-2 h-2 bg-green-500 rounded-full mr-2"></span>
+                    <div className="flex items-center text-success text-sm">
+                      <span className="w-2 h-2 bg-success rounded-full mr-2"></span>
                       Llogari aktive
                     </div>
                   </div>
@@ -296,40 +296,40 @@ export default function ProfilePage() {
               </div>
 
               {/* Quick Actions */}
-              <div className="bg-white rounded-xl shadow-sm border p-6">
-                <h3 className="font-semibold text-gray-900 mb-4">Veprime</h3>
+              <div className="bg-paper rounded shadow-sm border p-6">
+                <h3 className="font-semibold text-ink mb-4">Veprime</h3>
                 
                 <div className="space-y-3">
                   <Link href="/dashboard/bookings">
-                    <a className="block w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-50 rounded-lg transition-colors">
-                      📅 Shiko Rezervimet
+                    <a className="block w-full text-left px-4 py-2 text-ink hover:bg-cream rounded-lg transition-colors">
+                      Shiko Rezervimet
                     </a>
                   </Link>
                   
                   <Link href="/dashboard/favorites">
-                    <a className="block w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-50 rounded-lg transition-colors">
+                    <a className="block w-full text-left px-4 py-2 text-ink hover:bg-cream rounded-lg transition-colors">
                       ⭐ Sallone të Preferuara
                     </a>
                   </Link>
                   
                   <button
                     onClick={handleSignOut}
-                    className="block w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-50 rounded-lg transition-colors"
+                    className="block w-full text-left px-4 py-2 text-ink hover:bg-cream rounded-lg transition-colors"
                   >
-                    🚪 Dil nga Llogaria
+                    Dil nga Llogaria
                   </button>
                 </div>
               </div>
 
               {/* Danger Zone */}
-              <div className="bg-red-50 border border-red-200 rounded-xl p-6">
-                <h3 className="font-semibold text-red-900 mb-2">Zonë e Rrezikshme</h3>
-                <p className="text-red-700 text-sm mb-4">
+              <div className="bg-accent-soft/60 border border-accent/25 rounded p-6">
+                <h3 className="font-semibold text-accent-strong mb-2">Zonë e Rrezikshme</h3>
+                <p className="text-accent-strong text-sm mb-4">
                   Fshirja e llogarisë është e përhershme dhe nuk mund të zhbëhet.
                 </p>
                 <button
                   onClick={handleDeleteAccount}
-                  className="text-red-600 hover:text-red-800 text-sm font-medium underline"
+                  className="text-accent hover:text-red-800 text-sm font-medium underline"
                 >
                   Fshij Llogarinë
                 </button>
@@ -348,10 +348,10 @@ export default function ProfilePage() {
         message={
           <div>
             <p className="mb-2">Jeni të sigurt që doni të fshini llogarinë tuaj?</p>
-            <p className="text-sm text-gray-600">
+            <p className="text-sm text-clay">
               <strong>Ky veprim nuk mund të zhbëhet</strong> dhe do të humbasni:
             </p>
-            <ul className="list-disc list-inside text-sm text-gray-600 mt-2 space-y-1">
+            <ul className="list-disc list-inside text-sm text-clay mt-2 space-y-1">
               <li>Të gjitha rezervimet tuaja</li>
               <li>Historikun e rezervimeve</li>
               <li>Sallone të preferuara</li>

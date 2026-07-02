@@ -298,6 +298,14 @@
   .animate-fade-in {
     animation: legacyFadeIn 0.3s ease-out;
   }
+  .animate-slide-in {
+    animation: legacySlideIn 0.3s ease-out;
+  }
+}
+
+@keyframes legacySlideIn {
+  from { transform: translateX(100%); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
 }
 
 @keyframes legacyFadeIn {

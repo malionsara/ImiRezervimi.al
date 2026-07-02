@@ -84,11 +84,11 @@ export default function DemoDashboard() {
         <meta name="robots" content="noindex, nofollow" />
       </Head>
 
-      <div className="min-h-screen bg-gray-50 p-6">
+      <div className="min-h-screen bg-cream p-6">
         <div className="max-w-7xl mx-auto">
           <div className="mb-8">
-            <h1 className="text-3xl font-bold text-gray-900">Demo - Salon Dashboard</h1>
-            <p className="text-gray-600 mt-2">Test the salon dashboard components</p>
+            <h1 className="text-3xl font-bold text-ink">Demo - Salon Dashboard</h1>
+            <p className="text-clay mt-2">Test the salon dashboard components</p>
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -109,10 +109,10 @@ export default function DemoDashboard() {
                   onClose={() => setSelectedCustomer(null)}
                 />
               ) : (
-                <div className="bg-white rounded-xl shadow-sm border p-6 text-center">
-                  <div className="text-gray-400 text-4xl mb-4">👤</div>
-                  <h3 className="text-lg font-medium text-gray-900 mb-2">Detajet e klientit</h3>
-                  <p className="text-gray-600 text-sm">
+                <div className="bg-paper rounded shadow-sm border p-6 text-center">
+                  <div className="text-clay/70 text-4xl mb-4">👤</div>
+                  <h3 className="text-lg font-medium text-ink mb-2">Detajet e klientit</h3>
+                  <p className="text-clay text-sm">
                     Kliko mbi një kërkesë për të parë detajet e klientit.
                   </p>
                 </div>
@@ -122,8 +122,8 @@ export default function DemoDashboard() {
 
           {/* Standalone Action Buttons Demo */}
           <div className="mt-12">
-            <h2 className="text-xl font-semibold text-gray-900 mb-4">Demo - Appointment Actions</h2>
-            <div className="bg-white rounded-xl shadow-sm border p-6">
+            <h2 className="text-xl font-semibold text-ink mb-4">Demo - Appointment Actions</h2>
+            <div className="bg-paper rounded shadow-sm border p-6">
               <AppointmentActions
                 appointmentId="demo-1"
                 customerName="Ana Hoxha"
