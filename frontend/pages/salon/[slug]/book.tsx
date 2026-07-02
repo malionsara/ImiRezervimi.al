@@ -199,7 +199,7 @@ export default function BookingPage() {
                 </svg>
               </div>
               <h1 className="text-3xl font-bold text-ink mb-4">
-                Rezervimi u dërgua me sukses! 🎉
+                Rezervimi u dërgua me sukses! 
               </h1>
               <p className="text-lg text-clay mb-8">
                 Faleminderit! Rezervimi juaj për <strong>{salon.name}</strong> u dërgua me sukses.
@@ -377,7 +377,7 @@ export default function BookingPage() {
             <div className="text-center mb-12">
             <div className="flex items-center justify-center mb-6">
               <div className="w-16 h-16 bg-accent rounded-lg flex items-center justify-center mr-4">
-                <span className="text-2xl text-white">💅</span>
+                <span className="text-2xl text-white"></span>
               </div>
               <div className="text-left">
                 <h1 className="text-3xl font-bold text-ink">

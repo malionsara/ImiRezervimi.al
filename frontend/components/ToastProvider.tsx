@@ -20,60 +20,60 @@ const TOAST_CONFIG = {
 // Toast utilities with Albanian messages
 export const showToast = {
   success: (message: string) => {
-    toast.success(`✅ ${message}`, TOAST_CONFIG)
+    toast.success(message, TOAST_CONFIG)
   },
-  
+
   error: (message: string) => {
-    toast.error(`❌ ${message}`, {
+    toast.error(message, {
       ...TOAST_CONFIG,
       autoClose: 7000, // Longer for errors
     })
   },
-  
+
   warning: (message: string) => {
-    toast.warning(`⚠️ ${message}`, TOAST_CONFIG)
+    toast.warning(message, TOAST_CONFIG)
   },
-  
+
   info: (message: string) => {
-    toast.info(`ℹ️ ${message}`, TOAST_CONFIG)
+    toast.info(message, TOAST_CONFIG)
   },
 
   // Appointment-specific toasts
   appointmentCancelled: () => {
-    toast.success('✅ Rezervimi u anulua me sukses!', TOAST_CONFIG)
+    toast.success('Rezervimi u anulua me sukses!', TOAST_CONFIG)
   },
 
   appointmentApproved: () => {
-    toast.success('🎉 Rezervimi u miratua me sukses!', TOAST_CONFIG)
+    toast.success('Rezervimi u miratua me sukses!', TOAST_CONFIG)
   },
 
   appointmentDeclined: () => {
-    toast.warning('⚠️ Rezervimi u refuzua', TOAST_CONFIG)
+    toast.warning('Rezervimi u refuzua', TOAST_CONFIG)
   },
 
   appointmentRequested: () => {
-    toast.success('🎉 Kërkesa për rezervim u dërgua me sukses!', TOAST_CONFIG)
+    toast.success('Kërkesa për rezervim u dërgua me sukses!', TOAST_CONFIG)
   },
 
   // Authentication toasts
   loginSuccess: (salonName?: string) => {
-    toast.success(`🔑 Mirë se erdhe${salonName ? ` në ${salonName}` : ''}!`, TOAST_CONFIG)
+    toast.success(`Mirë se erdhe${salonName ? ` në ${salonName}` : ''}!`, TOAST_CONFIG)
   },
 
   logoutSuccess: () => {
-    toast.info('ℹ️ Dolët me sukses nga dashboard-i', TOAST_CONFIG)
+    toast.info('Dolët me sukses nga dashboard-i', TOAST_CONFIG)
   },
 
   // Network/System toasts
   networkError: () => {
-    toast.error('❌ Problem me lidhjen. Kontrolloni internetin dhe provoni përsëri.', {
+    toast.error('Problem me lidhjen. Kontrolloni internetin dhe provoni përsëri.', {
       ...TOAST_CONFIG,
       autoClose: 8000,
     })
   },
 
   serverError: () => {
-    toast.error('❌ Problem me serverin. Provoni përsëri pas disa sekondash.', {
+    toast.error('Problem me serverin. Provoni përsëri pas disa sekondash.', {
       ...TOAST_CONFIG,
       autoClose: 8000,
     })
@@ -82,17 +82,15 @@ export const showToast = {
 
 // Custom toast component with loading state
 export const showLoadingToast = (message: string = 'Duke u procesuar...') => {
-  return toast.loading(`⏳ ${message}`, {
+  return toast.loading(message, {
     position: 'top-right',
     theme: 'light',
   })
 }
 
 export const updateToast = (toastId: any, message: string, type: TypeOptions = 'success') => {
-  const icon = type === 'success' ? '✅' : type === 'error' ? '❌' : type === 'warning' ? '⚠️' : 'ℹ️'
-  
   toast.update(toastId, {
-    render: `${icon} ${message}`,
+    render: message,
     type,
     isLoading: false,
     autoClose: 5000,

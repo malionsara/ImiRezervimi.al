@@ -148,7 +148,7 @@ export default function AdminAuth({ children }) {
                 className="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-lg text-white bg-accent hover:bg-accent-strong focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-accent/25 transition-colors"
               >
                 <span className="absolute left-0 inset-y-0 flex items-center pl-3">
-                  🔐
+                  
                 </span>
                 Hyr në Admin Panel
               </button>
@@ -177,7 +177,7 @@ export default function AdminAuth({ children }) {
           className="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-lg shadow-soft text-sm transition-colors"
           title="Dil nga Admin Panel"
         >
-          🚪 Dil
+          Dil
         </button>
       </div>
     </>

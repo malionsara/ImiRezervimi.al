@@ -110,7 +110,7 @@ export default function DemoDashboard() {
                 />
               ) : (
                 <div className="bg-paper rounded shadow-sm border p-6 text-center">
-                  <div className="text-clay/70 text-4xl mb-4">👤</div>
+                  <div className="text-clay/70 text-4xl mb-4"></div>
                   <h3 className="text-lg font-medium text-ink mb-2">Detajet e klientit</h3>
                   <p className="text-clay text-sm">
                     Kliko mbi një kërkesë për të parë detajet e klientit.

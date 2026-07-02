@@ -91,7 +91,7 @@ export default function MobileBookingForm({ salon, onSuccess, onError }: MobileB
       )
       
       if (!isSelectedTimeStillAvailable) {
-        console.log('⚠️ Selected time slot is no longer available, clearing selection')
+        console.log('⚠Selected time slot is no longer available, clearing selection')
         setSelectedTime('')
       }
     }
@@ -106,7 +106,7 @@ export default function MobileBookingForm({ salon, onSuccess, onError }: MobileB
   )
 
   const onSubmit = async (formData: any) => {
-    console.log('🚀 FORM SUBMISSION TRIGGERED!')
+    console.log('FORM SUBMISSION TRIGGERED!')
     console.log('Form data received:', formData)
     console.log('Selected service:', selectedService)
     console.log('Selected date:', selectedDate)
@@ -160,7 +160,7 @@ export default function MobileBookingForm({ salon, onSuccess, onError }: MobileB
         duration: selectedService.duration_minutes
       }
 
-      console.log('📤 Sending appointment data to API:', appointmentData)
+      console.log('Sending appointment data to API:', appointmentData)
 
       const response = await fetch('/api/appointments/request', {
         method: 'POST',
@@ -168,9 +168,9 @@ export default function MobileBookingForm({ salon, onSuccess, onError }: MobileB
         body: JSON.stringify(appointmentData)
       })
 
-      console.log('📥 API Response status:', response.status)
+      console.log('API Response status:', response.status)
       const result = await response.json()
-      console.log('📥 API Response data:', result)
+      console.log('API Response data:', result)
       
       if (result.success) {
         console.log('✅ Booking successful, calling onSuccess callback')
@@ -245,7 +245,7 @@ export default function MobileBookingForm({ salon, onSuccess, onError }: MobileB
       <div className="p-6 bg-accent text-white">
         <div className="flex items-center space-x-3">
           <div className="w-10 h-10 bg-white/20 rounded flex items-center justify-center">
-            <span className="text-xl">💅</span>
+            <span className="text-xl"></span>
           </div>
           <div>
             <h2 className="font-bold text-lg">{salon.name}</h2>
@@ -573,7 +573,7 @@ export default function MobileBookingForm({ salon, onSuccess, onError }: MobileB
               )}
 
               <div className="text-center text-sm text-clay p-4 bg-accent-soft/40 rounded">
-                💬 Do të merrni konfirmim në WhatsApp nga salloni
+                Do të merrni konfirmim në WhatsApp nga salloni
               </div>
             </div>
           )}

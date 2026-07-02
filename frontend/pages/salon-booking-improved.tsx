@@ -87,7 +87,7 @@ export default function ImprovedSalonBookingPage() {
         <div className="min-h-screen flex items-center justify-center p-4">
           <div className="text-center">
             <div className="h-16 w-16 mx-auto rounded-lg bg-accent flex items-center justify-center mb-4 shadow-lifted animate-pulse">
-              <span className="text-2xl">💅</span>
+              <span className="text-2xl"></span>
             </div>
             <div className="flex space-x-1 justify-center mb-4">
               <div className="w-2 h-2 bg-accent rounded-full animate-bounce"></div>
@@ -118,7 +118,7 @@ export default function ImprovedSalonBookingPage() {
                 onClick={() => window.location.reload()}
                 className="w-full py-3 px-6 bg-accent text-white font-medium rounded hover:bg-accent-strong transition-all touch-manipulation"
               >
-                🔄 Provo përsëri
+                Provo përsëri
               </button>
               <Link
                 href="/salons"
@@ -165,12 +165,12 @@ export default function ImprovedSalonBookingPage() {
 
               <div className="space-y-4 text-sm text-clay mb-8">
                 <div className="flex items-center justify-center space-x-2 p-3 bg-accent-soft/40 rounded">
-                  <span className="text-lg">💬</span>
+                  <span className="text-lg"></span>
                   <p>Do të merrni konfirmim në WhatsApp nga salloni</p>
                 </div>
                 
                 <div className="flex items-center justify-center space-x-2 p-3 bg-success/5 rounded">
-                  <span className="text-lg">📱</span>
+                  <span className="text-lg"></span>
                   <p>Mund të ndiqni statusin e rezervimit tuaj</p>
                 </div>
               </div>
@@ -180,7 +180,7 @@ export default function ImprovedSalonBookingPage() {
                   href={`/booking/${appointmentId}/status`}
                   className="block w-full py-3 px-6 bg-accent text-white font-medium rounded hover:bg-accent-strong transition-all touch-manipulation"
                 >
-                  📋 Shiko Statusin
+                  Shiko Statusin
                 </Link>
                 
                 <Link
@@ -199,7 +199,7 @@ export default function ImprovedSalonBookingPage() {
                     href={`tel:${salon?.phone}`}
                     className="text-accent hover:text-accent-strong font-medium text-sm"
                   >
-                    📞 {salon?.phone}
+                    {salon?.phone}
                   </Link>
                   {salon?.instagram_handle && (
                     <Link
@@ -207,7 +207,7 @@ export default function ImprovedSalonBookingPage() {
                       target="_blank"
                       className="text-purple-600 hover:text-purple-700 font-medium text-sm"
                     >
-                      📱 @{salon.instagram_handle}
+                      @{salon.instagram_handle}
                     </Link>
                   )}
                 </div>
@@ -233,7 +233,7 @@ export default function ImprovedSalonBookingPage() {
               <div className="bg-accent p-6 text-white">
                 <div className="flex items-center space-x-3">
                   <div className="w-12 h-12 bg-white/20 rounded flex items-center justify-center">
-                    <span className="text-2xl">💅</span>
+                    <span className="text-2xl"></span>
                   </div>
                   <div>
                     <h1 className="text-xl font-bold">Rezervo në {salon?.name}</h1>
@@ -257,7 +257,7 @@ export default function ImprovedSalonBookingPage() {
                   href={`/login?callbackUrl=${encodeURIComponent(router.asPath)}`}
                   className="block w-full py-3 px-6 bg-accent text-white font-medium rounded hover:bg-accent-strong transition-all text-center touch-manipulation mb-4"
                 >
-                  🔐 Identifikohu / Regjistrohu →
+                  Identifikohu / Regjistrohu →
                 </Link>
 
                 <div className="text-center text-xs text-clay mb-4">
@@ -269,7 +269,7 @@ export default function ImprovedSalonBookingPage() {
                     href={`tel:${salon?.phone}`}
                     className="text-accent hover:text-accent-strong font-medium"
                   >
-                    📞 {salon?.phone}
+                    {salon?.phone}
                   </Link>
                   {salon?.instagram_handle && (
                     <Link
@@ -277,7 +277,7 @@ export default function ImprovedSalonBookingPage() {
                       target="_blank"
                       className="text-purple-600 hover:text-purple-700 font-medium"
                     >
-                      📱 @{salon.instagram_handle}
+                      @{salon.instagram_handle}
                     </Link>
                   )}
                 </div>
@@ -319,8 +319,8 @@ export default function ImprovedSalonBookingPage() {
           {/* Additional Info */}
           <div className="max-w-md mx-auto mt-6 text-center">
             <div className="bg-white/80 backdrop-blur rounded p-4 text-sm text-clay">
-              <p className="mb-2">🔒 Rezervimi juaj është i sigurt dhe privat</p>
-              <p>💬 Do të merrni konfirmim automatik në WhatsApp</p>
+              <p className="mb-2">Rezervimi juaj është i sigurt dhe privat</p>
+              <p>Do të merrni konfirmim automatik në WhatsApp</p>
             </div>
           </div>
         </div>
