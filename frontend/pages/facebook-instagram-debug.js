@@ -86,17 +86,17 @@ export default function FacebookInstagramDebug() {
         <title>Facebook Instagram Login Diagnostic - ImiRezervimi.al</title>
       </Head>
 
-      <div className="min-h-screen bg-gray-50 py-8">
+      <div className="min-h-screen bg-cream py-8">
         <div className="max-w-6xl mx-auto px-4">
-          <div className="bg-white rounded-lg shadow-lg p-8">
-            <h1 className="text-3xl font-bold text-gray-900 mb-8">
+          <div className="bg-paper rounded-lg shadow-soft p-8">
+            <h1 className="text-3xl font-bold text-ink mb-8">
               🔍 Facebook Instagram Login Diagnostic Tool
             </h1>
 
             {/* Important Update Notice */}
-            <div className="mb-8 bg-blue-50 border border-blue-200 rounded-lg p-6">
-              <h2 className="text-xl font-semibold text-blue-800 mb-3">📢 Important Update</h2>
-              <div className="text-blue-700 space-y-2">
+            <div className="mb-8 bg-accent-soft/40 border border-accent/25 rounded-lg p-6">
+              <h2 className="text-xl font-semibold text-accent-strong mb-3">📢 Important Update</h2>
+              <div className="text-accent-strong space-y-2">
                 <p><strong>Instagram Basic Display API has been deprecated!</strong></p>
                 <p>Meta has consolidated Instagram authentication into Facebook Login. You now use <strong>Facebook Login</strong> to access Instagram data.</p>
                 <p>✅ <strong>Good news:</strong> Your existing Facebook app can handle Instagram authentication!</p>
@@ -106,30 +106,30 @@ export default function FacebookInstagramDebug() {
             {/* Configuration Status */}
             <div className="mb-8">
               <h2 className="text-2xl font-semibold mb-4">📋 Current Configuration</h2>
-              <div className="bg-gray-50 rounded-lg p-6">
+              <div className="bg-cream rounded-lg p-6">
                 {config ? (
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                      <h3 className="font-semibold text-gray-700 mb-2">Environment</h3>
-                      <p className="text-sm font-mono bg-white p-2 rounded border">
+                      <h3 className="font-semibold text-ink mb-2">Environment</h3>
+                      <p className="text-sm font-mono bg-paper p-2 rounded border">
                         {config.environment || 'Not detected'}
                       </p>
                     </div>
                     <div>
-                      <h3 className="font-semibold text-gray-700 mb-2">Facebook App ID</h3>
-                      <p className="text-sm font-mono bg-white p-2 rounded border">
+                      <h3 className="font-semibold text-ink mb-2">Facebook App ID</h3>
+                      <p className="text-sm font-mono bg-paper p-2 rounded border">
                         {config.clientId ? `${config.clientId.substring(0, 8)}...` : 'Not configured'}
                       </p>
                     </div>
                     <div>
-                      <h3 className="font-semibold text-gray-700 mb-2">App Secret</h3>
-                      <p className="text-sm font-mono bg-white p-2 rounded border">
+                      <h3 className="font-semibold text-ink mb-2">App Secret</h3>
+                      <p className="text-sm font-mono bg-paper p-2 rounded border">
                         {config.hasClientSecret ? 'Configured ✅' : 'Missing ❌'}
                       </p>
                     </div>
                     <div>
-                      <h3 className="font-semibold text-gray-700 mb-2">Base URL</h3>
-                      <p className="text-sm font-mono bg-white p-2 rounded border">
+                      <h3 className="font-semibold text-ink mb-2">Base URL</h3>
+                      <p className="text-sm font-mono bg-paper p-2 rounded border">
                         {config.baseUrl || 'Not configured'}
                       </p>
                     </div>
@@ -143,9 +143,9 @@ export default function FacebookInstagramDebug() {
             {/* Required Facebook App Settings */}
             <div className="mb-8">
               <h2 className="text-2xl font-semibold mb-4">⚙️ Required Facebook App Settings</h2>
-              <div className="bg-green-50 border border-green-200 rounded-lg p-6">
-                <h3 className="font-semibold text-green-800 mb-3">✅ What you need to configure:</h3>
-                <ol className="list-decimal list-inside space-y-3 text-green-700">
+              <div className="bg-success/5 border border-success/25 rounded-lg p-6">
+                <h3 className="font-semibold text-success mb-3">✅ What you need to configure:</h3>
+                <ol className="list-decimal list-inside space-y-3 text-success">
                   <li>Go to <a href="https://developers.facebook.com/" className="underline font-semibold" target="_blank" rel="noopener noreferrer">Facebook Developers</a></li>
                   <li>Select your app → Click on <strong>&quot;Authenticate and request data from users with Facebook Login&quot;</strong></li>
                   <li>Go to <strong>Facebook Login → Settings</strong></li>
@@ -153,29 +153,29 @@ export default function FacebookInstagramDebug() {
                 </ol>
                 
                 <div className="mt-4 space-y-2">
-                  <div className="bg-white p-3 rounded border border-green-300">
+                  <div className="bg-paper p-3 rounded border border-green-300">
                     <code className="text-sm">https://www.imirezervimi.al/api/auth/callback/instagram-via-facebook</code>
-                    <span className="ml-2 text-green-600 font-semibold">← Primary</span>
+                    <span className="ml-2 text-success font-semibold">← Primary</span>
                   </div>
-                  <div className="bg-white p-3 rounded border border-green-300">
+                  <div className="bg-paper p-3 rounded border border-green-300">
                     <code className="text-sm">https://imirezervimi.al/api/auth/callback/instagram-via-facebook</code>
-                    <span className="ml-2 text-yellow-600 font-semibold">← Fallback</span>
+                    <span className="ml-2 text-warning font-semibold">← Fallback</span>
                   </div>
                 </div>
 
                 <div className="mt-4">
                   <h4 className="font-semibold mb-2">📋 Required Permissions:</h4>
                   <div className="grid grid-cols-2 gap-2">
-                    <div className="bg-white p-2 rounded border border-green-300">
+                    <div className="bg-paper p-2 rounded border border-green-300">
                       <strong>email</strong> - User email address
                     </div>
-                    <div className="bg-white p-2 rounded border border-green-300">
+                    <div className="bg-paper p-2 rounded border border-green-300">
                       <strong>public_profile</strong> - Basic profile info
                     </div>
-                    <div className="bg-white p-2 rounded border border-green-300">
+                    <div className="bg-paper p-2 rounded border border-green-300">
                       <strong>instagram_basic</strong> - Instagram account access
                     </div>
-                    <div className="bg-white p-2 rounded border border-green-300">
+                    <div className="bg-paper p-2 rounded border border-green-300">
                       <strong>pages_show_list</strong> - Connected Instagram accounts
                     </div>
                   </div>
@@ -198,7 +198,7 @@ export default function FacebookInstagramDebug() {
                 {config?.clientId && (
                   <a
                     href={generateFacebookAuthUrl()}
-                    className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-6 py-2 rounded-lg hover:from-blue-700 hover:to-indigo-700"
+                    className="bg-accent text-white px-6 py-2 rounded-lg hover:bg-accent-strong"
                   >
                     🔗 Test Facebook Instagram Login
                   </a>
@@ -206,20 +206,20 @@ export default function FacebookInstagramDebug() {
               </div>
 
               {testResults.length > 0 && (
-                <div className="bg-gray-50 rounded-lg p-4">
+                <div className="bg-cream rounded-lg p-4">
                   <h3 className="font-semibold mb-3">Test Results:</h3>
                   {testResults.map((result, index) => (
-                    <div key={index} className={`p-3 mb-2 rounded border ${result.success ? 'bg-green-50 border-green-200' : 'bg-red-50 border-red-200'}`}>
+                    <div key={index} className={`p-3 mb-2 rounded border ${result.success ? 'bg-success/5 border-success/25' : 'bg-accent-soft/60 border-accent/25'}`}>
                       <div className="flex items-center justify-between">
                         <span className="font-medium">{result.name}</span>
-                        <span className={`px-2 py-1 rounded text-sm ${result.success ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
+                        <span className={`px-2 py-1 rounded text-sm ${result.success ? 'bg-success/10 text-success' : 'bg-accent-soft text-red-800'}`}>
                           {result.success ? '✅ Pass' : '❌ Fail'}
                         </span>
                       </div>
-                      <div className="text-sm text-gray-600 mt-1">
+                      <div className="text-sm text-clay mt-1">
                         <p>URL: {result.url}</p>
                         {result.status && <p>Status: {result.status}</p>}
-                        {result.error && <p className="text-red-600">Error: {result.error}</p>}
+                        {result.error && <p className="text-accent">Error: {result.error}</p>}
                         {result.redirected && <p>Redirected to: {result.finalUrl}</p>}
                       </div>
                     </div>
@@ -232,9 +232,9 @@ export default function FacebookInstagramDebug() {
             <div className="mb-8">
               <h2 className="text-2xl font-semibold mb-4">🛠️ Common Issues & Solutions</h2>
               <div className="space-y-4">
-                <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+                <div className="bg-accent-soft/60 border border-accent/25 rounded-lg p-4">
                   <h3 className="font-semibold text-red-800 mb-2">❌ &quot;Access Denied&quot; or Login Fails</h3>
-                  <ul className="list-disc list-inside text-red-700 space-y-1">
+                  <ul className="list-disc list-inside text-accent-strong space-y-1">
                     <li>Make sure redirect URIs are added to Facebook Login settings</li>
                     <li>Verify your Facebook App ID and Secret are correct</li>
                     <li>Check that your app is in &quot;Live&quot; mode or you&apos;re added as a test user</li>
@@ -242,8 +242,8 @@ export default function FacebookInstagramDebug() {
                   </ul>
                 </div>
 
-                <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
-                  <h3 className="font-semibold text-yellow-800 mb-2">⚠️ Instagram Data Not Available</h3>
+                <div className="bg-yellow-50 border border-warning/25 rounded-lg p-4">
+                  <h3 className="font-semibold text-warning mb-2">⚠️ Instagram Data Not Available</h3>
                   <ul className="list-disc list-inside text-yellow-700 space-y-1">
                     <li>User must have an Instagram Business or Creator account</li>
                     <li>Instagram account must be connected to their Facebook page</li>
@@ -252,9 +252,9 @@ export default function FacebookInstagramDebug() {
                   </ul>
                 </div>
 
-                <div className="bg-green-50 border border-green-200 rounded-lg p-4">
-                  <h3 className="font-semibold text-green-800 mb-2">✅ Migration from Instagram Basic Display</h3>
-                  <ul className="list-disc list-inside text-green-700 space-y-1">
+                <div className="bg-success/5 border border-success/25 rounded-lg p-4">
+                  <h3 className="font-semibold text-success mb-2">✅ Migration from Instagram Basic Display</h3>
+                  <ul className="list-disc list-inside text-success space-y-1">
                     <li>✅ No need to create a new app - use your existing Facebook app</li>
                     <li>✅ More stable and future-proof authentication method</li>
                     <li>✅ Access to both Facebook and Instagram data in one login</li>
@@ -268,9 +268,9 @@ export default function FacebookInstagramDebug() {
             {config?.clientId && (
               <div>
                 <h2 className="text-2xl font-semibold mb-4">🔗 Generated OAuth URL</h2>
-                <div className="bg-gray-50 rounded-lg p-4">
-                  <p className="text-sm text-gray-600 mb-2">This is the exact URL that will be used for Facebook Instagram OAuth:</p>
-                  <div className="bg-white p-3 rounded border font-mono text-xs break-all">
+                <div className="bg-cream rounded-lg p-4">
+                  <p className="text-sm text-clay mb-2">This is the exact URL that will be used for Facebook Instagram OAuth:</p>
+                  <div className="bg-paper p-3 rounded border font-mono text-xs break-all">
                     {generateFacebookAuthUrl()}
                   </div>
                 </div>

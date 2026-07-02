@@ -76,17 +76,17 @@ export default function DebugInstagram() {
         <title>Instagram OAuth Debug - ImiRezervimi.al</title>
       </Head>
 
-      <div className="min-h-screen bg-gray-100 py-12 px-4">
+      <div className="min-h-screen bg-sand py-12 px-4">
         <div className="max-w-4xl mx-auto">
-          <div className="bg-white rounded-lg shadow-lg p-6">
-            <h1 className="text-3xl font-bold text-gray-900 mb-6">
+          <div className="bg-paper rounded-lg shadow-soft p-6">
+            <h1 className="text-3xl font-bold text-ink mb-6">
               Instagram OAuth Debug Tool
             </h1>
 
             {/* Environment Info */}
             <div className="mb-8">
               <h2 className="text-xl font-semibold mb-4">Environment Information</h2>
-              <div className="bg-gray-50 p-4 rounded-lg">
+              <div className="bg-cream p-4 rounded-lg">
                 <pre className="text-sm">
                   {JSON.stringify(debugInfo, null, 2)}
                 </pre>
@@ -97,18 +97,18 @@ export default function DebugInstagram() {
             <div className="mb-8">
               <h2 className="text-xl font-semibold mb-4">Required Instagram App URLs</h2>
               <div className="space-y-2">
-                <div className="p-3 bg-blue-50 border border-blue-200 rounded">
+                <div className="p-3 bg-accent-soft/40 border border-accent/25 rounded">
                   <strong>OAuth Redirect URIs (add BOTH to Instagram app):</strong>
                   <ul className="mt-2 space-y-1">
                     <li className="font-mono text-sm">https://imirezervimi.al/api/auth/callback/instagram</li>
                     <li className="font-mono text-sm">https://www.imirezervimi.al/api/auth/callback/instagram</li>
                   </ul>
                 </div>
-                <div className="p-3 bg-green-50 border border-green-200 rounded">
+                <div className="p-3 bg-success/5 border border-success/25 rounded">
                   <strong>Deauthorize Callback URL:</strong>
                   <p className="font-mono text-sm mt-1">https://www.imirezervimi.al/api/auth/deauthorize</p>
                 </div>
-                <div className="p-3 bg-yellow-50 border border-yellow-200 rounded">
+                <div className="p-3 bg-yellow-50 border border-warning/25 rounded">
                   <strong>Data Deletion Request URL:</strong>
                   <p className="font-mono text-sm mt-1">https://www.imirezervimi.al/api/auth/data-deletion</p>
                 </div>
@@ -128,7 +128,7 @@ export default function DebugInstagram() {
                 
                 <a
                   href={generateInstagramUrl()}
-                  className="inline-block bg-gradient-to-r from-purple-600 to-pink-600 text-white px-6 py-3 rounded-lg hover:from-purple-700 hover:to-pink-700"
+                  className="inline-block bg-accent text-white px-6 py-3 rounded-lg hover:bg-accent-strong"
                 >
                   Test Instagram Login
                 </a>
@@ -138,9 +138,9 @@ export default function DebugInstagram() {
             {/* Instructions */}
             <div className="mb-8">
               <h2 className="text-xl font-semibold mb-4">Fix Instructions</h2>
-              <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+              <div className="bg-accent-soft/60 border border-accent/25 rounded-lg p-4">
                 <h3 className="font-semibold text-red-800 mb-2">To fix the 302 error:</h3>
-                <ol className="list-decimal list-inside space-y-2 text-red-700">
+                <ol className="list-decimal list-inside space-y-2 text-accent-strong">
                   <li>Go to <a href="https://developers.facebook.com/" className="underline">Facebook Developers Console</a></li>
                   <li>Open your Instagram Basic Display app</li>
                   <li>Go to Instagram Basic Display → Basic Display</li>
@@ -159,11 +159,11 @@ export default function DebugInstagram() {
             {/* Current Configuration */}
             <div>
               <h2 className="text-xl font-semibold mb-4">Current Configuration</h2>
-              <div className="bg-gray-50 p-4 rounded-lg">
+              <div className="bg-cream p-4 rounded-lg">
                 <p><strong>Instagram Client ID:</strong> 1075659340661921</p>
                 <p><strong>Current Domain:</strong> {debugInfo.currentDomain}</p>
                 <p><strong>Generated OAuth URL:</strong></p>
-                <div className="mt-2 p-2 bg-white border rounded text-xs break-all">
+                <div className="mt-2 p-2 bg-paper border rounded text-xs break-all">
                   {generateInstagramUrl()}
                 </div>
               </div>

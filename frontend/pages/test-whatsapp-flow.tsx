@@ -85,16 +85,16 @@ export default function TestWhatsAppFlow() {
         <meta name="description" content="Test WhatsApp notification flow" />
       </Head>
 
-      <div className="min-h-screen bg-gray-50 py-8">
+      <div className="min-h-screen bg-cream py-8">
         <div className="max-w-4xl mx-auto px-4">
-          <div className="bg-white rounded-lg shadow-lg p-6">
-            <h1 className="text-3xl font-bold text-gray-900 mb-6">
+          <div className="bg-paper rounded-lg shadow-soft p-6">
+            <h1 className="text-3xl font-bold text-ink mb-6">
               🧪 WhatsApp Flow Testing
             </h1>
 
-            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
+            <div className="bg-accent-soft/40 border border-accent/25 rounded-lg p-4 mb-6">
               <h2 className="font-semibold text-blue-900 mb-2">📋 Si të testoni:</h2>
-              <ol className="list-decimal list-inside text-blue-800 space-y-1">
+              <ol className="list-decimal list-inside text-accent-strong space-y-1">
                 <li>Sigurohuni që numri juaj i WhatsApp është i lidhur me Twilio Sandbox</li>
                 <li>Dërgoni &quot;join [sandbox-name]&quot; te +14155238886</li>
                 <li>Vendosni numrin tuaj të telefonit më poshtë</li>
@@ -105,7 +105,7 @@ export default function TestWhatsAppFlow() {
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-ink mb-2">
                   Numri i Telefonit për Test
                 </label>
                 <input
@@ -113,21 +113,21 @@ export default function TestWhatsAppFlow() {
                   value={testPhone}
                   onChange={(e) => setTestPhone(e.target.value)}
                   placeholder="+355691234567"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  className="w-full px-3 py-2 border border-linen rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 />
-                <p className="text-xs text-gray-500 mt-1">
+                <p className="text-xs text-clay mt-1">
                   Format: +355XXXXXXXX (numër shqiptar)
                 </p>
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-ink mb-2">
                   Lloji i Testit
                 </label>
                 <select
                   value={testType}
                   onChange={(e) => setTestType(e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  className="w-full px-3 py-2 border border-linen rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 >
                   <option value="all">Të gjitha testet</option>
                   <option value="basic">Mesazh bazik</option>
@@ -152,17 +152,17 @@ export default function TestWhatsAppFlow() {
               <div className="mt-6 p-4 border rounded-lg">
                 <h3 className="font-semibold text-lg mb-2">📊 Përmbledhje e Testeve</h3>
                 <div className="grid grid-cols-3 gap-4 text-center">
-                  <div className="p-2 bg-gray-50 rounded">
-                    <div className="text-2xl font-bold text-gray-900">{summary.total}</div>
-                    <div className="text-sm text-gray-600">Total</div>
+                  <div className="p-2 bg-cream rounded">
+                    <div className="text-2xl font-bold text-ink">{summary.total}</div>
+                    <div className="text-sm text-clay">Total</div>
                   </div>
-                  <div className="p-2 bg-green-50 rounded">
-                    <div className="text-2xl font-bold text-green-600">{summary.passed}</div>
-                    <div className="text-sm text-green-600">Kaluan</div>
+                  <div className="p-2 bg-success/5 rounded">
+                    <div className="text-2xl font-bold text-success">{summary.passed}</div>
+                    <div className="text-sm text-success">Kaluan</div>
                   </div>
-                  <div className="p-2 bg-red-50 rounded">
-                    <div className="text-2xl font-bold text-red-600">{summary.failed}</div>
-                    <div className="text-sm text-red-600">Dështuan</div>
+                  <div className="p-2 bg-accent-soft/60 rounded">
+                    <div className="text-2xl font-bold text-accent">{summary.failed}</div>
+                    <div className="text-sm text-accent">Dështuan</div>
                   </div>
                 </div>
               </div>
@@ -177,8 +177,8 @@ export default function TestWhatsAppFlow() {
                       key={index}
                       className={`p-4 border rounded-lg ${
                         result.status === 'success'
-                          ? 'border-green-200 bg-green-50'
-                          : 'border-red-200 bg-red-50'
+                          ? 'border-success/25 bg-success/5'
+                          : 'border-accent/25 bg-accent-soft/60'
                       }`}
                     >
                       <div className="flex items-center justify-between">
@@ -186,16 +186,16 @@ export default function TestWhatsAppFlow() {
                         <span
                           className={`px-2 py-1 text-xs rounded-full ${
                             result.status === 'success'
-                              ? 'bg-green-200 text-green-800'
+                              ? 'bg-green-200 text-success'
                               : 'bg-red-200 text-red-800'
                           }`}
                         >
                           {result.status === 'success' ? '✅ Sukses' : '❌ Dështim'}
                         </span>
                       </div>
-                      <p className="text-sm text-gray-600 mt-1">{result.message}</p>
+                      <p className="text-sm text-clay mt-1">{result.message}</p>
                       {result.error && (
-                        <p className="text-sm text-red-600 mt-1">
+                        <p className="text-sm text-accent mt-1">
                           <strong>Gabim:</strong> {result.error}
                         </p>
                       )}
@@ -205,7 +205,7 @@ export default function TestWhatsAppFlow() {
               </div>
             )}
 
-            <div className="mt-8 text-center text-sm text-gray-500">
+            <div className="mt-8 text-center text-sm text-clay">
               <p>🔧 Development Testing Tool - ImiRezervimi.al</p>
             </div>
           </div>

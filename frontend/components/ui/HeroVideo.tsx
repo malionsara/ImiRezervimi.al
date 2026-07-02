@@ -1,5 +1,4 @@
 import { useEffect, useRef, useState } from 'react'
-import Image from 'next/image'
 import { cn } from '../../utils/cn'
 
 interface HeroVideoProps {
@@ -13,13 +12,15 @@ interface HeroVideoProps {
 
 /**
  * Ambient background video with a poster-first strategy:
- * - renders the poster image (LCP-friendly, works with next/image)
+ * - renders the poster image first (LCP-friendly)
  * - swaps in the muted looping video once mounted, unless the user
  *   prefers reduced motion
+ * - degrades silently (container background shows) while media assets
+ *   are missing, so pages can ship ahead of generation
  */
 export default function HeroVideo({ src, poster, alt, className, eager = true }: HeroVideoProps) {
   const [showVideo, setShowVideo] = useState(false)
-  const videoRef = useRef<HTMLVideoElement>(null)
+  const [posterOk, setPosterOk] = useState(true)
   const wrapperRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
@@ -48,19 +49,20 @@ export default function HeroVideo({ src, poster, alt, className, eager = true }:
 
   return (
     <div ref={wrapperRef} className={cn('relative overflow-hidden', className)}>
-      <Image
-        src={poster}
-        alt={alt}
-        fill
-        priority={eager}
-        sizes="100vw"
-        className="object-cover"
-      />
+      {posterOk && (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img
+          src={poster}
+          alt={alt}
+          className="absolute inset-0 h-full w-full object-cover"
+          loading={eager ? 'eager' : 'lazy'}
+          onError={() => setPosterOk(false)}
+        />
+      )}
       {showVideo && (
         <video
-          ref={videoRef}
           src={src}
-          poster={poster}
+          poster={posterOk ? poster : undefined}
           muted
           loop
           playsInline

@@ -4,6 +4,9 @@
 import Layout from '../components/layout/Layout'
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
+import { Search, Store, ArrowRight, BadgeCheck, Scissors, Sparkles } from 'lucide-react'
+import Skeleton from '../components/ui/Skeleton'
+import EmptyState from '../components/ui/EmptyState'
 
 interface Salon {
   id: string
@@ -13,6 +16,13 @@ interface Salon {
   address?: string
   description?: string
   instagram_handle?: string
+  category?: 'beauty' | 'barbershop' | 'unisex'
+}
+
+const categoryPhotos: Record<string, string> = {
+  beauty: '/media/photos/manicure-detail.webp',
+  barbershop: '/media/photos/barbershop.webp',
+  unisex: '/media/photos/unisex-styling.webp',
 }
 
 export default function SalonsListPage() {
@@ -41,16 +51,19 @@ export default function SalonsListPage() {
       description="Shfleto sallonet e disponueshme dhe rezervo online në çdo moment"
       headerVariant="default"
       footerVariant="default"
-      backgroundClass="bg-gray-50"
+      backgroundClass="bg-cream"
     >
       <div className="min-h-screen">
 
-        <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+        <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16">
           {/* Page heading + search */}
-          <div className="mb-8 flex flex-col md:flex-row md:items-end md:justify-between gap-4">
+          <div className="mb-10 flex flex-col md:flex-row md:items-end md:justify-between gap-5">
             <div>
-              <h1 className="text-3xl font-bold text-gray-900">Sallone</h1>
-              <p className="text-gray-600">Zbulo dhe rezervoni sallone të verifikuara</p>
+              <p className="text-xs font-medium uppercase tracking-[0.2em] text-accent mb-2">
+                Zbulo & rezervo
+              </p>
+              <h1 className="font-display text-3xl sm:text-4xl text-ink tracking-tight">Sallone</h1>
+              <p className="text-clay mt-2">Zbulo dhe rezervo në sallone të verifikuara</p>
             </div>
             <div className="w-full md:w-96">
               <div className="relative">
@@ -59,29 +72,46 @@ export default function SalonsListPage() {
                   value={query}
                   onChange={(e) => setQuery(e.target.value)}
                   placeholder="Kërko sipas emrit, qytetit..."
-                  className="w-full bg-white border border-gray-300 rounded-xl pl-11 pr-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent"
+                  className="w-full bg-paper border border-linen rounded pl-11 pr-4 py-3 text-base focus:outline-none focus:ring-2 focus:ring-accent/25 focus:border-accent transition-colors"
                 />
-                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">🔍</span>
+                <Search
+                  size={17}
+                  strokeWidth={1.75}
+                  className="absolute left-3.5 top-1/2 -translate-y-1/2 text-clay"
+                  aria-hidden="true"
+                />
               </div>
             </div>
           </div>
 
           {loading ? (
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6">
               {[...Array(6)].map((_, i) => (
-                <div key={i} className="h-40 bg-white rounded-xl border animate-pulse" />
+                <div key={i} className="bg-paper rounded-lg border border-linen overflow-hidden">
+                  <Skeleton className="h-40 w-full rounded-none" />
+                  <div className="p-5 space-y-3">
+                    <Skeleton className="h-5 w-2/3" />
+                    <Skeleton className="h-4 w-1/2" />
+                  </div>
+                </div>
               ))}
             </div>
           ) : salons.length === 0 ? (
-            <div className="text-center py-16 bg-white rounded-xl border">
-              <div className="text-5xl mb-4">🏪</div>
-              <p className="text-gray-600">Asnjë sallon i disponueshëm</p>
-              <div className="mt-6">
-                <Link href="/salon/register" className="text-red-600 hover:text-red-700 font-medium">Regjistro sallonin tënd →</Link>
-              </div>
+            <div className="bg-paper rounded-lg border border-linen">
+              <EmptyState
+                icon={Store}
+                title="Asnjë sallon i disponueshëm"
+                description="Sallonet e reja shfaqen këtu sapo verifikohen."
+                action={
+                  <Link href="/salon/register" className="inline-flex items-center gap-2 text-accent hover:text-accent-strong font-medium">
+                    Regjistro sallonin tënd
+                    <ArrowRight size={16} strokeWidth={1.75} aria-hidden="true" />
+                  </Link>
+                }
+              />
             </div>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6">
               {salons
                 .filter((s: any) => {
                   const q = query.trim().toLowerCase()
@@ -92,43 +122,63 @@ export default function SalonsListPage() {
                     (s.description || '').toLowerCase().includes(q)
                   )
                 })
-                .map((s: any) => (
+                .map((s: any) => {
+                  const category = s.category || 'beauty'
+                  const CategoryIcon = category === 'barbershop' ? Scissors : Sparkles
+                  return (
                   <Link
                     key={s.id}
                     href={`/${s.slug || 'salon'}`}
-                    className="group bg-white rounded-2xl border p-6 hover:shadow-lg transition-shadow relative overflow-hidden"
+                    data-theme={category}
+                    className="group bg-paper rounded-lg border border-linen overflow-hidden hover:shadow-lifted hover:-translate-y-0.5 transition-all duration-300"
                   >
-                    {/* Accent background */}
-                    <div className="absolute -right-10 -top-10 w-32 h-32 bg-gradient-to-tr from-red-50 to-pink-50 rounded-full group-hover:scale-110 transition-transform" />
-                    <div className="relative">
-                      <div className="flex items-start justify-between mb-2">
-                        <div className="flex items-center gap-3">
-                          <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-red-500 to-pink-500 text-white flex items-center justify-center text-xl shadow">
-                            💅
-                          </div>
-                          <div>
-                            <div className="font-semibold text-gray-900 leading-tight">{s.name}</div>
-                            <div className="text-sm text-gray-600">{s.city || ''}{s.city && s.address ? ' • ' : ''}{s.address || ''}</div>
-                          </div>
+                    {/* Photo header with category fallback */}
+                    <div className="relative h-40 bg-sand overflow-hidden">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img
+                        src={categoryPhotos[category] || categoryPhotos.beauty}
+                        alt=""
+                        loading="lazy"
+                        className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.04]"
+                        onError={(e) => { e.currentTarget.style.visibility = 'hidden' }}
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-ink/40 to-transparent"></div>
+                      {s.instagram_handle && (
+                        <div className="absolute top-3 right-3 text-xs bg-paper/90 backdrop-blur text-ink px-2.5 py-1 rounded-full">
+                          @{s.instagram_handle}
                         </div>
-                        {s.instagram_handle && (
-                          <div className="text-xs bg-pink-50 text-pink-600 px-2 py-1 rounded-full">@{s.instagram_handle}</div>
-                        )}
+                      )}
+                      <div className="absolute bottom-3 left-3">
+                        <span className="inline-flex items-center gap-1.5 text-xs bg-ink/50 backdrop-blur text-cream px-2.5 py-1 rounded-full">
+                          <CategoryIcon size={12} strokeWidth={1.75} aria-hidden="true" />
+                          {category === 'barbershop' ? 'Berber' : category === 'unisex' ? 'Unisex' : 'Bukuri'}
+                        </span>
+                      </div>
+                    </div>
+
+                    <div className="p-5">
+                      <div className="font-display text-lg text-ink leading-tight mb-1">{s.name}</div>
+                      <div className="text-sm text-clay">
+                        {s.city || ''}{s.city && s.address ? ' • ' : ''}{s.address || ''}
                       </div>
 
                       {s.description && (
-                        <p className="text-sm text-gray-600 line-clamp-2 mt-2">{s.description}</p>
+                        <p className="text-sm text-clay line-clamp-2 mt-2">{s.description}</p>
                       )}
 
-                      <div className="mt-4 flex items-center justify-between">
-                        <div className="text-xs text-gray-500">Verifikuar në platformë</div>
-                        <span className="inline-flex items-center gap-1 text-red-600 font-medium">
-                          Rezervo <span className="transition-transform group-hover:translate-x-1">→</span>
+                      <div className="mt-4 pt-4 border-t border-linen flex items-center justify-between">
+                        <div className="inline-flex items-center gap-1.5 text-xs text-clay">
+                          <BadgeCheck size={13} strokeWidth={1.75} className="text-success" aria-hidden="true" />
+                          Verifikuar në platformë
+                        </div>
+                        <span className="inline-flex items-center gap-1 text-accent font-medium text-sm">
+                          Rezervo
+                          <ArrowRight size={15} strokeWidth={1.75} className="transition-transform group-hover:translate-x-1" aria-hidden="true" />
                         </span>
                       </div>
                     </div>
                   </Link>
-                ))}
+                )})}
             </div>
           )}
         </main>
@@ -136,5 +186,3 @@ export default function SalonsListPage() {
     </Layout>
   )
 }
-
-

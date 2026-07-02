@@ -13,10 +13,10 @@ interface TwilioTestPageProps {
 const TwilioTestPage: React.FC<TwilioTestPageProps> = ({ isProduction }) => {
   if (isProduction) {
     return (
-      <div className="min-h-screen bg-gray-100 flex items-center justify-center">
-        <div className="bg-white p-8 rounded-lg shadow-lg text-center">
-          <h1 className="text-2xl font-bold text-red-600 mb-4">🚫 Access Denied</h1>
-          <p className="text-gray-600">
+      <div className="min-h-screen bg-sand flex items-center justify-center">
+        <div className="bg-paper p-8 rounded-lg shadow-soft text-center">
+          <h1 className="text-2xl font-bold text-accent mb-4">🚫 Access Denied</h1>
+          <p className="text-clay">
             Test page is not available in production environment.
           </p>
         </div>
@@ -32,17 +32,17 @@ const TwilioTestPage: React.FC<TwilioTestPageProps> = ({ isProduction }) => {
         <meta name="robots" content="noindex, nofollow" />
       </Head>
 
-      <div className="min-h-screen bg-gray-100 py-8">
+      <div className="min-h-screen bg-sand py-8">
         <div className="container mx-auto px-4">
           {/* Header */}
           <div className="text-center mb-8">
             <div className="inline-flex items-center gap-3 mb-4">
-              <div className="h-12 w-12 rounded-xl bg-gradient-to-br from-red-500 to-pink-500 flex items-center justify-center shadow-lg">
+              <div className="h-12 w-12 rounded bg-accent flex items-center justify-center shadow-soft">
                 <span className="text-xl font-bold text-white">IR</span>
               </div>
               <div>
-                <h1 className="text-3xl font-bold text-gray-800">ImiRezervimi.al</h1>
-                <p className="text-gray-600">Twilio WhatsApp Integration Test</p>
+                <h1 className="text-3xl font-bold text-ink">ImiRezervimi.al</h1>
+                <p className="text-clay">Twilio WhatsApp Integration Test</p>
               </div>
             </div>
           </div>
@@ -51,9 +51,9 @@ const TwilioTestPage: React.FC<TwilioTestPageProps> = ({ isProduction }) => {
           <TwilioTestPanel />
 
           {/* Instructions */}
-          <div className="max-w-4xl mx-auto mt-8 p-6 bg-blue-50 rounded-lg">
-            <h3 className="text-lg font-semibold text-blue-800 mb-3">📋 Setup Instructions</h3>
-            <div className="text-sm text-blue-700 space-y-2">
+          <div className="max-w-4xl mx-auto mt-8 p-6 bg-accent-soft/40 rounded-lg">
+            <h3 className="text-lg font-semibold text-accent-strong mb-3">📋 Setup Instructions</h3>
+            <div className="text-sm text-accent-strong space-y-2">
               <p><strong>1. Twilio Account Setup:</strong></p>
               <ul className="list-disc list-inside ml-4 space-y-1">
                 <li>Create account at <a href="https://console.twilio.com" target="_blank" rel="noopener noreferrer" className="underline">console.twilio.com</a></li>
@@ -79,7 +79,7 @@ const TwilioTestPage: React.FC<TwilioTestPageProps> = ({ isProduction }) => {
           </div>
 
           {/* Footer */}
-          <div className="text-center mt-8 text-gray-500 text-sm">
+          <div className="text-center mt-8 text-clay text-sm">
             <p>🧪 Development Environment Only</p>
             <p>Made with ❤️ for Albanian beauty salons</p>
           </div>

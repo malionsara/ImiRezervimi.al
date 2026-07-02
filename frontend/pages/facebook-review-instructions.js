@@ -11,7 +11,7 @@ export default function FacebookReviewInstructions() {
         <meta name="description" content="Instructions for Facebook reviewers to test Instagram Basic Display integration" />
       </Head>
 
-      <div className="min-h-screen bg-white">
+      <div className="min-h-screen bg-paper">
         {/* Header */}
         <header className="bg-blue-600 text-white">
           <div className="max-w-4xl mx-auto px-4 py-6">
@@ -24,7 +24,7 @@ export default function FacebookReviewInstructions() {
         <div className="max-w-4xl mx-auto px-4 py-12">
           
           {/* Quick Overview */}
-          <section className="mb-12 bg-blue-50 border-l-4 border-blue-500 p-6 rounded-r-lg">
+          <section className="mb-12 bg-accent-soft/40 border-l-4 border-blue-500 p-6 rounded-r-lg">
             <h2 className="text-xl font-bold text-blue-900 mb-4">📋 Instagram Login Test</h2>
             <div className="text-center">
               <p className="text-lg mb-4"><strong>Review Time:</strong> 2 minutes</p>
@@ -35,7 +35,7 @@ export default function FacebookReviewInstructions() {
 
           {/* Testing Steps */}
           <section className="mb-12">
-            <h2 className="text-2xl font-bold text-gray-900 mb-6">🔑 Login Flow Test</h2>
+            <h2 className="text-2xl font-bold text-ink mb-6">🔑 Login Flow Test</h2>
             
             <div className="text-center space-y-6">
               <div className="bg-blue-600 text-white p-8 rounded-lg">
@@ -43,7 +43,7 @@ export default function FacebookReviewInstructions() {
                 <p className="mb-6">Click below to test the login flow</p>
                 <a 
                   href="https://www.imirezervimi.al/login" 
-                  className="bg-white text-blue-600 px-8 py-3 rounded-lg font-bold hover:bg-gray-100 inline-block"
+                  className="bg-paper text-accent px-8 py-3 rounded-lg font-bold hover:bg-sand inline-block"
                   target="_blank"
                   rel="noopener noreferrer"
                 >
@@ -70,20 +70,20 @@ export default function FacebookReviewInstructions() {
 
           {/* What We Access */}
           <section className="mb-12">
-            <h2 className="text-2xl font-bold text-gray-900 mb-6">📋 What We Access</h2>
+            <h2 className="text-2xl font-bold text-ink mb-6">📋 What We Access</h2>
             
             <div className="grid md:grid-cols-2 gap-6">
-              <div className="border border-green-200 rounded-lg p-6 bg-green-50">
-                <h3 className="font-semibold mb-3 text-green-800">✅ We Access</h3>
-                <ul className="space-y-2 text-sm text-green-700">
+              <div className="border border-success/25 rounded-lg p-6 bg-success/5">
+                <h3 className="font-semibold mb-3 text-success">✅ We Access</h3>
+                <ul className="space-y-2 text-sm text-success">
                   <li>Username (for profile display)</li>
                   <li>User ID (for account identification)</li>
                 </ul>
               </div>
               
-              <div className="border border-red-200 rounded-lg p-6 bg-red-50">
+              <div className="border border-accent/25 rounded-lg p-6 bg-accent-soft/60">
                 <h3 className="font-semibold mb-3 text-red-800">❌ We DON&apos;T Access</h3>
-                <ul className="space-y-2 text-sm text-red-700">
+                <ul className="space-y-2 text-sm text-accent-strong">
                   <li>Photos or media</li>
                   <li>Posts or stories</li>
                   <li>Messages or DMs</li>
@@ -96,13 +96,13 @@ export default function FacebookReviewInstructions() {
 
           {/* Purpose */}
           <section className="mb-12">
-            <h2 className="text-2xl font-bold text-gray-900 mb-6">🎯 Purpose</h2>
+            <h2 className="text-2xl font-bold text-ink mb-6">🎯 Purpose</h2>
             
-            <div className="bg-blue-50 border border-blue-200 rounded-lg p-6 text-center">
+            <div className="bg-accent-soft/40 border border-accent/25 rounded-lg p-6 text-center">
               <p className="text-lg">
                 <strong>Simple user authentication for Albanian beauty salon booking platform</strong>
               </p>
-              <p className="mt-3 text-sm text-gray-600">
+              <p className="mt-3 text-sm text-clay">
                 Users discover salons on Instagram → Easy login with Instagram → Book appointments
               </p>
             </div>
@@ -110,19 +110,19 @@ export default function FacebookReviewInstructions() {
 
           {/* GDPR Compliance */}
           <section className="mb-12">
-            <h2 className="text-2xl font-bold text-gray-900 mb-6">🛡️ Privacy Compliance</h2>
+            <h2 className="text-2xl font-bold text-ink mb-6">🛡️ Privacy Compliance</h2>
             
             <div className="grid md:grid-cols-2 gap-4">
-              <div className="text-center p-4 border border-green-200 rounded-lg bg-green-50">
+              <div className="text-center p-4 border border-success/25 rounded-lg bg-success/5">
                 <h4 className="font-semibold mb-2">📋 Privacy Policy</h4>
-                <a href="https://www.imirezervimi.al/privacy-policy" className="text-blue-600 hover:underline text-sm">
+                <a href="https://www.imirezervimi.al/privacy-policy" className="text-accent hover:underline text-sm">
                   View Albanian Privacy Policy
                 </a>
               </div>
               
-              <div className="text-center p-4 border border-blue-200 rounded-lg bg-blue-50">
+              <div className="text-center p-4 border border-accent/25 rounded-lg bg-accent-soft/40">
                 <h4 className="font-semibold mb-2">🗑️ Data Deletion</h4>
-                <a href="https://www.imirezervimi.al/api/auth/data-deletion" className="text-blue-600 hover:underline text-sm">
+                <a href="https://www.imirezervimi.al/api/auth/data-deletion" className="text-accent hover:underline text-sm">
                   Active GDPR Endpoint
                 </a>
               </div>
@@ -131,9 +131,9 @@ export default function FacebookReviewInstructions() {
 
           {/* Contact */}
           <section className="mb-12">
-            <h2 className="text-2xl font-bold text-gray-900 mb-6">📞 Contact</h2>
+            <h2 className="text-2xl font-bold text-ink mb-6">📞 Contact</h2>
             
-            <div className="bg-gray-50 border border-gray-200 rounded-lg p-6 text-center">
+            <div className="bg-cream border border-linen rounded-lg p-6 text-center">
               <p>Questions? Contact: <strong>fatjona.bucpapaj@gmail.com</strong></p>
             </div>
           </section>
@@ -143,7 +143,7 @@ export default function FacebookReviewInstructions() {
           <section className="text-center border-t pt-8">
             <div className="bg-blue-600 text-white p-6 rounded-lg">
               <h3 className="text-xl font-bold mb-4">Ready to Test?</h3>
-              <a href="https://www.imirezervimi.al/login" className="bg-white text-blue-600 px-6 py-3 rounded-lg font-bold hover:bg-gray-100 inline-block">
+              <a href="https://www.imirezervimi.al/login" className="bg-paper text-accent px-6 py-3 rounded-lg font-bold hover:bg-sand inline-block">
                 Test Instagram Login Now →
               </a>
             </div>

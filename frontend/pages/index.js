@@ -1,17 +1,55 @@
 // frontend/pages/index.js
-// Enhanced Albanian homepage for ImiRezervimi.al
+// Albanian homepage for ImiRezervimi.al — editorial rebuild
 
 import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/router'
-import { useEffect, useState } from 'react'
-import Layout, { homeLayout } from '../components/layout/Layout'
+import { useEffect } from 'react'
 import Link from 'next/link'
+import { ArrowRight, CalendarCheck, MessageCircle, Scissors, Sparkles } from 'lucide-react'
+import Layout, { homeLayout } from '../components/layout/Layout'
+import Container from '../components/ui/Container'
+import Section, { SectionHeading } from '../components/ui/Section'
+import HeroVideo from '../components/ui/HeroVideo'
+import Spinner from '../components/ui/Spinner'
+
+function InstagramIcon({ size = 18, className = '' }) {
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.75"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+      aria-hidden="true"
+    >
+      <rect width="20" height="20" x="2" y="2" rx="5" ry="5" />
+      <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
+      <line x1="17.5" x2="17.51" y1="6.5" y2="6.5" />
+    </svg>
+  )
+}
+
+function EditorialPhoto({ src, alt, className = '' }) {
+  // Plain img so pages degrade gracefully until generated media lands
+  return (
+    // eslint-disable-next-line @next/next/no-img-element
+    <img
+      src={src}
+      alt={alt}
+      loading="lazy"
+      className={`h-full w-full object-cover ${className}`}
+      onError={(e) => { e.currentTarget.style.visibility = 'hidden' }}
+    />
+  )
+}
 
 export default function Homepage() {
   const { data: session, status } = useSession()
   const router = useRouter()
-  const [isVisible, setIsVisible] = useState(false)
-  const [scrollY, setScrollY] = useState(0)
 
   useEffect(() => {
     if (session) {
@@ -19,31 +57,10 @@ export default function Homepage() {
     }
   }, [session, router])
 
-  useEffect(() => {
-    const timer = setTimeout(() => setIsVisible(true), 100)
-    return () => clearTimeout(timer)
-  }, [])
-
-  useEffect(() => {
-    const handleScroll = () => setScrollY(window.scrollY)
-    window.addEventListener('scroll', handleScroll)
-    return () => window.removeEventListener('scroll', handleScroll)
-  }, [])
-
   if (status === 'loading') {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-pink-50 via-red-50 to-orange-50 flex items-center justify-center">
-        <div className="text-center">
-          <div className="mx-auto h-20 w-20 rounded-3xl bg-gradient-to-br from-red-500 to-pink-500 flex items-center justify-center mb-6 shadow-2xl animate-pulse">
-            <span className="text-3xl font-bold text-white">IR</span>
-          </div>
-          <div className="flex space-x-2 justify-center">
-            <div className="w-3 h-3 bg-red-500 rounded-full animate-bounce"></div>
-            <div className="w-3 h-3 bg-pink-500 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
-            <div className="w-3 h-3 bg-orange-500 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
-          </div>
-          <p className="text-gray-600 mt-4 text-lg">Po ngarkohet...</p>
-        </div>
+      <div className="min-h-screen bg-cream flex items-center justify-center">
+        <Spinner size="lg" label="Po ngarkohet..." />
       </div>
     )
   }
@@ -53,493 +70,251 @@ export default function Homepage() {
       title: "Rezervime Online për Sallone & Berberi",
       description: "Platforma e parë shqiptare për rezervime online në sallone bukurie dhe berberi. Rezervo me Instagram, konfirmo me WhatsApp."
     })}>
-      <div className="relative overflow-hidden">
-        {/* Dynamic Background */}
-        <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          <div 
-            className="absolute top-20 left-10 w-96 h-96 bg-gradient-to-r from-pink-200 to-red-200 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-float"
-            style={{ transform: `translateY(${scrollY * 0.5}px)` }}
-          ></div>
-          <div 
-            className="absolute top-40 right-10 w-96 h-96 bg-gradient-to-r from-red-200 to-orange-200 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-float-delayed"
-            style={{ transform: `translateY(${scrollY * 0.3}px)` }}
-          ></div>
-          <div 
-            className="absolute -bottom-8 left-20 w-96 h-96 bg-gradient-to-r from-orange-200 to-pink-200 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-float-slow"
-            style={{ transform: `translateY(${scrollY * 0.4}px)` }}
-          ></div>
-          
-          {/* Floating Icons - Mixed for both audiences */}
-          <div className="absolute top-32 left-1/4 animate-float-icon">
-            <div className="w-16 h-16 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center shadow-lg">
-              <span className="text-3xl">💅</span>
+      {/* ============ HERO ============ */}
+      <section className="relative min-h-[92vh] flex items-end bg-ink overflow-hidden">
+        <HeroVideo
+          src="/media/hero/hero-loop.mp4"
+          poster="/media/hero/hero-poster.webp"
+          alt="Sallon bukurie me dritë natyrale"
+          className="absolute inset-0"
+        />
+        {/* Legibility gradient */}
+        <div className="absolute inset-0 bg-gradient-to-t from-ink/90 via-ink/40 to-ink/20 pointer-events-none"></div>
+
+        <Container className="relative pb-16 sm:pb-24 pt-40 w-full">
+          <div className="max-w-3xl animate-fade-up">
+            <p className="text-cream/70 text-xs sm:text-sm font-medium uppercase tracking-[0.25em] mb-5">
+              Platforma e parë shqiptare për rezervime online
+            </p>
+            <h1 className="font-display text-4xl sm:text-6xl lg:text-7xl text-cream leading-[1.05] tracking-tight mb-6">
+              Rezervo te salloni yt i preferuar
+            </h1>
+            <p className="text-cream/80 text-lg sm:text-xl leading-relaxed max-w-xl mb-10">
+              Identifikohu me Instagram, zgjidh orarin, dhe konfirmo me WhatsApp.
+              Pa telefonata, pa pritje.
+            </p>
+
+            <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
+              <Link
+                href="/salons"
+                className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-accent text-white rounded font-medium text-base hover:bg-accent-strong transition-colors duration-200 btn-touch"
+              >
+                Zbulo Sallone
+                <ArrowRight size={18} strokeWidth={1.75} aria-hidden="true" />
+              </Link>
+              <Link
+                href="/salon"
+                className="inline-flex items-center justify-center gap-2 px-8 py-4 border border-cream/30 text-cream rounded font-medium text-base hover:bg-cream/10 transition-colors duration-200 btn-touch"
+              >
+                Për Sallone & Berberi
+              </Link>
             </div>
           </div>
-          <div className="absolute top-64 right-1/4 animate-float-icon-delayed">
-            <div className="w-14 h-14 bg-white/20 backdrop-blur-sm rounded-xl flex items-center justify-center shadow-lg">
-              <span className="text-2xl">✂️</span>
+        </Container>
+      </section>
+
+      {/* ============ CATEGORY DUO ============ */}
+      <Section tone="cream">
+        <SectionHeading
+          eyebrow="Zgjidh stilin tënd"
+          title="Bukuri dhe berberi, në një vend"
+          subtitle="Nga manikyri te prerja klasike — gjej profesionistët më të mirë pranë teje."
+        />
+        <div className="grid sm:grid-cols-2 gap-5 sm:gap-6">
+          <Link href="/salons?category=beauty" className="group relative rounded-lg overflow-hidden bg-sand aspect-[4/3] block">
+            <EditorialPhoto src="/media/photos/manicure-detail.webp" alt="Manikyr në sallon bukurie" className="transition-transform duration-700 group-hover:scale-[1.03]" />
+            <div className="absolute inset-0 bg-gradient-to-t from-ink/70 to-transparent"></div>
+            <div className="absolute bottom-0 left-0 p-6 sm:p-8">
+              <div className="flex items-center gap-2 text-cream/70 text-xs uppercase tracking-[0.2em] mb-2">
+                <Sparkles size={14} strokeWidth={1.75} aria-hidden="true" />
+                Sallone Bukurie
+              </div>
+              <p className="font-display text-2xl sm:text-3xl text-cream">Flokë, thonj, makeup</p>
+            </div>
+          </Link>
+
+          <Link href="/salons?category=barbershop" className="group relative rounded-lg overflow-hidden bg-ink aspect-[4/3] block">
+            <EditorialPhoto src="/media/photos/barbershop.webp" alt="Berber duke prerë flokë" className="transition-transform duration-700 group-hover:scale-[1.03]" />
+            <div className="absolute inset-0 bg-gradient-to-t from-ink/70 to-transparent"></div>
+            <div className="absolute bottom-0 left-0 p-6 sm:p-8">
+              <div className="flex items-center gap-2 text-cream/70 text-xs uppercase tracking-[0.2em] mb-2">
+                <Scissors size={14} strokeWidth={1.75} aria-hidden="true" />
+                Berberi & Sallone për Meshkuj
+              </div>
+              <p className="font-display text-2xl sm:text-3xl text-cream">Prerje, rroje, styling</p>
+            </div>
+          </Link>
+        </div>
+      </Section>
+
+      {/* ============ HOW IT WORKS ============ */}
+      <Section tone="paper" id="si-funksionon">
+        <SectionHeading
+          eyebrow="Si funksionon"
+          title="Tre hapa deri te takimi yt"
+          subtitle="Vetëm 3 hapa për rezervimin tuaj — nga Instagram te konfirmimi në WhatsApp."
+        />
+        <div className="grid sm:grid-cols-3 gap-10 sm:gap-8">
+          {[
+            {
+              n: '01',
+              icon: InstagramIcon,
+              title: 'Zbulo në Instagram',
+              text: 'Shfleto sallone ose berberi në Instagram dhe kliko linkun në bio për të rezervuar.',
+            },
+            {
+              n: '02',
+              icon: CalendarCheck,
+              title: 'Rezervo Online',
+              text: 'Identifikohu me Instagram dhe zgjidh shërbimin dhe orarin që të përshtatet.',
+            },
+            {
+              n: '03',
+              icon: MessageCircle,
+              title: 'Konfirmo me WhatsApp',
+              text: 'Merr konfirmimin në WhatsApp dhe kujtesa automatike para takimit.',
+            },
+          ].map((step) => {
+            const Icon = step.icon
+            return (
+              <div key={step.n} className="relative">
+                <div className="font-display text-6xl text-linen leading-none mb-4 select-none" aria-hidden="true">
+                  {step.n}
+                </div>
+                <div className="flex items-center gap-3 mb-3">
+                  <span className="w-10 h-10 rounded-full bg-accent-soft flex items-center justify-center">
+                    <Icon size={18} strokeWidth={1.75} className="text-accent" aria-hidden="true" />
+                  </span>
+                  <h3 className="font-display text-xl text-ink">{step.title}</h3>
+                </div>
+                <p className="text-clay leading-relaxed">{step.text}</p>
+              </div>
+            )
+          })}
+        </div>
+      </Section>
+
+      {/* ============ EDITORIAL PHOTO STRIP ============ */}
+      <section className="bg-cream">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-1 h-48 sm:h-64 lg:h-80">
+          <div className="bg-sand overflow-hidden"><EditorialPhoto src="/media/photos/hair-styling.webp" alt="Stilim flokësh" /></div>
+          <div className="bg-linen overflow-hidden"><EditorialPhoto src="/media/photos/products-shelf.webp" alt="Produkte bukurie" /></div>
+          <div className="bg-sand overflow-hidden"><EditorialPhoto src="/media/photos/reception-booking.webp" alt="Rezervim në recepsion" /></div>
+          <div className="bg-linen overflow-hidden"><EditorialPhoto src="/media/photos/unisex-styling.webp" alt="Stilim unisex" /></div>
+        </div>
+      </section>
+
+      {/* ============ FOR SALON OWNERS ============ */}
+      <Section tone="ink">
+        <div className="grid lg:grid-cols-2 gap-12 items-center">
+          <div>
+            <SectionHeading
+              align="left"
+              dark
+              eyebrow="Për pronarët e salloneve & berberive"
+              title="Je pronare salloni ose berberi?"
+              subtitle="Kthe ndjekësit e Instagram në klientë të rregullt. Kërkesat të vijnë të organizuara, konfirmimet dërgohen vetë në WhatsApp."
+              className="mb-8"
+            />
+            <ul className="space-y-4 mb-10">
+              {[
+                'Më shumë rezervime — kërkesa 24/7, edhe kur je e mbyllur',
+                'Zero thirrje të humbura — konfirmime automatike në WhatsApp',
+                'Orari nën kontrollin tënd — mirato çdo kërkesë me një klik',
+              ].map((item) => (
+                <li key={item} className="flex items-start gap-3 text-cream/80">
+                  <span className="mt-1 w-5 h-5 rounded-full bg-accent/20 flex items-center justify-center shrink-0">
+                    <span className="w-1.5 h-1.5 bg-accent-soft rounded-full"></span>
+                  </span>
+                  {item}
+                </li>
+              ))}
+            </ul>
+            <div className="flex flex-col sm:flex-row gap-3">
+              <Link
+                href="/salon"
+                className="inline-flex items-center justify-center gap-2 px-7 py-3.5 bg-accent text-white rounded font-medium hover:bg-accent-strong transition-colors duration-200 btn-touch"
+              >
+                Regjistro Sallonin Tënd
+                <ArrowRight size={18} strokeWidth={1.75} aria-hidden="true" />
+              </Link>
+              <Link
+                href="/salon#deshmi"
+                className="inline-flex items-center justify-center px-7 py-3.5 border border-cream/30 text-cream rounded font-medium hover:bg-cream/10 transition-colors duration-200 btn-touch"
+              >
+                Mëso më shumë
+              </Link>
             </div>
           </div>
-          <div className="absolute bottom-96 left-1/3 animate-float-icon-slow">
-            <div className="w-12 h-12 bg-white/20 backdrop-blur-sm rounded-lg flex items-center justify-center shadow-lg">
-              <span className="text-xl">✨</span>
-            </div>
-          </div>
-          <div className="absolute top-96 right-1/3 animate-float-icon">
-            <div className="w-12 h-12 bg-white/20 backdrop-blur-sm rounded-lg flex items-center justify-center shadow-lg">
-              <span className="text-xl">💈</span>
-            </div>
+          <div className="relative rounded-lg overflow-hidden bg-cream/5 aspect-[4/5] hidden lg:block">
+            <EditorialPhoto src="/media/photos/salon-interior.webp" alt="Ambient salloni me dritë natyrale" />
           </div>
         </div>
+      </Section>
 
+      {/* ============ TESTIMONIALS ============ */}
+      <Section tone="sand" id="deshmi">
+        <SectionHeading
+          eyebrow="Dëshmi"
+          title="Çfarë thonë klientët tanë"
+        />
+        <div className="grid sm:grid-cols-3 gap-5 sm:gap-6">
+          {[
+            {
+              quote: 'Shumë e thjeshtë dhe e shpejtë! Rezervova në sallonin tim të preferuar vetëm me 2 klikime.',
+              name: 'Ana M.',
+              city: 'Tiranë',
+            },
+            {
+              quote: 'Më pëlqen shumë që konfirmohet në WhatsApp! Nuk harrohen më takimet.',
+              name: 'Eda K.',
+              city: 'Durrës',
+            },
+            {
+              quote: 'Perfekt për rezervime të shpejta. Salloni im tani është më i organizuar.',
+              name: 'Mira S.',
+              city: 'Vlorë',
+            },
+          ].map((t) => (
+            <figure key={t.name} className="testimonial bg-paper rounded-lg border border-linen p-6 sm:p-8 flex flex-col">
+              <blockquote className="font-display text-lg text-ink leading-relaxed flex-1">
+                &ldquo;{t.quote}&rdquo;
+              </blockquote>
+              <figcaption className="mt-6 pt-4 border-t border-linen text-sm">
+                <span className="font-medium text-ink">{t.name}</span>
+                <span className="text-clay"> — {t.city}</span>
+              </figcaption>
+            </figure>
+          ))}
+        </div>
+      </Section>
 
-        {/* Enhanced Hero Section */}
-        <section className="relative py-32 lg:py-40">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className={`text-center transition-all duration-1000 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
-              {/* Badge */}
-              <div className="inline-flex items-center px-8 py-4 rounded-full bg-gradient-to-r from-red-100 via-pink-100 to-orange-100 border border-red-200/50 mb-12 shadow-lg backdrop-blur-sm animate-fade-in-up">
-                <span className="w-3 h-3 bg-green-500 rounded-full mr-3 animate-pulse"></span>
-                <span className="text-red-600 font-semibold text-lg">✨ Platforma #1 për rezervime në Shqipëri ✨</span>
-              </div>
-              
-              {/* Main Heading */}
-              <div className="mb-8">
-                <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold text-gray-900 mb-6 leading-tight">
-                  Rezervo te{' '}
-                  <span className="relative inline-block">
-                    <span className="text-transparent bg-clip-text bg-gradient-to-r from-red-500 via-pink-500 to-orange-500 animate-gradient-shift">
-                      salloni
-                    </span>
-                  </span>{' '}
-                  ose{' '}
-                  <span className="relative inline-block">
-                    <span className="text-transparent bg-clip-text bg-gradient-to-r from-slate-600 via-gray-700 to-slate-800 animate-gradient-shift">
-                      berberi
-                    </span>
-                  </span>{' '}
-                  yt i preferuar
-                </h1>
-                
-                <p className="text-2xl md:text-3xl text-gray-600 mb-8 max-w-5xl mx-auto leading-relaxed">
-                  Platforma e parë shqiptare për rezervime online në sallone bukurie dhe berberi.
-                  <br className="hidden md:block" />
-                  <span className="text-red-500 font-semibold">Identifikohu me Instagram</span>, rezervo me 1 klik, <span className="text-green-500 font-semibold">konfirmo me WhatsApp</span>.
-                </p>
-
-                {/* Category Selector */}
-                <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-12">
-                  <Link href="/salons?category=beauty" className="group px-8 py-4 bg-gradient-to-r from-red-500 via-pink-500 to-orange-500 text-white rounded-2xl font-semibold hover:shadow-xl transition-all duration-300 transform hover:scale-105 flex items-center">
-                    <span className="mr-3 text-2xl">💅</span>
-                    Sallone Bukurie
-                    <span className="ml-3 transform group-hover:translate-x-1 transition-transform">→</span>
-                  </Link>
-                  <Link href="/salons?category=barbershop" className="group px-8 py-4 bg-gradient-to-r from-slate-700 via-gray-800 to-slate-900 text-white rounded-2xl font-semibold hover:shadow-xl transition-all duration-300 transform hover:scale-105 flex items-center">
-                    <span className="mr-3 text-2xl">✂️</span>
-                    Berberi & Sallone për Meshkuj
-                    <span className="ml-3 transform group-hover:translate-x-1 transition-transform">→</span>
-                  </Link>
-                </div>
-              </div>
-
-              {/* CTA Buttons */}
-              <div className="flex flex-col sm:flex-row gap-6 justify-center items-center mb-16">
-                <Link href="/salons" className="group bg-gradient-to-r from-red-500 via-pink-500 to-orange-500 text-white px-10 py-5 rounded-3xl font-bold hover:shadow-2xl hover:shadow-red-500/30 transition-all duration-500 transform hover:scale-105 hover:-translate-y-2 text-xl relative overflow-hidden">
-                  <span className="relative z-10 flex items-center">
-                    <span className="mr-3 text-2xl">🔍</span>
-                    Zbulo Sallone
-                    <span className="ml-3 transform group-hover:translate-x-2 transition-transform duration-300">→</span>
-                  </span>
-                  <div className="absolute inset-0 bg-gradient-to-r from-red-600 via-pink-600 to-orange-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                </Link>
-                
-                <button className="group border-3 border-gray-300 text-gray-700 px-10 py-5 rounded-3xl font-bold hover:bg-white hover:border-red-300 hover:text-red-600 transition-all duration-500 text-xl shadow-lg hover:shadow-xl">
-                  <span className="flex items-center">
-                    <span className="mr-3 text-2xl">📱</span>
-                    Shiko Demo
-                    <span className="ml-3 transform group-hover:translate-x-2 transition-transform duration-300">→</span>
-                  </span>
-                </button>
-              </div>
-
-              {/* Enhanced Social Proof */}
-              <div className="text-center">
-                <p className="mb-8 text-xl text-gray-600">E besueshme nga <span className="text-red-500 font-bold text-2xl">500+</span> sallone të njohura në:</p>
-                <div className="flex justify-center space-x-6 flex-wrap gap-4">
-                  <div className="flex items-center space-x-3 px-6 py-4 bg-white/90 backdrop-blur-sm rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 border border-red-100">
-                    <span className="text-2xl">🏢</span>
-                    <span className="font-semibold text-gray-700">Tiranë</span>
-                    <span className="text-xs bg-green-100 text-green-600 px-2 py-1 rounded-full">Aktiv</span>
-                  </div>
-                  <div className="flex items-center space-x-3 px-6 py-4 bg-white/90 backdrop-blur-sm rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 border border-red-100">
-                    <span className="text-2xl">🏢</span>
-                    <span className="font-semibold text-gray-700">Durrës</span>
-                    <span className="text-xs bg-green-100 text-green-600 px-2 py-1 rounded-full">Aktiv</span>
-                  </div>
-                  <div className="flex items-center space-x-3 px-6 py-4 bg-white/90 backdrop-blur-sm rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 border border-red-100">
-                    <span className="text-2xl">🏢</span>
-                    <span className="font-semibold text-gray-700">Vlorë</span>
-                    <span className="text-xs bg-green-100 text-green-600 px-2 py-1 rounded-full">Aktiv</span>
-                  </div>
-                  <div className="flex items-center space-x-3 px-6 py-4 bg-white/90 backdrop-blur-sm rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 border border-red-100">
-                    <span className="text-2xl">🏢</span>
-                    <span className="font-semibold text-gray-700">Shkodër</span>
-                    <span className="text-xs bg-green-100 text-green-600 px-2 py-1 rounded-full">Aktiv</span>
-                  </div>
-                </div>
-              </div>
-            </div>
+      {/* ============ FINAL CTA ============ */}
+      <Section tone="cream">
+        <div className="text-center max-w-2xl mx-auto">
+          <h2 className="font-display text-3xl sm:text-5xl text-ink tracking-tight mb-5">
+            Gati për rezervimin tuaj të parë?
+          </h2>
+          <p className="text-clay text-lg mb-10">
+            Zbulo sallonet dhe berberitë më të mira në Shqipëri dhe rezervo online sot.
+          </p>
+          <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center">
+            <Link
+              href="/login"
+              className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-accent text-white rounded font-medium text-base hover:bg-accent-strong transition-colors duration-200 btn-touch"
+            >
+              Fillo Tani - FALAS
+              <ArrowRight size={18} strokeWidth={1.75} aria-hidden="true" />
+            </Link>
+            <Link
+              href="/salon"
+              className="inline-flex items-center justify-center px-8 py-4 border border-linen bg-paper text-ink rounded font-medium text-base hover:border-clay transition-colors duration-200 btn-touch"
+            >
+              Regjistro Sallonin
+            </Link>
           </div>
-        </section>
-
-        {/* Enhanced Features Section */}
-        <section id="si-funksionon" className="py-32 bg-white/80 backdrop-blur-sm relative">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="text-center mb-20">
-              <div className="inline-block px-6 py-2 bg-red-100 text-red-600 rounded-full text-sm font-semibold mb-6">
-                SI FUNKSIONON
-              </div>
-              <h2 className="text-4xl md:text-6xl font-bold text-gray-900 mb-6">
-                Si funksionon ImiRezervimi.al?
-              </h2>
-              <p className="text-2xl text-gray-600">
-                Vetëm <span className="text-red-500 font-bold">3 hapa</span> për rezervimin tuaj
-              </p>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
-              {/* Step 1 */}
-              <div className="relative group">
-                <div className="text-center transform group-hover:scale-105 transition-all duration-500">
-                  <div className="relative mb-8">
-                    <div className="w-28 h-28 bg-gradient-to-br from-blue-500 to-purple-600 rounded-3xl flex items-center justify-center mx-auto shadow-2xl transform group-hover:rotate-6 transition-all duration-500">
-                      <span className="text-4xl">📱</span>
-                    </div>
-                    <div className="absolute -top-3 -right-3 w-10 h-10 bg-white rounded-full shadow-lg flex items-center justify-center border-2 border-red-500">
-                      <span className="text-red-600 text-lg font-bold">1</span>
-                    </div>
-                  </div>
-                  <h3 className="text-2xl font-bold text-gray-900 mb-4">Zbulo në Instagram</h3>
-                  <p className="text-gray-600 leading-relaxed text-lg">Shfleto sallone ose berberi në Instagram dhe kliko linkun në bio për të rezervuar</p>
-                </div>
-              </div>
-
-              {/* Step 2 */}
-              <div className="relative group">
-                <div className="text-center transform group-hover:scale-105 transition-all duration-500">
-                  <div className="relative mb-8">
-                    <div className="w-28 h-28 bg-gradient-to-br from-purple-500 to-pink-600 rounded-3xl flex items-center justify-center mx-auto shadow-2xl transform group-hover:rotate-6 transition-all duration-500">
-                      <span className="text-4xl">⏰</span>
-                    </div>
-                    <div className="absolute -top-3 -right-3 w-10 h-10 bg-white rounded-full shadow-lg flex items-center justify-center border-2 border-red-500">
-                      <span className="text-red-600 text-lg font-bold">2</span>
-                    </div>
-                  </div>
-                  <h3 className="text-2xl font-bold text-gray-900 mb-4">Rezervo Online</h3>
-                  <p className="text-gray-600 leading-relaxed text-lg">Identifikohu me Instagram dhe zgjidh orarin që të përshtat</p>
-                </div>
-              </div>
-
-              {/* Step 3 */}
-              <div className="relative group">
-                <div className="text-center transform group-hover:scale-105 transition-all duration-500">
-                  <div className="relative mb-8">
-                    <div className="w-28 h-28 bg-gradient-to-br from-pink-500 to-red-600 rounded-3xl flex items-center justify-center mx-auto shadow-2xl transform group-hover:rotate-6 transition-all duration-500">
-                      <span className="text-4xl">💬</span>
-                    </div>
-                    <div className="absolute -top-3 -right-3 w-10 h-10 bg-white rounded-full shadow-lg flex items-center justify-center border-2 border-red-500">
-                      <span className="text-red-600 text-lg font-bold">3</span>
-                    </div>
-                  </div>
-                  <h3 className="text-2xl font-bold text-gray-900 mb-4">Konfirmo me WhatsApp</h3>
-                  <p className="text-gray-600 leading-relaxed text-lg">Merr konfirmimin në WhatsApp dhe kujtesa automatike para takimit</p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* Salon Owner CTA Section */}
-        <section className="py-32 bg-gradient-to-r from-purple-50 via-indigo-50 to-blue-50 relative overflow-hidden">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="bg-white/90 backdrop-blur-lg rounded-3xl p-12 shadow-2xl border border-white/50 relative overflow-hidden">
-              <div className="absolute inset-0 bg-gradient-to-br from-purple-500/5 to-blue-500/5"></div>
-              <div className="relative z-10 text-center">
-                <div className="mb-8">
-                  <div className="inline-block px-6 py-2 bg-purple-100 text-purple-600 rounded-full text-sm font-semibold mb-6">
-                    PËR PRONARËT E SALLONEVE & BERBERIVE
-                  </div>
-                  <h2 className="text-4xl md:text-6xl font-bold text-gray-900 mb-6">
-                    Je pronare salloni ose berberi?
-                  </h2>
-                  <p className="text-2xl text-gray-600 mb-8 max-w-3xl mx-auto leading-relaxed">
-                    Bashkohu me <span className="text-purple-500 font-bold">500+ sallone dhe berberi</span> që kanë rritur rezervimet me <span className="text-green-500 font-bold">+150%</span> falë ImiRezervimi.al
-                  </p>
-                </div>
-                
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
-                  <div className="text-center">
-                    <div className="w-16 h-16 bg-gradient-to-br from-green-500 to-emerald-500 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg">
-                      <span className="text-2xl">📈</span>
-                    </div>
-                    <h3 className="font-bold text-gray-900 mb-2">Më shumë rezervime</h3>
-                    <p className="text-gray-600">Rezervime 24/7 edhe kur je mbyllur</p>
-                  </div>
-                  
-                  <div className="text-center">
-                    <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-purple-500 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg">
-                      <span className="text-2xl">⚡</span>
-                    </div>
-                    <h3 className="font-bold text-gray-900 mb-2">Zero thirrje të humbura</h3>
-                    <p className="text-gray-600">Konfirmime automatike në WhatsApp</p>
-                  </div>
-                  
-                  <div className="text-center">
-                    <div className="w-16 h-16 bg-gradient-to-br from-pink-500 to-red-500 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg">
-                      <span className="text-2xl">💰</span>
-                    </div>
-                    <h3 className="font-bold text-gray-900 mb-2">30 ditë falas</h3>
-                    <p className="text-gray-600">Testo platformën pa asnjë kosto</p>
-                  </div>
-                </div>
-
-                <div className="flex flex-col sm:flex-row gap-6 justify-center">
-                  <Link href="/salon" className="group bg-gradient-to-r from-purple-500 via-indigo-500 to-blue-500 text-white px-10 py-5 rounded-3xl font-bold hover:shadow-2xl hover:shadow-purple-500/30 transition-all duration-500 transform hover:scale-105 hover:-translate-y-2 text-xl relative overflow-hidden">
-                    <span className="relative z-10 flex items-center justify-center">
-                      <span className="mr-3 text-2xl">🏪</span>
-                      Regjistro Sallonin Tënd
-                      <span className="ml-3 transform group-hover:translate-x-2 transition-transform duration-300">→</span>
-                    </span>
-                    <div className="absolute inset-0 bg-gradient-to-r from-purple-600 via-indigo-600 to-blue-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                  </Link>
-                  
-                  <Link href="/salon#deshmi" className="group border-3 border-gray-300 text-gray-700 px-10 py-5 rounded-3xl font-bold hover:bg-white hover:border-purple-300 hover:text-purple-600 transition-all duration-500 text-xl shadow-lg hover:shadow-xl">
-                    <span className="flex items-center justify-center">
-                      <span className="mr-3 text-2xl">⭐</span>
-                      Shiko Dëshmi
-                      <span className="ml-3 transform group-hover:translate-x-2 transition-transform duration-300">→</span>
-                    </span>
-                  </Link>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* Enhanced Testimonials */}
-        <section className="py-32 bg-gradient-to-r from-red-50 via-pink-50 to-orange-50 relative overflow-hidden">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="text-center mb-20">
-              <div className="inline-block px-6 py-2 bg-green-100 text-green-600 rounded-full text-sm font-semibold mb-6">
-                DËSHMI
-              </div>
-              <h2 className="text-4xl md:text-6xl font-bold text-gray-900 mb-6">
-                Çfarë thonë klientët tanë
-              </h2>
-              <p className="text-2xl text-gray-600">
-                <span className="text-green-500 font-bold">10,000+</span> klienta të kënaqura në të gjithë Shqipërinë
-              </p>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              {/* Testimonial 1 */}
-              <div className="group bg-white/90 backdrop-blur-lg rounded-3xl p-8 shadow-xl hover:shadow-2xl transition-all duration-500 transform hover:scale-105 hover:-translate-y-2 border border-white/50 relative overflow-hidden">
-                <div className="absolute inset-0 bg-gradient-to-br from-red-500/5 to-pink-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-                <div className="relative z-10">
-                  <div className="flex items-center mb-6">
-                    <div className="w-16 h-16 bg-gradient-to-br from-purple-500 to-pink-500 rounded-2xl flex items-center justify-center shadow-lg">
-                      <span className="text-white font-bold text-xl">A</span>
-                    </div>
-                    <div className="ml-4">
-                      <h4 className="font-bold text-gray-900 text-lg">Ana Mema</h4>
-                      <p className="text-gray-500">Klienti nga Tirana</p>
-                    </div>
-                  </div>
-                  <p className="text-gray-700 italic text-lg leading-relaxed mb-6">
-                    &ldquo;Shumë e thjeshtë dhe e shpejtë! Rezervova në sallonin tim të preferuar vetëm me 2 klikime.&rdquo;
-                  </p>
-                  <div className="flex items-center justify-between">
-                    <div className="flex text-yellow-400 text-xl">
-                      ⭐⭐⭐⭐⭐
-                    </div>
-                    <div className="text-xs text-gray-400 bg-gray-100 px-3 py-1 rounded-full">
-                      Verifikuar ✓
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Testimonial 2 */}
-              <div className="group bg-white/90 backdrop-blur-lg rounded-3xl p-8 shadow-xl hover:shadow-2xl transition-all duration-500 transform hover:scale-105 hover:-translate-y-2 border border-white/50 relative overflow-hidden">
-                <div className="absolute inset-0 bg-gradient-to-br from-red-500/5 to-pink-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-                <div className="relative z-10">
-                  <div className="flex items-center mb-6">
-                    <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-purple-500 rounded-2xl flex items-center justify-center shadow-lg">
-                      <span className="text-white font-bold text-xl">E</span>
-                    </div>
-                    <div className="ml-4">
-                      <h4 className="font-bold text-gray-900 text-lg">Eda Kola</h4>
-                      <p className="text-gray-500">Klienti nga Durrës</p>
-                    </div>
-                  </div>
-                  <p className="text-gray-700 italic text-lg leading-relaxed mb-6">
-                    &ldquo;Më pëlqen shumë që konfirmohet në WhatsApp! Nuk harrohen më takimet.&rdquo;
-                  </p>
-                  <div className="flex items-center justify-between">
-                    <div className="flex text-yellow-400 text-xl">
-                      ⭐⭐⭐⭐⭐
-                    </div>
-                    <div className="text-xs text-gray-400 bg-gray-100 px-3 py-1 rounded-full">
-                      Verifikuar ✓
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Testimonial 3 */}
-              <div className="group bg-white/90 backdrop-blur-lg rounded-3xl p-8 shadow-xl hover:shadow-2xl transition-all duration-500 transform hover:scale-105 hover:-translate-y-2 border border-white/50 relative overflow-hidden">
-                <div className="absolute inset-0 bg-gradient-to-br from-red-500/5 to-pink-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-                <div className="relative z-10">
-                  <div className="flex items-center mb-6">
-                    <div className="w-16 h-16 bg-gradient-to-br from-green-500 to-blue-500 rounded-2xl flex items-center justify-center shadow-lg">
-                      <span className="text-white font-bold text-xl">M</span>
-                    </div>
-                    <div className="ml-4">
-                      <h4 className="font-bold text-gray-900 text-lg">Mira Shehu</h4>
-                      <p className="text-gray-500">Klienti nga Vlorë</p>
-                    </div>
-                  </div>
-                  <p className="text-gray-700 italic text-lg leading-relaxed mb-6">
-                    &ldquo;Perfekt për rezervime të shpejta! Salloni im tani është më i organizuar.&rdquo;
-                  </p>
-                  <div className="flex items-center justify-between">
-                    <div className="flex text-yellow-400 text-xl">
-                      ⭐⭐⭐⭐⭐
-                    </div>
-                    <div className="text-xs text-gray-400 bg-gray-100 px-3 py-1 rounded-full">
-                      Verifikuar ✓
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* Enhanced CTA Section */}
-        <section className="py-32 bg-gradient-to-r from-red-500 via-pink-500 to-orange-500 relative overflow-hidden">
-          <div className="absolute inset-0 bg-black/10"></div>
-          
-          <div className="relative max-w-5xl mx-auto text-center px-4 sm:px-6 lg:px-8">
-            <div className="mb-8">
-              <div className="inline-block px-6 py-2 bg-white/20 backdrop-blur-sm text-white rounded-full text-sm font-semibold mb-6">
-                GATI PËR TË FILLUAR?
-              </div>
-              <h2 className="text-4xl md:text-6xl font-bold text-white mb-8">
-                Gati për rezervimin tuaj të parë?
-              </h2>
-              <p className="text-2xl text-white/95 mb-12 leading-relaxed max-w-3xl mx-auto">
-                Bashkohu me <span className="font-bold text-yellow-300">10,000+</span> klienta që kanë zgjedhur ImiRezervimi.al për rezervime në sallone bukurie dhe berberi
-              </p>
-            </div>
-            
-            <div className="flex flex-col sm:flex-row gap-6 justify-center mb-12">
-              <Link href="/login" className="group bg-white text-red-500 px-10 py-5 rounded-3xl font-bold hover:bg-gray-50 transition-all duration-500 transform hover:scale-105 hover:-translate-y-2 text-xl shadow-2xl relative overflow-hidden">
-                <span className="relative z-10 flex items-center justify-center">
-                  <span className="mr-3 text-2xl">🚀</span>
-                  Fillo Tani - FALAS
-                  <span className="ml-3 transform group-hover:translate-x-2 transition-transform duration-300">→</span>
-                </span>
-              </Link>
-              
-              <Link href="/salon" className="group border-3 border-white text-white px-10 py-5 rounded-3xl font-bold hover:bg-white hover:text-red-500 transition-all duration-500 text-xl relative overflow-hidden">
-                <span className="flex items-center justify-center">
-                  <span className="mr-3 text-2xl">💼</span>
-                  Regjistro Sallonin
-                  <span className="ml-3 transform group-hover:translate-x-2 transition-transform duration-300">→</span>
-                </span>
-              </Link>
-            </div>
-
-            {/* Stats */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-white">
-              <div className="text-center">
-                <div className="text-3xl md:text-4xl font-bold mb-2">500+</div>
-                <div className="text-white/80">Sallone</div>
-              </div>
-              <div className="text-center">
-                <div className="text-3xl md:text-4xl font-bold mb-2">10k+</div>
-                <div className="text-white/80">Klienta</div>
-              </div>
-              <div className="text-center">
-                <div className="text-3xl md:text-4xl font-bold mb-2">50k+</div>
-                <div className="text-white/80">Rezervime</div>
-              </div>
-              <div className="text-center">
-                <div className="text-3xl md:text-4xl font-bold mb-2">4.9★</div>
-                <div className="text-white/80">Vlerësim</div>
-              </div>
-            </div>
-          </div>
-        </section>
-
-      </div>
-
-      <style jsx>{`
-        @keyframes float {
-          0%, 100% { transform: translate(0px, 0px) scale(1); }
-          33% { transform: translate(30px, -50px) scale(1.1); }
-          66% { transform: translate(-20px, 20px) scale(0.9); }
-        }
-        
-        @keyframes float-delayed {
-          0%, 100% { transform: translate(0px, 0px) scale(1); }
-          33% { transform: translate(-30px, 50px) scale(1.1); }
-          66% { transform: translate(20px, -20px) scale(0.9); }
-        }
-        
-        @keyframes float-slow {
-          0%, 100% { transform: translate(0px, 0px) scale(1); }
-          50% { transform: translate(25px, -25px) scale(1.05); }
-        }
-        
-        @keyframes float-icon {
-          0%, 100% { transform: translateY(0px) rotate(0deg); }
-          50% { transform: translateY(-20px) rotate(5deg); }
-        }
-        
-        @keyframes float-icon-delayed {
-          0%, 100% { transform: translateY(0px) rotate(0deg); }
-          50% { transform: translateY(-15px) rotate(-3deg); }
-        }
-        
-        @keyframes float-icon-slow {
-          0%, 100% { transform: translateY(0px) rotate(0deg); }
-          50% { transform: translateY(-10px) rotate(2deg); }
-        }
-        
-        @keyframes gradient-shift {
-          0%, 100% { background-position: 0% 50%; }
-          50% { background-position: 100% 50%; }
-        }
-        
-        @keyframes fade-in-up {
-          from { opacity: 0; transform: translateY(30px); }
-          to { opacity: 1; transform: translateY(0); }
-        }
-        
-        .animate-float { animation: float 7s ease-in-out infinite; }
-        .animate-float-delayed { animation: float-delayed 7s ease-in-out infinite 2s; }
-        .animate-float-slow { animation: float-slow 10s ease-in-out infinite 1s; }
-        .animate-float-icon { animation: float-icon 4s ease-in-out infinite; }
-        .animate-float-icon-delayed { animation: float-icon-delayed 4s ease-in-out infinite 1s; }
-        .animate-float-icon-slow { animation: float-icon-slow 5s ease-in-out infinite 2s; }
-        .animate-gradient-shift { 
-          background-size: 200% 200%;
-          animation: gradient-shift 3s ease infinite;
-        }
-        .animate-fade-in-up { animation: fade-in-up 0.6s ease-out; }
-      `}</style>
+        </div>
+      </Section>
     </Layout>
   )
 }
