@@ -4,8 +4,8 @@
   "description": "Platforma shqiptare për rezervime në sallone bukurie",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#fdf2f8",
-  "theme_color": "#dc2626",
+  "background_color": "#FAF7F2",
+  "theme_color": "#FAF7F2",
   "orientation": "portrait",
   "scope": "/",
   "lang": "sq",
@@ -68,7 +68,10 @@
       "form_factor": "narrow"
     }
   ],
-  "categories": ["lifestyle", "business"],
+  "categories": [
+    "lifestyle",
+    "business"
+  ],
   "shortcuts": [
     {
       "name": "Rezervo tani",

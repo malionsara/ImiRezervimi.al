@@ -45,7 +45,7 @@ export default function Layout({
   showNav = true,
   transparentHeader = false,
   fixedHeader = false,
-  backgroundClass = 'bg-white',
+  backgroundClass = 'bg-cream',
   containerClass = '',
   className = ''
 }: LayoutProps) {
@@ -61,7 +61,7 @@ export default function Layout({
         <meta name="description" content={pageDescription} />
         <meta name="keywords" content={pageKeywords} />
         <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-        <meta name="theme-color" content="#ef4444" />
+        <meta name="theme-color" content="#FAF7F2" />
         
         {/* Open Graph / Facebook */}
         <meta property="og:type" content="website" />
@@ -85,7 +85,7 @@ export default function Layout({
         <meta name="apple-mobile-web-app-title" content="ImiRezervimi" />
         
         {/* Favicon */}
-        <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
         <link rel="alternate icon" href="/favicon.ico" />
         <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
         
@@ -149,22 +149,15 @@ export default function Layout({
       </div>
 
       {/* Global Loading Spinner */}
-      <div 
+      <div
         id="global-loading"
-        className="fixed inset-0 bg-white/90 backdrop-blur-sm flex items-center justify-center z-50 hidden"
+        className="fixed inset-0 bg-cream/90 backdrop-blur-sm flex items-center justify-center z-50 hidden"
         role="progressbar"
         aria-label="Po ngarkohet..."
       >
         <div className="text-center">
-          <div className="h-16 w-16 rounded-2xl bg-gradient-to-br from-red-500 to-pink-500 flex items-center justify-center mb-4 shadow-2xl animate-pulse mx-auto">
-            <span className="text-2xl">💅</span>
-          </div>
-          <div className="flex space-x-1 justify-center mb-4">
-            <div className="w-2 h-2 bg-red-500 rounded-full animate-bounce"></div>
-            <div className="w-2 h-2 bg-pink-500 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
-            <div className="w-2 h-2 bg-orange-500 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
-          </div>
-          <p className="text-gray-600 text-sm">Po ngarkohet...</p>
+          <div className="mx-auto mb-4 h-10 w-10 animate-spin rounded-full border-2 border-accent border-t-transparent"></div>
+          <p className="text-clay text-sm">Po ngarkohet...</p>
         </div>
       </div>
     </>
@@ -188,7 +181,7 @@ export const homeLayout = (props: Partial<LayoutProps>) => ({
   footerVariant: 'default' as const,
   transparentHeader: true,
   fixedHeader: true,
-  backgroundClass: 'bg-gradient-to-br from-pink-50 via-red-50 to-orange-50',
+  backgroundClass: 'bg-cream',
   ...props
 })
 
@@ -197,27 +190,27 @@ export const salonLayout = (props: Partial<LayoutProps>) => ({
   footerVariant: 'salon' as const,
   transparentHeader: true,
   fixedHeader: true,
-  backgroundClass: 'bg-gradient-to-br from-pink-50 via-red-50 to-orange-50',
+  backgroundClass: 'bg-cream',
   ...props
 })
 
 export const authLayout = (props: Partial<LayoutProps>) => ({
   headerVariant: 'auth' as const,
   footerVariant: 'minimal' as const,
-  backgroundClass: 'bg-gradient-to-br from-pink-50 via-red-50 to-orange-50',
+  backgroundClass: 'bg-cream',
   ...props
 })
 
 export const dashboardLayout = (props: Partial<LayoutProps>) => ({
   headerVariant: 'minimal' as const,
   footerVariant: 'minimal' as const,
-  backgroundClass: 'bg-gray-50',
+  backgroundClass: 'bg-cream',
   ...props
 })
 
 export const bookingLayout = (props: Partial<LayoutProps>) => ({
   headerVariant: 'minimal' as const,
   footerVariant: 'minimal' as const,
-  backgroundClass: 'bg-white',
+  backgroundClass: 'bg-cream',
   ...props
 })

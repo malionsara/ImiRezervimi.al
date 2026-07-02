@@ -122,9 +122,11 @@ export default function ToastProvider({ children }: ToastProviderProps) {
         pauseOnHover
         theme="light"
         className="text-sm font-medium"
+        toastClassName="!bg-paper !text-ink !rounded-lg !border !border-linen !shadow-lifted"
+        progressClassName="!bg-accent"
         style={{
           fontSize: '14px',
-          fontFamily: 'system-ui, -apple-system, sans-serif'
+          fontFamily: 'var(--font-sans), system-ui, sans-serif'
         }}
       />
     </>
