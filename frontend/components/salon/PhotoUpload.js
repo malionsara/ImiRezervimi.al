@@ -3,6 +3,7 @@
 
 import { useState, useRef } from 'react'
 import Image from 'next/image'
+import { Camera } from 'lucide-react'
 import { showToast } from '../ToastProvider'
 
 export default function PhotoUpload({ photos = [], onChange, maxPhotos = 5 }) {
