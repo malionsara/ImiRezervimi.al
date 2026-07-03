@@ -362,7 +362,7 @@ export default function RegistrationForm({ data, onChange, onNext }) {
           <h3 className="text-lg font-semibold text-ink mb-4">Oraret e punës</h3>
           <div className="space-y-4">
             {Object.entries(formData.workingHours).map(([day, hours]) => (
-              <div key={day} className="flex items-center space-x-4">
+              <div key={day} className="flex flex-wrap items-center gap-x-4 gap-y-2">
                 <div className="w-20 text-sm font-medium text-ink">
                   {dayNames[day]}
                 </div>
@@ -378,21 +378,21 @@ export default function RegistrationForm({ data, onChange, onNext }) {
                   </label>
                 </div>
                 {!hours.closed && (
-                  <>
+                  <div className="flex items-center gap-2 basis-full sm:basis-auto">
                     <input
                       type="time"
                       value={hours.open}
                       onChange={(e) => handleWorkingHoursChange(day, 'open', e.target.value)}
-                      className="px-3 py-1 border border-linen rounded focus:ring-2 focus:ring-accent/25 focus:border-transparent"
+                      className="min-w-0 flex-1 sm:flex-none px-3 py-1 border border-linen rounded focus:ring-2 focus:ring-accent/25 focus:border-transparent"
                     />
                     <span className="text-clay">-</span>
                     <input
                       type="time"
                       value={hours.close}
                       onChange={(e) => handleWorkingHoursChange(day, 'close', e.target.value)}
-                      className="px-3 py-1 border border-linen rounded focus:ring-2 focus:ring-accent/25 focus:border-transparent"
+                      className="min-w-0 flex-1 sm:flex-none px-3 py-1 border border-linen rounded focus:ring-2 focus:ring-accent/25 focus:border-transparent"
                     />
-                  </>
+                  </div>
                 )}
               </div>
             ))}

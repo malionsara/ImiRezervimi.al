@@ -143,11 +143,11 @@ export default function InstagramDebug() {
                 
                 <div className="mt-4 space-y-2">
                   <div className="bg-paper p-3 rounded border border-blue-300">
-                    <code className="text-sm">https://www.imirezervimi.al/api/auth/callback/instagram</code>
+                    <code className="text-sm break-all">https://www.imirezervimi.al/api/auth/callback/instagram</code>
                     <span className="ml-2 text-success font-semibold">← Primary (www)</span>
                   </div>
                   <div className="bg-paper p-3 rounded border border-blue-300">
-                    <code className="text-sm">https://imirezervimi.al/api/auth/callback/instagram</code>
+                    <code className="text-sm break-all">https://imirezervimi.al/api/auth/callback/instagram</code>
                     <span className="ml-2 text-warning font-semibold">← Fallback (no www)</span>
                   </div>
                 </div>
@@ -156,10 +156,10 @@ export default function InstagramDebug() {
                   <h4 className="font-semibold mb-2">Also add these URLs:</h4>
                   <div className="space-y-2">
                     <div className="bg-paper p-2 rounded border border-blue-300">
-                      <strong>Deauthorize:</strong> <code className="text-sm">https://www.imirezervimi.al/api/auth/deauthorize</code>
+                      <strong>Deauthorize:</strong> <code className="text-sm break-all">https://www.imirezervimi.al/api/auth/deauthorize</code>
                     </div>
                     <div className="bg-paper p-2 rounded border border-blue-300">
-                      <strong>Data Deletion:</strong> <code className="text-sm">https://www.imirezervimi.al/api/auth/data-deletion</code>
+                      <strong>Data Deletion:</strong> <code className="text-sm break-all">https://www.imirezervimi.al/api/auth/data-deletion</code>
                     </div>
                   </div>
                 </div>
