@@ -11,6 +11,7 @@ import Container from '../components/ui/Container'
 import Section, { SectionHeading } from '../components/ui/Section'
 import HeroVideo from '../components/ui/HeroVideo'
 import Spinner from '../components/ui/Spinner'
+import Reveal from '../components/ui/Reveal'
 
 function InstagramIcon({ size = 18, className = '' }) {
   return (
@@ -115,12 +116,15 @@ export default function Homepage() {
 
       {/* ============ CATEGORY DUO ============ */}
       <Section tone="cream">
-        <SectionHeading
-          eyebrow="Zgjidh stilin tënd"
-          title="Bukuri dhe berberi, në një vend"
-          subtitle="Nga manikyri te prerja klasike — gjej profesionistët më të mirë pranë teje."
-        />
+        <Reveal>
+          <SectionHeading
+            eyebrow="Zgjidh stilin tënd"
+            title="Bukuri dhe berberi, në një vend"
+            subtitle="Nga manikyri te prerja klasike — gjej profesionistët më të mirë pranë teje."
+          />
+        </Reveal>
         <div className="grid sm:grid-cols-2 gap-5 sm:gap-6">
+          <Reveal>
           <Link href="/salons?category=beauty" className="group relative rounded-lg overflow-hidden bg-sand aspect-[4/3] block">
             <EditorialPhoto src="/media/photos/manicure-detail.webp" alt="Manikyr në sallon bukurie" className="transition-transform duration-700 group-hover:scale-[1.03]" />
             <div className="absolute inset-0 bg-gradient-to-t from-ink/70 to-transparent"></div>
@@ -132,7 +136,9 @@ export default function Homepage() {
               <p className="font-display text-2xl sm:text-3xl text-cream">Flokë, thonj, makeup</p>
             </div>
           </Link>
+          </Reveal>
 
+          <Reveal delay={120}>
           <Link href="/salons?category=barbershop" className="group relative rounded-lg overflow-hidden bg-ink aspect-[4/3] block">
             <EditorialPhoto src="/media/photos/barbershop.webp" alt="Berber duke prerë flokë" className="transition-transform duration-700 group-hover:scale-[1.03]" />
             <div className="absolute inset-0 bg-gradient-to-t from-ink/70 to-transparent"></div>
@@ -144,16 +150,19 @@ export default function Homepage() {
               <p className="font-display text-2xl sm:text-3xl text-cream">Prerje, rroje, styling</p>
             </div>
           </Link>
+          </Reveal>
         </div>
       </Section>
 
       {/* ============ HOW IT WORKS ============ */}
       <Section tone="paper" id="si-funksionon">
-        <SectionHeading
-          eyebrow="Si funksionon"
-          title="Tre hapa deri te takimi yt"
-          subtitle="Vetëm 3 hapa për rezervimin tuaj — nga Instagram te konfirmimi në WhatsApp."
-        />
+        <Reveal>
+          <SectionHeading
+            eyebrow="Si funksionon"
+            title="Tre hapa deri te takimi yt"
+            subtitle="Vetëm 3 hapa për rezervimin tuaj — nga Instagram te konfirmimi në WhatsApp."
+          />
+        </Reveal>
         <div className="grid sm:grid-cols-3 gap-10 sm:gap-8">
           {[
             {
@@ -174,10 +183,10 @@ export default function Homepage() {
               title: 'Konfirmo me WhatsApp',
               text: 'Merr konfirmimin në WhatsApp dhe kujtesa automatike para takimit.',
             },
-          ].map((step) => {
+          ].map((step, index) => {
             const Icon = step.icon
             return (
-              <div key={step.n} className="relative">
+              <Reveal key={step.n} delay={index * 120} className="relative">
                 <div className="font-display text-6xl text-linen leading-none mb-4 select-none" aria-hidden="true">
                   {step.n}
                 </div>
@@ -188,7 +197,7 @@ export default function Homepage() {
                   <h3 className="font-display text-xl text-ink">{step.title}</h3>
                 </div>
                 <p className="text-clay leading-relaxed">{step.text}</p>
-              </div>
+              </Reveal>
             )
           })}
         </div>
@@ -196,18 +205,20 @@ export default function Homepage() {
 
       {/* ============ EDITORIAL PHOTO STRIP ============ */}
       <section className="bg-cream">
+        <Reveal>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-1 h-48 sm:h-64 lg:h-80">
           <div className="bg-sand overflow-hidden"><EditorialPhoto src="/media/photos/hair-styling.webp" alt="Stilim flokësh" /></div>
           <div className="bg-linen overflow-hidden"><EditorialPhoto src="/media/photos/products-shelf.webp" alt="Produkte bukurie" /></div>
           <div className="bg-sand overflow-hidden"><EditorialPhoto src="/media/photos/reception-booking.webp" alt="Rezervim në recepsion" /></div>
           <div className="bg-linen overflow-hidden"><EditorialPhoto src="/media/photos/unisex-styling.webp" alt="Stilim unisex" /></div>
         </div>
+        </Reveal>
       </section>
 
       {/* ============ FOR SALON OWNERS ============ */}
       <Section tone="ink">
         <div className="grid lg:grid-cols-2 gap-12 items-center">
-          <div>
+          <Reveal>
             <SectionHeading
               align="left"
               dark
@@ -245,19 +256,21 @@ export default function Homepage() {
                 Mëso më shumë
               </Link>
             </div>
-          </div>
-          <div className="relative rounded-lg overflow-hidden bg-cream/5 aspect-[4/5] hidden lg:block">
-            <EditorialPhoto src="/media/photos/salon-interior.webp" alt="Ambient salloni me dritë natyrale" />
-          </div>
+          </Reveal>
+          <Reveal delay={150} className="relative rounded-lg overflow-hidden bg-cream/5 aspect-[4/5] hidden lg:block">
+            <EditorialPhoto src="/media/photos/salon-interior.webp" alt="Ambient salloni me dritë natyrale" className="absolute inset-0" />
+          </Reveal>
         </div>
       </Section>
 
       {/* ============ TESTIMONIALS ============ */}
       <Section tone="sand" id="deshmi">
-        <SectionHeading
-          eyebrow="Dëshmi"
-          title="Çfarë thonë klientët tanë"
-        />
+        <Reveal>
+          <SectionHeading
+            eyebrow="Dëshmi"
+            title="Çfarë thonë klientët tanë"
+          />
+        </Reveal>
         <div className="grid sm:grid-cols-3 gap-5 sm:gap-6">
           {[
             {
@@ -275,22 +288,25 @@ export default function Homepage() {
               name: 'Mira S.',
               city: 'Vlorë',
             },
-          ].map((t) => (
-            <figure key={t.name} className="testimonial bg-paper rounded-lg border border-linen p-6 sm:p-8 flex flex-col">
-              <blockquote className="font-display text-lg text-ink leading-relaxed flex-1">
-                &ldquo;{t.quote}&rdquo;
-              </blockquote>
-              <figcaption className="mt-6 pt-4 border-t border-linen text-sm">
-                <span className="font-medium text-ink">{t.name}</span>
-                <span className="text-clay"> — {t.city}</span>
-              </figcaption>
-            </figure>
+          ].map((t, index) => (
+            <Reveal key={t.name} delay={index * 120}>
+              <figure className="testimonial bg-paper rounded-lg border border-linen p-6 sm:p-8 flex flex-col h-full">
+                <blockquote className="font-display text-lg text-ink leading-relaxed flex-1">
+                  &ldquo;{t.quote}&rdquo;
+                </blockquote>
+                <figcaption className="mt-6 pt-4 border-t border-linen text-sm">
+                  <span className="font-medium text-ink">{t.name}</span>
+                  <span className="text-clay"> — {t.city}</span>
+                </figcaption>
+              </figure>
+            </Reveal>
           ))}
         </div>
       </Section>
 
       {/* ============ FINAL CTA ============ */}
       <Section tone="cream">
+        <Reveal>
         <div className="text-center max-w-2xl mx-auto">
           <h2 className="font-display text-3xl sm:text-5xl text-ink tracking-tight mb-5">
             Gati për rezervimin tuaj të parë?
@@ -314,6 +330,7 @@ export default function Homepage() {
             </Link>
           </div>
         </div>
+        </Reveal>
       </Section>
     </Layout>
   )
