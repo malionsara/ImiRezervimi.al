@@ -3,6 +3,7 @@
 // Albanian Beauty Salon Booking Platform
 
 import { useState } from 'react'
+import { Check, X, PenLine, AlertTriangle } from 'lucide-react'
 import { showToast } from '../ToastProvider'
 
 // ==============================================
@@ -113,24 +114,22 @@ export default function AppointmentActions({
   // ==============================================
   return (
     <>
-      {/* Action Buttons */}
-      <div className="flex flex-col sm:flex-row gap-3">
+      {/* Action Buttons — approve is the primary action; the rest stay quiet */}
+      <div className="flex flex-col sm:flex-row gap-2.5">
         {/* Quick Approve */}
         <button
           onClick={handleQuickApprove}
           disabled={loading || disabled}
-          className="flex-1 bg-success hover:bg-green-600 text-white px-4 py-3 rounded-lg font-medium transition-colors disabled:bg-gray-300 disabled:cursor-not-allowed touch-manipulation min-h-[48px] flex items-center justify-center"
+          className="sm:flex-1 bg-success hover:bg-success/85 text-white px-5 py-2.5 rounded font-medium text-sm transition-colors disabled:opacity-50 disabled:cursor-not-allowed touch-manipulation min-h-[44px] inline-flex items-center justify-center gap-2"
         >
           {loading ? (
-            <div className="flex items-center">
-              <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></div>
+            <>
+              <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
               Po aprovohet...
-            </div>
+            </>
           ) : (
             <>
-              <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-              </svg>
+              <Check size={17} strokeWidth={2} aria-hidden="true" />
               Miratu shpejt
             </>
           )}
@@ -140,11 +139,9 @@ export default function AppointmentActions({
         <button
           onClick={() => setShowApproveModal(true)}
           disabled={loading || disabled}
-          className="bg-accent hover:bg-blue-600 text-white px-4 py-3 rounded-lg font-medium transition-colors disabled:bg-gray-300 disabled:cursor-not-allowed touch-manipulation min-h-[48px] flex items-center justify-center"
+          className="border border-linen bg-paper hover:border-success hover:text-success text-ink px-5 py-2.5 rounded font-medium text-sm transition-colors disabled:opacity-50 disabled:cursor-not-allowed touch-manipulation min-h-[44px] inline-flex items-center justify-center gap-2"
         >
-          <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-          </svg>
+          <PenLine size={16} strokeWidth={1.75} aria-hidden="true" />
           Miratu + Shënim
         </button>
 
@@ -152,11 +149,9 @@ export default function AppointmentActions({
         <button
           onClick={() => setShowDeclineModal(true)}
           disabled={loading || disabled}
-          className="bg-accent hover:bg-accent text-white px-4 py-3 rounded-lg font-medium transition-colors disabled:bg-gray-300 disabled:cursor-not-allowed touch-manipulation min-h-[48px] flex items-center justify-center"
+          className="border border-linen bg-paper hover:border-danger hover:text-danger text-clay px-5 py-2.5 rounded font-medium text-sm transition-colors disabled:opacity-50 disabled:cursor-not-allowed touch-manipulation min-h-[44px] inline-flex items-center justify-center gap-2"
         >
-          <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-          </svg>
+          <X size={16} strokeWidth={1.75} aria-hidden="true" />
           Refuzo
         </button>
       </div>
@@ -164,15 +159,13 @@ export default function AppointmentActions({
       {/* Approve with Notes Modal */}
       {showApproveModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-          <div className="bg-paper rounded max-w-md w-full p-6">
+          <div className="bg-paper rounded-lg border border-linen shadow-lifted max-w-md w-full p-6">
             <div className="flex items-center mb-4">
               <div className="w-10 h-10 bg-success/10 rounded-full flex items-center justify-center mr-3">
-                <svg className="w-6 h-6 text-success" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                </svg>
+                <Check size={20} strokeWidth={2} className="text-success" aria-hidden="true" />
               </div>
               <div>
-                <h3 className="text-lg font-semibold text-ink">Miratu rezervimin</h3>
+                <h3 className="font-display text-lg text-ink">Miratu rezervimin</h3>
                 <p className="text-sm text-clay">{customerName}</p>
               </div>
             </div>
@@ -185,7 +178,7 @@ export default function AppointmentActions({
                 value={approveNotes}
                 onChange={(e) => setApproveNotes(e.target.value)}
                 placeholder="P.sh. Jini të gatshëm 10 minuta para kohe..."
-                className="w-full p-3 border border-linen rounded-lg resize-none focus:ring-2 focus:ring-green-500 focus:border-green-500"
+                className="w-full p-3 border border-linen rounded resize-none focus:ring-2 focus:ring-success/25 focus:border-success"
                 rows={3}
                 maxLength={500}
               />
@@ -203,7 +196,7 @@ export default function AppointmentActions({
               <button
                 onClick={handleApproveWithNotes}
                 disabled={loading}
-                className="flex-1 bg-success hover:bg-green-600 text-white px-4 py-2 rounded-lg transition-colors disabled:opacity-50 flex items-center justify-center"
+                className="flex-1 bg-success hover:bg-success/85 text-white px-4 py-2 rounded font-medium transition-colors disabled:opacity-50 flex items-center justify-center"
               >
                 {loading ? (
                   <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
@@ -219,15 +212,13 @@ export default function AppointmentActions({
       {/* Decline Modal */}
       {showDeclineModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-          <div className="bg-paper rounded max-w-md w-full p-6">
+          <div className="bg-paper rounded-lg border border-linen shadow-lifted max-w-md w-full p-6">
             <div className="flex items-center mb-4">
-              <div className="w-10 h-10 bg-accent-soft rounded-full flex items-center justify-center mr-3">
-                <svg className="w-6 h-6 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                </svg>
+              <div className="w-10 h-10 bg-danger/10 rounded-full flex items-center justify-center mr-3">
+                <X size={20} strokeWidth={2} className="text-danger" aria-hidden="true" />
               </div>
               <div>
-                <h3 className="text-lg font-semibold text-ink">Refuzo rezervimin</h3>
+                <h3 className="font-display text-lg text-ink">Refuzo rezervimin</h3>
                 <p className="text-sm text-clay">{customerName}</p>
               </div>
             </div>
@@ -268,14 +259,12 @@ export default function AppointmentActions({
               )}
             </div>
 
-            <div className="bg-yellow-50 border border-warning/25 rounded-lg p-3 mb-4">
+            <div className="bg-warning/5 border border-warning/25 rounded p-3 mb-4">
               <div className="flex">
-                <svg className="w-5 h-5 text-yellow-400 mr-2 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
-                  <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
-                </svg>
+                <AlertTriangle size={17} strokeWidth={1.75} className="text-warning mr-2 mt-0.5 shrink-0" aria-hidden="true" />
                 <div>
-                  <p className="text-sm font-medium text-warning">Kini kujdes</p>
-                  <p className="text-xs text-yellow-700 mt-1">
+                  <p className="text-sm font-medium text-ink">Kini kujdes</p>
+                  <p className="text-xs text-clay mt-1">
                     Klienti do të marrë një njoftim WhatsApp me arsyen e refuzimit.
                   </p>
                 </div>
@@ -293,7 +282,7 @@ export default function AppointmentActions({
               <button
                 onClick={handleDecline}
                 disabled={loading || !declineReason || (declineReason === 'Tjetër...' && !customDeclineReason.trim())}
-                className="flex-1 bg-accent hover:bg-accent text-white px-4 py-2 rounded-lg transition-colors disabled:opacity-50 flex items-center justify-center"
+                className="flex-1 bg-danger hover:bg-accent-strong text-white px-4 py-2 rounded font-medium transition-colors disabled:opacity-50 flex items-center justify-center"
               >
                 {loading ? (
                   <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>

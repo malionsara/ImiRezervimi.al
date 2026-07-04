@@ -3,6 +3,7 @@
 // Albanian Beauty Salon Booking Platform
 
 import { useState, useMemo } from 'react'
+import { Star, Inbox, ChevronRight } from 'lucide-react'
 import AppointmentActions from './AppointmentActions'
 
 // ==============================================
@@ -119,23 +120,23 @@ export default function RequestsQueue({
 
   const getPriorityBadge = (score: number) => {
     if (score >= 80) {
-      return { label: 'VIP', color: 'bg-purple-100 text-purple-800', icon: '' }
+      return { label: 'VIP', color: 'bg-accent text-white' }
     } else if (score >= 60) {
-      return { label: 'I lartë', color: 'bg-accent-soft text-red-800', icon: '' }
+      return { label: 'I lartë', color: 'bg-accent-soft text-accent-strong' }
     } else if (score >= 40) {
-      return { label: 'Mesatar', color: 'bg-warning/10 text-warning', icon: '⭐' }
+      return { label: 'Mesatar', color: 'bg-warning/10 text-warning' }
     } else {
-      return { label: 'Normal', color: 'bg-sand text-ink', icon: '' }
+      return { label: 'Normal', color: 'bg-sand text-clay' }
     }
   }
 
   const getCustomerTypeBadge = (totalVisits: number) => {
     if (totalVisits === 0) {
-      return { label: 'Klient i ri', color: 'bg-accent-soft text-accent-strong', icon: '🆕' }
+      return { label: 'Klient i ri', color: 'bg-accent-soft text-accent-strong' }
     } else if (totalVisits >= 5) {
-      return { label: 'Klient besnik', color: 'bg-success/10 text-success', icon: '' }
+      return { label: 'Klient besnik', color: 'bg-success/10 text-success' }
     } else {
-      return { label: 'Klient', color: 'bg-sand text-ink', icon: '' }
+      return { label: 'Klient', color: 'bg-sand text-clay' }
     }
   }
 
@@ -151,9 +152,11 @@ export default function RequestsQueue({
   // ==============================================
   if (requests.length === 0) {
     return (
-      <div className="bg-paper rounded shadow-sm border p-8 text-center">
-        <div className="text-clay/70 text-5xl mb-4"></div>
-        <h3 className="text-lg font-medium text-ink mb-2">Asnjë kërkesë në pritje</h3>
+      <div className="bg-paper rounded-lg shadow-soft border border-linen p-8 text-center">
+        <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-sand">
+          <Inbox size={22} strokeWidth={1.75} className="text-clay" aria-hidden="true" />
+        </div>
+        <h3 className="font-display text-lg text-ink mb-2">Asnjë kërkesë në pritje</h3>
         <p className="text-clay">
           Të gjitha rezervimet janë procesuar. Klientët e rinj do të shfaqen këtu.
         </p>
@@ -168,7 +171,7 @@ export default function RequestsQueue({
     <div>
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6">
         <div>
-          <h2 className="section-title">⏳ Kërkesat në pritje</h2>
+          <h2 className="font-display text-xl text-ink">Kërkesat në pritje</h2>
           <p className="subtitle mt-1">
             {sortedAndFilteredRequests.length} nga {requests.length} kërkesa
           </p>
@@ -226,25 +229,22 @@ export default function RequestsQueue({
                         <h3 className="font-semibold text-ink">
                           {request.customer.firstName} {request.customer.lastName}
                         </h3>
-                        <svg className="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                        </svg>
+                        <ChevronRight size={16} strokeWidth={1.75} className="ml-1" aria-hidden="true" />
                       </button>
                     </div>
 
                     {/* Badges */}
                     <div className="flex flex-wrap gap-2 mb-3">
                       <span className={`pill ${priorityBadge.color}`}>
-                        <span className="mr-1">{priorityBadge.icon}</span>
                         {priorityBadge.label}
                       </span>
                       <span className={`pill ${customerBadge.color}`}>
-                        <span className="mr-1">{customerBadge.icon}</span>
                         {customerBadge.label}
                       </span>
                       {request.customer.rating > 0 && (
-                        <span className="pill bg-warning/10 text-warning">
-                          ⭐ {request.customer.rating.toFixed(1)}
+                        <span className="pill bg-warning/10 text-warning inline-flex items-center gap-1">
+                          <Star size={12} strokeWidth={2} className="fill-warning text-warning" aria-hidden="true" />
+                          {request.customer.rating.toFixed(1)}
                         </span>
                       )}
                     </div>

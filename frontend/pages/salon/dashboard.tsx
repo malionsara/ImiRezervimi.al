@@ -6,6 +6,7 @@ import { useState, useEffect, useCallback } from 'react'
 import { useRouter } from 'next/router'
 import Head from 'next/head'
 import Link from 'next/link'
+import Image from 'next/image'
 import { createClient } from '@supabase/supabase-js'
 import RequestsQueue from '../../components/salon/RequestsQueue'
 import CustomerDetails from '../../components/salon/CustomerDetails'
@@ -349,7 +350,7 @@ export default function SalonDashboard() {
         <title>Dashboard - {dashboardData.salon.name} | ImiRezervimi.al</title>
         <meta name="description" content="Menaxho rezervimet e sallonit tuaj" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <meta name="robots" content="noindex, nofollow" />
+        <meta name="robots" content="noindex, nofollow" />
       </Head>
 
       <div className="min-h-screen bg-cream">
@@ -401,17 +402,22 @@ export default function SalonDashboard() {
         </div>
 
         {/* Header */}
-        <header className="bg-white/95 backdrop-blur border-b sticky top-0 z-40">
+        <header className="bg-paper/95 backdrop-blur border-b border-linen sticky top-0 z-40">
           <div className="container-responsive">
             <div className="flex justify-between items-center h-16">
               <div className="flex items-center">
                 <Link href="/" className="flex items-center">
-                  <div className="h-10 w-10 rounded-lg bg-accent flex items-center justify-center mr-3 shadow-soft">
-                    <span className="text-lg font-bold text-white">IR</span>
-                  </div>
+                  <Image
+                    src="/brand/logo.png"
+                    alt="ImiRezervimi"
+                    width={40}
+                    height={40}
+                    className="rounded-sm mr-3"
+                    priority
+                  />
                   <div>
-                    <span className="text-xl font-bold text-ink">{dashboardData.salon.name}</span>
-                    <p className="text-sm text-clay">Dashboard</p>
+                    <span className="font-display text-xl text-ink">{dashboardData.salon.name}</span>
+                    <p className="text-sm text-clay -mt-0.5">Dashboard</p>
                   </div>
                 </Link>
               </div>
@@ -429,7 +435,7 @@ export default function SalonDashboard() {
                     placeholder="Kërko klient, shërbim..."
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    className="block w-64 pl-10 pr-3 py-2 border border-linen rounded-md leading-5 bg-paper placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-1 focus:ring-accent/25 focus:border-accent text-sm"
+                    className="block w-64 pl-10 pr-3 py-2 border border-linen rounded-md leading-5 bg-paper placeholder:text-clay/60 focus:outline-none focus:ring-1 focus:ring-accent/25 focus:border-accent text-sm"
                   />
                 </div>
 
@@ -522,7 +528,7 @@ export default function SalonDashboard() {
                   placeholder="Kërko klient, shërbim..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="block w-full pl-10 pr-3 py-2 border border-linen rounded-md leading-5 bg-paper placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-1 focus:ring-accent/25 focus:border-accent text-sm"
+                  className="block w-full pl-10 pr-3 py-2 border border-linen rounded-md leading-5 bg-paper placeholder:text-clay/60 focus:outline-none focus:ring-1 focus:ring-accent/25 focus:border-accent text-sm"
                 />
               </div>
               
