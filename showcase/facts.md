@@ -1,144 +1,64 @@
-# ImiRezervimi.al - Project Facts
+# ImiRezervimi.al — project facts
 
 ## Product
 
-**Name:** ImiRezervimi.al  
-**Website:** https://imirezervimi.al  
-**Tagline:** Albania's first beauty salon booking platform
-
-**Summary:** ImiRezervimi.al bridges the gap between Instagram discovery and seamless booking for Albanian beauty salons. Customers discover salons on Instagram, click bio links to request appointments, and receive WhatsApp confirmations when approved by salon owners.
+- **Name:** ImiRezervimi.al
+- **Website:** https://imirezervimi.al
+- **Summary:** ImiRezervimi.al is an online booking platform for beauty salons and barbershops in Albania. Customers request an appointment from a salon's link, and the salon approves it from its dashboard, with confirmations sent on WhatsApp.
 
 ## Client
 
-**Company:** Tech Atlas  
-**Industry:** Beauty & Personal Care Technology  
-**Country:** Albania  
-**Target Market:** Albanian beauty salons and their Instagram-active customers
+- **Client or company:** TODO
+- **Industry:** Beauty and barbershop appointment booking.
+- **Country:** Albania.
 
-## Timeline
+## Timeline and status
 
-**Project Started:** June 2025  
-**Current Status:** MVP Functional, in Beta  
-**Launch Date:** Q1 2026 (planned)  
-**Development Phase:** 5 months, ongoing
+- **Started:** July 2025. The first commit in the repository is dated 12 July 2025.
+- **Status:** Live at imirezervimi.al. Development is ongoing; the most recent work on the main branch is from July 2026.
+- **Launch date:** TODO
 
-## The Brief
+## The brief
 
-**Problem:** Albanian beauty salons are overwhelmed with Instagram DM booking requests. Customers struggle with back-and-forth messaging, no-shows are common, and salons manage appointments manually with pen and paper. There's no centralized platform connecting Instagram discovery (where customers find salons) with WhatsApp communication (how Albanians prefer to communicate).
+Albanian salons take most bookings through Instagram messages and phone calls, which means a lot of back-and-forth and a schedule kept by hand. ImiRezervimi.al gives each salon a booking link it can put in its Instagram bio. Customers pick a service, a day and a free time slot, and send a request. The salon reviews requests in one queue, approves or declines them, and the customer is notified on WhatsApp. It is built for salon and barbershop owners and for their customers, and the whole interface is in Albanian.
 
-**Target Users:**
-- **Salons:** 800+ beauty salons across Albania (hair, nails, eyebrows, esthetics)
-- **Customers:** Instagram-active Albanian women aged 18-45 in Tirana, Durrës, Vlorë, and Shkodër
+## What was built
 
-**Solution:** A request-based booking platform that integrates with Instagram bio links and sends WhatsApp confirmations, giving salons control over their schedule while providing customers instant booking from their favorite Instagram profiles.
+- **Public website:** A home page for customers and a separate page for salon owners ("Për Sallone & Berberi") with benefits, how it works, testimonials and a free 30-day trial offer. There is also a salon directory with search.
+- **Customer web app:**
+  - Sign-in with Google or Facebook, with phone number verification.
+  - A three-step booking flow (service, date and time, confirm) that shows only free slots.
+  - A booking status page and a personal dashboard with booking history and favourite salons.
+- **Salon dashboard:**
+  - Passwordless sign-in through a magic link sent on WhatsApp.
+  - A queue of pending requests, sorted by a customer priority score with VIP and loyal-customer badges.
+  - Quick approve, approve with a note, and decline.
+  - An availability calendar and working-hours settings, plus a customer details panel.
+- **Notifications:** WhatsApp messages through Twilio for request confirmations, approvals and reminders.
+- **Admin:** A protected admin area for reviewing and approving new salon registrations.
+- **Installable web app:** The site is a progressive web app (PWA), so customers can add it to their phone's home screen. There is no native mobile app.
 
-## What Was Built
+## Stack
 
-### Public Website
-- **Landing Page:** Albanian-language hero with gradient backgrounds, floating beauty icons (💅✨💄), and social proof from 500+ salons
-- **Salon Discovery:** Grid view with search/filter by city and service type
-- **Individual Salon Profiles:** Service listings, pricing, Instagram handles, "Book Now" CTAs
+- **Languages:** TypeScript and JavaScript.
+- **Frameworks:** Next.js 15 (pages router), React 19, Tailwind CSS.
+- **Authentication:** NextAuth.js with Google and Facebook sign-in.
+- **Database:** Supabase (PostgreSQL), with row-level security policies.
+- **Hosting:** Vercel, with Vercel Analytics and Speed Insights.
+- **Messaging:** Twilio WhatsApp API.
+- **Email:** None. The codebase has no email service.
+- **Payments:** None yet. Salons start on a free 30-day trial.
+- **Testing:** Playwright for end-to-end tests and Jest for unit tests.
 
-### Customer Web App
-- **Booking Flow:** Select service → Fill form (name, phone, date, time, notes) → Submit request
-- **Request Confirmation:** Albanian success messages: "Kërkesa u dërgua! Do të njoftoheni brenda 2 orësh ✨"
-- **WhatsApp Integration:** Automatic notifications when appointments are approved
-- **Albanian Localization:** Complete interface in Albanian language with special character support (ë, ç)
+## What comes next
 
-### Salon Dashboard
-- **Pending Requests Queue:** Priority-sorted appointment requests with customer ratings
-- **Customer Intelligence:** Shows rating (⭐ 4.8), total visits (12), no-show history
-- **One-Click Approval:** "Aprovo" / "Refuzo" buttons trigger instant WhatsApp confirmations
-- **Today's Schedule:** Calendar view of approved appointments
-- **Availability Management:** Working hours configuration and time slot blocking
+TODO. The repository README lists a React Native mobile app, photo uploads, deeper analytics, multi-staff scheduling, payments, loyalty programmes, and expansion to Kosovo and North Macedonia. Confirm which of these are still planned.
 
-### Key Features
-- **Smart Prioritization:** VIP customers (high ratings, regular visits) appear first in queue
-- **Anti-Spam Protection:** Phone verification, booking limits, customer reputation system
-- **WhatsApp Templates:** Pre-configured Albanian message templates for confirmations and reminders
-- **Mobile-First Design:** Optimized for Instagram in-app browser on Android/iOS
-- **PWA Support:** Installable progressive web app for easy re-access
+## Alt text
 
-## The Stack
-
-**Frontend:**
-- Next.js 15.3.5 (React 19, App Router)
-- TypeScript 5
-- Tailwind CSS 3.4.17
-- Playwright 1.56.1 (E2E testing)
-
-**Backend:**
-- Next.js API Routes
-- Supabase PostgreSQL (Database)
-- Supabase Auth & RLS (Row-Level Security)
-
-**Integrations:**
-- Twilio WhatsApp Business API
-- Instagram Basic Display API (planned)
-- Google OAuth (authentication)
-
-**Infrastructure:**
-- Vercel (Hosting & Edge Functions)
-- Supabase (Database & Authentication)
-- Cloudflare DNS
-
-**Developer Tools:**
-- ESLint, Prettier (Code quality)
-- Git + GitHub (Version control)
-- Claude Code (AI pair programming)
-
-## What Comes Next
-
-**Q1 2026 - Production Launch:**
-- Fix phone validation bug (blocks new registrations)
-- Complete salon discovery page
-- Add salon appointments visibility
-- Security audit (admin auth, webhook verification)
-
-**Q2 2026 - Mobile App:**
-- React Native mobile app for iOS/Android
-- Push notifications for appointment updates
-- Photo uploads for service inspiration
-- In-app messaging between customers and salons
-
-**Q3 2026 - Growth Features:**
-- Advanced analytics for salon owners
-- Multi-staff scheduling and calendars
-- Customer loyalty programs
-- Payment processing integration
-
-**Q4 2026 - Regional Expansion:**
-- Launch in Kosovo and North Macedonia
-- Multi-language support (Albanian, English)
-- API for third-party integrations
-- White-label solution for salon chains
-
-## Image Alt Text
-
-### Gallery Images
-
-**1-homepage.png** (1600×1000)  
-Alt: ImiRezervimi.al homepage hero with Albanian text "Rezervo te salloni yt i preferuar" and gradient pink-to-orange background
-
-**2-salons-grid.png** (1600×1000)  
-Alt: Grid of 6 Albanian beauty salons with search bar, showing locations in Tiranë, Durrës, and Vlorë
-
-**3-booking-form.png** (1600×1000)  
-Alt: Booking form for Klea Beauty Studio with service selection, date picker, and Albanian language fields
-
-**4-salon-dashboard.png** (1600×1000)  
-Alt: Salon dashboard showing pending appointment requests queue with customer ratings and priority scores
-
-**5-mobile-homepage.png** (1320×2868)  
-Alt: Mobile view of homepage hero section with "Zbulo Sallone" button and floating beauty icons
-
-**6-mobile-salons.png** (1320×2868)  
-Alt: Mobile salon browsing grid with search bar "Kërko sipas emrit, qytetit" and salon cards
-
-**7-mobile-booking.png** (1320×2868)  
-Alt: Mobile booking form with service cards for Manikyr, Pedikyr, and Ngjyrosje Flokësh
-
-### Cover Poster
-
-**cover-poster.jpg** (1920×1200)  
-Alt: Browser window showing appointment approval in salon dashboard with "Rezervimi u bë me sukses" confirmation message
+- **cover-poster.jpg:** Browser window on a dark stage showing the "Rezervimi u dërgua!" card after booking at a salon
+- **gallery/1-website.png:** ImiRezervimi.al home page with the headline "Rezervo te salloni yt i preferuar" over a salon photo
+- **gallery/2-salons.png:** Salon directory with a search bar and cards for six beauty salons and barbershops across Albania
+- **gallery/3-booking.png:** Booking step with a month calendar and a grid of free time slots, 14:00 selected
+- **gallery/4-request-sent.png:** Confirmation card reading "Rezervimi u dërgua!" with the salon name and booking ID
+- **gallery/5-salon-requests.png:** Salon dashboard with stats and a queue of pending requests, each with approve and decline buttons

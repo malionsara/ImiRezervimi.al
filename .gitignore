@@ -210,3 +210,11 @@ backups/
 # Miscellaneous
 *.tsbuildinfo
 .turbo/
+
+# Showcase tooling: local-only output and secrets
+scripts/showcase/out/
+scripts/showcase/.demo-session.json
+scripts/showcase/devdb/.env.showcase
+scripts/showcase/video/node_modules/
+scripts/showcase/video/public/
+/imirezervimi-showcase.zip

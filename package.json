@@ -24,10 +24,11 @@
     "mcp:profiles": "claude-playwright profile list",
     "lint": "cd frontend && npm run lint",
     "typecheck": "cd frontend && npm run typecheck",
-    "showcase:seed": "tsx scripts/seed-demo-data.ts --force-demo",
-    "showcase:record": "tsx scripts/record-showcase.ts",
-    "showcase:gallery": "tsx scripts/capture-gallery.ts",
-    "showcase:help": "cat showcase/README.md"
+    "showcase:db": "bash scripts/showcase/devdb/up.sh && node scripts/showcase/devdb/gateway.mjs",
+    "showcase:seed": "tsx scripts/seed-demo-data.ts",
+    "showcase:record": "node scripts/showcase/record.mjs",
+    "showcase:edit": "cd scripts/showcase/video && npm install && node render.mjs",
+    "showcase:gallery": "node scripts/showcase/gallery.mjs"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.39.0",
