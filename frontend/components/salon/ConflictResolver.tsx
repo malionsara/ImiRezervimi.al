@@ -36,29 +36,29 @@ const ConflictResolver: React.FC<ConflictResolverProps> = ({
     AUTO_APPROVE_CURRENT: {
       label: 'Miratu këtë rezervim',
       description: 'Rezervimi ka prioritet më të lartë se të tjerët',
-      icon: '✅',
-      color: 'text-green-600 bg-green-50 border-green-200',
+      icon: '',
+      color: 'text-success bg-success/5 border-success/25',
       buttonColor: 'bg-green-600 hover:bg-green-700'
     },
     AUTO_REJECT_CURRENT: {
       label: 'Refuzo këtë rezervim',
       description: 'Konflikt me rezervime të miratuara ose kohë të bllokuar',
-      icon: '❌',
-      color: 'text-red-600 bg-red-50 border-red-200',
-      buttonColor: 'bg-red-600 hover:bg-red-700'
+      icon: '',
+      color: 'text-accent bg-accent-soft/60 border-accent/25',
+      buttonColor: 'bg-accent hover:bg-accent-strong'
     },
     MANUAL_REVIEW: {
       label: 'Shqyrto manualisht',
       description: 'Kërkon vendim nga saloni për zgjidhjen e konfliktit',
-      icon: '👤',
-      color: 'text-yellow-600 bg-yellow-50 border-yellow-200',
+      icon: '',
+      color: 'text-warning bg-yellow-50 border-warning/25',
       buttonColor: 'bg-yellow-600 hover:bg-yellow-700'
     },
     RESCHEDULE_SUGGESTION: {
       label: 'Sugjero riplanifikim',
       description: 'Ofro kohë alternative për klientin',
-      icon: '📅',
-      color: 'text-blue-600 bg-blue-50 border-blue-200',
+      icon: '',
+      color: 'text-accent bg-accent-soft/40 border-accent/25',
       buttonColor: 'bg-blue-600 hover:bg-blue-700'
     }
   };
@@ -68,25 +68,25 @@ const ConflictResolver: React.FC<ConflictResolverProps> = ({
       title: 'Mbivendosje kohore',
       description: 'Kërkesat për të njëjtën kohë',
       icon: '⏰',
-      color: 'text-orange-600'
+      color: 'text-warning'
     },
     DOUBLE_BOOKING: {
       title: 'Rezervim i dyfishté',
       description: 'Konflikt me rezervim të miratuar',
-      icon: '🚫',
-      color: 'text-red-600'
+      icon: '',
+      color: 'text-accent'
     },
     APPROVAL_RACE: {
       title: 'Procesim i njëkohshëm',
       description: 'Rezervimi po përpunohet nga dikush tjetër',
-      icon: '⚡',
+      icon: '',
       color: 'text-purple-600'
     },
     AVAILABILITY_BLOCKED: {
       title: 'Kohë e bllokuar',
       description: 'Koha nuk është e disponueshme',
-      icon: '🔒',
-      color: 'text-gray-600'
+      icon: '',
+      color: 'text-clay'
     }
   };
 
@@ -151,24 +151,24 @@ const ConflictResolver: React.FC<ConflictResolverProps> = ({
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-      <div className="bg-white rounded-xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+      <div className="bg-paper rounded shadow-lifted max-w-2xl w-full max-h-[90vh] overflow-y-auto">
         {/* Header */}
-        <div className="p-6 border-b border-gray-200">
+        <div className="p-6 border-b border-linen">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
-              <div className="text-2xl">⚠️</div>
+              <div className="text-2xl"></div>
               <div>
-                <h2 className="text-xl font-bold text-gray-900">
+                <h2 className="text-xl font-bold text-ink">
                   Konflikt në rezervim
                 </h2>
-                <p className="text-sm text-gray-600">
+                <p className="text-sm text-clay">
                   {conflicts.length} konflikt{conflicts.length !== 1 ? 'e' : ''} u gjetën
                 </p>
               </div>
             </div>
             <button
               onClick={onCancel}
-              className="text-gray-500 hover:text-gray-700 transition-colors"
+              className="text-clay hover:text-ink transition-colors"
             >
               <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -185,7 +185,7 @@ const ConflictResolver: React.FC<ConflictResolverProps> = ({
               return (
                 <div
                   key={conflict.id}
-                  className="border border-gray-200 rounded-lg p-4 space-y-3"
+                  className="border border-linen rounded-lg p-4 space-y-3"
                 >
                   <div className="flex items-center space-x-3">
                     <div className="text-xl">{config.icon}</div>
@@ -193,15 +193,15 @@ const ConflictResolver: React.FC<ConflictResolverProps> = ({
                       <div className={`font-semibold ${config.color}`}>
                         {config.title}
                       </div>
-                      <div className="text-sm text-gray-600">
+                      <div className="text-sm text-clay">
                         {config.description}
                       </div>
                     </div>
                     <div className={`px-2 py-1 rounded text-xs font-medium ${
-                      conflict.severity === 'critical' ? 'bg-red-100 text-red-800' :
-                      conflict.severity === 'high' ? 'bg-orange-100 text-orange-800' :
-                      conflict.severity === 'medium' ? 'bg-yellow-100 text-yellow-800' :
-                      'bg-gray-100 text-gray-800'
+                      conflict.severity === 'critical' ? 'bg-accent-soft text-red-800' :
+                      conflict.severity === 'high' ? 'bg-warning/10 text-orange-800' :
+                      conflict.severity === 'medium' ? 'bg-warning/10 text-warning' :
+                      'bg-sand text-ink'
                     }`}>
                       {conflict.severity === 'critical' ? 'Kritik' :
                        conflict.severity === 'high' ? 'I lartë' :
@@ -209,40 +209,40 @@ const ConflictResolver: React.FC<ConflictResolverProps> = ({
                     </div>
                   </div>
 
-                  <div className="text-sm text-gray-700">
+                  <div className="text-sm text-ink">
                     {conflict.description}
                   </div>
 
                   {/* Conflicting appointments */}
                   {conflict.conflictingAppointments.length > 0 && (
                     <div className="space-y-2">
-                      <div className="text-xs font-medium text-gray-500 uppercase tracking-wide">
+                      <div className="text-xs font-medium text-clay uppercase tracking-wide">
                         Rezervime në konflikt:
                       </div>
                       {conflict.conflictingAppointments.map((appointment) => (
                         <div
                           key={appointment.id}
-                          className="bg-gray-50 rounded p-3 text-sm"
+                          className="bg-cream rounded p-3 text-sm"
                         >
                           <div className="flex items-center justify-between">
                             <div>
                               <div className="font-medium">
                                 {appointment.customers?.first_name} {appointment.customers?.last_name}
                               </div>
-                              <div className="text-gray-600">
+                              <div className="text-clay">
                                 {appointment.services?.name} - {appointment.start_time}
                               </div>
                             </div>
                             <div className={`px-2 py-1 rounded text-xs font-medium ${
-                              appointment.status === 'approved' ? 'bg-green-100 text-green-800' :
-                              appointment.status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
-                              'bg-gray-100 text-gray-800'
+                              appointment.status === 'approved' ? 'bg-success/10 text-success' :
+                              appointment.status === 'pending' ? 'bg-warning/10 text-warning' :
+                              'bg-sand text-ink'
                             }`}>
                               {appointment.status === 'approved' ? 'I miratuar' :
                                appointment.status === 'pending' ? 'Në pritje' : appointment.status}
                             </div>
                           </div>
-                          <div className="text-xs text-gray-500 mt-1">
+                          <div className="text-xs text-clay mt-1">
                             Prioritet: {appointment.priority_score || 0}/100
                           </div>
                         </div>
@@ -256,9 +256,9 @@ const ConflictResolver: React.FC<ConflictResolverProps> = ({
         </div>
 
         {/* Resolution Strategies */}
-        <div className="p-6 border-t border-gray-200">
+        <div className="p-6 border-t border-linen">
           <div className="space-y-4">
-            <div className="text-lg font-semibold text-gray-900">
+            <div className="text-lg font-semibold text-ink">
               Zgjidhje të sugjeruara
             </div>
 
@@ -289,7 +289,7 @@ const ConflictResolver: React.FC<ConflictResolverProps> = ({
             {/* Manual Review Option */}
             {suggestedStrategy === 'MANUAL_REVIEW' && (
               <div className="space-y-3">
-                <div className="text-sm font-medium text-gray-700">
+                <div className="text-sm font-medium text-ink">
                   Vendimi manual:
                 </div>
                 
@@ -297,7 +297,7 @@ const ConflictResolver: React.FC<ConflictResolverProps> = ({
                   value={manualNotes}
                   onChange={(e) => setManualNotes(e.target.value)}
                   placeholder="Shtoni shënime për vendimin tuaj..."
-                  className="w-full p-3 border border-gray-300 rounded-lg resize-none h-20 text-sm"
+                  className="w-full p-3 border border-linen rounded-lg resize-none h-20 text-sm"
                 />
 
                 <div className="grid grid-cols-2 gap-3">
@@ -309,7 +309,7 @@ const ConflictResolver: React.FC<ConflictResolverProps> = ({
                     disabled={processing || !manualNotes.trim()}
                     className="py-2 px-4 bg-green-600 hover:bg-green-700 disabled:opacity-50 text-white rounded-lg font-medium transition-colors"
                   >
-                    ✅ Miratu
+                    Miratu
                   </button>
                   <button
                     onClick={() => {
@@ -317,9 +317,9 @@ const ConflictResolver: React.FC<ConflictResolverProps> = ({
                       handleResolveConflict('AUTO_REJECT_CURRENT');
                     }}
                     disabled={processing}
-                    className="py-2 px-4 bg-red-600 hover:bg-red-700 disabled:opacity-50 text-white rounded-lg font-medium transition-colors"
+                    className="py-2 px-4 bg-accent hover:bg-accent-strong disabled:opacity-50 text-white rounded-lg font-medium transition-colors"
                   >
-                    ❌ Refuzo
+                    Refuzo
                   </button>
                 </div>
               </div>
@@ -327,14 +327,14 @@ const ConflictResolver: React.FC<ConflictResolverProps> = ({
 
             {/* Critical Conflicts Warning */}
             {hasCriticalConflicts && (
-              <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+              <div className="bg-accent-soft/60 border border-accent/25 rounded-lg p-4">
                 <div className="flex items-center space-x-2">
-                  <div className="text-red-600 text-xl">🚨</div>
+                  <div className="text-accent text-xl"></div>
                   <div className="text-red-800 font-medium">
                     Konflikt kritik
                   </div>
                 </div>
-                <div className="text-red-700 text-sm mt-1">
+                <div className="text-accent-strong text-sm mt-1">
                   Ky rezervim nuk mund të miratohet për shkak konfliktesh kritike me rezervime të miratuara.
                 </div>
               </div>
@@ -343,8 +343,8 @@ const ConflictResolver: React.FC<ConflictResolverProps> = ({
         </div>
 
         {/* Footer */}
-        <div className="p-6 border-t border-gray-200 bg-gray-50">
-          <div className="flex items-center justify-between text-sm text-gray-600">
+        <div className="p-6 border-t border-linen bg-cream">
+          <div className="flex items-center justify-between text-sm text-clay">
             <div>
               ID rezervimi: {appointmentId.slice(0, 8)}...
             </div>
@@ -352,11 +352,11 @@ const ConflictResolver: React.FC<ConflictResolverProps> = ({
               <button
                 onClick={onCancel}
                 disabled={processing}
-                className="text-gray-600 hover:text-gray-800 transition-colors"
+                className="text-clay hover:text-ink transition-colors"
               >
                 Anulo
               </button>
-              <div className="text-xs text-gray-500">
+              <div className="text-xs text-clay">
                 {new Date().toLocaleTimeString('sq-AL')}
               </div>
             </div>

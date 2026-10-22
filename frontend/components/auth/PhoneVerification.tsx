@@ -109,7 +109,7 @@ export default function PhoneVerification({
       const data: ApiResponse = await response.json();
 
       if (data.success) {
-        setSuccess('Kodi u dërgua me SMS! 📱');
+        setSuccess('Kodi u dërgua me SMS!');
         setStep('code');
         setCountdown(60); // 1 minute cooldown
         setCanResend(false);
@@ -162,7 +162,7 @@ export default function PhoneVerification({
       const data: ApiResponse = await response.json();
 
       if (data.success && data.data?.verified) {
-        setSuccess('Numri u verifikua me sukses! ✅');
+        setSuccess('Numri u verifikua me sukses!');
         setTimeout(() => {
           onVerificationComplete(phone);
         }, 1500);
@@ -222,16 +222,16 @@ export default function PhoneVerification({
     <div className={`phone-verification-component ${className}`}>
       {/* Header */}
       <div className="text-center mb-8">
-        <div className="mx-auto w-16 h-16 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center mb-4">
+        <div className="mx-auto w-16 h-16 bg-accent rounded-full flex items-center justify-center mb-4">
           <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} 
                   d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
           </svg>
         </div>
-        <h2 className="text-2xl font-bold text-gray-900 mb-2">
+        <h2 className="text-2xl font-bold text-ink mb-2">
           {step === 'phone' ? 'Verifikimi i Telefonit' : 'Shkruaj Kodin'}
         </h2>
-        <p className="text-gray-600">
+        <p className="text-clay">
           {step === 'phone' 
             ? 'Do t\'ju dërgojmë një kod verifikimi në SMS'
             : `Shkruaj kodin 6-shifror që u dërgua në ${phone}`
@@ -243,12 +243,12 @@ export default function PhoneVerification({
       {step === 'phone' && (
         <div className="space-y-6">
           <div>
-            <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-2">
+            <label htmlFor="phone" className="block text-sm font-medium text-ink mb-2">
               Numri i Telefonit
             </label>
             <div className="relative">
               <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                <span className="text-gray-500 sm:text-sm">🇦🇱</span>
+                <span className="text-clay sm:text-sm">🇦🇱</span>
               </div>
               <input
                 id="phone"
@@ -258,13 +258,13 @@ export default function PhoneVerification({
                 onKeyPress={handleKeyPress}
                 placeholder="+355 69 123 4567"
                 disabled={loading}
-                className="block w-full pl-12 pr-4 py-4 border border-gray-300 rounded-2xl text-lg 
+                className="block w-full pl-12 pr-4 py-4 border border-linen rounded-lg text-lg 
                          placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 
                          focus:border-transparent disabled:opacity-50 disabled:cursor-not-allowed
                          transition-all duration-200"
               />
             </div>
-            <p className="mt-2 text-sm text-gray-500">
+            <p className="mt-2 text-sm text-clay">
               Formati: +355 XX XXX XXXX (numër shqiptar)
             </p>
           </div>
@@ -273,11 +273,11 @@ export default function PhoneVerification({
             onClick={handleSendCode}
             disabled={loading || !isValidPhone(phone)}
             className="w-full flex justify-center items-center py-4 px-6 border border-transparent 
-                     text-lg font-semibold rounded-2xl text-white bg-gradient-to-r from-blue-600 
-                     to-purple-600 hover:from-blue-700 hover:to-purple-700 focus:outline-none 
+                     text-lg font-semibold rounded-lg text-white bg-gradient-to-r from-blue-600 
+                     to-purple-600 hover:bg-accent-strong focus:outline-none 
                      focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 
                      disabled:cursor-not-allowed transition-all duration-200 transform 
-                     hover:scale-105 disabled:transform-none"
+                     disabled:transform-none"
           >
             {loading ? (
               <>
@@ -301,7 +301,7 @@ export default function PhoneVerification({
       {step === 'code' && (
         <div className="space-y-6">
           <div>
-            <label htmlFor="code" className="block text-sm font-medium text-gray-700 mb-2">
+            <label htmlFor="code" className="block text-sm font-medium text-ink mb-2">
               Kodi i Verifikimit
             </label>
             <input
@@ -314,7 +314,7 @@ export default function PhoneVerification({
               onKeyPress={handleKeyPress}
               placeholder="123456"
               disabled={loading}
-              className="block w-full px-4 py-4 border border-gray-300 rounded-2xl text-lg text-center
+              className="block w-full px-4 py-4 border border-linen rounded-lg text-lg text-center
                        placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 
                        focus:border-transparent disabled:opacity-50 disabled:cursor-not-allowed
                        transition-all duration-200 tracking-widest font-mono"
@@ -322,20 +322,20 @@ export default function PhoneVerification({
               autoComplete="one-time-code"
             />
             <div className="mt-2 flex justify-between items-center text-sm">
-              <span className="text-gray-500">
+              <span className="text-clay">
                 {attemptsRemaining !== null && attemptsRemaining < 3 && (
                   `Të mbeten ${attemptsRemaining} përpjekje`
                 )}
               </span>
               {countdown > 0 ? (
-                <span className="text-gray-500">
+                <span className="text-clay">
                   Mund të dërgoni përsëri pas {countdown}s
                 </span>
               ) : canResend && (
                 <button
                   onClick={handleSendCode}
                   disabled={loading}
-                  className="text-blue-600 hover:text-blue-800 font-medium disabled:opacity-50"
+                  className="text-accent hover:text-accent-strong font-medium disabled:opacity-50"
                 >
                   Dërgo përsëri kodin
                 </button>
@@ -347,11 +347,11 @@ export default function PhoneVerification({
             onClick={handleVerifyCode}
             disabled={loading || code.length !== 6}
             className="w-full flex justify-center items-center py-4 px-6 border border-transparent 
-                     text-lg font-semibold rounded-2xl text-white bg-gradient-to-r from-green-600 
-                     to-blue-600 hover:from-green-700 hover:to-blue-700 focus:outline-none 
+                     text-lg font-semibold rounded-lg text-white bg-gradient-to-r from-green-600 
+                     to-blue-600 hover:bg-accent-strong focus:outline-none 
                      focus:ring-2 focus:ring-offset-2 focus:ring-green-500 disabled:opacity-50 
                      disabled:cursor-not-allowed transition-all duration-200 transform 
-                     hover:scale-105 disabled:transform-none"
+                     disabled:transform-none"
           >
             {loading ? (
               <>
@@ -380,7 +380,7 @@ export default function PhoneVerification({
               setCanResend(true);
             }}
             disabled={loading}
-            className="w-full py-3 text-gray-600 hover:text-gray-800 font-medium disabled:opacity-50
+            className="w-full py-3 text-clay hover:text-ink font-medium disabled:opacity-50
                      transition-colors duration-200"
           >
             ← Ktheu te numri i telefonit
@@ -390,71 +390,29 @@ export default function PhoneVerification({
 
       {/* Success Message */}
       {success && (
-        <div className="mt-6 p-4 bg-green-50 border border-green-200 rounded-2xl shadow-sm animate-fade-in">
+        <div className="mt-6 p-4 bg-success/5 border border-success/25 rounded-lg shadow-sm animate-fade-in">
           <div className="flex items-center">
             <svg className="w-5 h-5 text-green-400 mr-2 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
               <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
             </svg>
-            <p className="text-green-700 text-sm font-medium">{success}</p>
+            <p className="text-success text-sm font-medium">{success}</p>
           </div>
         </div>
       )}
 
       {/* Error Message */}
       {error && (
-        <div className="mt-6 p-4 bg-red-50 border border-red-200 rounded-2xl shadow-sm animate-shake">
+        <div className="mt-6 p-4 bg-accent-soft/60 border border-accent/25 rounded-lg shadow-sm animate-shake">
           <div className="flex items-center">
             <svg className="w-5 h-5 text-red-400 mr-2 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
               <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
             </svg>
-            <p className="text-red-700 text-sm font-medium">{error}</p>
+            <p className="text-accent-strong text-sm font-medium">{error}</p>
           </div>
         </div>
       )}
 
-      {/* Custom Styles */}
-      <style jsx>{`
-        @keyframes fade-in {
-          from {
-            opacity: 0;
-            transform: translateY(-10px);
-          }
-          to {
-            opacity: 1;
-            transform: translateY(0);
-          }
-        }
-
-        @keyframes shake {
-          0%, 100% { transform: translateX(0px); }
-          25% { transform: translateX(-5px); }
-          75% { transform: translateX(5px); }
-        }
-        
-        .animate-fade-in {
-          animation: fade-in 0.5s ease-out;
-        }
-        
-        .animate-shake {
-          animation: shake 0.5s ease-in-out;
-        }
-
-        /* Custom number input styling */
-        input[type="text"]:focus {
-          box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
-        }
-
-        /* Hide number input spinners */
-        input[type="text"]::-webkit-outer-spin-button,
-        input[type="text"]::-webkit-inner-spin-button {
-          -webkit-appearance: none;
-          margin: 0;
-        }
-
-        input[type="text"] {
-          -moz-appearance: textfield;
-        }
-      `}</style>
+      {/* Custom Styles */}
     </div>
   );
 }

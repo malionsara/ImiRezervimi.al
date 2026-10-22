@@ -136,14 +136,14 @@ export default function SalonRegister() {
         )
       case 3:
         return (
-          <div className="bg-white rounded-2xl shadow-xl p-8">
-            <h3 className="text-xl font-bold text-gray-900 mb-6">Rishikoni informacionet</h3>
+          <div className="bg-paper rounded-lg shadow-soft p-8">
+            <h3 className="text-xl font-bold text-ink mb-6">Rishikoni informacionet</h3>
             
             {/* Review Section */}
             <div className="space-y-6 mb-8">
               <div>
-                <h4 className="font-semibold text-gray-900 mb-2">Informacionet bazë</h4>
-                <div className="bg-gray-50 rounded-lg p-4 space-y-2">
+                <h4 className="font-semibold text-ink mb-2">Informacionet bazë</h4>
+                <div className="bg-cream rounded-lg p-4 space-y-2">
                   <p><span className="font-medium">Emri:</span> {registrationData.name}</p>
                   <p><span className="font-medium">Telefoni:</span> {registrationData.phone}</p>
                   <p><span className="font-medium">Adresa:</span> {registrationData.address}, {registrationData.city}</p>
@@ -151,8 +151,8 @@ export default function SalonRegister() {
               </div>
               
               <div>
-                <h4 className="font-semibold text-gray-900 mb-2">Shërbimet</h4>
-                <div className="bg-gray-50 rounded-lg p-4">
+                <h4 className="font-semibold text-ink mb-2">Shërbimet</h4>
+                <div className="bg-cream rounded-lg p-4">
                   {registrationData.services.length > 0 ? (
                     <ul className="space-y-1">
                       {registrationData.services.map((service, index) => (
@@ -163,7 +163,7 @@ export default function SalonRegister() {
                       ))}
                     </ul>
                   ) : (
-                    <p className="text-gray-500">Nuk janë shtuar shërbime ende</p>
+                    <p className="text-clay">Nuk janë shtuar shërbime ende</p>
                   )}
                 </div>
               </div>
@@ -171,8 +171,8 @@ export default function SalonRegister() {
 
             {/* Error Display */}
             {submitError && (
-              <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
-                <p className="text-red-600">{submitError}</p>
+              <div className="mb-6 p-4 bg-accent-soft/60 border border-accent/25 rounded-lg">
+                <p className="text-accent">{submitError}</p>
               </div>
             )}
 
@@ -180,14 +180,14 @@ export default function SalonRegister() {
             <div className="flex space-x-4">
               <button
                 onClick={handlePrevStep}
-                className="flex-1 px-6 py-3 border border-gray-300 text-gray-700 rounded-lg font-medium hover:bg-gray-50 transition-colors"
+                className="flex-1 px-6 py-3 border border-linen text-ink rounded-lg font-medium hover:bg-cream transition-colors"
               >
                 Kthehu prapa
               </button>
               <button
                 onClick={handleSubmitRegistration}
                 disabled={isSubmitting}
-                className="flex-1 px-6 py-3 bg-red-500 text-white rounded-lg font-medium hover:bg-red-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                className="flex-1 px-6 py-3 bg-accent text-white rounded-lg font-medium hover:bg-accent transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {isSubmitting ? 'Po dërgohet...' : 'Konfirmo regjistrimin'}
               </button>
@@ -207,15 +207,15 @@ export default function SalonRegister() {
       <div className="min-h-screen">
 
         {/* Progress Bar */}
-        <div className="bg-white border-b">
+        <div className="bg-paper border-b">
           <div className="max-w-3xl mx-auto px-4 py-4">
             <div className="flex items-center justify-between mb-2">
-              <span className="text-sm font-medium text-gray-900">Hapi {currentStep} nga {totalSteps}</span>
-              <span className="text-sm font-medium text-gray-900">{Math.round((currentStep / totalSteps) * 100)}%</span>
+              <span className="text-sm font-medium text-ink">Hapi {currentStep} nga {totalSteps}</span>
+              <span className="text-sm font-medium text-ink">{Math.round((currentStep / totalSteps) * 100)}%</span>
             </div>
-            <div className="w-full bg-gray-200 rounded-full h-2">
+            <div className="w-full bg-linen rounded-full h-2">
               <div 
-                className="bg-red-500 h-2 rounded-full transition-all duration-300 ease-out"
+                className="bg-accent h-2 rounded-full transition-all duration-300 ease-out"
                 style={{ width: `${(currentStep / totalSteps) * 100}%` }}
               />
             </div>
@@ -225,13 +225,13 @@ export default function SalonRegister() {
         {/* Main Content */}
         <main className="max-w-3xl mx-auto px-4 py-8">
           <div className="text-center mb-8">
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">
+            <h1 className="text-3xl font-bold text-ink mb-2">
               Regjistrimi i Sallonit
             </h1>
-            <h2 className="text-xl text-gray-600 mb-4">
+            <h2 className="text-xl text-clay mb-4">
               {getStepTitle()}
             </h2>
-            <p className="text-gray-600">
+            <p className="text-clay">
               Bashkohuni me mijëra sallone që përdorin ImiRezervimi.al për të menaxhuar rezervimet e tyre
             </p>
           </div>

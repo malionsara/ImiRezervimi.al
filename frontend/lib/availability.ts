@@ -413,6 +413,51 @@ export async function generateCalendarMonth(
     const workingHours = salon.working_hours as WorkingHours
     const days: CalendarDay[] = []
 
+    // Batch-fetch the whole month's appointments and blocked slots in two
+    // queries instead of three sequential queries per day (the old per-day
+    // loop produced ~75 round trips and took 10s+ on real networks).
+    const firstDateString = firstDay.toISOString().split('T')[0]
+    const lastDateString = lastDay.toISOString().split('T')[0]
+
+    const [{ data: monthAppointments, error: appointmentsError }, { data: monthBlocked, error: blockedError }] =
+      await Promise.all([
+        supabase
+          .from('appointments')
+          .select('appointment_date, start_time, duration_minutes')
+          .eq('salon_id', salonId)
+          .gte('appointment_date', firstDateString)
+          .lte('appointment_date', lastDateString)
+          .in('status', ['pending', 'approved']),
+        supabase
+          .from('time_slots')
+          .select('date, start_time, duration_minutes, block_reason')
+          .eq('salon_id', salonId)
+          .gte('date', firstDateString)
+          .lte('date', lastDateString)
+          .eq('status', 'blocked')
+      ])
+
+    if (appointmentsError) {
+      console.warn('Error fetching month appointments:', appointmentsError)
+    }
+    if (blockedError) {
+      console.warn('Error fetching month blocked slots:', blockedError)
+    }
+
+    // Group by date for O(1) per-day lookup
+    const appointmentsByDate = new Map<string, any[]>()
+    for (const appointment of monthAppointments || []) {
+      const list = appointmentsByDate.get(appointment.appointment_date) || []
+      list.push(appointment)
+      appointmentsByDate.set(appointment.appointment_date, list)
+    }
+    const blockedByDate = new Map<string, any[]>()
+    for (const blocked of monthBlocked || []) {
+      const list = blockedByDate.get(blocked.date) || []
+      list.push(blocked)
+      blockedByDate.set(blocked.date, list)
+    }
+
     // Generate all days in the month
     for (let date = new Date(firstDay); date <= lastDay; date.setDate(date.getDate() + 1)) {
       const dateString = date.toISOString().split('T')[0]
@@ -437,13 +482,23 @@ export async function generateCalendarMonth(
       // Only calculate availability for working days that aren't in the past
       if (isWorkingDay && date >= today) {
         try {
-          const availability = await calculateAvailability(salonId, dateString, DEFAULT_SLOT_DURATION, true)
+          const baseSlots = generateTimeSlots(dayHours as DayHours, DEFAULT_SLOT_DURATION)
+          const processedSlots = await processTimeSlots(
+            baseSlots,
+            appointmentsByDate.get(dateString) || [],
+            blockedByDate.get(dateString) || [],
+            salonId,
+            dateString,
+            DEFAULT_SLOT_DURATION
+          )
+          const finalSlots = filterPastTimes(processedSlots, dateString)
+          const stats = calculateSlotStatistics(finalSlots)
           calendarDay = {
             ...calendarDay,
-            totalSlots: availability.totalSlots,
-            availableSlots: availability.availableSlots,
-            blockedSlots: availability.blockedSlots,
-            bookedSlots: availability.bookedSlots
+            totalSlots: stats.totalSlots,
+            availableSlots: stats.availableSlots,
+            blockedSlots: stats.blockedSlots,
+            bookedSlots: stats.bookedSlots
           }
         } catch (error) {
           console.warn(`Error calculating availability for ${dateString}:`, error)

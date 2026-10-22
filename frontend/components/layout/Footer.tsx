@@ -3,7 +3,28 @@
 // Ensures consistent branding and responsive design
 
 import Link from 'next/link'
-import Image from 'next/image'
+import { Mail, MessageCircle } from 'lucide-react'
+import Logo from '../ui/Logo'
+
+function InstagramIcon({ size = 18 }: { size?: number }) {
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.75"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+    >
+      <rect width="20" height="20" x="2" y="2" rx="5" ry="5" />
+      <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
+      <line x1="17.5" x2="17.51" y1="6.5" y2="6.5" />
+    </svg>
+  )
+}
 
 interface FooterProps {
   variant?: 'default' | 'salon' | 'minimal'
@@ -13,44 +34,30 @@ interface FooterProps {
 export default function Footer({ variant = 'default', className = '' }: FooterProps) {
   const footerConfig = {
     default: {
-      mainText: 'ImiRezervimi.al',
       tagline: 'Rezervime Online',
-      description: 'Platforma e parë shqiptare për rezervime online në sallone bukurie. E bërë me ❤️ për komunitetin shqiptar.',
-      stats: [
-        { value: '500+', label: 'Sallone' },
-        { value: '10k+', label: 'Klienta' },
-        { value: '50k+', label: 'Rezervime' },
-        { value: '4.9★', label: 'Vlerësim' }
-      ],
+      description: 'Platforma e parë shqiptare për rezervime online në sallone bukurie dhe berberi.',
       sections: [
         {
           title: 'Shërbime',
           links: [
-            { href: '#', label: 'Rezervime Online' },
-            { href: '#', label: 'WhatsApp Njoftimet' },
-            { href: '#', label: 'Menaxhim Orari' }
+            { href: '/salons', label: 'Rezervime Online' },
+            { href: '#si-funksionon', label: 'Si funksionon' },
+            { href: '/salon', label: 'Për Sallone' }
           ]
         },
         {
           title: 'Mbështetje',
           links: [
-            { href: '#', label: 'Kontakt' },
-            { href: '#', label: 'Ndihmë' },
-            { href: '/privacy-policy', label: 'Privatësia' }
+            { href: 'mailto:info@imirezervimi.al', label: 'Kontakt' },
+            { href: '/privacy-policy', label: 'Privatësia' },
+            { href: '/terms-of-service', label: 'Kushtet e Përdorimit' }
           ]
         }
       ]
     },
     salon: {
-      mainText: 'ImiRezervimi.al',
       tagline: 'Për Sallone',
-      description: 'Platforma më e madhe e rezervimeve në Shqipëri. E bërë me ❤️ për sallone si e joja.',
-      stats: [
-        { value: '500+', label: 'Sallone' },
-        { value: '10k+', label: 'Klienta' },
-        { value: '50k+', label: 'Rezervime' },
-        { value: '4.9★', label: 'Vlerësim' }
-      ],
+      description: 'Menaxho rezervimet e sallonit tënd në një vend — kërkesat nga Instagram, konfirmimet në WhatsApp.',
       sections: [
         {
           title: 'Për Sallone',
@@ -71,10 +78,8 @@ export default function Footer({ variant = 'default', className = '' }: FooterPr
       ]
     },
     minimal: {
-      mainText: 'ImiRezervimi.al',
       tagline: 'Rezervime Online',
       description: 'Platforma e parë shqiptare për rezervime online në sallone bukurie.',
-      stats: [],
       sections: []
     }
   }
@@ -83,26 +88,14 @@ export default function Footer({ variant = 'default', className = '' }: FooterPr
 
   if (variant === 'minimal') {
     return (
-      <footer className={`bg-gray-50 border-t border-gray-200 py-8 ${className}`}>
+      <footer className={`bg-sand border-t border-linen py-8 ${className}`}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center">
-            <Link href="/" className="inline-flex items-center space-x-3 mb-4">
-              <div className="h-8 w-8 rounded-xl bg-white shadow-md overflow-hidden">
-                <Image 
-                  src="/favicon-96x96.png" 
-                  alt="ImiRezervimi Logo" 
-                  width={32} 
-                  height={32} 
-                  className="w-full h-full object-contain"
-                />
-              </div>
-              <div className="flex items-center">
-                <span className="text-lg font-bold text-red-600">{config.mainText.split('.')[0]}</span>
-                <span className="text-lg font-bold text-orange-500">.{config.mainText.split('.')[1]}</span>
-              </div>
-            </Link>
-            <p className="text-gray-600 text-sm mb-4">{config.description}</p>
-            <p className="text-gray-500 text-xs">© 2025 ImiRezervimi.al. Të gjitha të drejtat e rezervuara.</p>
+            <div className="mb-4 flex justify-center">
+              <Logo size="sm" />
+            </div>
+            <p className="text-clay text-sm mb-4">{config.description}</p>
+            <p className="text-clay/70 text-xs">© 2025 ImiRezervimi.al. Të gjitha të drejtat e rezervuara.</p>
           </div>
         </div>
       </footer>
@@ -110,53 +103,41 @@ export default function Footer({ variant = 'default', className = '' }: FooterPr
   }
 
   return (
-    <footer className={`bg-gray-900 text-white ${className}`}>
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+    <footer className={`bg-ink text-cream ${className}`}>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14">
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-10">
           {/* Brand Section */}
           <div className="lg:col-span-2">
-            <Link href="/" className="flex items-center space-x-3 mb-6 group">
-              <div className="h-12 w-12 rounded-2xl bg-white shadow-lg group-hover:shadow-xl transition-shadow overflow-hidden">
-                <Image 
-                  src="/favicon-96x96.png" 
-                  alt="ImiRezervimi Logo" 
-                  width={48} 
-                  height={48} 
-                  className="w-full h-full object-contain"
-                />
-              </div>
-              <div className="flex flex-col">
-                <div className="flex items-center">
-                  <span className="text-xl font-bold text-white">{config.mainText.split('.')[0]}</span>
-                  <span className="text-xl font-bold text-orange-400">.{config.mainText.split('.')[1]}</span>
-                </div>
-                <span className="text-sm text-gray-400 -mt-1">{config.tagline}</span>
-              </div>
-            </Link>
-            
-            <p className="text-gray-400 mb-6 max-w-md leading-relaxed">
+            <div className="mb-6">
+              <Logo size="md" dark tagline={config.tagline} />
+            </div>
+
+            <p className="text-cream/60 mb-8 max-w-md leading-relaxed">
               {config.description}
             </p>
 
             {/* Social Links */}
-            <div className="flex space-x-4">
-              <Link 
-                href="#" 
-                className="w-10 h-10 bg-gray-800 hover:bg-red-600 rounded-lg flex items-center justify-center transition-colors duration-200"
+            <div className="flex gap-3">
+              <Link
+                href="#"
+                aria-label="Instagram"
+                className="w-10 h-10 border border-cream/20 hover:border-cream/50 rounded flex items-center justify-center transition-colors duration-200"
               >
-                <span className="text-lg">📱</span>
+                <InstagramIcon size={18} />
               </Link>
-              <Link 
-                href="#" 
-                className="w-10 h-10 bg-gray-800 hover:bg-red-600 rounded-lg flex items-center justify-center transition-colors duration-200"
+              <Link
+                href="mailto:info@imirezervimi.al"
+                aria-label="Email"
+                className="w-10 h-10 border border-cream/20 hover:border-cream/50 rounded flex items-center justify-center transition-colors duration-200"
               >
-                <span className="text-lg">📧</span>
+                <Mail size={18} strokeWidth={1.75} aria-hidden="true" />
               </Link>
-              <Link 
-                href="#" 
-                className="w-10 h-10 bg-gray-800 hover:bg-red-600 rounded-lg flex items-center justify-center transition-colors duration-200"
+              <Link
+                href="#"
+                aria-label="WhatsApp"
+                className="w-10 h-10 border border-cream/20 hover:border-cream/50 rounded flex items-center justify-center transition-colors duration-200"
               >
-                <span className="text-lg">💬</span>
+                <MessageCircle size={18} strokeWidth={1.75} aria-hidden="true" />
               </Link>
             </div>
           </div>
@@ -164,13 +145,13 @@ export default function Footer({ variant = 'default', className = '' }: FooterPr
           {/* Links Sections */}
           {config.sections.map((section, index) => (
             <div key={index}>
-              <h4 className="text-white font-semibold mb-4">{section.title}</h4>
+              <h4 className="font-display text-lg mb-5">{section.title}</h4>
               <ul className="space-y-3">
                 {section.links.map((link, linkIndex) => (
                   <li key={linkIndex}>
                     <Link
                       href={link.href}
-                      className="text-gray-400 hover:text-white transition-colors duration-200"
+                      className="text-cream/60 hover:text-cream text-sm transition-colors duration-200"
                     >
                       {link.label}
                     </Link>
@@ -181,25 +162,9 @@ export default function Footer({ variant = 'default', className = '' }: FooterPr
           ))}
         </div>
 
-        {/* Stats Section */}
-        {config.stats.length > 0 && (
-          <div className="border-t border-gray-800 mt-12 pt-8">
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
-              {config.stats.map((stat, index) => (
-                <div key={index} className="text-center">
-                  <div className="text-2xl md:text-3xl font-bold text-white mb-1">
-                    {stat.value}
-                  </div>
-                  <div className="text-sm text-gray-400">{stat.label}</div>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-
         {/* Bottom Bar */}
-        <div className="border-t border-gray-800 mt-8 pt-8 text-center">
-          <p className="text-gray-400 text-sm">
+        <div className="border-t border-cream/10 mt-12 pt-8 text-center">
+          <p className="text-cream/50 text-sm">
             © 2025 ImiRezervimi.al. Të gjitha të drejtat e rezervuara.
           </p>
         </div>

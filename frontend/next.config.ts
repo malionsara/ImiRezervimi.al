@@ -215,7 +215,9 @@ const nextConfig = {
         permanent: true,
       },
       {
-        source: '/salon/:slug',
+        // Legacy salon booking links: /salon/{slug} → /{slug}.
+        // Must NOT swallow the real /salon/* pages (register, dashboard, ...).
+        source: '/salon/:slug((?!register$|dashboard$|success$|demo-dashboard$)[^/]+)',
         destination: '/:slug',
         permanent: false,
       },

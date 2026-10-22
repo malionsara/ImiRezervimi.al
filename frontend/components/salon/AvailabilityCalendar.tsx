@@ -95,32 +95,32 @@ const CalendarView: React.FC<CalendarViewProps> = ({
     const isSelected = selectedDate === day.date
     const hasSelectedSlots = selectedSlotDates.has(day.date)
     
-    let classes = 'relative p-2 h-20 border border-gray-100 cursor-pointer transition-all duration-200 '
+    let classes = 'relative p-2 h-20 border border-linen cursor-pointer transition-all duration-200 '
 
     // Base status colors
     switch (status) {
       case 'closed':
-        classes += 'bg-gray-100 text-gray-400 '
+        classes += 'bg-sand text-clay/70 '
         break
       case 'past':
-        classes += 'bg-gray-50 text-gray-300 '
+        classes += 'bg-cream text-linen '
         break
       case 'full':
-        classes += 'bg-red-50 text-red-600 '
+        classes += 'bg-accent-soft/60 text-accent '
         break
       case 'blocked':
-        classes += 'bg-orange-50 text-orange-600 '
+        classes += 'bg-warning/5 text-warning '
         break
       case 'available':
-        classes += 'bg-white text-gray-900 hover:bg-green-50 '
+        classes += 'bg-paper text-ink hover:bg-success/5 '
         break
     }
 
     // Selection states
     if (isSelected) {
-      classes += 'ring-2 ring-red-500 bg-red-50 '
+      classes += 'ring-2 ring-red-500 bg-accent-soft/60 '
     } else if (hasSelectedSlots) {
-      classes += 'ring-2 ring-blue-500 bg-blue-50 '
+      classes += 'ring-2 ring-blue-500 bg-accent-soft/40 '
     }
 
     // Today highlight
@@ -134,7 +134,7 @@ const CalendarView: React.FC<CalendarViewProps> = ({
   return (
     <div className="card overflow-hidden">
       {/* Month header */}
-      <div className="bg-gray-50 px-4 py-3 border-b">
+      <div className="bg-cream px-4 py-3 border-b">
         <h3 className="section-title">
           {month.monthName} {month.year}
         </h3>
@@ -147,7 +147,7 @@ const CalendarView: React.FC<CalendarViewProps> = ({
       <div className="grid grid-cols-7 gap-0">
         {/* Day headers */}
         {['Hën', 'Mar', 'Mër', 'Enj', 'Pre', 'Sht', 'Die'].map((dayName) => (
-          <div key={dayName} className="bg-gray-100 p-2 text-center text-sm font-medium text-gray-600 border-b">
+          <div key={dayName} className="bg-sand p-2 text-center text-sm font-medium text-clay border-b">
             {dayName}
           </div>
         ))}
@@ -163,7 +163,7 @@ const CalendarView: React.FC<CalendarViewProps> = ({
             <div className="text-sm font-medium mb-1">
               {new Date(day.date).getDate()}
               {day.isToday && (
-                <span className="ml-1 text-xs bg-red-500 text-white rounded-full px-1">Sot</span>
+                <span className="ml-1 text-xs bg-accent text-white rounded-full px-1">Sot</span>
               )}
             </div>
 
@@ -202,7 +202,7 @@ const CalendarView: React.FC<CalendarViewProps> = ({
       </div>
 
       {/* Legend */}
-      <div className="bg-gray-50 px-4 py-3 border-t">
+      <div className="bg-cream px-4 py-3 border-t">
         <div className="flex flex-wrap gap-4 text-xs">
           <div className="flex items-center">
             <div className="w-3 h-3 bg-green-400 rounded-full mr-2"></div>
@@ -299,14 +299,14 @@ const DayDetail: React.FC<DayDetailProps> = ({
 
     if (slot.status === 'available') {
       classes += isSelected 
-        ? 'bg-green-100 border-green-300 text-green-800' 
-        : 'bg-white border-gray-200 hover:bg-green-50 text-gray-900'
+        ? 'bg-success/10 border-green-300 text-success' 
+        : 'bg-paper border-linen hover:bg-success/5 text-ink'
     } else if (slot.status === 'blocked') {
       classes += isSelected
-        ? 'bg-orange-100 border-orange-300 text-orange-800'
-        : 'bg-orange-50 border-orange-200 text-orange-700'
+        ? 'bg-warning/10 border-orange-300 text-orange-800'
+        : 'bg-warning/5 border-orange-200 text-orange-700'
     } else {
-      classes += 'bg-red-50 border-red-200 text-red-700 cursor-not-allowed'
+      classes += 'bg-accent-soft/60 border-accent/25 text-accent-strong cursor-not-allowed'
     }
 
     return classes
@@ -315,14 +315,14 @@ const DayDetail: React.FC<DayDetailProps> = ({
   if (!selectedDay) return null
 
   return (
-    <div className="bg-white rounded-lg border p-6">
+    <div className="bg-paper rounded-lg border p-6">
       {/* Header */}
       <div className="flex justify-between items-center mb-6">
         <div>
-          <h3 className="text-lg font-semibold text-gray-900">
+          <h3 className="text-lg font-semibold text-ink">
             {formatAlbanianDate(selectedDay.date)}
           </h3>
-          <p className="text-sm text-gray-600">
+          <p className="text-sm text-clay">
             {selectedDay.workingHours && 
               `${selectedDay.workingHours.open} - ${selectedDay.workingHours.close}`
             }
@@ -330,7 +330,7 @@ const DayDetail: React.FC<DayDetailProps> = ({
         </div>
         <button
           onClick={onClose}
-          className="p-2 text-gray-400 hover:text-gray-600 rounded-lg hover:bg-gray-100"
+          className="p-2 text-clay/70 hover:text-clay rounded-lg hover:bg-sand"
         >
           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -340,16 +340,16 @@ const DayDetail: React.FC<DayDetailProps> = ({
 
       {/* Stats */}
       <div className="grid grid-cols-3 gap-4 mb-6">
-        <div className="bg-green-50 rounded-lg p-3">
-          <div className="text-lg font-semibold text-green-600">{selectedDay.availableSlots}</div>
-          <div className="text-sm text-green-700">Të lira</div>
+        <div className="bg-success/5 rounded-lg p-3">
+          <div className="text-lg font-semibold text-success">{selectedDay.availableSlots}</div>
+          <div className="text-sm text-success">Të lira</div>
         </div>
-        <div className="bg-red-50 rounded-lg p-3">
-          <div className="text-lg font-semibold text-red-600">{selectedDay.bookedSlots}</div>
-          <div className="text-sm text-red-700">Të zëna</div>
+        <div className="bg-accent-soft/60 rounded-lg p-3">
+          <div className="text-lg font-semibold text-accent">{selectedDay.bookedSlots}</div>
+          <div className="text-sm text-accent-strong">Të zëna</div>
         </div>
-        <div className="bg-orange-50 rounded-lg p-3">
-          <div className="text-lg font-semibold text-orange-600">{selectedDay.blockedSlots}</div>
+        <div className="bg-warning/5 rounded-lg p-3">
+          <div className="text-lg font-semibold text-warning">{selectedDay.blockedSlots}</div>
           <div className="text-sm text-orange-700">Të bllokoura</div>
         </div>
       </div>
@@ -357,14 +357,14 @@ const DayDetail: React.FC<DayDetailProps> = ({
       {/* Time slots */}
       {loading ? (
         <div className="text-center py-8">
-          <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-red-500"></div>
-          <p className="text-gray-600 mt-2">Po ngarkohen orët...</p>
+          <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-accent"></div>
+          <p className="text-clay mt-2">Po ngarkohen orët...</p>
         </div>
       ) : availability ? (
         <div className="space-y-4">
           {/* Bulk block form */}
           {!readOnly && showBlockForm && (
-            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+            <div className="bg-accent-soft/40 border border-accent/25 rounded-lg p-4">
               <h4 className="font-medium text-blue-900 mb-2">Blloko orët</h4>
               <input
                 type="text"
@@ -376,7 +376,7 @@ const DayDetail: React.FC<DayDetailProps> = ({
               <div className="flex gap-2 mt-3">
                 <button
                   onClick={() => setShowBlockForm(false)}
-                  className="px-3 py-1 text-sm bg-gray-100 text-gray-700 rounded hover:bg-gray-200"
+                  className="px-3 py-1 text-sm bg-sand text-ink rounded hover:bg-linen"
                 >
                   Anulo
                 </button>
@@ -393,7 +393,7 @@ const DayDetail: React.FC<DayDetailProps> = ({
                 onClick={() => !readOnly && slot.status !== 'booked' && onTimeSlotClick(slot)}
               >
                 <div className="text-sm font-medium">{slot.startTime}</div>
-                <div className="text-xs text-gray-600">{slot.duration} min</div>
+                <div className="text-xs text-clay">{slot.duration} min</div>
                 
                 {slot.status === 'blocked' && slot.blockReason && (
                   <div className="text-xs mt-1">{slot.blockReason}</div>
@@ -412,7 +412,7 @@ const DayDetail: React.FC<DayDetailProps> = ({
                           e.stopPropagation()
                           handleSlotAction(slot, 'block')
                         }}
-                        className="text-xs px-2 py-1 bg-orange-100 text-orange-700 rounded hover:bg-orange-200"
+                        className="text-xs px-2 py-1 bg-warning/10 text-orange-700 rounded hover:bg-orange-200"
                       >
                         Blloko
                       </button>
@@ -422,7 +422,7 @@ const DayDetail: React.FC<DayDetailProps> = ({
                           e.stopPropagation()
                           handleSlotAction(slot, 'unblock')
                         }}
-                        className="text-xs px-2 py-1 bg-green-100 text-green-700 rounded hover:bg-green-200"
+                        className="text-xs px-2 py-1 bg-success/10 text-success rounded hover:bg-green-200"
                       >
                         Çblloko
                       </button>
@@ -434,7 +434,7 @@ const DayDetail: React.FC<DayDetailProps> = ({
           </div>
         </div>
       ) : (
-        <div className="text-center py-8 text-gray-500">
+        <div className="text-center py-8 text-clay">
           {selectedDay.isWorkingDay ? 'Gabim në ngarkimin e të dhënave' : 'Salloni është i mbyllur në këtë ditë'}
         </div>
       )}
@@ -483,14 +483,14 @@ const BulkActions: React.FC<BulkActionsProps> = ({
   if (selectedSlots.length === 0) return null
 
   return (
-    <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4">
+    <div className="bg-accent-soft/40 border border-accent/25 rounded-lg p-4 mb-4">
       <div className="flex items-center justify-between mb-3">
         <h4 className="font-medium text-blue-900">
           {selectedSlots.length} orë të zgjedhura
         </h4>
         <button
           onClick={onClearSelection}
-          className="text-blue-600 hover:text-blue-700 text-sm"
+          className="text-accent hover:text-accent-strong text-sm"
         >
           Pastro zgjedhjen
         </button>
@@ -515,7 +515,7 @@ const BulkActions: React.FC<BulkActionsProps> = ({
             </button>
             <button
               onClick={() => setShowForm(false)}
-              className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200"
+              className="px-4 py-2 bg-sand text-ink rounded-lg hover:bg-linen"
             >
               Anulo
             </button>
@@ -533,7 +533,7 @@ const BulkActions: React.FC<BulkActionsProps> = ({
           <button
             onClick={handleBulkUnblock}
             disabled={isLoading}
-            className="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 disabled:opacity-50"
+            className="px-4 py-2 bg-success text-white rounded-lg hover:bg-green-600 disabled:opacity-50"
           >
             Çblloko
           </button>
@@ -660,7 +660,7 @@ export default function AvailabilityCalendar({
     <div className={`space-y-6 ${className}`}>
       {/* Header with navigation */}
       <div className="flex items-center justify-between">
-        <h2 className="text-xl font-semibold text-gray-900">
+        <h2 className="text-xl font-semibold text-ink">
           Kalendari i disponueshmërisë
         </h2>
         
@@ -668,7 +668,7 @@ export default function AvailabilityCalendar({
           <button
             onClick={() => navigateMonth('prev')}
             disabled={loading}
-            className="p-2 text-gray-400 hover:text-gray-600 rounded-lg hover:bg-gray-100 disabled:opacity-50"
+            className="p-2 text-clay/70 hover:text-clay rounded-lg hover:bg-sand disabled:opacity-50"
           >
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
@@ -677,7 +677,7 @@ export default function AvailabilityCalendar({
           
           <button
             onClick={() => setCurrentDate(new Date())}
-            className="px-3 py-1 text-sm bg-red-100 text-red-700 rounded-lg hover:bg-red-200"
+            className="px-3 py-1 text-sm bg-accent-soft text-accent-strong rounded-lg hover:bg-red-200"
           >
             Sot
           </button>
@@ -685,7 +685,7 @@ export default function AvailabilityCalendar({
           <button
             onClick={() => navigateMonth('next')}
             disabled={loading}
-            className="p-2 text-gray-400 hover:text-gray-600 rounded-lg hover:bg-gray-100 disabled:opacity-50"
+            className="p-2 text-clay/70 hover:text-clay rounded-lg hover:bg-sand disabled:opacity-50"
           >
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
@@ -712,9 +712,9 @@ export default function AvailabilityCalendar({
         {/* Calendar view */}
         <div className="lg:col-span-2">
           {loading ? (
-            <div className="bg-white rounded-lg border p-8 text-center">
-              <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-red-500"></div>
-              <p className="text-gray-600 mt-2">Po ngarkohet kalendari...</p>
+            <div className="bg-paper rounded-lg border p-8 text-center">
+              <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-accent"></div>
+              <p className="text-clay mt-2">Po ngarkohet kalendari...</p>
             </div>
           ) : calendarMonth ? (
             <CalendarView
@@ -727,7 +727,7 @@ export default function AvailabilityCalendar({
               readOnly={readOnly}
             />
           ) : (
-            <div className="bg-white rounded-lg border p-8 text-center text-gray-500">
+            <div className="bg-paper rounded-lg border p-8 text-center text-clay">
               Gabim në ngarkimin e kalendarit
             </div>
           )}
@@ -749,9 +749,9 @@ export default function AvailabilityCalendar({
               readOnly={readOnly}
             />
           ) : (
-            <div className="bg-white rounded-lg border p-6 text-center text-gray-500">
-              <div className="text-4xl mb-4">📅</div>
-              <h3 className="font-medium text-gray-900 mb-2">Zgjidhni një ditë</h3>
+            <div className="bg-paper rounded-lg border p-6 text-center text-clay">
+              <div className="text-4xl mb-4"></div>
+              <h3 className="font-medium text-ink mb-2">Zgjidhni një ditë</h3>
               <p className="text-sm">
                 Klikoni mbi një ditë në kalendar për të parë orët e disponueshme.
               </p>

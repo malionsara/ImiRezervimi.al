@@ -180,20 +180,14 @@ test.describe('Homepage - ImiRezervimi.al', () => {
     // This test might need adjustment based on how you handle auth
   });
 
-  test('should display correct social proof numbers', async ({ page }) => {
+  test('should not display fabricated social proof numbers', async ({ page }) => {
     await homePage.goto();
-    
-    // Check stats section
-    const stats = [
-      { text: '500+', label: 'Sallone' },
-      { text: '10k+', label: 'Klienta' },
-      { text: '50k+', label: 'Rezervime' },
-      { text: '4.9★', label: 'Vlerësim' }
-    ];
 
-    for (const stat of stats) {
-      await expect(page.locator(`text=${stat.text}`)).toBeVisible();
-      await expect(page.locator(`text=${stat.label}`)).toBeVisible();
+    // The redesign removed invented stats; make sure they stay gone
+    const fabricatedStats = ['500+', '10k+', '50k+', '4.9★'];
+
+    for (const stat of fabricatedStats) {
+      await expect(page.locator(`text=${stat}`)).toHaveCount(0);
     }
   });
 
@@ -209,11 +203,11 @@ test.describe('Homepage - ImiRezervimi.al', () => {
     
     if (testimonialCount > 0) {
       expect(testimonialCount).toBeGreaterThanOrEqual(3);
-      
-      // Check first testimonial has all elements
+
+      // Check first testimonial renders a quote and attribution
       const firstTestimonial = testimonials.first();
       await expect(firstTestimonial).toBeVisible();
-      await expect(firstTestimonial.locator('text=⭐⭐⭐⭐⭐')).toBeVisible();
+      await expect(firstTestimonial.locator('blockquote')).toBeVisible();
     }
   });
 

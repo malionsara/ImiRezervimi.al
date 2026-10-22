@@ -98,17 +98,17 @@ export default function SalonLoginPage() {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
       </Head>
       
-      <div className="min-h-screen bg-gradient-to-br from-pink-50 via-red-50 to-orange-50 flex items-center justify-center px-4">
-        <div className="bg-white rounded-2xl shadow-xl p-8 max-w-md w-full">
+      <div className="min-h-screen bg-cream flex items-center justify-center px-4">
+        <div className="bg-paper rounded-lg shadow-soft p-8 max-w-md w-full">
           {/* Logo */}
-          <div className="mx-auto h-16 w-16 rounded-2xl bg-gradient-to-br from-red-500 to-pink-500 flex items-center justify-center mb-6 shadow-lg">
+          <div className="mx-auto h-16 w-16 rounded-lg flex items-center justify-center mb-6">
             <Image src="/favicon-96x96.png" alt="ImiRezervimi Logo" width={48} height={48} className="w-full h-full object-contain" />
           </div>
           
           {/* Header */}
           <div className="text-center mb-6">
-            <h1 className="text-2xl font-bold text-gray-900 mb-2">🏪 Hyrje për Sallone</h1>
-            <p className="text-gray-600">
+            <h1 className="font-display text-2xl text-ink mb-2">Hyrje për Sallone</h1>
+            <p className="text-clay">
               Vendosni numrin e telefonit për të marrë një link hyrjeje në WhatsApp
             </p>
           </div>
@@ -116,19 +116,19 @@ export default function SalonLoginPage() {
           {/* Form */}
           <div className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                📱 Numri i telefonit të sallonit
+              <label className="block text-sm font-medium text-ink mb-2">
+                Numri i telefonit të sallonit
               </label>
               <input 
                 type="tel" 
-                className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-colors"
+                className="w-full border border-linen rounded-lg px-4 py-3 focus:ring-2 focus:ring-accent/25 focus:border-accent transition-colors"
                 value={phone} 
                 onChange={(e) => setPhone(e.target.value)}
                 onKeyPress={handleKeyPress}
                 placeholder="+355 69 123 4567"
                 disabled={loading}
               />
-              <p className="text-xs text-gray-500 mt-1">
+              <p className="text-xs text-clay mt-1">
                 Formatet e pranuara: +355691234567, 00355691234567, 691234567
               </p>
             </div>
@@ -136,7 +136,7 @@ export default function SalonLoginPage() {
             <button 
               onClick={requestLink} 
               disabled={loading || !phone.trim()} 
-              className="w-full bg-gradient-to-r from-red-500 to-pink-500 text-white rounded-lg px-4 py-3 hover:from-red-600 hover:to-pink-600 disabled:opacity-50 disabled:cursor-not-allowed transition-all font-medium shadow-lg"
+              className="w-full bg-accent text-white rounded-lg px-4 py-3 hover:bg-accent-strong disabled:opacity-50 disabled:cursor-not-allowed transition-all font-medium shadow-soft"
             >
               {loading ? (
                 <div className="flex items-center justify-center">
@@ -145,7 +145,7 @@ export default function SalonLoginPage() {
                 </div>
               ) : (
                 <>
-                  📲 Dërgo linkun në WhatsApp
+                  Dërgo linkun në WhatsApp
                 </>
               )}
             </button>
@@ -154,12 +154,12 @@ export default function SalonLoginPage() {
             {message && (
               <div className={`p-4 rounded-lg border ${
                 message.type === 'success' 
-                  ? 'bg-green-50 border-green-200 text-green-800' 
-                  : 'bg-red-50 border-red-200 text-red-800'
+                  ? 'bg-success/5 border-success/25 text-success' 
+                  : 'bg-accent-soft/60 border-accent/25 text-accent-strong'
               }`}>
                 <div className="flex items-center">
                   <div className="mr-2">
-                    {message.type === 'success' ? '✅' : '❌'}
+                    {message.type === 'success' ? '✓' : '✕'}
                   </div>
                   <div className="text-sm">
                     {message.text}
@@ -167,10 +167,10 @@ export default function SalonLoginPage() {
                 </div>
                 
                 {message.type === 'success' && (
-                  <div className="mt-3 p-3 bg-white rounded border border-green-200">
+                  <div className="mt-3 p-3 bg-paper rounded border border-success/25">
                     <div>
-                      <p className="text-xs text-green-700 font-medium mb-2">Hapat e ardhshëm:</p>
-                      <ol className="text-xs text-green-600 space-y-1">
+                      <p className="text-xs text-success font-medium mb-2">Hapat e ardhshëm:</p>
+                      <ol className="text-xs text-success space-y-1">
                         <li>1. Hapni WhatsApp në telefon</li>
                         <li>2. Kërkoni mesazhin nga ImiRezervimi.al</li>
                         <li>3. Kliko linkun në mesazh për të hyrë në dashboard</li>
@@ -184,22 +184,22 @@ export default function SalonLoginPage() {
           
           {/* Registration Link */}
           <div className="mt-8 text-center">
-            <p className="text-sm text-gray-600">
+            <p className="text-sm text-clay">
               Nuk keni llogari?{' '}
               <a 
                 href="/salon/register" 
-                className="text-red-600 hover:text-red-700 font-medium hover:underline"
+                className="text-accent hover:text-accent-strong font-medium hover:underline"
               >
-                Regjistrohuni këtu →
+                Regjistrohuni këtu
               </a>
             </p>
           </div>
 
           {/* Security Note */}
-          <div className="mt-6 p-4 bg-gray-50 rounded-lg">
+          <div className="mt-6 p-4 bg-cream rounded-lg">
             <div className="flex items-start">
-              <div className="text-yellow-500 mr-2">🔒</div>
-              <div className="text-xs text-gray-600">
+              <div className="text-warning mr-2">•</div>
+              <div className="text-xs text-clay">
                 <p className="font-medium mb-1">Siguria:</p>
                 <ul className="space-y-1">
                   <li>• Linqet e hyrjes skadojnë për 24 orë</li>
@@ -212,7 +212,7 @@ export default function SalonLoginPage() {
 
           {/* Support */}
           <div className="mt-6 text-center">
-            <p className="text-xs text-gray-500">
+            <p className="text-xs text-clay">
               Probleme? Kontaktoni: support@imirezervimi.al
             </p>
           </div>

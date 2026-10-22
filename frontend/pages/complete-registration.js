@@ -88,12 +88,12 @@ export default function CompleteRegistration() {
 
   if (status === 'loading' || isLoading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-pink-50 to-red-50 flex items-center justify-center">
+      <div className="min-h-screen bg-cream flex items-center justify-center">
         <div className="text-center">
-          <div className="mx-auto h-16 w-16 rounded-2xl bg-white flex items-center justify-center mb-4 shadow-lg animate-pulse p-2">
+          <div className="mx-auto h-16 w-16 rounded-lg bg-paper flex items-center justify-center mb-4 shadow-soft animate-pulse p-2">
             <Image src="/favicon-96x96.png" alt="ImiRezervimi Logo" width={64} height={64} className="w-full h-full object-contain" />
           </div>
-          <p className="text-gray-600">Po ngarkohet...</p>
+          <p className="text-clay">Po ngarkohet...</p>
         </div>
       </div>
     )
@@ -101,16 +101,16 @@ export default function CompleteRegistration() {
 
   if (!session?.user?.tempData) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-pink-50 to-red-50 flex items-center justify-center">
+      <div className="min-h-screen bg-cream flex items-center justify-center">
         <div className="text-center max-w-md mx-auto p-6">
-          <div className="mx-auto h-16 w-16 rounded-2xl bg-white flex items-center justify-center mb-6 shadow-lg p-2">
+          <div className="mx-auto h-16 w-16 rounded-lg bg-paper flex items-center justify-center mb-6 shadow-soft p-2">
             <Image src="/favicon-96x96.png" alt="ImiRezervimi Logo" width={64} height={64} className="w-full h-full object-contain" />
           </div>
-          <h1 className="text-2xl font-bold text-gray-900 mb-4">Ka ndodhur një gabim</h1>
-          <p className="text-gray-600 mb-6">Të dhënat e regjistrimit nuk u gjetën. Ju lutemi provoni përsëri.</p>
+          <h1 className="text-2xl font-bold text-ink mb-4">Ka ndodhur një gabim</h1>
+          <p className="text-clay mb-6">Të dhënat e regjistrimit nuk u gjetën. Ju lutemi provoni përsëri.</p>
           <button
             onClick={() => router.push('/login')}
-            className="bg-red-500 text-white px-6 py-3 rounded-lg font-medium hover:bg-red-600 transition-colors"
+            className="bg-accent text-white px-6 py-3 rounded-lg font-medium hover:bg-accent transition-colors"
           >
             Kthehu te identifikimi
           </button>
@@ -127,16 +127,16 @@ export default function CompleteRegistration() {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
       </Head>
 
-      <div className="min-h-screen bg-gradient-to-br from-pink-50 to-red-50">
+      <div className="min-h-screen bg-cream">
         {/* Header */}
-        <header className="bg-white/95 backdrop-blur-xl border-b border-red-100/50">
+        <header className="bg-white/95 backdrop-blur-xl border-b border-linen/50">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex justify-between items-center h-16">
               <div className="flex items-center">
-                <div className="h-10 w-10 rounded-2xl bg-white flex items-center justify-center mr-3 shadow-lg p-1">
+                <div className="h-10 w-10 rounded-lg bg-paper flex items-center justify-center mr-3 shadow-soft p-1">
                   <Image src="/favicon-96x96.png" alt="ImiRezervimi Logo" width={40} height={40} className="w-full h-full object-contain" />
                 </div>
-                <span className="text-xl font-bold text-gray-900">ImiRezervimi.al</span>
+                <span className="text-xl font-bold text-ink">ImiRezervimi.al</span>
               </div>
             </div>
           </div>
@@ -146,25 +146,25 @@ export default function CompleteRegistration() {
         <main className="flex items-center justify-center px-4 py-12">
           <div className="max-w-md w-full">
             {/* Welcome Card */}
-            <div className="bg-white rounded-2xl shadow-xl p-8 mb-8">
+            <div className="bg-paper rounded-lg shadow-soft p-8 mb-8">
               <div className="text-center mb-6">
-                <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <span className="text-2xl">✅</span>
+                <div className="w-16 h-16 bg-success/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <span className="text-2xl text-success">✓</span>
                 </div>
-                <h1 className="text-2xl font-bold text-gray-900 mb-2">
+                <h1 className="text-2xl font-bold text-ink mb-2">
                   Mirë se erdhe, {session.user.tempData.name}!
                 </h1>
-                <p className="text-gray-600">
+                <p className="text-clay">
                   Identifikimi me {session.user.tempData.provider === 'facebook' ? 'Facebook' : 'Google'} u krye me sukses.
                 </p>
               </div>
 
-              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
+              <div className="bg-accent-soft/40 border border-accent/25 rounded-lg p-4 mb-6">
                 <div className="flex items-center">
-                  <span className="text-blue-600 text-xl mr-3">📱</span>
+                  <span className="text-accent text-xl mr-3">•</span>
                   <div>
                     <h3 className="font-semibold text-blue-900">Hapi i fundit</h3>
-                    <p className="text-blue-700 text-sm">
+                    <p className="text-accent-strong text-sm">
                       Për të përdorur platformën, duhet të verifikosh numrin e WhatsApp.
                     </p>
                   </div>
@@ -173,19 +173,19 @@ export default function CompleteRegistration() {
             </div>
 
             {/* WhatsApp Verification Component */}
-            <div className="bg-white rounded-2xl shadow-xl p-8">
+            <div className="bg-paper rounded-lg shadow-soft p-8">
               {isLoading ? (
                 <div className="text-center py-8">
-                  <div className="mx-auto h-12 w-12 rounded-2xl bg-blue-100 flex items-center justify-center mb-4 animate-pulse">
+                  <div className="mx-auto h-12 w-12 rounded-lg bg-accent-soft flex items-center justify-center mb-4 animate-pulse">
                     <span className="text-2xl">⏳</span>
                   </div>
-                  <p className="text-gray-600">Po plotësohet regjistrimi...</p>
+                  <p className="text-clay">Po plotësohet regjistrimi...</p>
                 </div>
               ) : (
                 <>
                   <div className="mb-6">
-                    <h3 className="text-xl font-bold text-gray-900 mb-2">Verifikimi i WhatsApp</h3>
-                    <p className="text-gray-600">
+                    <h3 className="text-xl font-bold text-ink mb-2">Verifikimi i WhatsApp</h3>
+                    <p className="text-clay">
                       Do t&apos;ju dërgojmë një kod verifikimi në WhatsApp për të plotësuar regjistrimin.
                     </p>
                   </div>
@@ -197,8 +197,8 @@ export default function CompleteRegistration() {
                   />
                   
                   {verificationError && (
-                    <div className="mt-4 p-3 bg-red-50 border border-red-200 rounded-lg">
-                      <p className="text-red-600 text-sm">{verificationError}</p>
+                    <div className="mt-4 p-3 bg-accent-soft/60 border border-accent/25 rounded-lg">
+                      <p className="text-accent text-sm">{verificationError}</p>
                     </div>
                   )}
                 </>
@@ -207,7 +207,7 @@ export default function CompleteRegistration() {
 
             {/* Info Footer */}
             <div className="text-center mt-6">
-              <p className="text-gray-500 text-sm">
+              <p className="text-clay text-sm">
                 Numri i telefonit do të përdoret për konfirmimet e rezervimeve në WhatsApp
               </p>
             </div>

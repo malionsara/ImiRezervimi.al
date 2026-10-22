@@ -6,10 +6,12 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import Head from 'next/head';
 import { createClient } from '@supabase/supabase-js';
+import { ArrowLeft, AlertTriangle, CalendarDays, Smartphone } from 'lucide-react';
 import StatusCard from '../../../components/booking/StatusCard';
 import BookingHistory from '../../../components/booking/BookingHistory';
 import { showToast, showLoadingToast, updateToast } from '../../../components/ToastProvider';
 import ConfirmationModal from '../../../components/ui/ConfirmationModal';
+import Logo from '../../../components/ui/Logo';
 
 // Initialize Supabase client for real-time updates
 const supabase = createClient(
@@ -210,10 +212,10 @@ export default function BookingStatusPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-pink-50 flex items-center justify-center">
+      <div className="min-h-screen bg-cream flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-pink-600 mx-auto mb-4"></div>
-          <p className="text-gray-600">Duke ngarkuar të dhënat...</p>
+          <div className="animate-spin rounded-full h-12 w-12 border-2 border-accent border-t-transparent mx-auto mb-4"></div>
+          <p className="text-clay">Duke ngarkuar të dhënat...</p>
         </div>
       </div>
     );
@@ -221,14 +223,16 @@ export default function BookingStatusPage() {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-pink-50 flex items-center justify-center px-4">
-        <div className="bg-white rounded-lg shadow-lg p-8 max-w-md w-full text-center">
-          <div className="text-red-500 text-5xl mb-4">⚠️</div>
-          <h1 className="text-xl font-bold text-gray-900 mb-2">Gabim</h1>
-          <p className="text-gray-600 mb-6">{error}</p>
+      <div className="min-h-screen bg-cream flex items-center justify-center px-4">
+        <div className="bg-paper rounded-lg border border-linen shadow-soft p-8 max-w-md w-full text-center">
+          <div className="mx-auto w-14 h-14 bg-danger/10 rounded-full flex items-center justify-center mb-4">
+            <AlertTriangle size={26} strokeWidth={1.75} className="text-danger" aria-hidden="true" />
+          </div>
+          <h1 className="font-display text-xl text-ink mb-2">Gabim</h1>
+          <p className="text-clay mb-6">{error}</p>
           <button
             onClick={() => router.back()}
-            className="bg-pink-600 text-white px-6 py-2 rounded-lg hover:bg-pink-700 transition-colors"
+            className="bg-accent text-white px-6 py-2.5 rounded font-medium hover:bg-accent-strong transition-colors btn-touch"
           >
             Kthehu Mbrapa
           </button>
@@ -239,16 +243,18 @@ export default function BookingStatusPage() {
 
   if (!appointment) {
     return (
-      <div className="min-h-screen bg-pink-50 flex items-center justify-center px-4">
-        <div className="bg-white rounded-lg shadow-lg p-8 max-w-md w-full text-center">
-          <div className="text-gray-400 text-5xl mb-4">📅</div>
-          <h1 className="text-xl font-bold text-gray-900 mb-2">Rezervimi nuk u gjet</h1>
-          <p className="text-gray-600 mb-6">
+      <div className="min-h-screen bg-cream flex items-center justify-center px-4">
+        <div className="bg-paper rounded-lg border border-linen shadow-soft p-8 max-w-md w-full text-center">
+          <div className="mx-auto w-14 h-14 bg-sand rounded-full flex items-center justify-center mb-4">
+            <CalendarDays size={26} strokeWidth={1.75} className="text-clay" aria-hidden="true" />
+          </div>
+          <h1 className="font-display text-xl text-ink mb-2">Rezervimi nuk u gjet</h1>
+          <p className="text-clay mb-6">
             Rezervimi që kërkoni nuk ekziston ose është fshirë.
           </p>
           <button
             onClick={() => router.push('/')}
-            className="bg-pink-600 text-white px-6 py-2 rounded-lg hover:bg-pink-700 transition-colors"
+            className="bg-accent text-white px-6 py-2.5 rounded font-medium hover:bg-accent-strong transition-colors btn-touch"
           >
             Kthehu në faqen kryesore
           </button>
@@ -266,26 +272,25 @@ export default function BookingStatusPage() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <div className="min-h-screen bg-pink-50">
+      <div className="min-h-screen bg-cream">
         {/* Header */}
-        <div className="bg-white shadow-sm">
+        <div className="bg-paper border-b border-linen">
           <div className="max-w-4xl mx-auto px-4 py-4">
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-3">
                 <button
                   onClick={() => router.back()}
-                  className="text-gray-600 hover:text-gray-900 transition-colors"
+                  className="text-clay hover:text-ink transition-colors btn-touch p-1"
+                  aria-label="Kthehu mbrapa"
                 >
-                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-                  </svg>
+                  <ArrowLeft size={22} strokeWidth={1.75} aria-hidden="true" />
                 </button>
                 <div>
-                  <h1 className="text-xl font-bold text-gray-900">Statusi i Rezervimit</h1>
-                  <p className="text-sm text-gray-600">ID: {appointment.id.slice(0, 8)}...</p>
+                  <h1 className="font-display text-xl text-ink">Statusi i Rezervimit</h1>
+                  <p className="text-sm text-clay">ID: {appointment.id.slice(0, 8)}...</p>
                 </div>
               </div>
-              <div className="text-2xl">💅</div>
+              <Logo size="sm" withWordmark={false} />
             </div>
           </div>
         </div>
@@ -309,15 +314,16 @@ export default function BookingStatusPage() {
         </div>
 
         {/* Footer */}
-        <div className="bg-white border-t mt-12">
+        <div className="bg-paper border-t border-linen mt-12">
           <div className="max-w-4xl mx-auto px-4 py-8 text-center">
-            <div className="text-gray-600 mb-2">
+            <div className="text-clay mb-2">
               Për ndihmë ose pyetje, kontaktoni:
             </div>
-            <div className="text-pink-600 font-semibold">
-              📱 WhatsApp: +355 69 123 4567
+            <div className="text-accent font-semibold inline-flex items-center gap-2">
+              <Smartphone size={16} strokeWidth={1.75} aria-hidden="true" />
+              WhatsApp: +355 69 123 4567
             </div>
-            <div className="text-gray-500 text-sm mt-4">
+            <div className="text-clay/70 text-sm mt-4">
               © 2025 ImiRezervimi.al - Platforma për rezervime në sallonet e bukurisë
             </div>
           </div>

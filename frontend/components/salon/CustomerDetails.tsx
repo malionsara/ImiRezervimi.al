@@ -153,24 +153,24 @@ export default function CustomerDetails({ customer, onClose }: CustomerDetailsPr
 
   const getStatusColor = (status: string): string => {
     switch (status) {
-      case 'completed': return 'bg-green-100 text-green-800'
-      case 'cancelled': return 'bg-red-100 text-red-800'
-      case 'no_show': return 'bg-orange-100 text-orange-800'
-      case 'approved': return 'bg-blue-100 text-blue-800'
-      case 'declined': return 'bg-gray-100 text-gray-800'
-      default: return 'bg-gray-100 text-gray-800'
+      case 'completed': return 'bg-success/10 text-success'
+      case 'cancelled': return 'bg-accent-soft text-red-800'
+      case 'no_show': return 'bg-warning/10 text-orange-800'
+      case 'approved': return 'bg-accent-soft text-accent-strong'
+      case 'declined': return 'bg-sand text-ink'
+      default: return 'bg-sand text-ink'
     }
   }
 
   const getPriorityLevel = (score: number): { label: string; color: string; icon: string } => {
     if (score >= 80) {
-      return { label: 'VIP', color: 'text-purple-600', icon: '👑' }
+      return { label: 'VIP', color: 'text-purple-600', icon: '' }
     } else if (score >= 60) {
-      return { label: 'I lartë', color: 'text-red-600', icon: '🔥' }
+      return { label: 'I lartë', color: 'text-accent', icon: '' }
     } else if (score >= 40) {
-      return { label: 'Mesatar', color: 'text-yellow-600', icon: '⭐' }
+      return { label: 'Mesatar', color: 'text-warning', icon: '⭐' }
     } else {
-      return { label: 'Normal', color: 'text-gray-600', icon: '👤' }
+      return { label: 'Normal', color: 'text-clay', icon: '' }
     }
   }
 
@@ -211,12 +211,12 @@ export default function CustomerDetails({ customer, onClose }: CustomerDetailsPr
   // ==============================================
   if (loading) {
     return (
-      <div className="bg-white rounded-xl shadow-sm border">
-        <div className="p-6 border-b border-gray-200 flex justify-between items-center">
-          <h3 className="text-lg font-semibold text-gray-900">Po ngarkohet...</h3>
+      <div className="bg-paper rounded shadow-sm border">
+        <div className="p-6 border-b border-linen flex justify-between items-center">
+          <h3 className="text-lg font-semibold text-ink">Po ngarkohet...</h3>
           <button
             onClick={onClose}
-            className="text-gray-400 hover:text-gray-600 transition-colors"
+            className="text-clay/70 hover:text-clay transition-colors"
           >
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -224,7 +224,7 @@ export default function CustomerDetails({ customer, onClose }: CustomerDetailsPr
           </button>
         </div>
         <div className="p-6 text-center">
-          <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-red-500"></div>
+          <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-accent"></div>
         </div>
       </div>
     )
@@ -232,12 +232,12 @@ export default function CustomerDetails({ customer, onClose }: CustomerDetailsPr
 
   if (!history) {
     return (
-      <div className="bg-white rounded-xl shadow-sm border p-6 text-center">
-        <div className="text-red-500 text-4xl mb-4">❌</div>
-        <p className="text-gray-600">Gabim në ngarkimin e të dhënave të klientit</p>
+      <div className="bg-paper rounded shadow-sm border p-6 text-center">
+        <div className="text-accent text-4xl mb-4"></div>
+        <p className="text-clay">Gabim në ngarkimin e të dhënave të klientit</p>
         <button
           onClick={onClose}
-          className="mt-4 px-4 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 transition-colors"
+          className="mt-4 px-4 py-2 bg-linen text-ink rounded-lg hover:bg-gray-300 transition-colors"
         >
           Mbyll
         </button>
@@ -251,19 +251,19 @@ export default function CustomerDetails({ customer, onClose }: CustomerDetailsPr
   // MAIN RENDER
   // ==============================================
   return (
-    <div className="bg-white rounded-xl shadow-sm border h-fit sticky top-24">
+    <div className="bg-paper rounded shadow-sm border h-fit sticky top-24">
       {/* Header */}
-      <div className="p-6 border-b border-gray-200">
+      <div className="p-6 border-b border-linen">
         <div className="flex justify-between items-start mb-4">
           <div className="flex-1">
-            <h3 className="text-lg font-semibold text-gray-900">
+            <h3 className="text-lg font-semibold text-ink">
               {customer.firstName} {customer.lastName}
             </h3>
-            <p className="text-sm text-gray-600">{customer.phone}</p>
+            <p className="text-sm text-clay">{customer.phone}</p>
           </div>
           <button
             onClick={onClose}
-            className="text-gray-400 hover:text-gray-600 transition-colors p-1"
+            className="text-clay/70 hover:text-clay transition-colors p-1"
           >
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -278,7 +278,7 @@ export default function CustomerDetails({ customer, onClose }: CustomerDetailsPr
             {priority.label}
           </span>
           {customer.rating > 0 && (
-            <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
+            <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-warning/10 text-warning">
               ⭐ {customer.rating.toFixed(1)}
             </span>
           )}
@@ -287,31 +287,31 @@ export default function CustomerDetails({ customer, onClose }: CustomerDetailsPr
         {/* Quick Stats */}
         <div className="grid grid-cols-2 gap-4 text-sm">
           <div>
-            <p className="text-gray-600">Vizita totale</p>
-            <p className="font-semibold text-gray-900">{history.stats.totalVisits}</p>
+            <p className="text-clay">Vizita totale</p>
+            <p className="font-semibold text-ink">{history.stats.totalVisits}</p>
           </div>
           <div>
-            <p className="text-gray-600">Shuma totale</p>
-            <p className="font-semibold text-gray-900">{history.stats.totalSpent.toFixed(2)}€</p>
+            <p className="text-clay">Shuma totale</p>
+            <p className="font-semibold text-ink">{history.stats.totalSpent.toFixed(2)}€</p>
           </div>
         </div>
       </div>
 
       {/* Tabs */}
-      <div className="border-b border-gray-200">
+      <div className="border-b border-linen">
         <nav className="flex">
           {[
-            { id: 'overview', label: 'Përmbledhje', icon: '📊' },
-            { id: 'history', label: 'Historiku', icon: '📅' },
-            { id: 'notes', label: 'Shënime', icon: '📝' }
+            { id: 'overview', label: 'Përmbledhje', icon: '' },
+            { id: 'history', label: 'Historiku', icon: '' },
+            { id: 'notes', label: 'Shënime', icon: '' }
           ].map((tab) => (
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id as 'overview' | 'history' | 'notes')}
               className={`flex-1 px-4 py-3 text-sm font-medium border-b-2 transition-colors ${
                 activeTab === tab.id
-                  ? 'border-red-500 text-red-600'
-                  : 'border-transparent text-gray-500 hover:text-gray-700'
+                  ? 'border-accent text-accent'
+                  : 'border-transparent text-clay hover:text-ink'
               }`}
             >
               <span className="mr-1">{tab.icon}</span>
@@ -327,29 +327,29 @@ export default function CustomerDetails({ customer, onClose }: CustomerDetailsPr
         {activeTab === 'overview' && (
           <div className="space-y-6">
             <div>
-              <h4 className="font-medium text-gray-900 mb-3">Statistika</h4>
+              <h4 className="font-medium text-ink mb-3">Statistika</h4>
               <div className="space-y-3">
                 <div className="flex justify-between">
-                  <span className="text-gray-600 text-sm">Mesatarja e vlerësimit</span>
+                  <span className="text-clay text-sm">Mesatarja e vlerësimit</span>
                   <span className="font-medium">{history.stats.averageRating.toFixed(1)} ⭐</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-gray-600 text-sm">Shkalla e anulimeve</span>
+                  <span className="text-clay text-sm">Shkalla e anulimeve</span>
                   <span className="font-medium">{(history.stats.cancellationRate * 100).toFixed(1)}%</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-gray-600 text-sm">Shkalla e mosparaqitjeve</span>
+                  <span className="text-clay text-sm">Shkalla e mosparaqitjeve</span>
                   <span className="font-medium">{(history.stats.noShowRate * 100).toFixed(1)}%</span>
                 </div>
                 {history.stats.lastVisit && (
                   <div className="flex justify-between">
-                    <span className="text-gray-600 text-sm">Vizita e fundit</span>
+                    <span className="text-clay text-sm">Vizita e fundit</span>
                     <span className="font-medium">{formatDate(history.stats.lastVisit)}</span>
                   </div>
                 )}
                 {history.stats.favoriteService && (
                   <div className="flex justify-between">
-                    <span className="text-gray-600 text-sm">Shërbimi i preferuar</span>
+                    <span className="text-clay text-sm">Shërbimi i preferuar</span>
                     <span className="font-medium">{history.stats.favoriteService}</span>
                   </div>
                 )}
@@ -361,15 +361,15 @@ export default function CustomerDetails({ customer, onClose }: CustomerDetailsPr
         {/* History Tab */}
         {activeTab === 'history' && (
           <div>
-            <h4 className="font-medium text-gray-900 mb-3">Historiku i rezervimeve</h4>
+            <h4 className="font-medium text-ink mb-3">Historiku i rezervimeve</h4>
             {history.appointments.length > 0 ? (
               <div className="space-y-3">
                 {history.appointments.map((appointment) => (
-                  <div key={appointment.id} className="p-3 border border-gray-200 rounded-lg">
+                  <div key={appointment.id} className="p-3 border border-linen rounded-lg">
                     <div className="flex justify-between items-start mb-2">
                       <div>
-                        <p className="font-medium text-gray-900">{appointment.serviceName}</p>
-                        <p className="text-sm text-gray-600">
+                        <p className="font-medium text-ink">{appointment.serviceName}</p>
+                        <p className="text-sm text-clay">
                           {formatDate(appointment.appointmentDate)} në {appointment.startTime}
                         </p>
                       </div>
@@ -378,19 +378,19 @@ export default function CustomerDetails({ customer, onClose }: CustomerDetailsPr
                       </span>
                     </div>
                     {appointment.price && (
-                      <p className="text-sm text-gray-600 mb-2">{appointment.price}€</p>
+                      <p className="text-sm text-clay mb-2">{appointment.price}€</p>
                     )}
                     {appointment.salonNotes && (
                       <div className="text-sm">
-                        <p className="text-gray-600">Shënim nga salloni:</p>
-                        <p className="text-gray-800 italic">&quot;{appointment.salonNotes}&quot;</p>
+                        <p className="text-clay">Shënim nga salloni:</p>
+                        <p className="text-ink italic">&quot;{appointment.salonNotes}&quot;</p>
                       </div>
                     )}
                   </div>
                 ))}
               </div>
             ) : (
-              <p className="text-gray-600 text-sm">Nuk ka histori rezervimesh</p>
+              <p className="text-clay text-sm">Nuk ka histori rezervimesh</p>
             )}
           </div>
         )}
@@ -398,22 +398,22 @@ export default function CustomerDetails({ customer, onClose }: CustomerDetailsPr
         {/* Notes Tab */}
         {activeTab === 'notes' && (
           <div>
-            <h4 className="font-medium text-gray-900 mb-3">Shënime të sallonit</h4>
+            <h4 className="font-medium text-ink mb-3">Shënime të sallonit</h4>
             
             {/* Add New Note */}
-            <div className="mb-4 p-3 border border-gray-200 rounded-lg">
+            <div className="mb-4 p-3 border border-linen rounded-lg">
               <textarea
                 value={newNote}
                 onChange={(e) => setNewNote(e.target.value)}
                 placeholder="Shto një shënim për këtë klient..."
-                className="w-full p-2 border border-gray-300 rounded text-sm resize-none focus:ring-2 focus:ring-red-500 focus:border-red-500"
+                className="w-full p-2 border border-linen rounded text-sm resize-none focus:ring-2 focus:ring-accent/25 focus:border-accent"
                 rows={3}
               />
               <div className="flex justify-end mt-2">
                 <button
                   onClick={handleAddNote}
                   disabled={!newNote.trim() || addingNote}
-                  className="px-3 py-1 bg-red-500 text-white rounded text-sm hover:bg-red-600 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
+                  className="px-3 py-1 bg-accent text-white rounded text-sm hover:bg-accent disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
                 >
                   {addingNote ? 'Po shtohet...' : 'Shto shënim'}
                 </button>
@@ -424,9 +424,9 @@ export default function CustomerDetails({ customer, onClose }: CustomerDetailsPr
             {history.notes.length > 0 ? (
               <div className="space-y-3">
                 {history.notes.map((note) => (
-                  <div key={note.id} className="p-3 bg-gray-50 rounded-lg">
-                    <p className="text-sm text-gray-800 mb-2">{note.note}</p>
-                    <div className="flex justify-between text-xs text-gray-500">
+                  <div key={note.id} className="p-3 bg-cream rounded-lg">
+                    <p className="text-sm text-ink mb-2">{note.note}</p>
+                    <div className="flex justify-between text-xs text-clay">
                       <span>{note.createdBy}</span>
                       <span>{formatDate(note.createdAt)}</span>
                     </div>
@@ -434,7 +434,7 @@ export default function CustomerDetails({ customer, onClose }: CustomerDetailsPr
                 ))}
               </div>
             ) : (
-              <p className="text-gray-600 text-sm">Nuk ka shënime të ruajtura</p>
+              <p className="text-clay text-sm">Nuk ka shënime të ruajtura</p>
             )}
           </div>
         )}
